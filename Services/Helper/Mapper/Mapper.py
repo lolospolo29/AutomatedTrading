@@ -1,5 +1,6 @@
 from typing import Any
 
+from Models.Asset.Candle import Candle
 from Models.Trade.Order import Order
 from Models.Trade.Trade import Trade
 
@@ -22,34 +23,37 @@ class Mapper:
 
         # name = list(data.keys())[0]
 
+        if name == "Candle":
+            return self.mapCandle(mainData)
+
         if name == "Trade":
-            return self.mapTrade(data)
+            return self.mapTrade(mainData)
 
         if name == "order":
-            return self.mapOrder(data)
+            return self.mapOrder(mainData)
 
         return None
 
-    def mapTrade(self, data: Any) -> Trade:
+    def mapTrade(self, maindata: Any) -> Trade:
         # Mappe die Daten auf das Trade-Objekt
-        data = data.get("Trade")
+        maindata = maindata.get("Trade")
 
         # Handle asset
-        assetValue = data.get('asset')
+        assetValue = maindata.get('asset')
         assetValue = assetValue.strip("'") if assetValue else None  # Entferne einfache Anführungszeichen
 
         # Handle strategyName
-        strategyName = data.get('strategyName', '')
+        strategyName = maindata.get('strategyName', '')
 
         # Initialisiere das Trade-Objekt
-        trade = Trade(asset=assetValue, strategyName=strategyName)
+        trade = Trade(asset=assetValue, strategy=strategyName)
 
         # Mappe den Status und PnL
-        trade.status = data.get('status', None)
-        trade.pnl = data.get('pnl', 0)
+        trade.status = maindata.get('status', None)
+        trade.pnl = maindata.get('pnl', 0)
 
         # Verarbeite die Order-Liste, falls vorhanden
-        orderJSON = data.get('orders')
+        orderJSON = maindata.get('orders')
         for orderData in orderJSON:
             trade.orders.append(self.MapToClass(orderData))
 
@@ -65,3 +69,17 @@ class Mapper:
         order.riskPercentage = data.get('riskPercentage')
         order.broker = data.get('broker')
         return order
+
+    @staticmethod
+    def mapCandle(mainData: Any) -> Candle:
+            mainData = mainData.get("Candle")
+            asset = mainData.get("asset")
+            broker = mainData.get("broker")
+            open = mainData.get("open")
+            close = mainData.get("close")
+            high = mainData.get("high")
+            low = mainData.get("low")
+            IsoTime = mainData.get("IsoTime")
+            timeFrame = mainData.get("timeFrame")
+
+            return Candle(asset,broker,open,close,high,low,IsoTime,timeFrame)

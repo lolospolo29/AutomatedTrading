@@ -1,47 +1,75 @@
-from Models.Asset import SMTPair, CandleSeries
+from Models.Asset.BrokerStrategyAssignment import BrokerStrategyAssignment
+from Models.Asset.Candle import Candle
+from Models.Asset.CandleSeries import CandleSeries
+from Models.Asset.SMTPair import SMTPair
 
 
 class Asset:
-    def __init__(self, name: str, strategies: list[str], smtPairs: list[str], brokers: list):
+    def __init__(self, name: str):
         self.name: str = name
-        self.strategies: list[str] = strategies
-        self.brokers: list[str] = brokers
-        self.smtPairs: list[SMTPair] = smtPairs
+        self.strategies: list[str] = []
+        self.brokers: list[str] = []
+        self.smtPairs: list[SMTPair] = []
         self.CandlesSeries: list[CandleSeries] = []
-        self.brokerStrategyAssignment: dict = {}
+        self.brokerStrategyAssignment: list[BrokerStrategyAssignment] = []
 
-    def addCurrentData(self, tradingData):
-        for assetData in self.currentData:
-            if assetData.timeFrame == tradingData.timeFrame:
-                assetData.addData(tradingData.open, tradingData.high, tradingData.low, tradingData.close,
-                                  tradingData.time)
+    def addStrategy(self, strategy: str) -> None:
+        if not self.isStrategyInStrategies(strategy):
+            self.strategies.append(strategy)
+
+    def addBroker(self, broker: str) -> None:
+        if not self.isBrokerInBrokers(broker):
+            self.brokers.append(broker)
+
+    def addSMTPair(self, pair: SMTPair) -> None:
+        if not self.isPairInSMTPairs(pair):
+            self.smtPairs.append(pair)
+
+    def addCandleSeries(self, timeFrame: int, maxlen: int, broker: str) -> None:
+        for candleSeries in self.CandlesSeries:
+            if not self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame,candleSeries):
+                break
+        self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
+
+    def addCandle(self, candle: Candle) -> None:
+        for candleSeries in self.CandlesSeries:
+            if not self.isBrokerAndTimeFrameInCandleSeries(candle.broker, candle.timeFrame,candleSeries):
+                candleSeries.addCandle(candle)
                 break
 
-    def returnCurrentDataByIds(self, _ids):
-        collectedIdData = []
-        for assetData in self.currentData:
-            collectedIdData.append(assetData.getDataByIds(_ids))
-        return collectedIdData
+    def brokerStrategyAssignment(self, broker: str, strategy: str) -> None:
+            if not self.isBrokerAndStrategyInAssignment(broker, strategy):
+                self.brokerStrategyAssignment.append(BrokerStrategyAssignment(broker, strategy))
 
-    def returnAllTimeFrames(self):
-        """Gibt eine Liste aller timeFrames zurück, die in dataStorage gespeichert sind."""
-        return [assetData.timeFrame for assetData in self.currentData]
+    def isStrategyInStrategies(self, strategy: str) -> bool:
+        if strategy in self.strategies:
+            return True
+        return False
 
-    def returnCurrentDataByTimeFrameAndDataPoints(self, timeframe, numberOfDataPoints):
-        """
-        Fetch the last 'number_of_data_points' for the given timeframe.
-        This is useful for retrieving historical data for analysis.
-        """
-        for assetData in self.currentData:
-            if assetData.timeFrame == timeframe:
-                # Ensure we don't request more data than we have
-                availableDataPoints = min(len(assetData.open), numberOfDataPoints)
+    def isBrokerInBrokers(self, broker: str) -> bool:
+        if broker in self.brokers:
+            return True
+        return False
 
-                historical_data = {
-                    'open': list(assetData.open)[-availableDataPoints:],
-                    'high': list(assetData.high)[-availableDataPoints:],
-                    'low': list(assetData.low)[-availableDataPoints:],
-                    'close': list(assetData.close)[-availableDataPoints:],
-                    'time': list(assetData.time)[-availableDataPoints:]
-                }
-                return historical_data
+    def isPairInSMTPairs(self, pair: SMTPair) -> bool:
+        for existingPair in self.smtPairs:
+            if (existingPair.strategy == pair.strategy and
+                    existingPair.correlation == pair.correlation and
+                    sorted(existingPair.smtPair) == sorted(
+                        pair.smtPair)):  # Ensure elements match, regardless of order
+                print("Duplicate SMTPair found. Not adding to smtPairs.")
+                return True
+        return True
+    @staticmethod
+    def isBrokerAndTimeFrameInCandleSeries(broker: str, timeFrame: int, candleSeries: CandleSeries)-> bool:
+        if candleSeries.broker == broker and candleSeries.timeFrame == timeFrame:
+            return True
+        return False
+
+    def isBrokerAndStrategyInAssignment(self, broker, strategy):
+        for assignement in self.brokerStrategyAssignment:
+            if assignement.strategy == strategy and assignement.broker == broker:
+                return True
+        return False
+
+

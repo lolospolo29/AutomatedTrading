@@ -1,5 +1,5 @@
 class SMTPair:
-    def __init__(self, strategy: str, smtPairs: list[str], correlation: str):
+    def __init__(self, strategy: str, smtPair: list[str], correlation: str):
         self.strategy: str = strategy
-        self.smtPairs: list[str] = smtPairs
+        self.smtPair: list[str] = smtPair
         self.correlation: str = correlation

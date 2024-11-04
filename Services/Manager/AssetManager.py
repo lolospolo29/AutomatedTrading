@@ -10,8 +10,9 @@ class AssetManager:
         self.assets[asset.name] = asset
         print(f"Asset '{asset.name}' created and added to Asset Manager.")
 
-    def addStrategy(self, asset: str,strategy: str):
-        if asset in self.assets[]:
+    def addStrategy(self, asset: str,strategy: str) -> None:
+        if asset in self.assets:
+            self.assets[asset].addStrategy(strategy)
 
     # def dailyDataArchive(self):
     #
