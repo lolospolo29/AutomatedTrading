@@ -1,0 +1,12 @@
+{
+  "Candle": {
+    "asset": "{{ticker}}",
+    "broker" : "{{exchange}}",
+    "open": {{open}},
+    "high": {{high}},
+    "low": {{low}},
+    "close": {{close}},
+    "time": "{{time}}",
+    "timeFrame": 5
+    }
+}

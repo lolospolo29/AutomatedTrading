@@ -1,0 +1,18 @@
+from Interfaces.Strategy.ILevel import ILevel
+from Models.Asset import Candle
+from Models.StrategyAnalyse.Level import Level
+
+
+class NWOG(ILevel):
+    def getLevels(self, candle: Candle) -> list[Level]:
+        allLevel = []
+        high = candle.high
+        low = candle.low
+
+        NWOGHighObj = Level(name="NWOG_high", level=high)
+        NWOGLowObj = Level(name="NWOG_low", level=low)
+
+        allLevel.append(NWOGHighObj)
+        allLevel.append(NWOGLowObj)
+
+        return allLevel
