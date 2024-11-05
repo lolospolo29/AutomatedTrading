@@ -4,15 +4,15 @@ import time
 
 import requests as requests
 
-from Interfaces.IBroker import IBroker
+from Models.Main.Brokers.Broker import Broker
 
 
-class Bybit(IBroker):
+class Bybit(Broker):
 
-    def __init__(self, name: str, apiKey='', apiSecret=''):
-        self.name: str = name
-        self.apiKey: str = apiKey
-        self.apiSecret: str = apiSecret
+    def __init__(self,name: str):
+        super().__init__(name)
+        self.apiKey: str = ''
+        self.apiSecret: str = ''
         self.baseUrl: str = 'https://api.bybit.com'
 
     def generateSignature(self, params):
@@ -26,7 +26,7 @@ class Bybit(IBroker):
     def cancelOrder(self):
         pass
 
-    def getOrdeInformation(self):
+    def getOrderInformation(self):
         pass
 
     def executeMarketOrder(self, order):

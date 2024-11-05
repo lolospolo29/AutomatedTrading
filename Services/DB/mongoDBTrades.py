@@ -1,12 +1,14 @@
 from Models.DB.MongoDB import MongoDB
 from Models.Main.Trade import Trade
+from Services.Helper.Mapper.Mapper import Mapper
+from Services.Helper.SecretsManager import SecretsManager
 
 
 class mongoDBTrades:
-    def __init__(self, secretsManager, DataMapper):
-        self._secretManager = secretsManager
-        self._DataMapper = DataMapper
-        self._MongoDBTrades = MongoDB("Trades", secretsManager.returnSecret("mongodb"))
+    def __init__(self, secretsManager: SecretsManager, DataMapper: Mapper):
+        self._SecretManager: SecretsManager = secretsManager
+        self._DataMapper: Mapper = DataMapper
+        self._MongoDBTrades: MongoDB = MongoDB("Trades", self._SecretManager.returnSecret("mongodb"))
 
     def addTradeToDB(self, trade: Trade) -> bool:
         self._MongoDBTrades.add("OpenTrades", trade)

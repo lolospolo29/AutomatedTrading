@@ -1,15 +1,16 @@
-from Interfaces.Strategy.IStrategy import IStrategy
+from Models.Main.Strategies.ExitEntryStrategy import ExitEntryStrategy
+from Models.Main.Strategies.Strategy import Strategy
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 
 
-class FVGSession(IStrategy):
-    def __init__(self, name: str, exitStrategy, entryStrategy):
-        self.name: str = name
+class FVGSession(Strategy):
+    def __init__(self, name: str, entryStrategy : ExitEntryStrategy, exitStrategy: ExitEntryStrategy):
+        super().__init__(name)
         self._TimeWindow = LondonOpen()
-        self.safeDataDuration = 0  # Days of Data needed for Strategy
-        self.exitStrategy = exitStrategy
         self.entryStrategy = entryStrategy
-        # self.entryStrategy.setCallback(self.updatePDArrays)
+        self.exitStrategy = exitStrategy
+        self.safeDataDuration = 0  # Days of Data needed for StrategyAnalyse
+        self.expectedTimeFrames = [1,5,15]
 
     def analyzePreviousData(self, dataPoints):
         pass

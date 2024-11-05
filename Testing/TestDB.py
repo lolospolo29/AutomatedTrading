@@ -13,8 +13,8 @@ collection = db.currentData
 document = {
         "tradingViewData": {
             "ticker": "BTC",
-            "Broker": "Bybit",
-            "Strategy": "FVG",
+            "Brokers": "Bybit",
+            "StrategyAnalyse": "FVG",
             "close": 175.30,
             "open": 172.40,
             "high": 176.00,

@@ -1,3 +1,4 @@
+from Models.Main.Strategies.Strategy import Strategy
 from Services.Manager.AssetManager import AssetManager
 
 class StrategyManager:
@@ -5,6 +6,6 @@ class StrategyManager:
         self.strategies: dict = {}
         self._AssetManager: AssetManager = assetManager
 
-    def registerStrategy(self, strategy):
+    def registerStrategy(self, strategy: Strategy):
         self.strategies[strategy.name] = strategy
         print(f"Strategy '{strategy.name}' created and added to the Strategy Manager.")

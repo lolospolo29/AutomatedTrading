@@ -6,9 +6,13 @@ from threading import Thread
 import pytz
 
 from Controller.SignalController import SignalControler
+from Models.Pattern.Factory.BrokerFactory import BrokerFactory
+from Models.Pattern.Factory.StrategyFactory import StrategyFactory
+from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.DB.mongoDBData import mongoDBData
 from Services.DB.mongoDBTrades import mongoDBTrades
 from Services.DBService import DBService
+from Services.Helper.ConfigManager import ConfigManager
 from Services.Helper.Mapper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
 from Services.Manager.AssetManager import AssetManager
@@ -30,8 +34,15 @@ mapper = Mapper()
 
 mongoDBTrades = mongoDBTrades(secretsManager, mapper)
 mongoDBData = mongoDBData(secretsManager, mapper)
+mongoDBConfig = mongoDBConfig(secretsManager, mapper)
 
 dbService = DBService(mapper, mongoDBData, mongoDBTrades)
+
+# Factory
+
+brokerFactory = BrokerFactory()
+
+strategyFactory = StrategyFactory()
 
 # Manager / Services
 assetManager = AssetManager(dbService)
@@ -45,6 +56,8 @@ brokerManager = BrokerManager()
 tradeManager = TradeManager(dbService, brokerManager, strategyManager, riskManager)
 
 tradingService = TradingService(assetManager, tradeManager, strategyManager)
+
+configManager = ConfigManager(mongoDBConfig,assetManager,brokerManager,strategyManager,brokerFactory,strategyFactory)
 
 # Controller
 
@@ -62,7 +75,10 @@ def job(trading_service):
         if now.strftime("%H:%M") == "00:00":
             trading_service.executeDailyTasks()
 
-
+def runStartUp(config_Manager: ConfigManager):
+    config_Manager.runStartingSetup()
 # Use partial to pass tradingService as an argument
 thread = Thread(target=partial(job, tradingService))
 thread.start()
+
+runStartUp(configManager)

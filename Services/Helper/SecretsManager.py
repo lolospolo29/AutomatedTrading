@@ -5,7 +5,7 @@ from typing import Any
 
 
 class SecretsManager:
-    def __init__(self, configFile='C:\\TradingBot\\Config\\config.ini'):
+    def __init__(self, configFile='C:\\AutomatedTrading\\Config\\config.ini'):
         self.configFile = configFile
         self.secretsFilePath = self.loadSecretsPath()
         # print(f"Pfad zur Secrets-Datei: {self.secrets_file_path}")  # Debug-Ausgabe

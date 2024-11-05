@@ -1,6 +1,6 @@
 import datetime
 
-from Services.Helper.Factory.FlyweightFactory import FlyweightFactory
+from Models.Pattern.Factory.FlyweightFactory import FlyweightFactory
 
 
 class Candle:

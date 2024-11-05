@@ -16,6 +16,7 @@
         <list>
           <option value="open" />
           <option value="list" />
+          <option value="exit" />
         </list>
       </option>
     </inspection_tool>
