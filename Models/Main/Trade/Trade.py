@@ -1,4 +1,4 @@
-from Models.Trade import Order
+from Models.Main.Trade import Order
 
 
 class Trade:

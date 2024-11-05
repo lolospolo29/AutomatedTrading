@@ -1,5 +1,5 @@
 from Interfaces.Strategy.ILevel import ILevel
-from Models.Asset import Candle
+from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Level import Level
 
 

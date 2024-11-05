@@ -1,5 +1,5 @@
 from Interfaces.Strategy.IPDArray import IPDArray
-from Models.Asset import Candle
+from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.PDArray import PDArray
 
 

@@ -1,13 +1,18 @@
-from Models.Trade import Trade
+from Models.Main.Trade import Trade
+from Services.DBService import DBService
+from Services.Manager.BrokerManager import BrokerManager
+from Services.Manager.RiskManager import RiskManager
+from Services.Manager.StrategyManager import StrategyManager
 
 
 class TradeManager:
-    def __init__(self, DBService, BrokerManager, StrategyManager, RiskManager):
+    def __init__(self, dbService: DBService, brokerManager: BrokerManager, strategyManager: StrategyManager,
+                 riskManager: RiskManager):
         self.openTrades: list[Trade] = []
-        self._DBService = DBService
-        self._BrokerManager = BrokerManager
-        self._StrategyManager = StrategyManager
-        self._RiskManager = RiskManager
+        self._DBService: DBService = dbService
+        self._BrokerManager: BrokerManager = brokerManager
+        self._StrategyManager: StrategyManager = strategyManager
+        self._RiskManager: RiskManager = riskManager
 
     def addTradeToDB(self, status, trade):
         pass

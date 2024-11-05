@@ -1,18 +1,16 @@
-from Models.Asset.Asset import Asset
+from Models.Main.Asset.Asset import Asset
+from Services.DBService import DBService
 
 
 class AssetManager:
-    def __init__(self, DBService):
+    def __init__(self, dbService: DBService):
         self.assets: dict = {}
-        self._DBService = DBService
+        self._DBService: DBService = dbService
 
     def registerAsset(self, asset: Asset) -> None:
-        self.assets[asset.name] = asset
-        print(f"Asset '{asset.name}' created and added to Asset Manager.")
-
-    def addStrategy(self, asset: str,strategy: str) -> None:
-        if asset in self.assets:
-            self.assets[asset].addStrategy(strategy)
+        if not asset in self.assets:
+            self.assets[asset.name] = asset
+            print(f"Asset '{asset.name}' created and added to Asset Manager.")
 
     # def dailyDataArchive(self):
     #

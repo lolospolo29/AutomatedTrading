@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from Models.Asset import Candle
+from Models.Main.Asset import Candle
 
 
 class ILevel(ABC):  # Opening Gap

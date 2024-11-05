@@ -1,8 +1,8 @@
 from typing import Any
 
-from Models.Asset.Candle import Candle
-from Models.Trade.Order import Order
-from Models.Trade.Trade import Trade
+from Models.Main.Asset.Candle import Candle
+from Models.Main.Trade.Order import Order
+from Models.Main.Trade.Trade import Trade
 
 
 class Mapper:

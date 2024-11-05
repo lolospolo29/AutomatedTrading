@@ -1,7 +1,7 @@
-from Models.Asset.BrokerStrategyAssignment import BrokerStrategyAssignment
-from Models.Asset.Candle import Candle
-from Models.Asset.CandleSeries import CandleSeries
-from Models.Asset.SMTPair import SMTPair
+from Models.Main.Asset.BrokerStrategyAssignment import BrokerStrategyAssignment
+from Models.Main.Asset.Candle import Candle
+from Models.Main.Asset.CandleSeries import CandleSeries
+from Models.Main.Asset.SMTPair import SMTPair
 
 
 class Asset:
@@ -66,7 +66,7 @@ class Asset:
             return True
         return False
 
-    def isBrokerAndStrategyInAssignment(self, broker, strategy):
+    def isBrokerAndStrategyInAssignment(self, broker: str, strategy: str) -> bool:
         for assignement in self.brokerStrategyAssignment:
             if assignement.strategy == strategy and assignement.broker == broker:
                 return True

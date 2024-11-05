@@ -1,7 +1,7 @@
 import uuid
 from collections import deque
 
-from Models.Asset import Candle
+from Models.Main.Asset import Candle
 
 
 class CandleSeries:

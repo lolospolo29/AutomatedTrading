@@ -1,5 +1,5 @@
 from Interfaces.Strategy.IConfirmation import IConfirmation
-from Models.Asset import Candle
+from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Structure import Structure
 
 

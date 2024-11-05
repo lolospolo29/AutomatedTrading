@@ -1,5 +1,5 @@
 from Models.DB.MongoDB import MongoDB
-from Models.Trade import Trade
+from Models.Main.Trade import Trade
 
 
 class mongoDBTrades:
