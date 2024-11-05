@@ -1,3 +1,5 @@
+from typing import Any
+
 from Models.DB.MongoDB import MongoDB
 from Services.Helper.Mapper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
@@ -9,5 +11,11 @@ class mongoDBConfig:
         self._DataMapper: Mapper = DataMapper
         self._MongoDBConfig: MongoDB = MongoDB("TradingConfig", self._SecretManager.returnSecret("mongodb"))
 
-    def loadData(self, collectionName: str):
-        return self._MongoDBConfig.find(collectionName,None)
+    def loadData(self, collectionName: str, query: Any):
+        return self._MongoDBConfig.find(collectionName,query)
+
+    def findById(self,typ: str, attribute: str, id: int, getAttribute: str) -> str:
+            query = self._MongoDBConfig.buildQuery(typ, attribute, id)
+            assetDict = self.loadData(typ,query)
+            for doc in assetDict:
+                return (doc.get(typ)).get(getAttribute)

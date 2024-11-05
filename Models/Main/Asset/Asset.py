@@ -1,4 +1,4 @@
-from Models.Main.Asset.BrokerStrategyAssignment import BrokerStrategyAssignment
+from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from Models.Main.Asset.Candle import Candle
 from Models.Main.Asset.CandleSeries import CandleSeries
 from Models.Main.Asset.SMTPair import SMTPair
@@ -7,19 +7,19 @@ from Models.Main.Asset.SMTPair import SMTPair
 class Asset:
     def __init__(self, name: str):
         self.name: str = name
-        self.strategies: list[str] = []
         self.brokers: list[str] = []
+        self.strategies: list[str] = []
         self.smtPairs: list[SMTPair] = []
         self.CandlesSeries: list[CandleSeries] = []
-        self.brokerStrategyAssignment: list[BrokerStrategyAssignment] = []
-
-    def addStrategy(self, strategy: str) -> None:
-        if not self.isStrategyInStrategies(strategy):
-            self.strategies.append(strategy)
+        self.brokerStrategyAssignment: list[AssetBrokerStrategyRelation] = []
 
     def addBroker(self, broker: str) -> None:
         if not self.isBrokerInBrokers(broker):
             self.brokers.append(broker)
+
+    def addStrategy(self, strategy: str) -> None:
+        if not self.isStrategyInStrategies(strategy):
+            self.strategies.append(strategy)
 
     def addSMTPair(self, pair: SMTPair) -> None:
         if not self.isPairInSMTPairs(pair):
@@ -37,17 +37,17 @@ class Asset:
                 candleSeries.addCandle(candle)
                 break
 
-    def brokerStrategyAssignment(self, broker: str, strategy: str) -> None:
+    def addBrokerStrategyAssignment(self, broker: str, strategy: str) -> None:
             if not self.isBrokerAndStrategyInAssignment(broker, strategy):
-                self.brokerStrategyAssignment.append(BrokerStrategyAssignment(broker, strategy))
-
-    def isStrategyInStrategies(self, strategy: str) -> bool:
-        if strategy in self.strategies:
-            return True
-        return False
+                self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
 
     def isBrokerInBrokers(self, broker: str) -> bool:
         if broker in self.brokers:
+            return True
+        return False
+
+    def isStrategyInStrategies(self, strategy: str) -> bool:
+        if strategy in self.strategies:
             return True
         return False
 

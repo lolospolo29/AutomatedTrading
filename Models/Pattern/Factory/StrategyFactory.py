@@ -14,7 +14,7 @@ class StrategyFactory(IFactory):
         exit = self.returnSubTyp2(subTyp2)
 
         if typ == "FVGSession":
-            FVGSession(typ,entry,exit)
+            return FVGSession(typ,entry,exit)
 
     @staticmethod
     def returnSubTyp(subTyp: str) -> ExitEntryStrategy:
