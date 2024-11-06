@@ -3,13 +3,11 @@ from abc import ABC, abstractmethod
 
 class IStrategy(ABC):
     @abstractmethod
-    def analyzePreviousData(self):
+    def returnExpectedTimeFrame(self):
         pass
-
     @abstractmethod
-    def analyzeCurrentData(self, data_points):
+    def analyzeData(self):
         pass
-
     @abstractmethod
     def isInTime(self):
         pass

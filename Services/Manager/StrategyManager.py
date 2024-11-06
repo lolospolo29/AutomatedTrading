@@ -9,3 +9,8 @@ class StrategyManager:
     def registerStrategy(self, strategy: Strategy):
         self.strategies[strategy.name] = strategy
         print(f"Strategy '{strategy.name}' created and added to the Strategy Manager.")
+
+    def returnExpectedTimeFrame(self, strategy: str) -> list:
+        if strategy in self.strategies:
+            return self.strategies[strategy].returnExpectedTimeFrame()
+        return []

@@ -106,5 +106,15 @@ class ConfigManager:
             self.smtPairs.append(SMTPair(strategy,smtPairList,doc.get(typ).get("correlation")))
 
     def runOverList(self):
-        pass
+        for broker in self.brokers:
+            self._BrokerManager.registerBroker(broker)
+        for strategy in self.strategies:
+            self._StrategyManager.registerStrategy(strategy)
+        for asset in self.assets:
+            for relation in self.relations:
+                if relation.asset == asset.name:
+                    asset.addBroker(relation.broker)
+                    asset.addStrategy(relation.strategy)
+                    asset.addBrokerStrategyAssignment(relation.broker, relation.strategy)
+                    expectedTimeFrames: list = self._StrategyManager.returnExpectedTimeFrame(relation.strategy)
 

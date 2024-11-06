@@ -1,4 +1,5 @@
 from Models.Main.Strategies.ExitEntryStrategy import ExitEntryStrategy
+from Models.Main.Strategies.ExpectedTimeFrame import ExpectedTimeFrame
 from Models.Main.Strategies.Strategy import Strategy
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 
@@ -10,12 +11,20 @@ class FVGSession(Strategy):
         self.entryStrategy = entryStrategy
         self.exitStrategy = exitStrategy
         self.safeDataDuration = 0  # Days of Data needed for StrategyAnalyse
-        self.expectedTimeFrames = [1,5,15]
+        timeFrame = ExpectedTimeFrame(1,90)
+        timeFrame2 = ExpectedTimeFrame(5,90)
+        timeFrame3 = ExpectedTimeFrame(15,90)
 
-    def analyzePreviousData(self, dataPoints):
-        pass
+        self.expectedTimeFrames = []
 
-    def analyzeCurrentData(self, dataPoints):
+        self.expectedTimeFrames.append(timeFrame)
+        self.expectedTimeFrames.append(timeFrame2)
+        self.expectedTimeFrames.append(timeFrame3)
+
+    def returnExpectedTimeFrame(self) -> list:
+        return self.expectedTimeFrames
+
+    def analyzeData(self):
         pass
 
     def isInTime(self):

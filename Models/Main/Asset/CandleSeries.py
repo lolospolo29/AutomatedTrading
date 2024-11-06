@@ -5,9 +5,9 @@ from Models.Main.Asset import Candle
 
 
 class CandleSeries:
-    def __init__(self, timeFrame: int, maxlen: int, broker: str):
-        self.candleSeries = deque(maxlen=maxlen)
-        self.id = deque(maxlen=maxlen)
+    def __init__(self, timeFrame: int, maxLen: int, broker: str):
+        self.candleSeries = deque(maxlen=maxLen)
+        self.id = deque(maxlen=maxLen)
         self.timeFrame: int = timeFrame
         self.broker: str = broker
 
