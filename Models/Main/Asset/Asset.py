@@ -28,8 +28,12 @@ class Asset:
     def addCandleSeries(self, timeFrame: int, maxlen: int, broker: str) -> None:
         for candleSeries in self.CandlesSeries:
             if not self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame,candleSeries):
+                self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
                 break
-        self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
+        if len(self.CandlesSeries) == 0:
+            if self.isBrokerInBrokers(broker):
+                self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
+
 
     def addCandle(self, candle: Candle) -> None:
         for candleSeries in self.CandlesSeries:
@@ -39,7 +43,8 @@ class Asset:
 
     def addBrokerStrategyAssignment(self, broker: str, strategy: str) -> None:
             if not self.isBrokerAndStrategyInAssignment(broker, strategy):
-                self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
+                if self.isBrokerInBrokers(broker) and self.isStrategyInStrategies(strategy):
+                    self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
 
     def isBrokerInBrokers(self, broker: str) -> bool:
         if broker in self.brokers:
@@ -59,7 +64,7 @@ class Asset:
                         pair.smtPair)):  # Ensure elements match, regardless of order
                 print("Duplicate SMTPair found. Not adding to smtPairs.")
                 return True
-        return True
+        return False
     @staticmethod
     def isBrokerAndTimeFrameInCandleSeries(broker: str, timeFrame: int, candleSeries: CandleSeries)-> bool:
         if candleSeries.broker == broker and candleSeries.timeFrame == timeFrame:

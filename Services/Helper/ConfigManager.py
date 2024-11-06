@@ -45,6 +45,8 @@ class ConfigManager:
 
         self.runOverList()
 
+        a = 1
+
     def addDataToList(self, typ: str, dbList: list) -> None:
         for doc in dbList:
 
@@ -62,9 +64,7 @@ class ConfigManager:
             self.assets.append(asset)
 
     def isTypBrokerAddBroker(self, typ: str, doc: dict) -> None:
-
-        if typ == "Brokers":
-
+        if typ == "Broker":
             broker: Broker = self._BrokerFactory.returnClass((doc.get(typ)).get("name"))
             self.brokers.append(broker)
 
@@ -118,3 +118,10 @@ class ConfigManager:
                     asset.addBrokerStrategyAssignment(relation.broker, relation.strategy)
                     expectedTimeFrames: list = self._StrategyManager.returnExpectedTimeFrame(relation.strategy)
 
+                    for expectedTimeFrame in expectedTimeFrames:
+                        asset.addCandleSeries(expectedTimeFrame.timeFrame, expectedTimeFrame.maxLen,relation.broker)
+            for smtPair in self.smtPairs:
+                for pair in smtPair.smtPair:
+                    if pair == asset.name:
+                        asset.addSMTPair(smtPair)
+            self._AssetManager.registerAsset(asset)
