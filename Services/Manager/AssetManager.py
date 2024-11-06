@@ -1,3 +1,5 @@
+from typing import Any
+
 from Models.Main.Asset.Asset import Asset
 from Models.Main.Asset.Candle import Candle
 from Services.DBService import DBService
@@ -13,7 +15,7 @@ class AssetManager:
             self.assets[asset.name] = asset
             print(f"Asset '{asset.name}' created and added to Asset Manager.")
 
-    def addCandle(self, json: dict):
+    def addCandle(self, json: dict) -> Any:
         mappedCandle: Candle = self._DBService.autoMapper(json)
         if mappedCandle.asset in self.assets:
             self.assets[mappedCandle.asset].addCandle(mappedCandle)
