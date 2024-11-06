@@ -1,16 +1,18 @@
 import datetime
 
+from Models.Pattern.Decorator.IDDecorator import IDDecorator
 from Models.Pattern.Factory.FlyweightFactory import FlyweightFactory
 
 
+@IDDecorator
 class Candle:
-    def __init__(self, broker: str, asset: str, open: float, high: float, low: float, close: float,
+    def __init__(self, asset: str, broker: str, open: float, high: float, low: float, close: float,
                  IsoTime: datetime, timeFrame: int):
         self.asset: str = FlyweightFactory.getFlyweight(asset)
         self.broker: str = FlyweightFactory.getFlyweight(broker)
         self.open: float = FlyweightFactory.getFlyweight(open)
         self.high: float = FlyweightFactory.getFlyweight(high)
-        self.low: float= FlyweightFactory.getFlyweight(low)
+        self.low: float = FlyweightFactory.getFlyweight(low)
         self.close: float = FlyweightFactory.getFlyweight(close)
         self.isoTime: datetime = IsoTime
         self.timeFrame: int = FlyweightFactory.getFlyweight(timeFrame)

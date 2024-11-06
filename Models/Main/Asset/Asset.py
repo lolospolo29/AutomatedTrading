@@ -37,7 +37,7 @@ class Asset:
 
     def addCandle(self, candle: Candle) -> None:
         for candleSeries in self.CandlesSeries:
-            if not self.isBrokerAndTimeFrameInCandleSeries(candle.broker, candle.timeFrame,candleSeries):
+            if self.isBrokerAndTimeFrameInCandleSeries(candle.broker, candle.timeFrame,candleSeries):
                 candleSeries.addCandle(candle)
                 break
 
@@ -45,6 +45,9 @@ class Asset:
             if not self.isBrokerAndStrategyInAssignment(broker, strategy):
                 if self.isBrokerInBrokers(broker) and self.isStrategyInStrategies(strategy):
                     self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
+
+    def returnCandles(self):
+        pass
 
     def isBrokerInBrokers(self, broker: str) -> bool:
         if broker in self.brokers:
