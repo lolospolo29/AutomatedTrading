@@ -5,6 +5,7 @@ from Models.Main.Brokers.Broker import Broker
 from Models.Main.Strategies.Strategy import Strategy
 from Models.Pattern.Factory.BrokerFactory import BrokerFactory
 from Models.Pattern.Factory.StrategyFactory import StrategyFactory
+from Monitoring.TimeWrapper import logTime
 from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.BrokerManager import BrokerManager
@@ -26,7 +27,7 @@ class ConfigManager:
         self.strategies: list[Strategy] = []
         self.relations: list[AssetBrokerStrategyRelation] = []
         self.smtPairs: list[SMTPair] = []
-
+    @logTime
     def runStartingSetup(self):
 
         assets: list = self._MongoDBConfig.loadData("Asset",None)
@@ -102,7 +103,7 @@ class ConfigManager:
                                              "name"))
 
             self.smtPairs.append(SMTPair(strategy,smtPairList,doc.get(typ).get("correlation")))
-
+    @logTime
     def runOverList(self):
         for broker in self.brokers:
             self._BrokerManager.registerBroker(broker)

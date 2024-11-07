@@ -80,4 +80,4 @@ class Mapper:
             IsoTime = mainData.get("IsoTime")
             timeFrame = mainData.get("timeFrame")
 
-            return Candle(asset,broker,open,close,high,low,IsoTime,timeFrame)
+            return Candle( asset, broker,open,high,low,close,IsoTime,timeFrame)

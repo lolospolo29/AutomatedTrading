@@ -14,7 +14,6 @@ class AssetManager:
         if not asset in self.assets:
             self.assets[asset.name] = asset
             print(f"Asset '{asset.name}' created and added to Asset Manager.")
-
     def addCandle(self, json: dict) -> Any:
         mappedCandle: Candle = self._DBService.autoMapper(json)
         if mappedCandle.asset in self.assets:

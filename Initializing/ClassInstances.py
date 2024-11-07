@@ -70,7 +70,7 @@ def job(trading_service):
     while True:
         time.sleep(20)
         now = datetime.datetime.now(ny_tz)
-        print(now.strftime("%H:%M"))
+        # print(now.strftime("%H:%M"))
         # Wenn es 00:00 New York-Zeit ist
         if now.strftime("%H:%M") == "00:00":
             trading_service.executeDailyTasks()

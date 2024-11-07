@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from Models.Pattern.SingletonMeta import SingletonMeta
+from Models.Pattern.Singleton.SingletonMeta import SingletonMeta
 
 
 class Broker(ABC, metaclass=SingletonMeta):
