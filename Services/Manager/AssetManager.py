@@ -21,6 +21,14 @@ class AssetManager:
             self.assets[mappedCandle.asset].addCandle(mappedCandle)
             return mappedCandle.asset, mappedCandle.broker, mappedCandle.timeFrame
 
+    def returnCandles(self, asset: str, broker: str, timeFrame: int) -> list:
+        if asset in self.assets:
+            return self.assets[asset].returnCandles(timeFrame, broker)
+
+    def returnRelations(self, asset: str, broker: str) -> list:
+        if asset in self.assets:
+            return self.assets[asset].returnRelationsForBroker(broker)
+
 
     # def dailyDataArchive(self):
     #

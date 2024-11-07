@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="@localhost">
+  <database-model serializer="dbm" dbms="MONGO" family-id="MONGO" format-version="4.53">
+    <root id="1">
+      <ServerVersion>7.0.14</ServerVersion>
+    </root>
+    <schema id="2" parent="1" name="Trades">
+      <LastIntrospectionLocalTimestamp>2024-11-07.09:55:14</LastIntrospectionLocalTimestamp>
+    </schema>
+    <schema id="3" parent="1" name="TradingConfig">
+      <LastIntrospectionLocalTimestamp>2024-11-07.09:55:14</LastIntrospectionLocalTimestamp>
+    </schema>
+    <schema id="4" parent="1" name="TradingData">
+      <LastIntrospectionLocalTimestamp>2024-11-07.09:55:14</LastIntrospectionLocalTimestamp>
+    </schema>
+    <schema id="5" parent="1" name="admin"/>
+    <schema id="6" parent="1" name="config"/>
+    <schema id="7" parent="1" name="local"/>
+    <schema id="8" parent="1" name="neutraldb"/>
+    <schema id="9" parent="1" name="test_database"/>
+    <table id="10" parent="2" name="ClosedTrades"/>
+    <table id="11" parent="2" name="OpenTrades"/>
+    <table id="12" parent="3" name="Asset"/>
+    <table id="13" parent="3" name="AssetBrokerStrategyRelation"/>
+    <table id="14" parent="3" name="Broker"/>
+    <table id="15" parent="3" name="SMTPairs"/>
+    <table id="16" parent="3" name="Strategy"/>
+    <table id="17" parent="4" name="BTCUSDT.P"/>
+    <column id="18" parent="10" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="19" parent="10" name="Trade.asset">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="20" parent="10" name="Trade.orders">
+      <Position>1</Position>
+      <StoredType>list|4999545s</StoredType>
+    </column>
+    <column id="21" parent="10" name="Trade.orders.broker">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="22" parent="10" name="Trade.orders.id">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="23" parent="10" name="Trade.orders.riskPercentage">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="24" parent="10" name="Trade.orders.status">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="25" parent="10" name="Trade.orders.stopLoss">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="26" parent="10" name="Trade.orders.takeProfit">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="27" parent="10" name="Trade.pnl">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="28" parent="10" name="Trade.status">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="29" parent="10" name="Trade.strategyName">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="30" parent="10" name="Trade">
+      <Position>2</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="31" parent="11" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="32" parent="11" name="Trade">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="33" parent="11" name="Trade.asset">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="34" parent="11" name="Trade.orders">
+      <Position>1</Position>
+      <StoredType>list|4999545s</StoredType>
+    </column>
+    <column id="35" parent="11" name="Trade.orders.broker">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="36" parent="11" name="Trade.orders.id">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="37" parent="11" name="Trade.orders.riskPercentage">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="38" parent="11" name="Trade.orders.status">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="39" parent="11" name="Trade.orders.stopLoss">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="40" parent="11" name="Trade.orders.takeProfit">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="41" parent="11" name="Trade.pnl">
+      <Position>1</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="42" parent="11" name="Trade.status">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="43" parent="11" name="Trade.strategyName">
+      <Position>1</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="44" parent="12" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="45" parent="12" name="Asset">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="46" parent="12" name="Asset.assetId">
+      <Position>2</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="47" parent="12" name="Asset.name">
+      <Position>3</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="48" parent="13" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="49" parent="13" name="AssetBrokerStrategyRelation">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="50" parent="13" name="AssetBrokerStrategyRelation.assetId">
+      <Position>2</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="51" parent="13" name="AssetBrokerStrategyRelation.brokerId">
+      <Position>3</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="52" parent="13" name="AssetBrokerStrategyRelation.strategyId">
+      <Position>4</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="53" parent="14" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="54" parent="14" name="Broker">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="55" parent="14" name="Broker.brokerId">
+      <Position>2</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="56" parent="14" name="Broker.name">
+      <Position>3</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="57" parent="15" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="58" parent="15" name="SMTPairs">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="59" parent="15" name="SMTPairs.correlation">
+      <Position>2</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="60" parent="15" name="SMTPairs.smtPairIds">
+      <Position>3</Position>
+      <StoredType>Array|2003s</StoredType>
+    </column>
+    <column id="61" parent="15" name="SMTPairs.strategyId">
+      <Position>4</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+    <column id="62" parent="16" name="_id">
+      <Position>1</Position>
+      <StoredType>ObjectId|12s</StoredType>
+    </column>
+    <column id="63" parent="16" name="Strategy">
+      <Position>1</Position>
+      <StoredType>Object|4999544s</StoredType>
+    </column>
+    <column id="64" parent="16" name="Strategy.entry">
+      <Position>2</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="65" parent="16" name="Strategy.exit">
+      <Position>3</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="66" parent="16" name="Strategy.name">
+      <Position>4</Position>
+      <StoredType>String|12s</StoredType>
+    </column>
+    <column id="67" parent="16" name="Strategy.strategyId">
+      <Position>5</Position>
+      <StoredType>Int32|4s</StoredType>
+    </column>
+  </database-model>
+</dataSource>

@@ -29,11 +29,14 @@ class Asset:
         for candleSeries in self.CandlesSeries:
             if not self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame,candleSeries):
                 self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
-                break
         if len(self.CandlesSeries) == 0:
             if self.isBrokerInBrokers(broker):
                 self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
 
+    def addBrokerStrategyAssignment(self, broker: str, strategy: str) -> None:
+            if not self.isBrokerAndStrategyInAssignment(broker, strategy):
+                if self.isBrokerInBrokers(broker) and self.isStrategyInStrategies(strategy):
+                    self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
 
     def addCandle(self, candle: Candle) -> None:
         for candleSeries in self.CandlesSeries:
@@ -41,13 +44,19 @@ class Asset:
                 candleSeries.addCandle(candle)
                 break
 
-    def addBrokerStrategyAssignment(self, broker: str, strategy: str) -> None:
-            if not self.isBrokerAndStrategyInAssignment(broker, strategy):
-                if self.isBrokerInBrokers(broker) and self.isStrategyInStrategies(strategy):
-                    self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
+    def returnCandles(self, timeFrame: int,broker: str) -> list:
+        for candleSeries in self.CandlesSeries:
+            if self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, candleSeries):
+                return candleSeries.toList()
+        return []
 
-    def returnCandles(self):
-        pass
+    def returnRelationsForBroker(self, broker: str) -> list[AssetBrokerStrategyRelation]:
+        strategies: list = []
+        for assignment in self.brokerStrategyAssignment:
+            if broker == assignment.broker:
+                strategies.append(assignment)
+        return strategies
+
 
     def isBrokerInBrokers(self, broker: str) -> bool:
         if broker in self.brokers:

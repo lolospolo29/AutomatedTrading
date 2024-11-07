@@ -45,8 +45,6 @@ class ConfigManager:
 
         self.runOverList()
 
-        a = 1
-
     def addDataToList(self, typ: str, dbList: list) -> None:
         for doc in dbList:
 

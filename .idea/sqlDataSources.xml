@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="e5c9c755-6d20-46fe-b1e8-79605f089273" name="@localhost Mapping">
+      <data-sources db="13b4d230-b1c3-47fa-83e2-2ff359c8fc78" ddl="372c8e8a-7400-447b-bf3c-ebd7f0bc76be" />
+      <scope>
+        <node kind="schema">
+          <name qname="Trades" />
+          <name qname="TradingConfig" />
+          <name qname="TradingData" />
+        </node>
+      </scope>
+    </mapping>
+  </component>
+  <component name="SqlDataSourceStorage">
+    <option name="dataSources">
+      <list>
+        <State>
+          <option name="id" value="372c8e8a-7400-447b-bf3c-ebd7f0bc76be" />
+          <option name="name" value="@localhost (DDL)" />
+          <option name="dbmsName" value="MONGO" />
+          <option name="urls">
+            <array>
+              <option value="file://$PROJECT_DIR$/DAO" />
+            </array>
+          </option>
+          <option name="outLayout" value="File per object by schema.groovy" />
+        </State>
+      </list>
+    </option>
+  </component>
+</project>

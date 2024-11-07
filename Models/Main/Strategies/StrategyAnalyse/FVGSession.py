@@ -1,10 +1,11 @@
 from Models.Main.Strategies.ExitEntryStrategy import ExitEntryStrategy
 from Models.Main.Strategies.ExpectedTimeFrame import ExpectedTimeFrame
 from Models.Main.Strategies.Strategy import Strategy
+from Models.StrategyAnalyse.PDArrays.FVG import FVG
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 
 
-class FVGSession(Strategy):
+class FVGSession(Strategy,FVG):
     def __init__(self, name: str, entryStrategy : ExitEntryStrategy, exitStrategy: ExitEntryStrategy):
         super().__init__(name)
         self._TimeWindow = LondonOpen()
@@ -24,8 +25,8 @@ class FVGSession(Strategy):
     def returnExpectedTimeFrame(self) -> list:
         return self.expectedTimeFrames
 
-    def analyzeData(self):
-        pass
+    def analyzeData(self, candles: list):
+        self.getArrayList(candles)
 
     def isInTime(self):
         if self._TimeWindow.IsInEntryWindow() and self._TimeWindow.IsInExitWindow():

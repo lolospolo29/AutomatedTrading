@@ -1,3 +1,5 @@
+from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Models.Main.Asset.Candle import Candle
 from Models.Main.Strategies.Strategy import Strategy
 from Services.Manager.AssetManager import AssetManager
 
@@ -14,3 +16,8 @@ class StrategyManager:
         if strategy in self.strategies:
             return self.strategies[strategy].returnExpectedTimeFrame()
         return []
+
+    def analyzeStrategy(self, candles: list[Candle], relations: list[AssetBrokerStrategyRelation], timeFrame: int) -> None:
+        for relation in relations:
+            if relation.strategy in self.strategies:
+                self.strategies[relation.strategy].analyzeData(candles)

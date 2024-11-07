@@ -21,8 +21,6 @@ class Mapper:
         # Now proceed with the mapping as per the main data key
         name = list(mainData.keys())[0]
 
-        # name = list(data.keys())[0]
-
         if name == "Candle":
             return self.mapCandle(mainData)
 

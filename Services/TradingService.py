@@ -18,9 +18,15 @@ class TradingService:
         while self.lockActive:
             time.sleep(1)
         asset, broker, timeFrame = self._AssetManager.addCandle(jsonData)
+        self.analyzeStrategy(asset, broker, timeFrame)
 
-    def analyzeStrategy(self, assetName: str) -> None:
-        pass
+    def analyzeStrategy(self, asset: str, broker: str, timeFrame:int) -> None:
+        candles : list = self._AssetManager.returnCandles(asset, broker, timeFrame)
+
+        relations: list = self._AssetManager.returnRelations(asset, broker)
+
+        self._StrategyManager.analyzeStrategy(candles, relations, timeFrame)
+
 
     # def executeDailyTasks(self) -> None:
     #     """ Aufgaben, die täglich um 04:00 UTC (00:00 NY) ausgeführt werden """
