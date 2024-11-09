@@ -4,6 +4,7 @@ from functools import partial
 from threading import Thread
 
 import pytz
+from watchdog.observers import Observer
 
 from Controller.SignalController import SignalControler
 from Models.Pattern.Factory.BrokerFactory import BrokerFactory
@@ -13,6 +14,7 @@ from Services.DB.mongoDBData import mongoDBData
 from Services.DB.mongoDBTrades import mongoDBTrades
 from Services.DBService import DBService
 from Services.Helper.ConfigManager import ConfigManager
+from Services.Helper.FileHandler import NewFileHandler
 from Services.Helper.Mapper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
 from Services.Manager.AssetManager import AssetManager
@@ -59,13 +61,27 @@ tradingService = TradingService(assetManager, tradeManager, strategyManager)
 
 configManager = ConfigManager(mongoDBConfig,assetManager,brokerManager,strategyManager,brokerFactory,strategyFactory)
 
+# FileHandler
+newFileHandler = NewFileHandler(assetManager)
+
 # Controller
 
 signalController = SignalControler(tradingService)
 
 # Logic
 
-def job(trading_service):
+def monitorFolder(handler, folderPath):
+    observer = Observer()
+    observer.schedule(handler, path=folderPath, recursive=False)
+    observer.start()
+    try:
+        while True:
+            time.sleep(1)  # Keeps the script running
+    except KeyboardInterrupt:
+        observer.stop()
+    observer.join()
+
+def job(tradingService):
     # Hole die aktuelle Zeit in der New York-Zeitzone
     while True:
         time.sleep(20)
@@ -73,12 +89,16 @@ def job(trading_service):
         # print(now.strftime("%H:%M"))
         # Wenn es 00:00 New York-Zeit ist
         if now.strftime("%H:%M") == "00:00":
-            trading_service.executeDailyTasks()
+            tradingService.executeDailyTasks()
 
 def runStartUp(config_Manager: ConfigManager):
     config_Manager.runStartingSetup()
+
 # Use partial to pass tradingService as an argument
 thread = Thread(target=partial(job, tradingService))
 thread.start()
 
 runStartUp(configManager)
+
+thread = Thread(target=partial(monitorFolder, newFileHandler, "C:\\AutomatedTrading\\ObservedFolder"))
+thread.start()

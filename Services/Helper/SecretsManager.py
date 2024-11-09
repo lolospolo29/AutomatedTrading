@@ -3,7 +3,6 @@ import os
 from configparser import ConfigParser
 from typing import Any
 
-
 class SecretsManager:
     def __init__(self, configFile='C:\\AutomatedTrading\\Config\\config.ini'):
         self.configFile = configFile

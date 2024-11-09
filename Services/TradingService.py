@@ -24,6 +24,7 @@ class TradingService:
 
     @logTime
     def analyzeStrategy(self, asset: str, broker: str, timeFrame:int) -> None:
+        global lockState
         candles : list = self._AssetManager.returnCandles(asset, broker, timeFrame)
 
         relations: list = self._AssetManager.returnRelations(asset, broker)
