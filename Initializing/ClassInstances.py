@@ -70,6 +70,8 @@ signalController = SignalControler(tradingService)
 
 # Logic
 
+configManager.runStartingSetup()
+
 def monitorFolder(handler, folderPath):
     observer = Observer()
     observer.schedule(handler, path=folderPath, recursive=False)
@@ -77,6 +79,7 @@ def monitorFolder(handler, folderPath):
     try:
         while True:
             time.sleep(1)  # Keeps the script running
+
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
@@ -91,14 +94,10 @@ def job(tradingService):
         if now.strftime("%H:%M") == "00:00":
             tradingService.executeDailyTasks()
 
-def runStartUp(config_Manager: ConfigManager):
-    config_Manager.runStartingSetup()
-
 # Use partial to pass tradingService as an argument
 thread = Thread(target=partial(job, tradingService))
 thread.start()
 
-runStartUp(configManager)
 
 thread = Thread(target=partial(monitorFolder, newFileHandler, "C:\\AutomatedTrading\\ObservedFolder"))
 thread.start()

@@ -1,6 +1,7 @@
 import time
 from typing import Any, Dict
 
+from Initializing.GlobalStatements import getLockState
 from Monitoring.TimeWrapper import logTime
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager
@@ -12,19 +13,18 @@ class TradingService:
         self._AssetManager: AssetManager = assetManager
         self._TradeManager: TradeManager = tradeManager
         self._StrategyManager: StrategyManager = strategyManager
-        self.lockActive: bool = False  # Flag um den Status des Locks zu verfolgen
 
     @logTime
     def handlePriceActionSignal(self, jsonData: Dict[str, Any]) -> None:
 
-        while self.lockActive:
+        while getLockState():
             time.sleep(1)
+
         asset, broker, timeFrame = self._AssetManager.addCandle(jsonData)
         self.analyzeStrategy(asset, broker, timeFrame)
 
     @logTime
     def analyzeStrategy(self, asset: str, broker: str, timeFrame:int) -> None:
-        global lockState
         candles : list = self._AssetManager.returnCandles(asset, broker, timeFrame)
 
         relations: list = self._AssetManager.returnRelations(asset, broker)

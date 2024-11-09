@@ -1,8 +1,8 @@
 lockState = False
 
-def set_lock_state(value: bool):
+def setLockState(value: bool):
     global lockState
     lockState = value
 
-def get_lock_state():
+def getLockState():
     return lockState

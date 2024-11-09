@@ -5,7 +5,8 @@ import shutil
 
 from watchdog.events import FileSystemEventHandler
 
-from Initializing.GlobalStatements import set_lock_state, get_lock_state
+from Initializing.GlobalStatements import setLockState, getLockState
+from Monitoring.TimeWrapper import logTime
 from Services.Manager.AssetManager import AssetManager
 
 
@@ -13,10 +14,11 @@ class NewFileHandler(FileSystemEventHandler):
     def __init__(self, assetManager: AssetManager):
         self._AssetManager: AssetManager = assetManager
 
+    @logTime
     def on_created(self, event):
         # Only process the specific file name
-        set_lock_state(True)
-        if not get_lock_state():
+        if not getLockState():
+            setLockState(True)
             filename = os.path.basename(event.src_path)
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
                 print(f"New file detected: {event.src_path}")
@@ -25,7 +27,7 @@ class NewFileHandler(FileSystemEventHandler):
                     self._AssetManager.addCandle(candle)
 
                 self.moveToArchive(event.src_path)
-                set_lock_state(False)
+                setLockState(False)
 
     @staticmethod
     def parseCandleData(csv_filename) -> list:
