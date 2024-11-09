@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Console Output</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"> <!-- Link to the external CSS -->
+</head>
+<body>
+    <header>
+        <h1>Console Output</h1>
+    </header>
+
+    <div class="terminal">
+        <pre id="log-content"></pre>
+    </div>
+
+    <div class="access-granted">
+        ACCESS GRANTED
+    </div>
+
+    <!-- Spinning Globe -->
+    <div class="spinning-coin">
+        <div class="coin-etching"></div> <!-- Simulated coin etching -->
+        <div class="shine"></div> <!-- Glossy shine effect -->
+    </div>
+
+    <script>
+        // Establish SSE connection
+        const logContent = document.getElementById('log-content');
+        const eventSource = new EventSource("/stream");
+
+        eventSource.onmessage = function(event) {
+            // Split the incoming data by newline and add each as a separate line
+            const lines = event.data.split("\\n");
+            lines.forEach(line => {
+                if (line.trim() !== "") {  // Only append if there's content
+                    const lineElement = document.createTextNode(line + "\n");
+                    logContent.appendChild(lineElement);
+                }
+            });
+            logContent.scrollTop = logContent.scrollHeight; // Auto-scroll to the bottom
+        };
+    </script>
+</body>
+</html>
