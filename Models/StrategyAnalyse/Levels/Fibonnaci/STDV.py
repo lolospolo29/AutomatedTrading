@@ -7,31 +7,52 @@ from Models.StrategyAnalyse.Level import Level
 class STDV(ILevel):
     def __init__(self):
         self.extensionLevels: list[float] = [1.5, 2, 3, 4]
+        self.name = "STDV"
 
-    def returnLevels(self, pdArray: PDArray, candles: list[Candle]) -> list:
+    def returnLevels(self, candle: Candle, candles: list[Candle], pdArray: PDArray) -> list:
         allLevel = []
-        if pdArray.name == "bearish_breaker":
+        breakerHigh = candle.high
+        breakerId = candle.id
+        breakerLow = candle.low
+        filteredCandles: list = []
+        if  pdArray.name == "Breaker" and pdArray.direction == "Bearish":
             # Extract levels from the bearish breaker
-            breakerHigh = max(pdArray.high)
-            breakerLow = min(pdArray.low)
 
             # Step 1: Filter data points lower than the bearish breaker
-            filteredDataPoints = [dataPoint for dataPoint in candles if min(dataPoint.low) > breakerLow]
+            for candle in candles:
+                if  breakerLow < candle.low:
+                    filteredCandles.append(candle)
 
-            if not filteredDataPoints:
-                return None  # No relevant data points
+            if not filteredCandles:
+                return allLevel  # No relevant data points
 
             # Step 2: Calculate Fibonacci levels down to the breaker candle
-            maxHigh = max([max(dataPoint.high) for dataPoint in filteredDataPoints])
-            fibLevel15Bearish = maxHigh - 1.5 * (maxHigh - breakerLow)
-            fibLevel20Bearish = maxHigh - 2 * (maxHigh - breakerLow)
-            fibLevel30Bearish = maxHigh - 3 * (maxHigh - breakerLow)
-            fibLevel40Bearish = maxHigh - 4 * (maxHigh - breakerLow)
+            high = None
+            highId = None
+            low = None
+            lowId = None
 
-            fibLevel15BearishObj = Level(name="stdv_1.5_bearish", level=fibLevel15Bearish)
-            fibLevel20BearishObj = Level(name="stdv_2.0_bearish", level=fibLevel20Bearish)
-            fibLevel30BearishObj = Level(name="stdv_3.0_bearish", level=fibLevel30Bearish)
-            fibLevel40BearishObj = Level(name="stdv_4.0_bearish", level=fibLevel40Bearish)
+            for candle in candles:
+                if high < candle.high:
+                    high = candle.high
+                    highId = candle.id
+                if low > candle.low:
+                    low = candle.low
+                    lowId = candle.id
+
+            fibLevel15Bearish = high - 1.5 * (high - breakerLow)
+            fibLevel20Bearish = high - 2 * (high - breakerLow)
+            fibLevel30Bearish = high - 3 * (high - breakerLow)
+            fibLevel40Bearish = high - 4 * (high - breakerLow)
+
+            fibLevel15BearishObj = Level(name=self.name, level=fibLevel15Bearish)
+            fibLevel15BearishObj.setFibLevel(1.5,"Bearish",[highId,lowId,breakerId])
+            fibLevel20BearishObj = Level(name=self.name, level=fibLevel20Bearish)
+            fibLevel20BearishObj.setFibLevel(2.5,"Bearish",[highId,lowId,breakerId])
+            fibLevel30BearishObj = Level(name=self.name, level=fibLevel30Bearish)
+            fibLevel30BearishObj.setFibLevel(3.0,"Bearish",[highId,lowId,breakerId])
+            fibLevel40BearishObj = Level(name=self.name, level=fibLevel40Bearish)
+            fibLevel40BearishObj.setFibLevel(4.0,"Bearish",[highId,lowId,breakerId])
 
             allLevel.append(fibLevel15BearishObj)
             allLevel.append(fibLevel20BearishObj)
@@ -39,28 +60,43 @@ class STDV(ILevel):
             allLevel.append(fibLevel40BearishObj)
             return allLevel
 
-        elif pdArray.name == "bullish_breaker":
-            # Extract levels from the bullish breaker
-            breakerLow = min(pdArray.low)
-            breakerHigh = max(pdArray.high)
-
+        elif pdArray.name == "Breaker" and pdArray.direction == "Bullish":
             # Step 1: Filter data points higher than the bullish breaker
-            filteredDataPoints = [dataPoint for dataPoint in candles if max(dataPoint.high) < breakerHigh]
+            for candle in candles:
+                if breakerLow < candle.low:
+                    filteredCandles.append(candle)
 
-            if not filteredDataPoints:
-                return None  # No relevant data points
+            if not filteredCandles:
+                return allLevel  # No relevant data points
 
             # Step 2: Calculate Fibonacci levels up to the breaker candle
-            minLow = min([min(dataPoint.low) for dataPoint in filteredDataPoints])
+            high = None
+            highId = None
+            low = None
+            lowId = None
+
+            for candle in candles:
+                if high < candle.high:
+                    high = candle.high
+                    highId = candle.id
+                if low > candle.low:
+                    low = candle.low
+                    lowId = candle.id
+
+            minLow = min([min(candle.low) for candle in filteredCandles])
             fibLevel15Bullish = minLow + 1.5 * (breakerHigh - minLow)
             fibLevel20Bullish = minLow + 2 * (breakerHigh - minLow)
             fibLevel30Bullish = minLow + 3 * (breakerHigh - minLow)
             fibLevel40Bullish = minLow + 4 * (breakerHigh - minLow)
 
-            fibLevel15BullishObj = Level(name="stdv_1.5_bullish", level=fibLevel15Bullish)
-            fibLevel20BullishObj = Level(name="stdv_2.0_bullish", level=fibLevel20Bullish)
-            fibLevel30BullishObj = Level(name="stdv_3.0_bullish", level=fibLevel30Bullish)
-            fibLevel40BullishObj = Level(name="stdv_4.0_bullish", level=fibLevel40Bullish)
+            fibLevel15BullishObj = Level(self.name, level=fibLevel15Bullish)
+            fibLevel15BullishObj.setFibLevel(1.5,"Bullish",[highId,lowId,breakerId])
+            fibLevel20BullishObj = Level(self.name, level=fibLevel20Bullish)
+            fibLevel20BullishObj.setFibLevel(2.0,"Bullish",[highId,lowId,breakerId])
+            fibLevel30BullishObj = Level(self.name, level=fibLevel30Bullish)
+            fibLevel30BullishObj.setFibLevel(3.0,"Bullish",[highId,lowId,breakerId])
+            fibLevel40BullishObj = Level(self.name, level=fibLevel40Bullish)
+            fibLevel40BullishObj.setFibLevel(4.0,"Bullish",[highId,lowId,breakerId])
 
             allLevel.append(fibLevel15BullishObj)
             allLevel.append(fibLevel20BullishObj)

@@ -5,22 +5,32 @@ from Models.StrategyAnalyse.Level import Level
 
 class PreviousWeekLevels(ILevel):
     def returnLevels(self, candles: list[Candle]) -> list:
-        allHighs = []
-        allLows = []
         allLevel = []
 
-        for dataPoint in candles:  # Using camelCase for the variable
-            allHighs.extend(dataPoint.high)
-            allLows.extend(dataPoint.low)
+        high = None
+        highId = None
+        low = None
+        lowId = None
+
+        allLevels = []  # Changed to allLevels for C# style
+
+        # Collecting high and low values from each data point
+        for candle in candles:
+            if high < candle.high:
+                high = candle.high
+                highId = candle.id
+            if low > candle.low:
+                low = candle.low
+                lowId = candle.id
 
         # Step 2: Calculate the overall high and low
-        high = max(allHighs) if allHighs else 0  # Added a safeguard for empty lists
-        low = min(allLows) if allLows else 0
 
-        PWHObj = Level(name="PWH", level=high)
-        PWLObj = Level(name="PWL", level=low)
+        previousWeekHigh = Level(name="PWH", level=high)
+        previousWeekHigh.setFibLevel(0.0, "High", [highId])
+        previousWeekLow = Level(name="PWL", level=low)
+        previousWeekLow.setFibLevel(0.0, "Low", [lowId])
 
-        allLevel.append(PWHObj)
-        allLevel.append(PWLObj)
+        allLevel.append(previousWeekHigh)
+        allLevel.append(previousWeekLow)
 
         return allLevel

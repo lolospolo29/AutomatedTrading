@@ -13,23 +13,29 @@ class VolumeImbalance(IPDArray):
     def returnArrayList(self, candles: list[Candle]) -> list:
         pdArrays = []  # List to store PDArray instances
 
-        for i in range(1, len(candles.close)):
+        opens = [candle.open for candle in candles]
+        highs = [candle.high for candle in candles]
+        lows = [candle.low for candle in candles]
+        close = [candle.close for candle in candles]
+        ids = [candle.id for candle in candles]
+
+        for i in range(1, len(close)):
             # Check for a bullish vi
-            if min(candles.open[i], candles.close[i]) > candles.high[i - 1] and \
-                    candles.low[i] > max(candles.open[i - 1], candles.close[-1]) and \
-                    (candles.low[i] < candles.high[i - 1]):
+            if min(opens[i], close[i]) > highs[i - 1] and \
+                    lows[i] > max(opens[i - 1], close[-1]) and \
+                    (lows[i] < highs[i - 1]):
                 pdArray = PDArray(name=self.name, direction="Bullish")
-                pdArray.addId(candles.id[i])
-                pdArray.addId(candles.id[i - 1])
+                pdArray.addId(ids[i])
+                pdArray.addId(ids[i - 1])
                 pdArrays.append(pdArray)
 
             # Check for a bearish vi
-            elif max(candles.open[i], candles.close[i]) < candles.low[i - 1] and \
-                    candles.high[i] < min(candles.open[i - 1], candles.close[-1]) and \
-                    (candles.high[i] > candles.low[i - 1]):
+            elif max(open[i], close[i]) < lows[i - 1] and \
+                    highs[i] < min(opens[i - 1], close[-1]) and \
+                    (highs[i] > lows[i - 1]):
                 pdArray = PDArray(name=self.name, direction="Bearish")
-                pdArray.addId(candles.id[i])
-                pdArray.addId(candles.id[i - 1])
+                pdArray.addId(ids[i])
+                pdArray.addId(ids[i - 1])
                 pdArrays.append(pdArray)
 
         return pdArrays  # Return the list of voids found

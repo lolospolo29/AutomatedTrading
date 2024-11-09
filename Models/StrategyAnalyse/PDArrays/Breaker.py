@@ -26,16 +26,17 @@ class Breaker(IPDArray):  # id need to be fixed
 
     def returnArrayList(self, candles: list[Candle]) -> list:
         """Get confirmation for breaker blocks"""
-        high = candles.high
-        low = candles.low
-        close = candles.close
-        ids = candles.id
+        opens = [candle.open for candle in candles]
+        highs = [candle.high for candle in candles]
+        lows = [candle.low for candle in candles]
+        close = [candle.close for candle in candles]
+        ids = [candle.id for candle in candles]
 
         # List to store PDArray objects
         pdArrayList = []
 
         # Find swing highs and lows
-        swings = self.findSwingPoints(high, low)
+        swings = self.findSwingPoints(highs, lows)
 
         # Identify breaker candles
         for swing in swings['highs']:

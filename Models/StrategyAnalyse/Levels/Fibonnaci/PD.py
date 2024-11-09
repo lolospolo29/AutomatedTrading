@@ -6,20 +6,25 @@ from Models.StrategyAnalyse.Level import Level
 class PD(ILevel):
     def __init__(self):
         self.pdLevels: list[float] = [1.0, 0.5, 0]
+        self.name = "PD"
 
     def returnLevels(self, candles: list[Candle]) -> list:
         # Step 1: Extract high and low values from the data points
-        allHighs = []
-        allLows = []
         allLevel = []
 
-        for dataPoint in candles:  # Using camelCase for the variable
-            allHighs.extend(dataPoint.high)
-            allLows.extend(dataPoint.low)
+        # Step 1: Extract high and low values from the data points
+        high = None
+        highId = None
+        low = None
+        lowId = None
 
-        # Step 2: Calculate the overall high and low
-        high = max(allHighs) if allHighs else 0  # Added a safeguard for empty lists
-        low = min(allLows) if allLows else 0
+        for candle in candles:
+            if high  < candle.high:
+                high = candle.high
+                highId = candle.id
+            if low > candle.low:
+                low = candle.low
+                lowId = candle.id
 
         # Step 3: Calculate the PD levels
         level0 = low  # 0.0 corresponds to the low value
@@ -27,9 +32,12 @@ class PD(ILevel):
         level05 = (high + low) / 2  # 0.5 is the midpoint between high and low
 
         # Step 4: Create Level objects with names "0.0", "0.5", and "1.0"
-        level0Obj = Level(name="pd_0.0", level=level0)
-        level05Obj = Level(name="pd_0.5", level=level05)
-        level1Obj = Level(name="pd_1.0", level=level1)
+        level0Obj = Level(name=self.name, level=level0)
+        level0Obj.setFibLevel(0.0,"Low",[lowId,highId])
+        level05Obj = Level(name=self.name, level=level05)
+        level05Obj.setFibLevel(0.5,"Equilibrium",[lowId,highId])
+        level1Obj = Level(name=self.name, level=level1)
+        level1Obj.setFibLevel(1.0,"High",[lowId,highId])
 
         allLevel.append(level0Obj)
         allLevel.append(level05Obj)

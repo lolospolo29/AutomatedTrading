@@ -8,6 +8,7 @@ from Models.StrategyAnalyse.Structure import Structure
 class BOS(IConfirmation):
     def __init__(self, lookback: int):
         self.lookback: int = lookback
+        self.name = "BOS"
 
     def returnConfirmation(self, candles: list[Candle]) -> Any:
         """
@@ -15,23 +16,33 @@ class BOS(IConfirmation):
         param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
         :return: 'BOS_Bullish', 'BOS_Bearish' or None.
         """
-        lookback = self.lookback
-        highs = [data['high'] for data in candles]
-        lows = [data['low'] for data in candles]
-        closes = [data['close'] for data in candles]
+        highs = []
+        lows = []
+        closes = []
+        ids = []
+
+        for candle in candles:
+            highs.append(candle.high)
+            lows.append(candle.low)
+            closes.append(candle.close)
+            ids.append(candle.high)
 
         lastBullishHigh = None
+        lastBullishHighId = None
         lastBearishLow = None
+        lastBearishLowId = None
 
         for i in range(len(candles)):
             # Track the last significant bullish high
-            if i >= lookback:
-                if closes[i] > max(highs[i - lookback:i]):
+            if i >= self.lookback:
+                if closes[i] > max(highs[i - self.lookback:i]):
                     lastBullishHigh = closes[i]
-                return Structure(name="BOS", direction="Bullish")
+                    lastBullishHighId = ids[i]
+                return Structure(self.name, direction="Bullish", id=lastBullishHighId)
 
             # Track the last significant bearish low
-            if i >= lookback:
-                if closes[i] < min(lows[i - lookback:i]):
+            if i >= self.lookback:
+                if closes[i] < min(lows[i - self.lookback:i]):
                     lastBearishLow = closes[i]
-                    return Structure(name="BOS", direction="Bearish")
+                    lastBearishLowId = ids[i]
+                    return Structure(self.name, direction="Bearish", id=lastBearishLowId)

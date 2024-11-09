@@ -17,10 +17,16 @@ class LiquidityVoid(IPDArray):
         rowCandles = 0
         direction = None
 
+        opens = [candle.open for candle in candles]
+        highs = [candle.high for candle in candles]
+        lows = [candle.low for candle in candles]
+        close = [candle.close for candle in candles]
+        ids = [candle.id for candle in candles]
+
         # Loop through all candles in the data
-        for i in range(1, len(candles.close)):
+        for i in range(1, len(close)):
             # Check if the current candle is bullish or bearish
-            currentDirection = 'Bullish' if candles.close[i] > candles.open[i] else 'Bearish'
+            currentDirection = 'Bullish' if close[i] > opens[i] else 'Bearish'
 
             # If it's the first candle, set the direction
             if direction is None:
@@ -37,7 +43,7 @@ class LiquidityVoid(IPDArray):
 
                     # Add the candle data to the PDArray
                     for j in range(i - rowCandles, i):
-                        pdArray.addId(candles.id[j])
+                        pdArray.addId(ids[j])
 
                     pdArrays.append(pdArray)
 
@@ -49,8 +55,8 @@ class LiquidityVoid(IPDArray):
         if rowCandles >= MinCandlesInRow:
             pdArray = PDArray(self.name, direction)
 
-            for j in range(len(candles.close) - rowCandles, len(candles.close)):
-                pdArray.addId(candles.id[j])
+            for j in range(len(close) - rowCandles, len(close)):
+                pdArray.addId(ids[j])
 
             pdArrays.append(pdArray)
 

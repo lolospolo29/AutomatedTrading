@@ -9,6 +9,7 @@ class Choch(IConfirmation):
 
     def __init__(self, lookback: int):
         self.lookback: int = lookback
+        self.name = "CHOCH"
 
     @staticmethod
     def isBullishFractal(highs: list, index: int, lookback: int) -> bool:
@@ -40,32 +41,38 @@ class Choch(IConfirmation):
         _param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
         :return: 'Choch_Bullish', 'Choch_Bearish' or None.
         """
-        lookback = self.lookback
-        highs = [data['high'] for data in candles]
-        lows = [data['low'] for data in candles]
-        closes = [data['close'] for data in candles]
+        highs = []
+        lows = []
+        closes = []
+        ids = []
+
+        for candle in candles:
+            highs.append(candle.high)
+            lows.append(candle.low)
+            closes.append(candle.close)
+            ids.append(candle.id)
 
         upperFractal = None
         lowerFractal = None
         os = 0  # Keeps track of the order of structure (bullish or bearish)
 
-        for i in range(lookback // 2, len(candles) - lookback // 2):
+        for i in range(self.lookback // 2, len(candles) - self.lookback // 2):
             # Check for bullish fractal
-            if self.isBullishFractal(highs, i, lookback):
+            if self.isBullishFractal(highs, i, self.lookback):
                 upperFractal = {'value': highs[i], 'index': i, 'crossed': False}
 
             # Check for bearish fractal
-            if self.isBearishFractal(lows, i, lookback):
+            if self.isBearishFractal(lows, i, self.lookback):
                 lowerFractal = {'value': lows[i], 'index': i, 'crossed': False}
 
             # Check crossover above the bullish fractal (ChoCH/BOS Bullish)
             if upperFractal and closes[i] > upperFractal['value'] and not upperFractal['crossed']:
                 upperFractal['crossed'] = True
                 os = 1  # Set structure to bullish
-                return Structure(name="CHOCH", direction="Bullish")
+                return Structure(name=self.name, direction="Bullish", id=ids[i])
 
             # Check crossover below the bearish fractal (ChoCH/BOS Bearish)
             if lowerFractal and closes[i] < lowerFractal['value'] and not lowerFractal['crossed']:
                 lowerFractal['crossed'] = True
                 os = -1  # Set structure to bearish
-                return Structure(name="CHOCH", direction="Bearish")
+                return Structure(name=self.name, direction="Bearish", id=ids[i])

@@ -13,21 +13,27 @@ class Swings(IPDArray):  # id need to be fixed
     def returnArrayList(self, candles: list[Candle]) -> list:
         swingList = []  # List to store PDArray objects
 
+        opens = [candle.open for candle in candles]
+        highs = [candle.high for candle in candles]
+        lows = [candle.low for candle in candles]
+        close = [candle.close for candle in candles]
+        ids = [candle.id for candle in candles]
+
         # Variables for storing points used in calculation
         a = b = c = d = e = None
         aId = bId = cId = dId = eId = None  # Add variables to track the IDs of data points
 
         # Iterate over the data points, similar to Pine Script logic
-        for i in range(1, len(candles.close) - 1):
-            ph = self.isPivotHigh(candles.high, i)  # Pivot High
-            pl = self.isPivotLow(candles.low, i)  # Pivot Low
+        for i in range(1, len(close) - 1):
+            ph = self.isPivotHigh(highs, i)  # Pivot High
+            pl = self.isPivotLow(lows, i)  # Pivot Low
 
             if not (ph or pl):  # No swing point
                 continue
 
             # Update points and their IDs
-            a = candles.close[i]
-            aId = candles.ids[i]  # Assuming 'ids' is a list of unique IDs for each data point
+            a = close[i]
+            aId = ids[i]  # Assuming 'ids' is a list of unique IDs for each data point
 
             if b is None:
                 b = a

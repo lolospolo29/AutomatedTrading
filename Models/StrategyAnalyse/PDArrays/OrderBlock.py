@@ -17,10 +17,11 @@ class Orderblock(IPDArray):
         pdArrays = []
 
         # Extract data points
-        highs = candles.high
-        lows = candles.low
-        closes = candles.close
-        ids = candles.id
+        opens = [candle.open for candle in candles]
+        highs = [candle.high for candle in candles]
+        lows = [candle.low for candle in candles]
+        close = [candle.close for candle in candles]
+        ids = [candle.id for candle in candles]
 
         n = len(highs)
 
@@ -32,14 +33,14 @@ class Orderblock(IPDArray):
             swingLow = self.getSwingLow(lows, i, lookback)
 
             # Detect Bullish Order Blocks
-            if closes[i] > swingHigh and (lastBullish is None or lastBullish['top'] < swingHigh):
+            if close[i] > swingHigh and (lastBullish is None or lastBullish['top'] < swingHigh):
                 lastBullish = {'top': swingHigh, 'bottom': swingLow}
                 pdArray = PDArray(name=self.name, direction="Bullish")
                 pdArray.addId(ids[i])
                 pdArrays.append(pdArray)
 
             # Detect Bearish Order Blocks
-            if closes[i] < swingLow and (lastBearish is None or lastBearish['bottom'] > swingLow):
+            if close[i] < swingLow and (lastBearish is None or lastBearish['bottom'] > swingLow):
                 lastBearish = {'top': swingHigh, 'bottom': swingLow}
                 pdArray = PDArray(name=self.name, direction="Bearish")
                 pdArray.addId(ids[i])

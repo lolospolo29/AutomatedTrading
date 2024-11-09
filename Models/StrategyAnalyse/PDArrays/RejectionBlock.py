@@ -11,13 +11,14 @@ class RejectionBlock(IPDArray):
         pass
 
     def returnArrayList(self, candles: list[Candle]) -> list:
-        rejectionBlocks = None
+        rejectionBlocks = []
 
         # We assume 'data_points_asset' contains the asset data (high, low, open, close, ids)
-        opens = candles.open
-        highs = candles.high
-        lows = candles.low
-        closes = candles.close
+        opens = [candle.open for candle in candles]
+        highs = [candle.high for candle in candles]
+        lows = [candle.low for candle in candles]
+        close = [candle.close for candle in candles]
+        ids = [candle.id for candle in candles]
 
         if len(opens) < 10:
             return rejectionBlocks  # Not enough data for rejection block detection
@@ -30,7 +31,7 @@ class RejectionBlock(IPDArray):
             openPrice = opens[i]
             highPrice = highs[i]
             lowPrice = lows[i]
-            closePrice = closes[i]
+            closePrice = close[i]
 
             # Candle type: Bullish or Bearish
             isBullish = closePrice > openPrice
@@ -43,10 +44,10 @@ class RejectionBlock(IPDArray):
             # Bullish rejection: Large lower wick compared to average range
             if isBullish and lowerWick > avgRange:
                 rejectionBlocks = PDArray(self.name, "Bullish")
-                rejectionBlocks.addId(candles.id[i])
+                rejectionBlocks.addId(ids[i])
             # Bearish rejection: Large upper wick compared to average range
             elif isBearish and upperWick > avgRange:
                 rejectionBlocks = PDArray(self.name, "Bearish")
-                rejectionBlocks.addId(candles.id[i])
+                rejectionBlocks.addId(ids[i])
 
         return rejectionBlocks

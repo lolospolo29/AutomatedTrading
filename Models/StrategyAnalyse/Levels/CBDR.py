@@ -4,28 +4,41 @@ from Models.StrategyAnalyse.Level import Level
 
 
 class CBDR(ILevel):
+    def __init__(self):
+        self.name = 'CBDR'
+
     def returnLevels(self, candles: list[Candle]) -> list:
-        allHighs = []
-        allLows = []
         allLevel = []
 
-        for dataPoint in candles:  # Using camelCase for the variable
-            allHighs.extend(dataPoint.high)
-            allLows.extend(dataPoint.low)
+        high = None
+        highId = None
+        low = None
+        lowId = None
 
-        # Step 2: Calculate the overall high and low
-        high = max(allHighs) if allHighs else 0  # Added a safeguard for empty lists
-        low = min(allLows) if allLows else 0
+        # Collecting high and low values from each data point
+        for candle in candles:
+            if high < candle.high:
+                high = candle.high
+                highId = candle.id
+            if low > candle.low:
+                low = candle.low
+                lowId = candle.id
 
         cbdrRange = high - low
 
-        cbdRange1BullishObj = Level(name="cbdr_1_bullish", level=low - cbdrRange)
-        cbdRange2BullishObj = Level(name="cbdr_2_bullish", level=low - cbdrRange - cbdrRange)
-        cbdRange3BullishObj = Level(name="cbdr_3_bullish", level=low - cbdrRange - cbdrRange - cbdrRange)
+        cbdRange1BullishObj = Level(name=self.name, level=low - cbdrRange)
+        cbdRange1BullishObj.setFibLevel(1,"Bullish",[highId,lowId])
+        cbdRange2BullishObj = Level(name=self.name, level=low - cbdrRange - cbdrRange)
+        cbdRange2BullishObj.setFibLevel(2,"Bullish",[highId,lowId])
+        cbdRange3BullishObj = Level(name=self.name, level=low - cbdrRange - cbdrRange - cbdrRange)
+        cbdRange3BullishObj.setFibLevel(3,"Bullish",[highId,lowId])
 
-        cbdRange1BearishObj = Level(name="cbdr_1_bearish", level=low - cbdrRange)
-        cbdRange2BearishObj = Level(name="cbdr_2_bearish", level=low - cbdrRange - cbdrRange)
-        cbdRange3BearishObj = Level(name="cbdr_3_bearish", level=low - cbdrRange - cbdrRange - cbdrRange)
+        cbdRange1BearishObj = Level(self.name, level=low - cbdrRange)
+        cbdRange1BearishObj.setFibLevel(1,"Bearish",[highId,lowId])
+        cbdRange2BearishObj = Level(self.name, level=low - cbdrRange - cbdrRange)
+        cbdRange2BearishObj.setFibLevel(2,"Bearish",[highId,lowId])
+        cbdRange3BearishObj = Level(self.name, level=low - cbdrRange - cbdrRange - cbdrRange)
+        cbdRange3BearishObj.setFibLevel(3,"Bearish",[highId,lowId])
 
         allLevel.append(cbdRange1BullishObj)
         allLevel.append(cbdRange2BullishObj)

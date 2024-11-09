@@ -34,47 +34,76 @@ class equalHL(ILevel):  ### Implement threshold for every Asset every Timeframe
 
     def _detect_equal_lows(self, candles: list[Candle]) -> list[Level]:
         equalLows = []
-        lows = candles.low  # Access the low prices
-        timeStamp = candles.timeStamp  # Access timestamps for better tracking
+        lows = []
+        ids = []
+
+        # Collecting high and low values from each data point
+        for candle in candles:
+            lows.append(candle.low)
+            ids.append(candle.id)
 
         # Check for equal lows
         for i in range(len(lows)):
             currentLow = lows[i]
             similarLows = []
+            similarIds = []
 
             # Compare with the remaining lows
             for j in range(i + 1, len(lows)):
                 if abs(lows[j] - currentLow) <= self.threshold:
                     # Check if any price has gone lower after this potential equal low
                     if not any(low < currentLow for low in lows[j:]):
-                        similarLows.append((lows[j], timeStamp[j]))  # Add the similar low and its timestamp
+                        similarLows.append((lows[j]))  # Add the similar low
+                        similarIds.append(ids[j])
+
 
             # If we found similar lows, add them as levels
             if similarLows:
-                equalLows.append(Level(name="EqualLow", level=currentLow))
+                level = Level(name="EqualLow", level=currentLow)
+                level.setFibLevel(0.0,"EQL",[ids[i]])
+                equalLows.append(level)
+
+                for k in range(len(similarLows)):
+                    level = Level(name="EqualLow", level=similarLows[k])
+                    level.setFibLevel(0.0, "EQL", [similarIds[k]])
+                    equalLows.append(level)
 
         return equalLows
 
     def _detect_equal_highs(self, candles: list[Candle]) -> list[Level]:
         equalHighs = []
-        highs = candles.high  # Access the high prices
-        timeStamp = candles.timeStamp  # Access timestamps for better tracking
+        highs = []
+        ids = []
+
+        # Collecting high and low values from each data point
+        for candle in candles:
+            highs.append(candle.high)
+            ids.append(candle.id)
 
         # Check for equal highs
         for i in range(len(highs)):
             currentHigh = highs[i]
             similarHighs = []
+            similarIds = []
 
             # Compare with the remaining highs
             for j in range(i + 1, len(highs)):
                 if abs(highs[j] - currentHigh) <= self.threshold:
                     # Check if any price has gone higher after this potential equal high
                     if not any(high > currentHigh for high in highs[j:]):
-                        similarHighs.append((highs[j], timeStamp[j]))  # Add the similar high and its timestamp
+                        similarHighs.append((highs[j]))  # Add the similar high
+                        similarIds.append(ids[j])
 
             # If we found similar highs, add them as levels
             if similarHighs:
-                equalHighs.append(Level(name="EqualHigh", level=currentHigh))
+                level = Level(name="EqualHigh", level=currentHigh)
+                level.setFibLevel(0.0,"EQH",[ids[i]])
+                equalHighs.append(level)
+
+                for k in range(len(similarHighs)):
+                    level = Level(name="EqualHigh", level=similarHighs[k])
+                    level.setFibLevel(0.0, "EQH", [similarIds[k]])
+                    equalHighs.append(level)
 
         return equalHighs
 
