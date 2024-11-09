@@ -7,10 +7,10 @@ class VolumeImbalance(IPDArray):
     def __init__(self):
         self.name = "VI"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         pdArrays = []  # List to store PDArray instances
 
         for i in range(1, len(candles.close)):

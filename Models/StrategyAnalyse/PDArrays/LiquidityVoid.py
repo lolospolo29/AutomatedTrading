@@ -8,10 +8,10 @@ class LiquidityVoid(IPDArray):
         self.minCandlesInRow: int = minCandlesInRow
         self.name: str = "LV"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         MinCandlesInRow = self.minCandlesInRow
         pdArrays = []
         rowCandles = 0

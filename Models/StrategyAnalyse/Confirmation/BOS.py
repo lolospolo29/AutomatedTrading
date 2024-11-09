@@ -1,3 +1,5 @@
+from typing import Any
+
 from Interfaces.Strategy.IConfirmation import IConfirmation
 from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Structure import Structure
@@ -7,7 +9,7 @@ class BOS(IConfirmation):
     def __init__(self, lookback: int):
         self.lookback: int = lookback
 
-    def getConfirmation(self, candles: list[Candle]) -> Structure:
+    def returnConfirmation(self, candles: list[Candle]) -> Any:
         """
         Identify Break of Structure (BOS) from provided data.
         param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.

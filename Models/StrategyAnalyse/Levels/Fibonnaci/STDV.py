@@ -8,7 +8,7 @@ class STDV(ILevel):
     def __init__(self):
         self.extensionLevels: list[float] = [1.5, 2, 3, 4]
 
-    def getLevels(self, pdArray: PDArray, candles: list[Candle]) -> list[Level]:
+    def returnLevels(self, pdArray: PDArray, candles: list[Candle]) -> list:
         allLevel = []
         if pdArray.name == "bearish_breaker":
             # Extract levels from the bearish breaker
@@ -69,4 +69,4 @@ class STDV(ILevel):
 
             return allLevel
 
-        return None  # In case direction is not recognized
+        return allLevel  # In case direction is not recognized

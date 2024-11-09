@@ -1,3 +1,5 @@
+from typing import Any
+
 from Interfaces.Strategy.IConfirmation import IConfirmation
 from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Structure import Structure
@@ -32,7 +34,7 @@ class Choch(IConfirmation):
                 return False
         return True
 
-    def getConfirmation(self, candles: list[Candle]) -> Structure:
+    def returnConfirmation(self, candles: list[Candle]) -> Any:
         """
         Identify Change of Character (ChoCH) from provided data.
         _param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.

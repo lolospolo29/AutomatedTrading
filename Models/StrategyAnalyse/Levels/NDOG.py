@@ -4,7 +4,7 @@ from Models.StrategyAnalyse.Level import Level
 
 
 class NDOG(ILevel):
-    def getLevels(self, candle: Candle) -> list[Level]:
+    def returnLevels(self, candle: Candle) -> list:
         allLevel = []
         high = candle.high
         low = candle.low

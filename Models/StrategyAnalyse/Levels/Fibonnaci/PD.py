@@ -7,7 +7,7 @@ class PD(ILevel):
     def __init__(self):
         self.pdLevels: list[float] = [1.0, 0.5, 0]
 
-    def getLevels(self, candles: list[Candle]) -> list[Level]:
+    def returnLevels(self, candles: list[Candle]) -> list:
         # Step 1: Extract high and low values from the data points
         allHighs = []
         allLows = []

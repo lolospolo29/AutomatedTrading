@@ -7,10 +7,10 @@ class Swings(IPDArray):  # id need to be fixed
     def __init__(self):
         self.name = "Swing"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         swingList = []  # List to store PDArray objects
 
         # Variables for storing points used in calculation

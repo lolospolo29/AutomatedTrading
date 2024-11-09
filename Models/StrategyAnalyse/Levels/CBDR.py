@@ -4,7 +4,7 @@ from Models.StrategyAnalyse.Level import Level
 
 
 class CBDR(ILevel):
-    def getLevels(self, candles: list[Candle]) -> list[Level]:
+    def returnLevels(self, candles: list[Candle]) -> list:
         allHighs = []
         allLows = []
         allLevel = []

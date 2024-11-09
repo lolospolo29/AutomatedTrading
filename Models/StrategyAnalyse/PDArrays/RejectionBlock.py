@@ -7,10 +7,10 @@ class RejectionBlock(IPDArray):
     def __init__(self):
         self.name = "RB"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         rejectionBlocks = None
 
         # We assume 'data_points_asset' contains the asset data (high, low, open, close, ids)

@@ -7,10 +7,10 @@ class BPR(IPDArray):
     def __init__(self):
         self.name = "BPR"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         pdArrays = []
 
         # Lists to store identified FVGs

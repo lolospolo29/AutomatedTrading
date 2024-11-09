@@ -1,11 +1,11 @@
 from Models.Main.Strategies.ExitEntryStrategy import ExitEntryStrategy
 from Models.Main.Strategies.ExpectedTimeFrame import ExpectedTimeFrame
 from Models.Main.Strategies.Strategy import Strategy
-from Models.Pattern.Mediator.CalculatorMediator import CalculatorMediator
+from Models.Pattern.Mediator.PDMediator import PDMediator
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 
 
-class FVGSession(Strategy,CalculatorMediator):
+class FVGSession(Strategy, PDMediator):
     def __init__(self, name: str, entryStrategy : ExitEntryStrategy, exitStrategy: ExitEntryStrategy):
         super().__init__(name)
         self._TimeWindow = LondonOpen()

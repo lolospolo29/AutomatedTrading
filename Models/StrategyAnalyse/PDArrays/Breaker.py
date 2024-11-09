@@ -9,7 +9,7 @@ class Breaker(IPDArray):  # id need to be fixed
         self.lookback: int = lookback
         self.name = "Breaker"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
     def findSwingPoints(self, high: list, low: list):
@@ -24,7 +24,7 @@ class Breaker(IPDArray):  # id need to be fixed
                 swings['lows'].append((i, low[i]))  # Store index and value of swing low
         return swings
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         """Get confirmation for breaker blocks"""
         high = candles.high
         low = candles.low

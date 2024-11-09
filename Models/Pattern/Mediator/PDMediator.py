@@ -8,12 +8,12 @@ from Models.StrategyAnalyse.PDArrays.Void import Void
 from Models.StrategyAnalyse.PDArrays.VolumeImbalance import VolumeImbalance
 
 
-class CalculatorMediator:
+class PDMediator:
     _instance = None  # Class-level attribute to hold the singleton instance
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super(CalculatorMediator, cls).__new__(cls)
+            cls._instance = super(PDMediator, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
@@ -28,19 +28,19 @@ class CalculatorMediator:
             self.volumeImbalance: VolumeImbalance = VolumeImbalance()
             self.initialized: bool = True  # Mark as initialized
 
-    def calculatePDArray(self,calculatorType: str, candles: list):
-        if calculatorType == "BPR":
-            self.bpr.getArrayList(candles)
-        if calculatorType == "Breaker":
-            self.breaker.getArrayList(candles)
-        if calculatorType == "LiquidityVoid":
-            self.liquidityVoid.getArrayList(candles)
-        if calculatorType == "RejectionBlock":
-            self.rejectionBlock.getArrayList(candles)
-        if calculatorType == "Swings":
-            self.swings.getArrayList(candles)
-        if calculatorType == "Void":
-            self.void.getArrayList(candles)
-        if calculatorType == "VolumeImbalance":
-            self.volumeImbalance.getArrayList(candles)
+    def calculatePDArray(self, pdType: str, candles: list) -> list:
+        if pdType == "BPR":
+            return self.bpr.returnArrayList(candles)
+        if pdType == "Breaker":
+            return self.breaker.returnArrayList(candles)
+        if pdType == "LiquidityVoid":
+            return self.liquidityVoid.returnArrayList(candles)
+        if pdType == "RejectionBlock":
+            return self.rejectionBlock.returnArrayList(candles)
+        if pdType == "Swings":
+            return self.swings.returnArrayList(candles)
+        if pdType == "Void":
+            return self.void.returnArrayList(candles)
+        if pdType == "VolumeImbalance":
+            return self.volumeImbalance.returnArrayList(candles)
 

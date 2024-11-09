@@ -4,7 +4,7 @@ from Models.StrategyAnalyse.Level import Level
 
 
 class PreviousDaysLevels(ILevel):
-    def getLevels(self, candles: list[Candle]) -> list[Level]:
+    def returnLevels(self, candles: list[Candle]) -> list:
         # Step 1: Extract high and low values from the data points
         allHighs = []
         allLows = []

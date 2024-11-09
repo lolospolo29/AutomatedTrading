@@ -7,10 +7,10 @@ class FVG(IPDArray):
     def __init__(self):
         self.name = "FVG"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         pdArrays = []
         opens = [candle.open for candle in candles]
         highs = [candle.high for candle in candles]

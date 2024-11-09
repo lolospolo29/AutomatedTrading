@@ -10,3 +10,4 @@ class SingletonMeta(ABCMeta):
             # Erzeugt und speichert line neue Instanz, falls noch nicht vorhanden
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
+

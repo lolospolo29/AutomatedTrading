@@ -16,7 +16,7 @@ class equalHL(ILevel):  ### Implement threshold for every Asset every Timeframe
         else:
             self.threshold: float = self.threshold_stocks * self.mintick
 
-    def getLevels(self, candles: list[Candle], detect: str) -> list[Level]:
+    def returnLevels(self, candles: list[Candle], detect: str) -> list:
         equalLevels = []
 
         # Detect equal lows

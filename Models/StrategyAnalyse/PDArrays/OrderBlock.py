@@ -8,10 +8,10 @@ class Orderblock(IPDArray):
         self.lookback: int = lookback
         self.name: str = "OB"
 
-    def getCandleRange(self, candles: list[Candle]):
+    def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def getArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def returnArrayList(self, candles: list[Candle]) -> list:
         lookback = self.lookback
 
         pdArrays = []

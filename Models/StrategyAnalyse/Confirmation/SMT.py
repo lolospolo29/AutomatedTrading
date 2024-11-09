@@ -1,10 +1,12 @@
+from typing import Any
+
 from Interfaces.Strategy.IConfirmation import IConfirmation
 from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Structure import Structure
 
 
 class SMT(IConfirmation):
-    def getConfirmation(self, candlesAsset1: list[Candle], candlesAsset2: list[Candle]) -> Structure:
+    def returnConfirmation(self, candlesAsset1: list[Candle], candlesAsset2: list[Candle]) -> Any:
         """
         Determine if an SMT divergence is detected between two asset data points.
 
