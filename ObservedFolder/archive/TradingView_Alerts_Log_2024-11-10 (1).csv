@@ -1,0 +1,265 @@
+Alert ID,Ticker,Name,Description,Time
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79790.3,
+    ""high"": 79816,
+    ""low"": 79790.3,
+    ""close"": 79811.3,
+    ""IsoTime"": ""2024-11-10T16:37:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:38:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79764.2,
+    ""high"": 79791.9,
+    ""low"": 79714,
+    ""close"": 79790.3,
+    ""IsoTime"": ""2024-11-10T16:36:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:37:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79804.7,
+    ""high"": 79825,
+    ""low"": 79759.6,
+    ""close"": 79764.2,
+    ""IsoTime"": ""2024-11-10T16:35:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:36:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79824.2,
+    ""high"": 79824.9,
+    ""low"": 79792.4,
+    ""close"": 79804.7,
+    ""IsoTime"": ""2024-11-10T16:34:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:35:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79776.1,
+    ""high"": 79824.3,
+    ""low"": 79753.7,
+    ""close"": 79824.2,
+    ""IsoTime"": ""2024-11-10T16:33:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:34:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79821.7,
+    ""high"": 79825.3,
+    ""low"": 79766,
+    ""close"": 79776.1,
+    ""IsoTime"": ""2024-11-10T16:32:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:33:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79774,
+    ""high"": 79825.3,
+    ""low"": 79774,
+    ""close"": 79821.7,
+    ""IsoTime"": ""2024-11-10T16:31:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:32:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79749.6,
+    ""high"": 79774,
+    ""low"": 79738.4,
+    ""close"": 79774,
+    ""IsoTime"": ""2024-11-10T16:30:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:31:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79678.3,
+    ""high"": 79749.6,
+    ""low"": 79678.1,
+    ""close"": 79749.6,
+    ""IsoTime"": ""2024-11-10T16:29:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:30:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79678.9,
+    ""high"": 79695.8,
+    ""low"": 79667.5,
+    ""close"": 79678.3,
+    ""IsoTime"": ""2024-11-10T16:28:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:29:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79644.5,
+    ""high"": 79678.9,
+    ""low"": 79632,
+    ""close"": 79678.9,
+    ""IsoTime"": ""2024-11-10T16:27:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T16:28:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79722.3,
+    ""high"": 79722.3,
+    ""low"": 79689.4,
+    ""close"": 79695,
+    ""IsoTime"": ""2024-11-10T15:53:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:54:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79700,
+    ""high"": 79726,
+    ""low"": 79681.6,
+    ""close"": 79722.3,
+    ""IsoTime"": ""2024-11-10T15:52:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:53:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79736.1,
+    ""high"": 79736.1,
+    ""low"": 79700,
+    ""close"": 79700,
+    ""IsoTime"": ""2024-11-10T15:51:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:52:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79757.7,
+    ""high"": 79780.3,
+    ""low"": 79708.2,
+    ""close"": 79736.1,
+    ""IsoTime"": ""2024-11-10T15:50:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:51:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79750,
+    ""high"": 79772.7,
+    ""low"": 79700.3,
+    ""close"": 79757.7,
+    ""IsoTime"": ""2024-11-10T15:49:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:50:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79766.4,
+    ""high"": 79796,
+    ""low"": 79747.9,
+    ""close"": 79750,
+    ""IsoTime"": ""2024-11-10T15:48:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:49:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79755.3,
+    ""high"": 79774,
+    ""low"": 79736,
+    ""close"": 79766.4,
+    ""IsoTime"": ""2024-11-10T15:47:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:48:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79763.8,
+    ""high"": 79766.3,
+    ""low"": 79736,
+    ""close"": 79755.3,
+    ""IsoTime"": ""2024-11-10T15:46:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:47:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79727,
+    ""high"": 79768.3,
+    ""low"": 79726.9,
+    ""close"": 79763.8,
+    ""IsoTime"": ""2024-11-10T15:45:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:46:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79700.1,
+    ""high"": 79727,
+    ""low"": 79631.3,
+    ""close"": 79727,
+    ""IsoTime"": ""2024-11-10T15:44:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:45:00Z
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 79722.2,
+    ""high"": 79725.6,
+    ""low"": 79681,
+    ""close"": 79700.1,
+    ""IsoTime"": ""2024-11-10T15:43:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-11-10T15:44:00Z

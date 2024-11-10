@@ -12,7 +12,9 @@ class Orderblock(IPDArray):
         pass
 
     def returnArrayList(self, candles: list[Candle]) -> list:
-        lookback = self.lookback
+
+        if len(candles) < self.lookback:
+            return []
 
         pdArrays = []
 
@@ -28,9 +30,9 @@ class Orderblock(IPDArray):
         lastBullish = None
         lastBearish = None
 
-        for i in range(lookback, n):
-            swingHigh = self.getSwingHigh(highs, i, lookback)
-            swingLow = self.getSwingLow(lows, i, lookback)
+        for i in range(self.lookback, n):
+            swingHigh = self.getSwingHigh(highs, i, self.lookback)
+            swingLow = self.getSwingLow(lows, i, self.lookback)
 
             # Detect Bullish Order Blocks
             if close[i] > swingHigh and (lastBullish is None or lastBullish['top'] < swingHigh):

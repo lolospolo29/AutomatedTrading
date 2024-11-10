@@ -40,12 +40,17 @@ class LevelMediator:
             self.pd.returnLevels(candles)
         if levelType == "STDV":
             if 'pd' in kwargs:
-                addedAttribute = kwargs['pd']
-                self.stdv.returnLevels(candles, addedAttribute)
+                candle = kwargs['candle']
+                pd = kwargs['pd']
+                self.stdv.returnLevels(candle,candles,pd)
         if levelType == "NWOG":
-            self.nwog.returnLevels(candles)
+            preCandle = kwargs['preCandle']
+            midnightCandle = kwargs['midnightCandle']
+            self.nwog.returnLevels(preCandle,midnightCandle)
         if levelType == "NDOG":
-            self.ndog.returnLevels(candles)
+            preCandle = kwargs['preCandle']
+            midnightCandle = kwargs['midnightCandle']
+            self.ndog.returnLevels(preCandle,midnightCandle)
         if levelType == "previousDaysLevels":
             self.previousDaysLevel.returnLevels(candles)
         if levelType == "PreviousSessionLevels":

@@ -2,7 +2,6 @@ import time
 from typing import Any, Dict
 
 from Initializing.GlobalStatements import getLockState
-from Monitoring.TimeWrapper import logTime
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager
 from Services.Manager.TradeManager import TradeManager
@@ -14,7 +13,7 @@ class TradingService:
         self._TradeManager: TradeManager = tradeManager
         self._StrategyManager: StrategyManager = strategyManager
 
-    @logTime
+   # @logTime
     def handlePriceActionSignal(self, jsonData: Dict[str, Any]) -> None:
 
         while getLockState():
@@ -23,7 +22,7 @@ class TradingService:
         asset, broker, timeFrame = self._AssetManager.addCandle(jsonData)
         self.analyzeStrategy(asset, broker, timeFrame)
 
-    @logTime
+  #  @logTime
     def analyzeStrategy(self, asset: str, broker: str, timeFrame:int) -> None:
         candles : list = self._AssetManager.returnCandles(asset, broker, timeFrame)
 

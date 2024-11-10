@@ -12,7 +12,10 @@ class LiquidityVoid(IPDArray):
         pass
 
     def returnArrayList(self, candles: list[Candle]) -> list:
-        MinCandlesInRow = self.minCandlesInRow
+
+        if len(candles) < self.minCandlesInRow:
+            return []
+
         pdArrays = []
         rowCandles = 0
         direction = None
@@ -38,7 +41,7 @@ class LiquidityVoid(IPDArray):
             # If the direction changes
             else:
                 # If there are enough candles in the row, create a new PDArray
-                if rowCandles >= MinCandlesInRow:
+                if rowCandles >= self.minCandlesInRow:
                     pdArray = PDArray(self.name, direction)
 
                     # Add the candle data to the PDArray
@@ -52,7 +55,7 @@ class LiquidityVoid(IPDArray):
                 rowCandles = 1
 
         # Handle the case where the last set of candles forms a valid sequence
-        if rowCandles >= MinCandlesInRow:
+        if rowCandles >= self.minCandlesInRow:
             pdArray = PDArray(self.name, direction)
 
             for j in range(len(close) - rowCandles, len(close)):

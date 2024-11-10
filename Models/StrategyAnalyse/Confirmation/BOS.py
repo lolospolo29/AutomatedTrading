@@ -16,6 +16,8 @@ class BOS(IConfirmation):
         param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
         :return: 'BOS_Bullish', 'BOS_Bearish' or None.
         """
+        if len(candles) < self.lookback:
+            return []
         highs = []
         lows = []
         closes = []

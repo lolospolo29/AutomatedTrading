@@ -26,6 +26,10 @@ class Breaker(IPDArray):  # id need to be fixed
 
     def returnArrayList(self, candles: list[Candle]) -> list:
         """Get confirmation for breaker blocks"""
+
+        if len(candles) < self.lookback:
+            return []
+
         opens = [candle.open for candle in candles]
         highs = [candle.high for candle in candles]
         lows = [candle.low for candle in candles]

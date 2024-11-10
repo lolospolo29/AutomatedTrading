@@ -6,7 +6,7 @@ class IStrategy(ABC):
     def returnExpectedTimeFrame(self):
         pass
     @abstractmethod
-    def analyzeData(self):
+    def analyzeData(self, candles: list):
         pass
     @abstractmethod
     def isInTime(self):

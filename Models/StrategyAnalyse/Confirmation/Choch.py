@@ -41,6 +41,8 @@ class Choch(IConfirmation):
         _param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
         :return: 'Choch_Bullish', 'Choch_Bearish' or None.
         """
+        if len(candles) < self.lookback:
+            return []
         highs = []
         lows = []
         closes = []

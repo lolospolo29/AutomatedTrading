@@ -12,5 +12,5 @@ class Strategy(IStrategy):
         pass
     def isInTime(self):
         pass
-    def analyzeData(self):
+    def analyzeData(self, candles: list):
         pass

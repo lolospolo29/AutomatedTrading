@@ -26,7 +26,7 @@ class ConfirmationMediator:
         if confirmationType == "Choch":
             return self.choch.returnConfirmation(candles)
         if confirmationType == "SMT":
-            if 'addedAttribute' in kwargs:
+            if 'candlesAsset2' in kwargs:
                 candlesAsset2 = kwargs['candlesAsset2']
                 return self.smt.returnConfirmation(candles, candlesAsset2)
 

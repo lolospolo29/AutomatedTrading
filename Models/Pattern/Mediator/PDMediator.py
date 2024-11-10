@@ -1,5 +1,6 @@
 from Models.StrategyAnalyse.PDArrays.BPR import BPR
 from Models.StrategyAnalyse.PDArrays.Breaker import Breaker
+from Models.StrategyAnalyse.PDArrays.FVG import FVG
 from Models.StrategyAnalyse.PDArrays.LiquidityVoid import LiquidityVoid
 from Models.StrategyAnalyse.PDArrays.OrderBlock import Orderblock
 from Models.StrategyAnalyse.PDArrays.RejectionBlock import RejectionBlock
@@ -19,10 +20,11 @@ class PDMediator:
     def __init__(self):
         if not hasattr(self, "initialized"):  # Prevent re-initialization
             self.bpr: BPR = BPR()
+            self.fvg = FVG()
             self.breaker: Breaker = Breaker(10)
             self.liquidityVoid: LiquidityVoid = LiquidityVoid(4)
             self.orderBlock: Orderblock = Orderblock(10)
-            self.rejectionBlock: RejectionBlock = RejectionBlock()
+            self.rejectionBlock: RejectionBlock = RejectionBlock(10)
             self.swings: Swings = Swings()
             self.void: Void = Void()
             self.volumeImbalance: VolumeImbalance = VolumeImbalance()
@@ -31,6 +33,8 @@ class PDMediator:
     def calculatePDArray(self, pdType: str, candles: list) -> list:
         if pdType == "BPR":
             return self.bpr.returnArrayList(candles)
+        if pdType == "FVG":
+            return self.fvg.returnArrayList(candles)
         if pdType == "Breaker":
             return self.breaker.returnArrayList(candles)
         if pdType == "LiquidityVoid":

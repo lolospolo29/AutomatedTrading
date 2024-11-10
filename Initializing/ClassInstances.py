@@ -9,6 +9,8 @@ from watchdog.observers import Observer
 from Controller.SignalController import SignalControler
 from Models.Pattern.Factory.BrokerFactory import BrokerFactory
 from Models.Pattern.Factory.StrategyFactory import StrategyFactory
+from Models.Pattern.Mediator.ConfrimationMediator import ConfirmationMediator
+from Models.Pattern.Mediator.PDMediator import PDMediator
 from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.DB.mongoDBData import mongoDBData
 from Services.DB.mongoDBTrades import mongoDBTrades
@@ -25,8 +27,6 @@ from Services.Manager.TradeManager import TradeManager
 from Services.TradingService import TradingService
 
 ny_tz = pytz.timezone('America/New_York')
-
-#  #  Services
 
 # DB
 
@@ -45,6 +45,11 @@ dbService = DBService(mapper, mongoDBData, mongoDBTrades)
 brokerFactory = BrokerFactory()
 
 strategyFactory = StrategyFactory()
+
+# Mediator
+
+pdMediator = PDMediator()
+confirmationMediator = ConfirmationMediator()
 
 # Manager / Services
 assetManager = AssetManager(dbService)

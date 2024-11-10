@@ -1,18 +1,27 @@
 from Models.Main.Strategies.ExitEntryStrategy import ExitEntryStrategy
 from Models.Main.Strategies.ExpectedTimeFrame import ExpectedTimeFrame
 from Models.Main.Strategies.Strategy import Strategy
+from Models.Pattern.Mediator.ConfrimationMediator import ConfirmationMediator
 from Models.Pattern.Mediator.PDMediator import PDMediator
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 
 
-class FVGSession(Strategy, PDMediator):
-    def __init__(self, name: str, entryStrategy : ExitEntryStrategy, exitStrategy: ExitEntryStrategy):
+class FVGSession(Strategy):
+    def __init__(self, name: str, entryStrategy : ExitEntryStrategy,
+                 exitStrategy: ExitEntryStrategy):
         super().__init__(name)
+
+        self._PDMediator = PDMediator()
+        self._ConfirmationMediator = ConfirmationMediator()
+
         self._TimeWindow = LondonOpen()
+
         self.entryStrategy = entryStrategy
         self.exitStrategy = exitStrategy
+
         self.safeDataDuration = 0  # Days of Data needed for StrategyAnalyse
-        timeFrame = ExpectedTimeFrame(1,90)
+
+        timeFrame = ExpectedTimeFrame(1,20)
         timeFrame2 = ExpectedTimeFrame(5,90)
         timeFrame3 = ExpectedTimeFrame(15,90)
 
@@ -26,8 +35,16 @@ class FVGSession(Strategy, PDMediator):
         return self.expectedTimeFrames
 
     def analyzeData(self, candles: list):
-        # self.calculatePDArray(candles)
-        pass
+        if len(candles) > 10:
+            bpr = self._PDMediator.calculatePDArray("BPR",candles)
+            brk = self._PDMediator.calculatePDArray("Breaker",candles)
+            lv = self._PDMediator.calculatePDArray("LiquidityVoid",candles)
+            rb = self._PDMediator.calculatePDArray("RejectionBlock",candles)
+            swings = self._PDMediator.calculatePDArray("Swings",candles)
+            void = self._PDMediator.calculatePDArray("Void",candles)
+            vi = self._PDMediator.calculatePDArray("VolumeImbalance",candles)
+            bos = self._ConfirmationMediator.calculateConfirmation("BOS",candles)
+            choch = self._ConfirmationMediator.calculateConfirmation("CHOCH",candles)
 
     def isInTime(self):
         if self._TimeWindow.IsInEntryWindow() and self._TimeWindow.IsInExitWindow():

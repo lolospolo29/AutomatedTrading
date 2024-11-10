@@ -4,13 +4,18 @@ from Models.StrategyAnalyse.PDArray import PDArray
 
 
 class RejectionBlock(IPDArray):
-    def __init__(self):
+    def __init__(self, lookback):
+        self.lookback = lookback
         self.name = "RB"
 
     def returnCandleRange(self, candles: list[Candle]):
         pass
 
     def returnArrayList(self, candles: list[Candle]) -> list:
+
+        if len(candles) < self.lookback:
+            return []
+
         rejectionBlocks = []
 
         # We assume 'data_points_asset' contains the asset data (high, low, open, close, ids)
@@ -20,7 +25,7 @@ class RejectionBlock(IPDArray):
         close = [candle.close for candle in candles]
         ids = [candle.id for candle in candles]
 
-        if len(opens) < 10:
+        if len(opens) < self.lookback:
             return rejectionBlocks  # Not enough data for rejection block detection
 
         for i in range(9, len(opens)):  # Start from the 10th candle onwards
