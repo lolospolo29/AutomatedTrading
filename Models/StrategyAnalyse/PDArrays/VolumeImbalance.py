@@ -23,16 +23,16 @@ class VolumeImbalance(IPDArray):
             # Check for a bullish vi
             if min(opens[i], close[i]) > highs[i - 1] and \
                     lows[i] > max(opens[i - 1], close[-1]) and \
-                    (lows[i] < highs[i - 1]):
+                    (lows[i] <= highs[i - 1]):
                 pdArray = PDArray(name=self.name, direction="Bullish")
                 pdArray.addId(ids[i])
                 pdArray.addId(ids[i - 1])
                 pdArrays.append(pdArray)
 
             # Check for a bearish vi
-            elif max(open[i], close[i]) < lows[i - 1] and \
+            elif max(opens[i], close[i]) < lows[i - 1] and \
                     highs[i] < min(opens[i - 1], close[-1]) and \
-                    (highs[i] > lows[i - 1]):
+                    (highs[i] >= lows[i - 1]):
                 pdArray = PDArray(name=self.name, direction="Bearish")
                 pdArray.addId(ids[i])
                 pdArray.addId(ids[i - 1])

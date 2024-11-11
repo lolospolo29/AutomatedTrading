@@ -11,6 +11,10 @@ class BPR(IPDArray):
         pass
 
     def returnArrayList(self, candles: list[Candle]) -> list:
+
+        if len(candles) > 6 :
+            return []
+
         pdArrays = []
 
         # Lists to store identified FVGs
@@ -36,7 +40,8 @@ class BPR(IPDArray):
                 bearishFvgList.append({
                     'high': low1,  # Top of FVG range
                     'low': high3,  # Bottom of FVG range
-                    'ids': [id1, id2, id3]
+                    'ids': [id1, id2, id3],
+                    'index': [i, i-1,i-2]
                 })
 
             # Check for Bullish FVG (Buy-side FVG)
@@ -44,7 +49,8 @@ class BPR(IPDArray):
                 bullishFvgList.append({
                     'high': low3,  # Top of FVG range
                     'low': high1,  # Bottom of FVG range
-                    'ids': [id1, id2, id3]
+                    'ids': [id1, id2, id3],
+                    'index': [i, i - 1, i - 2]
                 })
 
         # Second step: Check for overlaps between Bearish and Bullish FVGs
@@ -61,10 +67,10 @@ class BPR(IPDArray):
                     direction = "Bullish"  # Default direction is bullish
 
                     # If the first FVG (sell_fvg) is Bearish and the second (buy_fvg) is Bullish
-                    if sellFvg in bearishFvgList and buyFvg in bullishFvgList:
+                    if max(sellFvg['index']) < max(buyFvg['index']):
                         direction = "Bullish"
                     # If the first FVG (buy_fvg) is Bullish and the second (sell_fvg) is Bearish
-                    elif buyFvg in bearishFvgList and sellFvg in bullishFvgList:
+                    if max(sellFvg['index']) > max(buyFvg['index']):
                         direction = "Bearish"
 
                     pdArray = PDArray(name=self.name, direction=direction)

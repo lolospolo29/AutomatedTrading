@@ -21,7 +21,7 @@ class PDMediator:
         if not hasattr(self, "initialized"):  # Prevent re-initialization
             self.bpr: BPR = BPR()
             self.fvg = FVG()
-            self.breaker: Breaker = Breaker(10)
+            self.breaker: Breaker = Breaker(5)
             self.liquidityVoid: LiquidityVoid = LiquidityVoid(4)
             self.orderBlock: Orderblock = Orderblock(10)
             self.rejectionBlock: RejectionBlock = RejectionBlock(10)

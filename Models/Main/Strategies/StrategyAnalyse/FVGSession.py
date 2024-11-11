@@ -36,12 +36,8 @@ class FVGSession(Strategy):
 
     def analyzeData(self, candles: list):
         if len(candles) > 10:
-            bpr = self._PDMediator.calculatePDArray("BPR",candles)
             brk = self._PDMediator.calculatePDArray("Breaker",candles)
-            lv = self._PDMediator.calculatePDArray("LiquidityVoid",candles)
-            rb = self._PDMediator.calculatePDArray("RejectionBlock",candles)
             swings = self._PDMediator.calculatePDArray("Swings",candles)
-            void = self._PDMediator.calculatePDArray("Void",candles)
             vi = self._PDMediator.calculatePDArray("VolumeImbalance",candles)
             bos = self._ConfirmationMediator.calculateConfirmation("BOS",candles)
             choch = self._ConfirmationMediator.calculateConfirmation("CHOCH",candles)
