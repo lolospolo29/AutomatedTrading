@@ -8,23 +8,30 @@ from watchdog.events import FileSystemEventHandler
 from Initializing.GlobalStatements import setLockState, getLockState
 from Monitoring.TimeWrapper import logTime
 from Services.Manager.AssetManager import AssetManager
+from Services.Manager.StrategyManager import StrategyManager
 
 
 class NewFileHandler(FileSystemEventHandler):
-    def __init__(self, assetManager: AssetManager):
+    def __init__(self, assetManager: AssetManager, strategyManager: StrategyManager):
         self._AssetManager: AssetManager = assetManager
+        self._StrategyManager: StrategyManager = strategyManager
 
     @logTime
     def on_created(self, event):
         # Only process the specific file name
+
         if not getLockState():
             setLockState(True)
             filename = os.path.basename(event.src_path)
+
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
                 print(f"New file detected: {event.src_path}")
                 candles = self.parseCandleData(event.src_path)
                 for candle in candles:
-                    self._AssetManager.addCandle(candle)
+                    asset, broker, timeFrame = self._AssetManager.addCandle(candle)
+                    candles: list = self._AssetManager.returnCandles(asset, broker, timeFrame)
+                    relations: list = self._AssetManager.returnRelations(asset, broker)
+                    self._StrategyManager.analyzeStrategy(candles, relations,timeFrame)
 
                 self.moveToArchive(event.src_path)
                 setLockState(False)
@@ -33,9 +40,9 @@ class NewFileHandler(FileSystemEventHandler):
     def parseCandleData(csv_filename) -> list:
         candles = []
         with open(csv_filename, mode='r', newline='') as file:
-            reader = csv.DictReader(file)
+            reader = list(csv.DictReader(file))
 
-            for row in reader:
+            for row in reversed(reader): # change back to normal after debug reversed
                 description_json = json.loads(row["Description"])
                 # candle_data = description_json["Candle"]
                 candle_data = description_json.get("Candle", {})

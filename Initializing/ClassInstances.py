@@ -67,7 +67,7 @@ tradingService = TradingService(assetManager, tradeManager, strategyManager)
 configManager = ConfigManager(mongoDBConfig,assetManager,brokerManager,strategyManager,brokerFactory,strategyFactory)
 
 # FileHandler
-newFileHandler = NewFileHandler(assetManager)
+newFileHandler = NewFileHandler(assetManager,strategyManager)
 
 # Controller
 

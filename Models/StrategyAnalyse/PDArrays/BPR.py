@@ -12,7 +12,7 @@ class BPR(IPDArray):
 
     def returnArrayList(self, candles: list[Candle]) -> list:
 
-        if len(candles) > 6 :
+        if len(candles) < 6 :
             return []
 
         pdArrays = []

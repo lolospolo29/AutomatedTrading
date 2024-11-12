@@ -23,7 +23,7 @@ class ConfirmationMediator:
     def calculateConfirmation(self, confirmationType: str, candles: list, *args, **kwargs) -> Any:
         if confirmationType == "BOS":
             return self.bos.returnConfirmation(candles)
-        if confirmationType == "Choch":
+        if confirmationType == "CHOCH":
             return self.choch.returnConfirmation(candles)
         if confirmationType == "SMT":
             if 'candlesAsset2' in kwargs:

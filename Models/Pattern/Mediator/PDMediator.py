@@ -35,16 +35,18 @@ class PDMediator:
             return self.bpr.returnArrayList(candles)
         if pdType == "FVG":
             return self.fvg.returnArrayList(candles)
-        if pdType == "Breaker":
+        if pdType == "BRK":
             return self.breaker.returnArrayList(candles)
-        if pdType == "LiquidityVoid":
+        if pdType == "LV":
             return self.liquidityVoid.returnArrayList(candles)
-        if pdType == "RejectionBlock":
+        if pdType == "OB":
+            return self.orderBlock.returnArrayList(candles)
+        if pdType == "RB":
             return self.rejectionBlock.returnArrayList(candles)
         if pdType == "Swings":
             return self.swings.returnArrayList(candles)
         if pdType == "Void":
             return self.void.returnArrayList(candles)
-        if pdType == "VolumeImbalance":
+        if pdType == "VI":
             return self.volumeImbalance.returnArrayList(candles)
 

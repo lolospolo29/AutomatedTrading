@@ -21,7 +21,7 @@ class FVGSession(Strategy):
 
         self.safeDataDuration = 0  # Days of Data needed for StrategyAnalyse
 
-        timeFrame = ExpectedTimeFrame(1,20)
+        timeFrame = ExpectedTimeFrame(1,90)
         timeFrame2 = ExpectedTimeFrame(5,90)
         timeFrame3 = ExpectedTimeFrame(15,90)
 
@@ -33,14 +33,17 @@ class FVGSession(Strategy):
 
     def returnExpectedTimeFrame(self) -> list:
         return self.expectedTimeFrames
-
+    # fix double detection by ids
     def analyzeData(self, candles: list):
         if len(candles) > 10:
-            brk = self._PDMediator.calculatePDArray("Breaker",candles)
-            swings = self._PDMediator.calculatePDArray("Swings",candles)
-            vi = self._PDMediator.calculatePDArray("VolumeImbalance",candles)
-            bos = self._ConfirmationMediator.calculateConfirmation("BOS",candles)
-            choch = self._ConfirmationMediator.calculateConfirmation("CHOCH",candles)
+            pass
+        #good lil fix with killing ss/bs   ob = self._PDMediator.calculatePDArray("OB",candles)
+        #good    bpr = self._PDMediator.calculatePDArray("BPR",candles)
+        #good candle fix    brk = self._PDMediator.calculatePDArray("BRK",candles)
+        #big fix     swings = self._PDMediator.calculatePDArray("Swings",candles)
+        #at 0.79 fib viable    rb = self._PDMediator.calculatePDArray("RB",candles)
+        #spam mf   bos = self._ConfirmationMediator.calculateConfirmation("BOS",candles)
+        #good    choch = self._ConfirmationMediator.calculateConfirmation("CHOCH",candles)
 
     def isInTime(self):
         if self._TimeWindow.IsInEntryWindow() and self._TimeWindow.IsInExitWindow():
