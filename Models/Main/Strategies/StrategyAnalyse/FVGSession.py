@@ -36,14 +36,13 @@ class FVGSession(Strategy):
     # fix double detection by ids
     def analyzeData(self, candles: list):
         if len(candles) > 10:
-            pass
-        #good lil fix with killing ss/bs   ob = self._PDMediator.calculatePDArray("OB",candles)
-        #good    bpr = self._PDMediator.calculatePDArray("BPR",candles)
-        #good candle fix    brk = self._PDMediator.calculatePDArray("BRK",candles)
-        #big fix     swings = self._PDMediator.calculatePDArray("Swings",candles)
-        #at 0.79 fib viable    rb = self._PDMediator.calculatePDArray("RB",candles)
-        #spam mf   bos = self._ConfirmationMediator.calculateConfirmation("BOS",candles)
-        #good    choch = self._ConfirmationMediator.calculateConfirmation("CHOCH",candles)
+            ob = self._PDMediator.calculatePDArray("OB",candles) #good lil fix with killing ss/bs
+            bpr = self._PDMediator.calculatePDArray("BPR",candles) #good
+            brk = self._PDMediator.calculatePDArray("BRK",candles) #good candle fix
+            #big fix     swings = self._PDMediator.calculatePDArray("Swings",candles)
+            rb = self._PDMediator.calculatePDArray("RB",candles) #at 0.79 fib viable
+            bos = self._ConfirmationMediator.calculateConfirmation("BOS",candles) #spam mf
+            choch = self._ConfirmationMediator.calculateConfirmation("CHOCH",candles) #good
 
     def isInTime(self):
         if self._TimeWindow.IsInEntryWindow() and self._TimeWindow.IsInExitWindow():

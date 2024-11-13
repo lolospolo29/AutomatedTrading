@@ -3,3 +3,9 @@ class AssetBrokerStrategyRelation:
         self.asset = asset
         self.broker = broker
         self.strategy = strategy
+
+    def compare(self, assetBrokerStrategyRelation: "AssetBrokerStrategyRelation") -> bool:
+        if (self.asset == assetBrokerStrategyRelation.asset and self.broker == assetBrokerStrategyRelation.broker and
+                self.strategy == assetBrokerStrategyRelation.strategy):
+            return True
+        return False
