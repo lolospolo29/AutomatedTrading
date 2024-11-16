@@ -43,6 +43,12 @@ class LevelMediator:
                 candle = kwargs['candle']
                 pd = kwargs['pd']
                 self.stdv.returnLevels(candle,candles,pd)
+        if levelType == "EQUALHL":
+            if 'direction' in kwargs:
+                direction = kwargs['direction']
+                self.equal.returnLevels(candles,direction)
+        if levelType == "CBDR":
+            self.cbdr.returnLevels(candles)
         if levelType == "NWOG":
             preCandle = kwargs['preCandle']
             midnightCandle = kwargs['midnightCandle']

@@ -2,6 +2,7 @@ from Models.Main.Strategies.ExitEntryStrategy import ExitEntryStrategy
 from Models.Main.Strategies.ExpectedTimeFrame import ExpectedTimeFrame
 from Models.Main.Strategies.Strategy import Strategy
 from Models.Pattern.Mediator.ConfrimationMediator import ConfirmationMediator
+from Models.Pattern.Mediator.LevelMediator import LevelMediator
 from Models.Pattern.Mediator.PDMediator import PDMediator
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 
@@ -9,17 +10,16 @@ from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 class FVGSession(Strategy):
     def __init__(self, name: str, entryStrategy : ExitEntryStrategy,
                  exitStrategy: ExitEntryStrategy):
-        super().__init__(name)
+        super().__init__(name,False,0)
 
         self._PDMediator = PDMediator()
         self._ConfirmationMediator = ConfirmationMediator()
+        self._LevelMediator = LevelMediator()
 
         self._TimeWindow = LondonOpen()
 
         self.entryStrategy = entryStrategy
         self.exitStrategy = exitStrategy
-
-        self.safeDataDuration = 0  # Days of Data needed for StrategyAnalyse
 
         timeFrame = ExpectedTimeFrame(1,90)
         timeFrame2 = ExpectedTimeFrame(5,90)
@@ -36,13 +36,10 @@ class FVGSession(Strategy):
     # fix double detection by ids
     def analyzeData(self, candles: list):
         if len(candles) > 10:
-            ob = self._PDMediator.calculatePDArray("OB",candles) #good lil fix with killing ss/bs
-            bpr = self._PDMediator.calculatePDArray("BPR",candles) #good
-            brk = self._PDMediator.calculatePDArray("BRK",candles) #good candle fix
-            #big fix     swings = self._PDMediator.calculatePDArray("Swings",candles)
-            rb = self._PDMediator.calculatePDArray("RB",candles) #at 0.79 fib viable
-            bos = self._ConfirmationMediator.calculateConfirmation("BOS",candles) #spam mf
-            choch = self._ConfirmationMediator.calculateConfirmation("CHOCH",candles) #good
+            ote = self._LevelMediator.calculateLevels("OTE",candles)
+            equal = self._LevelMediator.calculateLevels("EQUALHL",candles,direction="both")
+            cisd = self._ConfirmationMediator.calculateConfirmation("CISD",candles)
+
 
     def isInTime(self):
         if self._TimeWindow.IsInEntryWindow() and self._TimeWindow.IsInExitWindow():

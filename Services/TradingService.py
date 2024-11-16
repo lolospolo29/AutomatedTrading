@@ -31,30 +31,29 @@ class TradingService:
         self._StrategyManager.analyzeStrategy(candles, relations, timeFrame)
 
 
-    # def executeDailyTasks(self) -> None:
-    #     """ Aufgaben, die täglich um 04:00 UTC (00:00 NY) ausgeführt werden """
-    #     if not self.lockActive:  # Nur wenn der Lock nicht aktiv ist
-    #         self.lockActive = True  # Lock aktivieren
-    #         print("Daily tasks execution started at 04:00 UTC.")
-    #
-    #         # Dies wird nur einmal um 04:00 Uhr ausgeführt
-    #
-    #         self.dailyArchive()
-    #
-    #         self.dailyClearer()
-    #
-    #         self.RecentRetriever()
-    #
-    #         self.lockActive = False  # Lock wieder deaktivieren nach der Ausführung
-    #
-    # def dailyArchive(self) -> None:
-    #     self._AssetManager.dailyDataArchive()
-    #     self._TradeManager.archiveClosedTrades()
-    #
-    # def dailyClearer(self) -> None:
-    #     self._AssetManager.clearAllData()
-    #     self._TradeManager.clearOpenTrades()
-    #
-    # def RecentRetriever(self) -> None:
-    #     self._AssetManager.recentDataRetriever()
-    #     self._TradeManager.findOpenTrades()
+    def executeDailyTasks(self) -> None:
+        """ Aufgaben, die täglich um 04:00 UTC (00:00 NY) ausgeführt werden """
+        if getLockState():  # Nur wenn der Lock nicht aktiv ist
+            self.lockActive = True  # Lock aktivieren
+            print("Daily tasks execution started at 04:00 UTC.")
+
+            # Dies wird nur einmal um 04:00 Uhr ausgeführt
+
+            self.dailyArchive()
+
+            self.dailyClearer()
+
+            self.RecentRetriever()
+
+            self.lockActive = False  # Lock wieder deaktivieren nach der Ausführung
+
+    def dailyArchive(self) -> None:
+        self._AssetManager.dailyDataArchive()
+        self._TradeManager.archiveClosedTrades()
+
+    def dailyClearer(self) -> None:
+        self._TradeManager.clearOpenTrades()
+
+    def RecentRetriever(self) -> None:
+        self._AssetManager.recentDataRetriever()
+        self._TradeManager.findOpenTrades()

@@ -23,7 +23,7 @@ class PDMediator:
             self.fvg = FVG()
             self.breaker: Breaker = Breaker(5)
             self.liquidityVoid: LiquidityVoid = LiquidityVoid(4)
-            self.orderBlock: Orderblock = Orderblock(10)
+            self.orderBlock: Orderblock = Orderblock()
             self.rejectionBlock: RejectionBlock = RejectionBlock(10)
             self.swings: Swings = Swings()
             self.void: Void = Void()

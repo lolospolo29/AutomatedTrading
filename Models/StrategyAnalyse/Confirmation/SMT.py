@@ -18,6 +18,16 @@ class SMT(IConfirmation):
         data_points_asset2 (list): Data points for asset 2.
 
         """
+
+        last_candle_asset1 = candlesAsset1[-1]
+        last_candle_asset2 = candlesAsset2[-1]
+
+        # Compare isoTime values
+        if last_candle_asset1.isoTime != last_candle_asset2.isoTime:
+            return False
+
+        if len(candlesAsset1) != len(candlesAsset2):
+            return False
         highs1 = []
         ids1 = []
         highs2 = []

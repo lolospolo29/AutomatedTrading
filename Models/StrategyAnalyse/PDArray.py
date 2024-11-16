@@ -1,20 +1,18 @@
 from typing import Any
 
-from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Models.StrategyAnalyse.FrameWork import FrameWork
 
 
-class PDArray:
+class PDArray(FrameWork):
     def __init__(self, name: str, direction: str):
-        self.Ids: list = []
+        super().__init__("PDArray")
         self.name: str = name
         self.direction: str = direction
-        self.assetBrokerStrategyRelation = None
+        self.Ids: list = []
 
     def addId(self, Id: Any) -> None:
-        self.Ids.append(Id)
-
-    def addRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> None:
-        self.assetBrokerStrategyRelation = assetBrokerStrategyRelation
+        if Id not in self.Ids:
+            self.Ids.append(Id)
 
     def isIdPresent(self, id_: list) -> Any:
         """

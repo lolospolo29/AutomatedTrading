@@ -2,6 +2,7 @@ from typing import Any
 
 from Models.Main.Asset.Asset import Asset
 from Models.Main.Asset.Candle import Candle
+from Models.Main.Asset.CandleSeries import CandleSeries
 from Services.DBService import DBService
 
 
@@ -29,30 +30,30 @@ class AssetManager:
         if asset in self.assets:
             return self.assets[asset].returnRelationsForBroker(broker)
 
+    def returnSMTPair(self, asset: str):
+        if asset in self.assets:
+            return self.assets[asset].returnSMTPair()
 
-    # def dailyDataArchive(self):
-    #
-    #     # Iterate over the assets
-    #     for asset_name, asset in self.assets.items():
-    #         timeFrames = self.returnAllCurrentTimeFrames(asset.name)
-    #         for timeFrame in timeFrames:
-    #             for assetData in asset.currentData:
-    #                 if assetData.timeFrame == timeFrame:
-    #                     currentData = assetData.toDict()
-    #                     if len(assetData.open) != 0:
-    #                         self._DBService.addDataToDB(asset.name, currentData)
-    #                     break
-    #
-    #         self._DBService.returnRetrieveOrDoArchive(asset.name, "archive")
-    #
-    # def recentDataRetriever(self):
-    #
-    #     for asset_name, asset in self.assets.items():
-    #         strategyDataList = self._DBService.returnRetrieveOrDoArchive(asset.name, "retrieve")
-    #         for strategyData in strategyDataList:
-    #             self.addPreviousData(asset.name, self._DBService.autoMapper(strategyData))
-    #
-    # def clearAllData(self):
-    #     for asset_name, asset in self.assets.items():
-    #         self.assets[asset.name].currentData = []
-    #         # self.assets[asset.name].previousData = []
+    def returnBroker(self,asset: str, strategy: str):
+        if asset in self.assets:
+            return self.assets[asset].returnBrokers(strategy)
+
+    def dailyDataArchive(self):
+        # Iterate over the assets
+        for asset_name, asset in self.assets.items():
+            candleSeries: list[CandleSeries] = self.assets[asset].CandlesSeries
+            for candleSerie in candleSeries:
+                for candle in candleSerie.candleSeries:
+                        self._DBService.addDataToDB(asset.name, candle.toDict())
+                        break
+
+            self._DBService.archiveData(asset.name)
+
+    def recentDataRetriever(self, asset:str,broker: str, timeFrame:int,lookback: int) -> list:
+        dbCandles = self._DBService.receiveData(asset, broker, timeFrame, lookback)
+        candles = []
+        for candle in dbCandles:
+            candles.append(self._DBService.autoMapper(candle))
+        return candles
+
+

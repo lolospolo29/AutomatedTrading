@@ -20,7 +20,7 @@ class mongoDBData:
         self._MongoDBData.add(collectionName, data)
         return True
 
-    def returnRetrieveOrDoArchive(self, asset: str, task: str) -> Any:
+    def archiveData(self, asset: str) -> Any:
         currentTimeNy = datetime.datetime.now(ny_tz)
 
         # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
@@ -30,11 +30,21 @@ class mongoDBData:
         currentTimeUtc = currentTimeNy.astimezone(pytz.utc)
         date60DaysAgoUtc = date60DaysAgoNy.astimezone(pytz.utc)
 
-        Query = 'AssetData.timeStamp'
+        query = 'AssetData.timeStamp'
 
-        if task == "retrieve":
-            return self._MongoDBData.getDataWithinDateRange(asset, Query,
-                                                            date60DaysAgoUtc,
-                                                            currentTimeUtc)
-        if task == "archive":
-            self._MongoDBData.deleteOldDocuments(asset, Query, date60DaysAgoUtc)
+        self._MongoDBData.deleteOldDocuments(asset, query, date60DaysAgoUtc)
+
+    def receiveData(self,asset:str, broker:str, timeFrame:int, lookback: int):
+        currentTimeNy = datetime.datetime.now(ny_tz)
+
+        # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
+        three_days_ago = currentTimeNy - datetime.timedelta(days=lookback)
+
+        # Erstelle die Query
+        query = {
+            "Candle.broker": broker,
+            "Candle.timeFrame": timeFrame,
+            "Candle.IsoTime": {"$lte": three_days_ago.isoformat()}
+            # Hole Dokumente, die vor oder gleich dem Datum liegen
+        }
+        return self._MongoDBData.find(asset, query)

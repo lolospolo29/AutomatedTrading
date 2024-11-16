@@ -42,7 +42,7 @@ class Choch(IConfirmation):
         :return: 'Choch_Bullish', 'Choch_Bearish' or None.
         """
         if len(candles) < self.lookback:
-            return []
+            return False
         highs = []
         lows = []
         closes = []

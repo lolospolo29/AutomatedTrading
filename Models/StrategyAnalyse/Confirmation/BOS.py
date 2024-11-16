@@ -17,7 +17,7 @@ class BOS(IConfirmation):
         :return: 'BOS_Bullish', 'BOS_Bearish' or None.
         """
         if len(candles) < self.lookback:
-            return []
+            return False
         highs = []
         lows = []
         closes = []

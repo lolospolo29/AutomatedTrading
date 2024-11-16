@@ -1,6 +1,7 @@
 from typing import Any
 
 from Models.StrategyAnalyse.Confirmation.BOS import BOS
+from Models.StrategyAnalyse.Confirmation.CISD import CISD
 from Models.StrategyAnalyse.Confirmation.Choch import Choch
 from Models.StrategyAnalyse.Confirmation.SMT import SMT
 
@@ -18,6 +19,7 @@ class ConfirmationMediator:
             self.bos = BOS(10)
             self.choch = Choch(10)
             self.smt = SMT()
+            self.cisd = CISD(5)
             self.initialized: bool = True  # Mark as initialized
 
     def calculateConfirmation(self, confirmationType: str, candles: list, *args, **kwargs) -> Any:
@@ -25,6 +27,8 @@ class ConfirmationMediator:
             return self.bos.returnConfirmation(candles)
         if confirmationType == "CHOCH":
             return self.choch.returnConfirmation(candles)
+        if confirmationType == "CISD":
+            return self.cisd.returnConfirmation(candles)
         if confirmationType == "SMT":
             if 'candlesAsset2' in kwargs:
                 candlesAsset2 = kwargs['candlesAsset2']

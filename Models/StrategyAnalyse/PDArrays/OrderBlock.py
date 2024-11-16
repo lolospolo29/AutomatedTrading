@@ -4,8 +4,7 @@ from Models.StrategyAnalyse.PDArray import PDArray
 
 
 class Orderblock(IPDArray):
-    def __init__(self, lookback: int):
-        self.lookback: int = lookback
+    def __init__(self):
         self.name: str = "OB"
 
     def returnCandleRange(self, candles: list[Candle]):
@@ -13,7 +12,7 @@ class Orderblock(IPDArray):
 
     def returnArrayList(self, candles: list[Candle]) -> list:
 
-        if len(candles) < self.lookback:
+        if len(candles) < 2:
             return []
 
         pdArrays = []
@@ -27,36 +26,19 @@ class Orderblock(IPDArray):
 
         n = len(highs)
 
-        lastBullish = None
-        lastBearish = None
+        # Loop through the data and check 3 consecutive candles for FVGs
+        for i in range(1, n):  # Start bei der 2. Kerze (Index 1)
+            open1, high1, low1, close1, id1 = opens[i - 1], highs[i - 1], lows[i - 1], close[i - 1], ids[i - 1]
+            open2, high2, low2, close2, id2 = opens[i], highs[i], lows[i], close[i], ids[i]
 
-        for i in range(self.lookback, n):
-            swingHigh = self.getSwingHigh(highs, i, self.lookback)
-            swingLow = self.getSwingLow(lows, i, self.lookback)
-
-            # Detect Bullish Order Blocks
-            if close[i] > swingHigh and (lastBullish is None or lastBullish['top'] < swingHigh):
-                lastBullish = {'top': swingHigh, 'bottom': swingLow}
-                pdArray = PDArray(name=self.name, direction="Bullish")
-                pdArray.addId(ids[i])
+            if close1 < open1 and close2 > open2 and low1 > low2 and close2 > high1:
+                pdArray = PDArray(name="OB",direction="Bullish")
+                pdArray.addId(id1)
+                pdArray.addId(id2)
                 pdArrays.append(pdArray)
-
-            # Detect Bearish Order Blocks
-            if close[i] < swingLow and (lastBearish is None or lastBearish['bottom'] > swingLow):
-                lastBearish = {'top': swingHigh, 'bottom': swingLow}
-                pdArray = PDArray(name=self.name, direction="Bearish")
-                pdArray.addId(ids[i])
+            if close1 > open1 and close2 < open2 and high1 < high2 and low1 > close2:
+                pdArray = PDArray(name="OB",direction="Bearish")
+                pdArray.addId(id1)
+                pdArray.addId(id2)
                 pdArrays.append(pdArray)
-
-        # Return order blocks as PDArray
         return pdArrays
-
-    @staticmethod
-    def getSwingHigh(highs: list, currentIndex: int, lookback: int):
-        """Returns the highest high within the lookback period."""
-        return max(highs[currentIndex - lookback: currentIndex])
-
-    @staticmethod
-    def getSwingLow(lows: list, currentIndex: int, lookback: int):
-        """Returns the lowest low within the lookback period."""
-        return min(lows[currentIndex - lookback: currentIndex])

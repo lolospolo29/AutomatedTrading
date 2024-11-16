@@ -17,8 +17,12 @@ class StrategyManager:
             return self.strategies[strategy].returnExpectedTimeFrame()
         return []
 
+    def returnDataDuration(self,strategy: str) -> int:
+        if strategy in self.strategies:
+            return self.strategies[strategy].returnDataDuration()
+
     def analyzeStrategy(self, candles: list[Candle], relations: list[AssetBrokerStrategyRelation],
                         timeFrame: int) -> None:
         for relation in relations:
             if relation.strategy in self.strategies:
-                self.strategies[relation.strategy].analyzeData(candles)
+                frameworks:list = self.strategies[relation.strategy].analyzeData(candles)

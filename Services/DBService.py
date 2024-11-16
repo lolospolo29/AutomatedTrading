@@ -20,11 +20,13 @@ class DBService:
     def archiveCloseTrade(self, closedTradeList: list) -> None:
         self._MongoDBTrades.archiveCloseTrade(closedTradeList)
 
-    def returnRetrieveOrDoArchive(self, assetName: str, task: str) -> Any:
-        if task == "retrieve":
-            return self._MongoDBData.returnRetrieveOrDoArchive(assetName, task)
-        if task == "archive":
-            self._MongoDBData.returnRetrieveOrDoArchive(assetName, task)
+    def archiveData(self, assetName: str) -> Any:
+        self._MongoDBData.archiveData(assetName)
+
+    def receiveData(self,asset:str, broker:str, timeFrame:int,lookback: int):
+        self._MongoDBData.receiveData(asset, broker, timeFrame,lookback)
 
     def returnOpenTrades(self) -> list:
         return self._MongoDBTrades.returnOpenTrades()
+
+

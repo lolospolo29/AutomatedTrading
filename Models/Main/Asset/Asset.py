@@ -50,13 +50,25 @@ class Asset:
                 return candleSeries.toList()
         return []
 
+    def returnBrokers(self,strategy: str) -> list:
+        brokers = []
+        for relation in self.brokerStrategyAssignment:
+            if relation.strategy == strategy:
+                brokers.append(relation.broker)
+        return brokers
+
+    def returnSMTPair(self, pairName: str):
+        for smtPair in self.smtPairs:
+            for pair in smtPair.smtPair:
+                if pair == pairName:
+                    return smtPair
+
     def returnRelationsForBroker(self, broker: str) -> list[AssetBrokerStrategyRelation]:
         strategies: list = []
         for assignment in self.brokerStrategyAssignment:
             if broker == assignment.broker:
                 strategies.append(assignment)
         return strategies
-
 
     def isBrokerInBrokers(self, broker: str) -> bool:
         if broker in self.brokers:
