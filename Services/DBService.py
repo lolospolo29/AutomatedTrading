@@ -24,7 +24,7 @@ class DBService:
         self._MongoDBData.archiveData(assetName)
 
     def receiveData(self,asset:str, broker:str, timeFrame:int,lookback: int):
-        self._MongoDBData.receiveData(asset, broker, timeFrame,lookback)
+        return self._MongoDBData.receiveData(asset, broker, timeFrame,lookback)
 
     def returnOpenTrades(self) -> list:
         return self._MongoDBTrades.returnOpenTrades()

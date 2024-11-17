@@ -38,20 +38,31 @@ class AssetManager:
         if asset in self.assets:
             return self.assets[asset].returnBrokers(strategy)
 
+    def returnAllRelations(self,asset: str):
+        if asset in self.assets:
+            return self.assets[asset].brokerStrategyAssignment
+
+    def returnAllAssets(self):
+        assets = []
+        for name,asset in self.assets.items():
+            assets.append(name)
+        return assets
+
     def dailyDataArchive(self):
         # Iterate over the assets
-        for asset_name, asset in self.assets.items():
-            candleSeries: list[CandleSeries] = self.assets[asset].CandlesSeries
+        for name, asset in self.assets.items():
+            candleSeries: list[CandleSeries] = self.assets[name].returnAllCandleSeries()
             for candleSerie in candleSeries:
                 for candle in candleSerie.candleSeries:
                         self._DBService.addDataToDB(asset.name, candle.toDict())
-                        break
 
             self._DBService.archiveData(asset.name)
 
     def recentDataRetriever(self, asset:str,broker: str, timeFrame:int,lookback: int) -> list:
         dbCandles = self._DBService.receiveData(asset, broker, timeFrame, lookback)
         candles = []
+        if len(dbCandles) <= 0:
+            return candles
         for candle in dbCandles:
             candles.append(self._DBService.autoMapper(candle))
         return candles

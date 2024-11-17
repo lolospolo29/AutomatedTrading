@@ -40,11 +40,11 @@ class mongoDBData:
         # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
         three_days_ago = currentTimeNy - datetime.timedelta(days=lookback)
 
-        # Erstelle die Query
+        three_days_ago_utc = three_days_ago.astimezone(pytz.utc)
+
         query = {
             "Candle.broker": broker,
             "Candle.timeFrame": timeFrame,
-            "Candle.IsoTime": {"$lte": three_days_ago.isoformat()}
-            # Hole Dokumente, die vor oder gleich dem Datum liegen
+            "Candle.IsoTime": {"$gte": three_days_ago_utc}
         }
         return self._MongoDBData.find(asset, query)

@@ -14,8 +14,8 @@ class TradeManager:
         self._StrategyManager: StrategyManager = strategyManager
         self._RiskManager: RiskManager = riskManager
 
-    def addTradeToDB(self, status, trade):
-        pass
+    def addTradeToDB(self,trade):
+        self._DBService.addTradeToDB(trade)
 
     def isTradeOpen(self):
         pass
@@ -26,11 +26,14 @@ class TradeManager:
     def handleExit(self):
         pass
 
-    def archiveClosedTrades(self):
+    def archiveTrades(self):
         for trade in self.openTrades:
             if trade.status == "closed":
                 tradeData = trade.toDict()
                 self._DBService.archiveCloseTrade(tradeData)
+            if trade.status == "open":
+                tradeData = trade.toDict()
+                self.addTradeToDB(tradeData)
 
     def clearOpenTrades(self):
         self.openTrades = []

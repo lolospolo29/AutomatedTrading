@@ -1,6 +1,5 @@
 from Interfaces.Strategy.IConfirmation import IConfirmation
 from Models.Main.Asset.Candle import Candle
-from Models.StrategyAnalyse.Level import Level
 from Models.StrategyAnalyse.Structure import Structure
 
 
@@ -10,89 +9,61 @@ class CISD(IConfirmation):
         self.name = "CISD"
 
     def returnConfirmation(self, candles: list[Candle]):
-
         if len(candles) < self.lookback:
             return False
 
         rowCandles = 0
         direction = None
+        tracked_structures = []  # List of structures to track their levels
+        last_traded_structure = None  # Store the last structure that was traded
 
-        liquidityVoids = []
-
+        # Extract candle data
         opens = [candle.open for candle in candles]
         highs = [candle.high for candle in candles]
         lows = [candle.low for candle in candles]
         close = [candle.close for candle in candles]
         ids = [candle.id for candle in candles]
 
-        # Loop through all candles in the data
         for i in range(1, len(close)):
-            # Check if the current candle is bullish or bearish
+            # Determine the direction of the current candle
             currentDirection = 'Bullish' if close[i] > opens[i] else 'Bearish'
 
-            # If it's the first candle, set the direction
+            # Initialize direction on the first candle
             if direction is None:
                 direction = currentDirection
                 rowCandles = 1
-            # If the current candle is in the same direction as the previous one
+            # Same direction: continue tracking
             elif currentDirection == direction:
                 rowCandles += 1
-            # If the direction changes
+            # Direction changes
             else:
-                # If there are enough candles in the row, create a new PDArray
                 if rowCandles >= self.lookback:
-                    # Add the candle data to the PDArray
-                    stateId = None
-                    level = -1
-
-                    for j in range(i - rowCandles, i):
-                        if direction == 'Bullish':
-                            self.checkStructure(direction,level,stateId,highs[j],ids[j])
-                        if direction == 'Bearish':
-                            self.checkStructure(direction, level, stateId, lows[j], ids[j])
-
-                    struct = Level(self.name,level)
-                    struct.direction = currentDirection
-                    liquidityVoids.append(struct)
+                    if direction == 'Bearish':
+                        tracked_structures.append({
+                            "type": "Bearish",
+                            "level": max(highs[i - rowCandles:i]),
+                            "id": ids[i - 1]
+                        })
+                    elif direction == 'Bullish':
+                        tracked_structures.append({
+                            "type": "Bullish",
+                            "level": min(lows[i - rowCandles:i]),
+                            "id": ids[i - 1]
+                        })
 
                 # Reset for the new direction
                 direction = currentDirection
                 rowCandles = 1
 
-        if len(liquidityVoids) > 0:
-            direction = "Bullish"
-            id = -1
-            for candle in candles:
-                for liquidityVoid in liquidityVoids:
-                    if liquidityVoid.direction == 'Bullish':
-                        if candle.high > liquidityVoid.level:
-                            direction = "Bullish"
-                            id = candle.id
-                    if liquidityVoid.direction == 'Bearish':
-                        if candle.low < liquidityVoid.level:
-                            direction = "Bearish"
-                            id = candle.id
-            return Structure(self.name,direction,id)
+            # Check if any tracked structure is traded through
+            for struct in tracked_structures:
+                if struct["type"] == "Bearish" and close[i] > struct["level"]:
+                    last_traded_structure = Structure(self.name, "Bullish", ids[i])
+                    tracked_structures.remove(struct)  # Remove structure after it is traded through
+                elif struct["type"] == "Bullish" and close[i] < struct["level"]:
+                    last_traded_structure = Structure(self.name, "Bearish", ids[i])
+                    tracked_structures.remove(struct)  # Remove structure after it is traded through
 
+        # Return the last traded structure
+        return last_traded_structure
 
-    @staticmethod
-    def checkStructure(direction, level, id, candleLevel, candleId):
-        if direction == 'Bullish':
-            if level is None:
-                stateId = candleId
-                level = candleLevel
-                return level,stateId
-            if level < candleLevel:
-                stateId = candleId
-                level = candleLevel
-                return level,stateId
-        if direction == 'Bearish':
-            if level is None:
-                stateId = candleId
-                level = candleLevel
-                return level,stateId
-            if level > candleLevel:
-                stateId = candleId
-                level = candleLevel
-                return level,stateId
-        return level,id

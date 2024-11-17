@@ -39,10 +39,7 @@ class LevelMediator:
         if levelType == "PD":
             self.pd.returnLevels(candles)
         if levelType == "STDV":
-            if 'pd' in kwargs:
-                candle = kwargs['candle']
-                pd = kwargs['pd']
-                self.stdv.returnLevels(candle,candles,pd)
+            self.stdv.returnLevels(candles)
         if levelType == "EQUALHL":
             if 'direction' in kwargs:
                 direction = kwargs['direction']

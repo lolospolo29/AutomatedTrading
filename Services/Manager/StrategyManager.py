@@ -12,6 +12,10 @@ class StrategyManager:
         self.strategies[strategy.name] = strategy
         print(f"Strategy '{strategy.name}' created and added to the Strategy Manager.")
 
+    def returnDataDuration(self, strategy: str) -> int:
+        if strategy not in self.strategies:
+            return self.strategies[strategy].returnDataDuration()
+
     def returnExpectedTimeFrame(self, strategy: str) -> list:
         if strategy in self.strategies:
             return self.strategies[strategy].returnExpectedTimeFrame()

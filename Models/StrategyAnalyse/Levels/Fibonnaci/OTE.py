@@ -1,3 +1,5 @@
+import sys
+
 from Interfaces.Strategy.ILevel import ILevel
 from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Level import Level
@@ -11,10 +13,10 @@ class OTE(ILevel):
 
     def returnLevels(self, candles: list[Candle]) -> list:
         # Step 1: Extract high and low values from the data points
-        high = None
-        highId = None
-        low = None
-        lowId = None
+        high = -1
+        highId = -1
+        low = sys.maxsize
+        lowId = -1
 
         allLevels = []  # Changed to allLevels for C# style
 
@@ -28,12 +30,12 @@ class OTE(ILevel):
                 lowId = candle.id
 
         # Step 3: Calculate Bearish Fibonacci retracement levels (from high to low)
-        level075Bearish = high - 0.75 * (high - low)
-        level062Bearish = high - 0.62 * (high - low)
+        level075Bullish = high - 0.75 * (high - low)
+        level062Bullish = high - 0.62 * (high - low)
 
         # Step 4: Calculate Bullish Fibonacci retracement levels (from low to high)
-        level075Bullish = low + 0.75 * (high - low)
-        level062Bullish = low + 0.62 * (high - low)
+        level075Bearish = low + 0.75 * (high - low)
+        level062Bearish = low + 0.62 * (high - low)
 
         # Step 5: Create Level objects for each Fibonacci level with bullish/bearish names
         level075BearishObj = Level(name=self.name, level=level075Bearish)

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from Models.Pattern.Decorator.IDDecorator import IDDecorator
 from Models.Pattern.Factory.FlyweightFactory import FlyweightFactory
@@ -14,8 +14,21 @@ class Candle:
         self.high: float = FlyweightFactory.getFlyweight(high)
         self.low: float = FlyweightFactory.getFlyweight(low)
         self.close: float = FlyweightFactory.getFlyweight(close)
-        self.isoTime: datetime = IsoTime
+
+        # Konvertiere oder validiere IsoTime
+        if isinstance(IsoTime, str):
+            try:
+                self.isoTime: datetime = datetime.strptime(IsoTime, "%Y-%m-%dT%H:%M:%SZ")
+            except ValueError:
+                raise ValueError(f"Invalid ISO time format: {IsoTime}")
+        elif isinstance(IsoTime, datetime):
+            self.isoTime = IsoTime
+        else:
+            raise TypeError(f"IsoTime must be a string or datetime, got {type(IsoTime).__name__}")
+
         self.timeFrame: int = FlyweightFactory.getFlyweight(timeFrame)
+
+        print(f"Type of isoTime: {type(self.isoTime)}")  # Erwartet: <class 'datetime.datetime'>
 
     def toDict(self) -> dict:
         """Gibt alle Datenpunkte als Dictionary zurück"""
@@ -27,7 +40,7 @@ class Candle:
                 "high": self.high,
                 "low": self.low,
                 "close": self.close,
-                "IsoTime": self.isoTime,  # Formatiert nur die Uhrzeit
-                "timeFrame": self.timeFrame  # Zeitstempel im Format ISO
+                "IsoTime": self.isoTime,  # In ISO 8601-String konvertieren
+                "timeFrame": self.timeFrame
             }
         }

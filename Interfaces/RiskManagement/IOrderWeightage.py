@@ -3,9 +3,9 @@ from abc import ABC, abstractmethod
 
 class IOrderWeightage(ABC):
     @abstractmethod
-    def getPercentagePerLevel(self):
+    def getPercentagePerLevel(self, percentage: float, order_tp_assignments: list[tuple[int, float]]):
         pass
 
     @abstractmethod
-    def sortOrderToTPLevel(self):
+    def sortOrderToTPLevel(self, orderAmount: int, tpLevel: list[float], direction: str):
         pass

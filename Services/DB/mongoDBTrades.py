@@ -1,3 +1,5 @@
+from typing import Any
+
 from Models.DB.MongoDB import MongoDB
 from Models.Main.Trade import Trade
 from Services.Helper.Mapper.Mapper import Mapper
@@ -10,7 +12,7 @@ class mongoDBTrades:
         self._DataMapper: Mapper = DataMapper
         self._MongoDBTrades: MongoDB = MongoDB("Trades", self._SecretManager.returnSecret("mongodb"))
 
-    def addTradeToDB(self, trade: Trade) -> bool:
+    def addTradeToDB(self, trade: Any) -> bool:
         self._MongoDBTrades.add("OpenTrades", trade)
         return True
 

@@ -36,9 +36,7 @@ class FVGSession(Strategy):
     # fix double detection by ids
     def analyzeData(self, candles: list):
         if len(candles) > 10:
-            ote = self._LevelMediator.calculateLevels("OTE",candles)
-            equal = self._LevelMediator.calculateLevels("EQUALHL",candles,direction="both")
-            cisd = self._ConfirmationMediator.calculateConfirmation("CISD",candles)
+            pass
 
 
     def isInTime(self):

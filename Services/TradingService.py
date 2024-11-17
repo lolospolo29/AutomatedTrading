@@ -1,7 +1,8 @@
 import time
 from typing import Any, Dict
 
-from Initializing.GlobalStatements import getLockState
+from Initializing.GlobalStatements import getLockState, setLockState
+from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager
 from Services.Manager.TradeManager import TradeManager
@@ -13,18 +14,18 @@ class TradingService:
         self._TradeManager: TradeManager = tradeManager
         self._StrategyManager: StrategyManager = strategyManager
 
-   # @logTime
+    # @logTime
     def handlePriceActionSignal(self, jsonData: Dict[str, Any]) -> None:
 
         while getLockState():
             time.sleep(1)
 
         asset, broker, timeFrame = self._AssetManager.addCandle(jsonData)
-        self.analyzeStrategy(asset, broker, timeFrame)
-
-  #  @logTime
-    def analyzeStrategy(self, asset: str, broker: str, timeFrame:int) -> None:
         candles : list = self._AssetManager.returnCandles(asset, broker, timeFrame)
+        self.analyzeStrategy(asset, broker, timeFrame, candles)
+
+    #  @logTime
+    def analyzeStrategy(self, asset: str, broker: str, timeFrame:int,candles:list) -> None:
 
         relations: list = self._AssetManager.returnRelations(asset, broker)
 
@@ -33,27 +34,30 @@ class TradingService:
 
     def executeDailyTasks(self) -> None:
         """ Aufgaben, die täglich um 04:00 UTC (00:00 NY) ausgeführt werden """
-        if getLockState():  # Nur wenn der Lock nicht aktiv ist
-            self.lockActive = True  # Lock aktivieren
-            print("Daily tasks execution started at 04:00 UTC.")
+        if not getLockState():  # Nur wenn der Lock nicht aktiv ist
 
-            # Dies wird nur einmal um 04:00 Uhr ausgeführt
+            setLockState(True)
+            print("Daily tasks execution started at 04:00 UTC.")
 
             self.dailyArchive()
 
-            self.dailyClearer()
+            # Dies wird nur einmal um 04:00 Uhr ausgeführt
+            assets = self._AssetManager.returnAllAssets()
+            for asset in assets:
+                relations: list[AssetBrokerStrategyRelation] = self._AssetManager.returnAllRelations(asset)
 
-            self.RecentRetriever()
+                for relation in relations:
+                    expectedTimeFrames: list = self._StrategyManager.returnExpectedTimeFrame(relation.strategy)
+                    dataDuration: int = self._StrategyManager.returnDataDuration(relation.strategy)
+                    for expectedTimeFrame in expectedTimeFrames:
+                        candles: list = self._AssetManager.recentDataRetriever(relation.asset,
+                                                                               relation.broker,expectedTimeFrame.timeFrame
+                                                                               , dataDuration)
+                        self.analyzeStrategy(asset, relation.broker, expectedTimeFrame.timeFrame, candles)
 
-            self.lockActive = False  # Lock wieder deaktivieren nach der Ausführung
+            setLockState(False)
+
 
     def dailyArchive(self) -> None:
         self._AssetManager.dailyDataArchive()
-        self._TradeManager.archiveClosedTrades()
-
-    def dailyClearer(self) -> None:
-        self._TradeManager.clearOpenTrades()
-
-    def RecentRetriever(self) -> None:
-        self._AssetManager.recentDataRetriever()
-        self._TradeManager.findOpenTrades()
+        self._TradeManager.archiveTrades()

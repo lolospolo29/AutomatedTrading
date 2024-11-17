@@ -49,6 +49,11 @@ class Asset:
             if self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, candleSeries):
                 return candleSeries.toList()
         return []
+    def returnAllCandleSeries(self):
+        candleSeries = []
+        for candleSerie in self.CandlesSeries:
+            candleSeries.append(candleSerie)
+        return candleSeries
 
     def returnBrokers(self,strategy: str) -> list:
         brokers = []

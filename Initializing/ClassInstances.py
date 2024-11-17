@@ -77,6 +77,7 @@ signalController = SignalControler(tradingService)
 
 configManager.runStartingSetup()
 
+
 def monitorFolder(handler, folderPath):
     observer = Observer()
     observer.schedule(handler, path=folderPath, recursive=False)
@@ -98,6 +99,8 @@ def job(tradingService):
         # Wenn es 00:00 New York-Zeit ist
         if now.strftime("%H:%M") == "00:00":
             tradingService.executeDailyTasks()
+
+#tradingService.executeDailyTasks()
 
 # Use partial to pass tradingService as an argument
 thread = Thread(target=partial(job, tradingService))
