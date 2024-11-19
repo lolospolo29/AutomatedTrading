@@ -9,8 +9,6 @@ from watchdog.observers import Observer
 from Controller.SignalController import SignalControler
 from Models.Pattern.Factory.BrokerFactory import BrokerFactory
 from Models.Pattern.Factory.StrategyFactory import StrategyFactory
-from Models.Pattern.Mediator.ConfrimationMediator import ConfirmationMediator
-from Models.Pattern.Mediator.PDMediator import PDMediator
 from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.DB.mongoDBData import mongoDBData
 from Services.DB.mongoDBTrades import mongoDBTrades
@@ -20,9 +18,12 @@ from Services.Helper.FileHandler import NewFileHandler
 from Services.Helper.Mapper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
 from Services.Manager.AssetManager import AssetManager
-from Services.Manager.BrokerManager import BrokerManager
-from Services.Manager.RiskManager import RiskManager
+from Services.Manager.StrategyHandler.LevelHandler import LevelHandler
+from Services.Manager.StrategyHandler.PDArrayHandler import PDArrayHandler
+from Services.Manager.StrategyHandler.StructureHandler import StructureHandler
 from Services.Manager.StrategyManager import StrategyManager
+from Services.Manager.TradeHandler.BrokerManager import BrokerManager
+from Services.Manager.TradeHandler.RiskManager import RiskManager
 from Services.Manager.TradeManager import TradeManager
 from Services.TradingService import TradingService
 
@@ -46,15 +47,18 @@ brokerFactory = BrokerFactory()
 
 strategyFactory = StrategyFactory()
 
-# Mediator
+# Handler
 
-pdMediator = PDMediator()
-confirmationMediator = ConfirmationMediator()
+pdArrayHandler = PDArrayHandler()
+
+levelHandler = LevelHandler()
+
+structureHandler = StructureHandler()
 
 # Manager / Services
 assetManager = AssetManager(dbService)
 
-strategyManager = StrategyManager(assetManager)
+strategyManager = StrategyManager(assetManager, pdArrayHandler,levelHandler,structureHandler)
 
 riskManager = RiskManager(2, 1)
 

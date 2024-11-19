@@ -1,8 +1,8 @@
 from Models.Main.Trade import Trade
 from Services.DBService import DBService
-from Services.Manager.BrokerManager import BrokerManager
-from Services.Manager.RiskManager import RiskManager
 from Services.Manager.StrategyManager import StrategyManager
+from Services.Manager.TradeHandler.BrokerManager import BrokerManager
+from Services.Manager.TradeHandler.RiskManager import RiskManager
 
 
 class TradeManager:

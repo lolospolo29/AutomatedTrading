@@ -28,12 +28,14 @@ class NewFileHandler(FileSystemEventHandler):
 
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
                 print(f"New file detected: {event.src_path}")
-                candles = self.parseCandleData(event.src_path)
-                for candle in candles:
+                candlesCSV = self.parseCandleData(event.src_path)
+                for candle in candlesCSV:
                     asset, broker, timeFrame = self._AssetManager.addCandle(candle)
-                    #candles: list = self._AssetManager.returnCandles(asset, broker, timeFrame)
-                    #relations: list = self._AssetManager.returnRelations(asset, broker)
-                    #self._StrategyManager.analyzeStrategy(candles, relations,timeFrame)
+                    candles: list = self._AssetManager.returnCandles(asset, broker, timeFrame)
+                    relations: list = self._AssetManager.returnRelations(asset, broker)
+                    for relation in relations:
+                        self._StrategyManager.analyzeStrategy(candles, relation,timeFrame)
+                        self._StrategyManager.getEntry(candles, relation, timeFrame)
 
                 self.moveToArchive(event.src_path)
                 self.archive()
@@ -67,7 +69,8 @@ class NewFileHandler(FileSystemEventHandler):
 
         return candles
 
-    def archive(self):
+    @staticmethod
+    def archive():
 
         # Pfade definieren
         observed_folder = r"C:\AutomatedTrading\ObservedFolder\archive"

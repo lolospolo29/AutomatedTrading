@@ -12,11 +12,11 @@ class Strategy(IStrategy):
         return self.dataDuration
     def getExit(self):
         pass
-    def getEntry(self):
+    def getEntry(self, candles: list, timeFrame: int, pd: list, level:list, structure: list):
         pass
     def isInTime(self):
         pass
     def analyzeSMT(self):
         pass
-    def analyzeData(self, candles: list):
+    def analyzeData(self, candles: list, timeFrame: int) -> list:
         pass

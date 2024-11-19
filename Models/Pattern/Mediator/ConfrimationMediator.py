@@ -1,9 +1,9 @@
 from typing import Any
 
-from Models.StrategyAnalyse.Confirmation.BOS import BOS
-from Models.StrategyAnalyse.Confirmation.CISD import CISD
-from Models.StrategyAnalyse.Confirmation.Choch import Choch
-from Models.StrategyAnalyse.Confirmation.SMT import SMT
+from Models.StrategyAnalyse.Structures.BOS import BOS
+from Models.StrategyAnalyse.Structures.CISD import CISD
+from Models.StrategyAnalyse.Structures.Choch import Choch
+from Models.StrategyAnalyse.Structures.SMT import SMT
 
 
 class ConfirmationMediator:

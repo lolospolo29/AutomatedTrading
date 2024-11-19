@@ -14,7 +14,7 @@ document = {
         "tradingViewData": {
             "ticker": "BTC",
             "Brokers": "Bybit",
-            "StrategyAnalyse": "FVG",
+            "Analyse": "FVG",
             "close": 175.30,
             "open": 172.40,
             "high": 176.00,

@@ -29,7 +29,8 @@ class TradingService:
 
         relations: list = self._AssetManager.returnRelations(asset, broker)
 
-        self._StrategyManager.analyzeStrategy(candles, relations, timeFrame)
+        for relation in relations:
+            self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)
 
 
     def executeDailyTasks(self) -> None:
@@ -48,7 +49,7 @@ class TradingService:
 
                 for relation in relations:
                     expectedTimeFrames: list = self._StrategyManager.returnExpectedTimeFrame(relation.strategy)
-                    dataDuration: int = self._StrategyManager.returnDataDuration(relation.strategy)
+                    dataDuration: int = self._StrategyManager.returnDuration(relation.strategy)
                     for expectedTimeFrame in expectedTimeFrames:
                         candles: list = self._AssetManager.recentDataRetriever(relation.asset,
                                                                                relation.broker,expectedTimeFrame.timeFrame
@@ -56,7 +57,6 @@ class TradingService:
                         self.analyzeStrategy(asset, relation.broker, expectedTimeFrame.timeFrame, candles)
 
             setLockState(False)
-
 
     def dailyArchive(self) -> None:
         self._AssetManager.dailyDataArchive()

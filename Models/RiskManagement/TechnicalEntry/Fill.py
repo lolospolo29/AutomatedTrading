@@ -3,4 +3,4 @@ from Interfaces.RiskManagement.ITechnicalEntry import ITechnicalEntry
 
 class FillEntry(ITechnicalEntry):
     def getEntry(self, candle):
-        pass
+            return candle.open

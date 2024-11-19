@@ -8,8 +8,8 @@ from Models.Pattern.Factory.StrategyFactory import StrategyFactory
 from Monitoring.TimeWrapper import logTime
 from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.Manager.AssetManager import AssetManager
-from Services.Manager.BrokerManager import BrokerManager
 from Services.Manager.StrategyManager import StrategyManager
+from Services.Manager.TradeHandler.BrokerManager import BrokerManager
 
 
 class ConfigManager:
