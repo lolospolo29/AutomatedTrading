@@ -35,6 +35,10 @@ class NewFileHandler(FileSystemEventHandler):
                     relations: list = self._AssetManager.returnRelations(asset, broker)
                     for relation in relations:
                         self._StrategyManager.analyzeStrategy(candles, relation,timeFrame)
+
+                        _ids = [candle.id for candle in candles]
+                        self._StrategyManager.updateFrameWorkHandler(_ids, relation, timeFrame)
+
                         self._StrategyManager.getEntry(candles, relation, timeFrame)
 
                 self.moveToArchive(event.src_path)

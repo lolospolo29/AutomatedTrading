@@ -1,5 +1,3 @@
-from typing import Any
-
 from Interfaces.Strategy.IConfirmation import IConfirmation
 from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Structure import Structure
@@ -35,18 +33,19 @@ class Choch(IConfirmation):
                 return False
         return True
 
-    def returnConfirmation(self, candles: list[Candle]) -> Any:
+    def returnConfirmation(self, candles: list[Candle]) -> list:
         """
         Identify Change of Character (ChoCH) from provided data.
         _param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
         :return: 'Choch_Bullish', 'Choch_Bearish' or None.
         """
         if len(candles) < self.lookback:
-            return False
+            return []
         highs = []
         lows = []
         closes = []
         ids = []
+        structures = []
 
         for candle in candles:
             highs.append(candle.high)
@@ -71,10 +70,15 @@ class Choch(IConfirmation):
             if upperFractal and closes[i] > upperFractal['value'] and not upperFractal['crossed']:
                 upperFractal['crossed'] = True
                 os = 1  # Set structure to bullish
-                return Structure(name=self.name, direction="Bullish", id=ids[i])
+
+                structure =  Structure(name=self.name, direction="Bullish", id=ids[i])
+                structures.append(structure)
 
             # Check crossover below the bearish fractal (ChoCH/BOS Bearish)
             if lowerFractal and closes[i] < lowerFractal['value'] and not lowerFractal['crossed']:
                 lowerFractal['crossed'] = True
                 os = -1  # Set structure to bearish
-                return Structure(name=self.name, direction="Bearish", id=ids[i])
+                structure =  Structure(name=self.name, direction="Bearish", id=ids[i])
+                structures.append(structure)
+
+        return structures

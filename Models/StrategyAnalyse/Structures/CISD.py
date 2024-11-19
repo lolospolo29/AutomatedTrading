@@ -8,13 +8,14 @@ class CISD(IConfirmation):
         self.lookback: int = lookback
         self.name = "CISD"
 
-    def returnConfirmation(self, candles: list[Candle]):
+    def returnConfirmation(self, candles: list[Candle]) -> list:
         if len(candles) < self.lookback:
-            return False
+            return []
 
         rowCandles = 0
         direction = None
         tracked_structures = []  # List of structures to track their levels
+        currentStructure = []
         last_traded_structure = None  # Store the last structure that was traded
 
         # Extract candle data
@@ -59,11 +60,15 @@ class CISD(IConfirmation):
             for struct in tracked_structures:
                 if struct["type"] == "Bearish" and close[i] > struct["level"]:
                     last_traded_structure = Structure(self.name, "Bullish", ids[i])
+                    currentStructure.clear()
+                    currentStructure.append(last_traded_structure)
                     tracked_structures.remove(struct)  # Remove structure after it is traded through
                 elif struct["type"] == "Bullish" and close[i] < struct["level"]:
                     last_traded_structure = Structure(self.name, "Bearish", ids[i])
+                    currentStructure.clear()
+                    currentStructure.append(last_traded_structure)
                     tracked_structures.remove(struct)  # Remove structure after it is traded through
 
         # Return the last traded structure
-        return last_traded_structure
+        return currentStructure
 
