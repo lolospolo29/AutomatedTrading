@@ -16,11 +16,11 @@ class FVGSession(Strategy):
 
         self._TimeWindow = LondonOpen()
 
+        self.expectedTimeFrames = []
+
         timeFrame = ExpectedTimeFrame(1,90)
         timeFrame2 = ExpectedTimeFrame(5,90)
         timeFrame3 = ExpectedTimeFrame(15,90)
-
-        self.expectedTimeFrames = []
 
         self.expectedTimeFrames.append(timeFrame)
         self.expectedTimeFrames.append(timeFrame2)
@@ -28,7 +28,7 @@ class FVGSession(Strategy):
 
     def returnExpectedTimeFrame(self) -> list:
         return self.expectedTimeFrames
-    # fix double detection by ids
+
     def analyzeData(self, candles: list, timeFrame: int) -> list:
         frameWorks = []
         if len(candles) > 10:
@@ -39,10 +39,10 @@ class FVGSession(Strategy):
                 swings = self._PDMediator.calculatePDArray("Swings", candles)
 
                 if len(bos) > 0 or len(ote) > 0 or len(fvg) > 0 or len(swings) > 0:
-                    frameWorks.append(bos)
-                    frameWorks.append(ote)
-                    frameWorks.append(fvg)
-                    frameWorks.append(swings)
+                    frameWorks.extend(bos)
+                    frameWorks.extend(ote)
+                    frameWorks.extend(fvg)
+                    frameWorks.extend(swings)
 
             if timeFrame == 1:
                 choch = self._ConfirmationMediator.calculateConfirmation("CHOCH", candles)
@@ -50,9 +50,9 @@ class FVGSession(Strategy):
                 fvg = self._PDMediator.calculatePDArray("FVG", candles)
 
                 if len(choch) > 0 or len(cisd) > 0 or len(fvg) > 0:
-                    frameWorks.append(choch)
-                    frameWorks.append(cisd)
-                    frameWorks.append(fvg)
+                    frameWorks.extend(choch)
+                    frameWorks.extend(cisd)
+                    frameWorks.extend(fvg)
 
         return frameWorks
 
@@ -63,7 +63,7 @@ class FVGSession(Strategy):
 
     def getEntry(self, candles: list, timeFrame: int, pd: list, level:list, structure: list):
         if self.isInTime():
-            a = 1
+            pass
 
     def getExit(self):
         pass

@@ -1,0 +1,4440 @@
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06627,
+    "high": 1.06629,
+    "low": 1.06624,
+    "close": 1.06628,
+    "IsoTime": "2024-11-11T23:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-12T00:00:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06616,
+    "high": 1.06628,
+    "low": 1.06615,
+    "close": 1.06628,
+    "IsoTime": "2024-11-11T23:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:59:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06615,
+    "high": 1.06619,
+    "low": 1.06613,
+    "close": 1.06615,
+    "IsoTime": "2024-11-11T23:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:58:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06612,
+    "high": 1.06614,
+    "low": 1.06608,
+    "close": 1.06614,
+    "IsoTime": "2024-11-11T23:56:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:57:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06613,
+    "high": 1.06621,
+    "low": 1.06609,
+    "close": 1.06611,
+    "IsoTime": "2024-11-11T23:55:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:56:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06605,
+    "high": 1.06615,
+    "low": 1.06605,
+    "close": 1.06614,
+    "IsoTime": "2024-11-11T23:54:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:55:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06599,
+    "high": 1.06607,
+    "low": 1.06598,
+    "close": 1.06606,
+    "IsoTime": "2024-11-11T23:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:54:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.066,
+    "high": 1.066,
+    "low": 1.06591,
+    "close": 1.06598,
+    "IsoTime": "2024-11-11T23:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:53:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06602,
+    "high": 1.06603,
+    "low": 1.066,
+    "close": 1.06601,
+    "IsoTime": "2024-11-11T23:51:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:52:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06598,
+    "high": 1.06607,
+    "low": 1.06598,
+    "close": 1.06604,
+    "IsoTime": "2024-11-11T23:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:51:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06602,
+    "high": 1.06605,
+    "low": 1.066,
+    "close": 1.06601,
+    "IsoTime": "2024-11-11T23:49:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06584,
+    "high": 1.06604,
+    "low": 1.06583,
+    "close": 1.06603,
+    "IsoTime": "2024-11-11T23:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:49:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06583,
+    "high": 1.06587,
+    "low": 1.06583,
+    "close": 1.06585,
+    "IsoTime": "2024-11-11T23:47:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:48:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06591,
+    "high": 1.06591,
+    "low": 1.06584,
+    "close": 1.06584,
+    "IsoTime": "2024-11-11T23:46:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:47:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06584,
+    "high": 1.06593,
+    "low": 1.06583,
+    "close": 1.06592,
+    "IsoTime": "2024-11-11T23:45:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:46:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06574,
+    "high": 1.06584,
+    "low": 1.06574,
+    "close": 1.06583,
+    "IsoTime": "2024-11-11T23:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:45:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06573,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06575,
+    "IsoTime": "2024-11-11T23:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:44:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06577,
+    "low": 1.06569,
+    "close": 1.06574,
+    "IsoTime": "2024-11-11T23:42:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:43:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T23:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:42:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:41:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:40:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06573,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:39:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06573,
+    "low": 1.06569,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:38:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06573,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T23:36:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:37:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T23:35:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:36:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06571,
+    "low": 1.06567,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:34:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:35:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.0657,
+    "low": 1.06566,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T23:33:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:34:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06574,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:32:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:33:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06574,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06574,
+    "IsoTime": "2024-11-11T23:31:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:32:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06575,
+    "low": 1.0657,
+    "close": 1.06575,
+    "IsoTime": "2024-11-11T23:30:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:31:16Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:29:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:30:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06571,
+    "low": 1.06567,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:28:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:29:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06567,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T23:27:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:28:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06573,
+    "low": 1.06568,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T23:26:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:27:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06574,
+    "low": 1.0657,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T23:25:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:26:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06573,
+    "low": 1.06571,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T23:24:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:25:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06575,
+    "high": 1.06575,
+    "low": 1.06573,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T23:23:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:24:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06574,
+    "IsoTime": "2024-11-11T23:22:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:23:34Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:20:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:22:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.0657,
+    "low": 1.06567,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T23:19:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:20:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06563,
+    "high": 1.0657,
+    "low": 1.06563,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T23:18:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:19:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06563,
+    "low": 1.06557,
+    "close": 1.06562,
+    "IsoTime": "2024-11-11T23:17:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:18:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06559,
+    "low": 1.06557,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T23:16:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:17:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.0656,
+    "low": 1.06558,
+    "close": 1.06559,
+    "IsoTime": "2024-11-11T23:15:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:16:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.0656,
+    "low": 1.06555,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T23:14:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:15:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06562,
+    "high": 1.06562,
+    "low": 1.06553,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T23:13:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:14:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06564,
+    "low": 1.06559,
+    "close": 1.06563,
+    "IsoTime": "2024-11-11T23:12:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:13:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T23:11:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:12:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.0656,
+    "low": 1.06558,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T23:10:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:11:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06561,
+    "low": 1.06559,
+    "close": 1.06559,
+    "IsoTime": "2024-11-11T23:09:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:10:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06561,
+    "low": 1.06559,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T23:08:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:09:41Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06563,
+    "low": 1.06559,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T23:07:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:08:28Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06566,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T23:06:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:07:17Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0655,
+    "high": 1.06566,
+    "low": 1.0655,
+    "close": 1.06563,
+    "IsoTime": "2024-11-11T23:05:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:06:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06547,
+    "high": 1.06548,
+    "low": 1.06545,
+    "close": 1.06547,
+    "IsoTime": "2024-11-11T23:04:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:05:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06544,
+    "high": 1.06548,
+    "low": 1.06544,
+    "close": 1.06545,
+    "IsoTime": "2024-11-11T23:03:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:04:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06541,
+    "high": 1.06543,
+    "low": 1.06539,
+    "close": 1.06543,
+    "IsoTime": "2024-11-11T23:02:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:03:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06554,
+    "high": 1.06554,
+    "low": 1.06538,
+    "close": 1.0654,
+    "IsoTime": "2024-11-11T23:01:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:02:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06551,
+    "high": 1.06567,
+    "low": 1.06547,
+    "close": 1.06553,
+    "IsoTime": "2024-11-11T23:00:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:01:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.06555,
+    "low": 1.06554,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T22:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:00:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06564,
+    "low": 1.06552,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T22:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:59:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06561,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T22:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:58:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06565,
+    "high": 1.06565,
+    "low": 1.06565,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T22:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:55:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06564,
+    "low": 1.06564,
+    "close": 1.06564,
+    "IsoTime": "2024-11-11T22:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:53:48Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06565,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T22:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:52:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06565,
+    "low": 1.06561,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T22:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06572,
+    "low": 1.06566,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T22:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:46:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06571,
+    "low": 1.06554,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T22:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:44:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.06556,
+    "low": 1.06555,
+    "close": 1.06556,
+    "IsoTime": "2024-11-11T22:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:43:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06551,
+    "high": 1.06556,
+    "low": 1.06551,
+    "close": 1.06556,
+    "IsoTime": "2024-11-11T22:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:41:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0655,
+    "high": 1.06553,
+    "low": 1.06544,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T22:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:40:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06554,
+    "high": 1.06559,
+    "low": 1.06549,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T22:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:39:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06555,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T22:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:38:16Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06556,
+    "low": 1.06552,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T22:36:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:37:18Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06562,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T22:35:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:36:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T22:34:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:35:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.0656,
+    "low": 1.06557,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T22:33:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:34:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06561,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T22:31:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:33:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T22:30:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:31:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06552,
+    "high": 1.06558,
+    "low": 1.06552,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T22:29:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:30:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06553,
+    "high": 1.06557,
+    "low": 1.06553,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T22:28:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:29:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06551,
+    "high": 1.06552,
+    "low": 1.0655,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T22:27:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:28:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06549,
+    "high": 1.06553,
+    "low": 1.06549,
+    "close": 1.0655,
+    "IsoTime": "2024-11-11T22:26:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:27:30Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06539,
+    "high": 1.06548,
+    "low": 1.06539,
+    "close": 1.06548,
+    "IsoTime": "2024-11-11T22:25:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:26:15Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06528,
+    "high": 1.06533,
+    "low": 1.06528,
+    "close": 1.06533,
+    "IsoTime": "2024-11-11T22:24:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:25:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06529,
+    "high": 1.06529,
+    "low": 1.06529,
+    "close": 1.06529,
+    "IsoTime": "2024-11-11T22:23:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:24:46Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06523,
+    "high": 1.06523,
+    "low": 1.06523,
+    "close": 1.06523,
+    "IsoTime": "2024-11-11T22:22:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:23:24Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06522,
+    "high": 1.06523,
+    "low": 1.06519,
+    "close": 1.06522,
+    "IsoTime": "2024-11-11T22:21:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:22:57Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06512,
+    "high": 1.06522,
+    "low": 1.06512,
+    "close": 1.06521,
+    "IsoTime": "2024-11-11T22:20:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:21:54Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06517,
+    "low": 1.06511,
+    "close": 1.06511,
+    "IsoTime": "2024-11-11T22:19:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:20:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0652,
+    "high": 1.0652,
+    "low": 1.06512,
+    "close": 1.06512,
+    "IsoTime": "2024-11-11T22:18:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:19:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06519,
+    "low": 1.0651,
+    "close": 1.06517,
+    "IsoTime": "2024-11-11T22:17:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:18:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06517,
+    "low": 1.0651,
+    "close": 1.06516,
+    "IsoTime": "2024-11-11T22:16:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:17:52Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06516,
+    "high": 1.06516,
+    "low": 1.06516,
+    "close": 1.06516,
+    "IsoTime": "2024-11-11T22:15:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:16:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06517,
+    "low": 1.06513,
+    "close": 1.06517,
+    "IsoTime": "2024-11-11T22:13:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:15:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06515,
+    "high": 1.06516,
+    "low": 1.06508,
+    "close": 1.06514,
+    "IsoTime": "2024-11-11T22:12:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:13:13Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06509,
+    "high": 1.06516,
+    "low": 1.06506,
+    "close": 1.06507,
+    "IsoTime": "2024-11-11T22:11:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:12:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0651,
+    "high": 1.06511,
+    "low": 1.0651,
+    "close": 1.0651,
+    "IsoTime": "2024-11-11T22:10:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:11:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06508,
+    "high": 1.06508,
+    "low": 1.06508,
+    "close": 1.06508,
+    "IsoTime": "2024-11-11T22:09:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:10:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06508,
+    "high": 1.06508,
+    "low": 1.06502,
+    "close": 1.06502,
+    "IsoTime": "2024-11-11T22:08:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:09:54Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06489,
+    "high": 1.06503,
+    "low": 1.06489,
+    "close": 1.06503,
+    "IsoTime": "2024-11-11T22:07:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:08:25Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06488,
+    "high": 1.06511,
+    "low": 1.06451,
+    "close": 1.06488,
+    "IsoTime": "2024-11-11T22:06:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:07:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06513,
+    "high": 1.06517,
+    "low": 1.06495,
+    "close": 1.06495,
+    "IsoTime": "2024-11-11T22:05:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:06:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06553,
+    "high": 1.06555,
+    "low": 1.06548,
+    "close": 1.06553,
+    "IsoTime": "2024-11-11T21:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:01:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06556,
+    "low": 1.06548,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T21:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:59:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.0656,
+    "low": 1.0655,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T21:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:58:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.0656,
+    "low": 1.06556,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:56:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:57:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:55:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:56:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.0656,
+    "low": 1.06555,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:54:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:55:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.0656,
+    "low": 1.06554,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T21:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:54:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06564,
+    "low": 1.0656,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:53:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06562,
+    "close": 1.06563,
+    "IsoTime": "2024-11-11T21:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:52:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06565,
+    "low": 1.0656,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:49:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06563,
+    "high": 1.06565,
+    "low": 1.06563,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:49:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06562,
+    "low": 1.06561,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T21:47:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:48:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06562,
+    "low": 1.06559,
+    "close": 1.06562,
+    "IsoTime": "2024-11-11T21:46:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:47:47Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06556,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:45:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:46:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:45:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:44:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:42:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:43:56Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06561,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:42:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06568,
+    "low": 1.06562,
+    "close": 1.06562,
+    "IsoTime": "2024-11-11T21:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:41:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06569,
+    "low": 1.06568,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:40:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06567,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:39:17Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T21:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:38:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06567,
+    "low": 1.06566,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:36:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:37:35Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06565,
+    "close": 1.06566,
+    "IsoTime": "2024-11-11T21:35:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:36:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06569,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T21:34:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:35:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:33:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:34:34Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:32:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:33:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06568,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:31:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:32:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06571,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:30:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:31:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06576,
+    "low": 1.06572,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T21:29:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:30:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06572,
+    "low": 1.06571,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:28:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:29:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:27:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:28:19Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:26:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:27:15Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06574,
+    "high": 1.06574,
+    "low": 1.0657,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T21:25:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:26:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06573,
+    "low": 1.06568,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T21:24:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:25:24Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06569,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:23:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:24:13Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06568,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:22:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:24:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:21:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:22:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06568,
+    "low": 1.06566,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:20:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:21:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06569,
+    "low": 1.06566,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:19:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:20:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06568,
+    "low": 1.06564,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:18:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:19:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:17:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:18:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06568,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:16:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:17:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.06566,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:15:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:16:43Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06572,
+    "low": 1.06568,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:14:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:15:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06565,
+    "high": 1.06568,
+    "low": 1.06565,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:13:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:14:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06567,
+    "low": 1.06556,
+    "close": 1.06566,
+    "IsoTime": "2024-11-11T21:12:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:13:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06556,
+    "low": 1.06554,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T21:11:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:12:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06561,
+    "low": 1.06555,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T21:10:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:11:20Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06564,
+    "low": 1.0656,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T21:09:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:10:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.0656,
+    "low": 1.06557,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:08:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:09:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06563,
+    "high": 1.06563,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:07:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:08:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06563,
+    "close": 1.06564,
+    "IsoTime": "2024-11-11T21:06:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:07:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06566,
+    "low": 1.06564,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:05:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:06:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06565,
+    "low": 1.06561,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:04:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:05:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06562,
+    "high": 1.06562,
+    "low": 1.06558,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:03:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:04:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06562,
+    "low": 1.06558,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T21:02:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:03:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:01:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:02:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06553,
+    "high": 1.0656,
+    "low": 1.06552,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:00:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:01:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06557,
+    "low": 1.06553,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T20:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:00:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06561,
+    "low": 1.06556,
+    "close": 1.06559,
+    "IsoTime": "2024-11-11T20:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:59:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06535,
+    "high": 1.06556,
+    "low": 1.06535,
+    "close": 1.06556,
+    "IsoTime": "2024-11-11T20:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:58:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06532,
+    "high": 1.06536,
+    "low": 1.0653,
+    "close": 1.06536,
+    "IsoTime": "2024-11-11T20:56:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:57:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06538,
+    "high": 1.06538,
+    "low": 1.06534,
+    "close": 1.06534,
+    "IsoTime": "2024-11-11T20:55:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:56:20Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06537,
+    "high": 1.06545,
+    "low": 1.06537,
+    "close": 1.06539,
+    "IsoTime": "2024-11-11T20:54:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:55:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06531,
+    "high": 1.06538,
+    "low": 1.06531,
+    "close": 1.06538,
+    "IsoTime": "2024-11-11T20:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:54:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0653,
+    "high": 1.06531,
+    "low": 1.0653,
+    "close": 1.0653,
+    "IsoTime": "2024-11-11T20:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:53:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06537,
+    "high": 1.06538,
+    "low": 1.0653,
+    "close": 1.06531,
+    "IsoTime": "2024-11-11T20:51:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:52:20Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06525,
+    "high": 1.06536,
+    "low": 1.06525,
+    "close": 1.06535,
+    "IsoTime": "2024-11-11T20:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:51:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06524,
+    "high": 1.06525,
+    "low": 1.0652,
+    "close": 1.06524,
+    "IsoTime": "2024-11-11T20:49:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06525,
+    "high": 1.0653,
+    "low": 1.06525,
+    "close": 1.06525,
+    "IsoTime": "2024-11-11T20:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:49:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06519,
+    "high": 1.06527,
+    "low": 1.06519,
+    "close": 1.06524,
+    "IsoTime": "2024-11-11T20:47:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:48:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.0652,
+    "low": 1.06516,
+    "close": 1.0652,
+    "IsoTime": "2024-11-11T20:46:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:47:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0652,
+    "high": 1.06523,
+    "low": 1.06515,
+    "close": 1.06516,
+    "IsoTime": "2024-11-11T20:45:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:46:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06525,
+    "high": 1.06525,
+    "low": 1.06519,
+    "close": 1.06521,
+    "IsoTime": "2024-11-11T20:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:45:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06529,
+    "high": 1.0653,
+    "low": 1.06524,
+    "close": 1.06524,
+    "IsoTime": "2024-11-11T20:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:44:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06536,
+    "high": 1.06536,
+    "low": 1.06528,
+    "close": 1.06528,
+    "IsoTime": "2024-11-11T20:42:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:43:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0654,
+    "high": 1.06541,
+    "low": 1.06527,
+    "close": 1.06535,
+    "IsoTime": "2024-11-11T20:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:42:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06539,
+    "high": 1.0654,
+    "low": 1.06532,
+    "close": 1.06539,
+    "IsoTime": "2024-11-11T20:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:41:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06539,
+    "high": 1.06539,
+    "low": 1.06532,
+    "close": 1.06538,
+    "IsoTime": "2024-11-11T20:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:40:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06536,
+    "high": 1.0654,
+    "low": 1.06535,
+    "close": 1.06538,
+    "IsoTime": "2024-11-11T20:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:39:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06538,
+    "high": 1.06539,
+    "low": 1.06535,
+    "close": 1.06535,
+    "IsoTime": "2024-11-11T20:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:38:13Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06627,
+    "high": 1.06629,
+    "low": 1.06624,
+    "close": 1.06628,
+    "IsoTime": "2024-11-11T23:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-12T00:00:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06616,
+    "high": 1.06628,
+    "low": 1.06615,
+    "close": 1.06628,
+    "IsoTime": "2024-11-11T23:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:59:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06615,
+    "high": 1.06619,
+    "low": 1.06613,
+    "close": 1.06615,
+    "IsoTime": "2024-11-11T23:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:58:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06612,
+    "high": 1.06614,
+    "low": 1.06608,
+    "close": 1.06614,
+    "IsoTime": "2024-11-11T23:56:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:57:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06613,
+    "high": 1.06621,
+    "low": 1.06609,
+    "close": 1.06611,
+    "IsoTime": "2024-11-11T23:55:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:56:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06605,
+    "high": 1.06615,
+    "low": 1.06605,
+    "close": 1.06614,
+    "IsoTime": "2024-11-11T23:54:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:55:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06599,
+    "high": 1.06607,
+    "low": 1.06598,
+    "close": 1.06606,
+    "IsoTime": "2024-11-11T23:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:54:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.066,
+    "high": 1.066,
+    "low": 1.06591,
+    "close": 1.06598,
+    "IsoTime": "2024-11-11T23:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:53:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06602,
+    "high": 1.06603,
+    "low": 1.066,
+    "close": 1.06601,
+    "IsoTime": "2024-11-11T23:51:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:52:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06598,
+    "high": 1.06607,
+    "low": 1.06598,
+    "close": 1.06604,
+    "IsoTime": "2024-11-11T23:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:51:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06602,
+    "high": 1.06605,
+    "low": 1.066,
+    "close": 1.06601,
+    "IsoTime": "2024-11-11T23:49:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06584,
+    "high": 1.06604,
+    "low": 1.06583,
+    "close": 1.06603,
+    "IsoTime": "2024-11-11T23:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:49:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06583,
+    "high": 1.06587,
+    "low": 1.06583,
+    "close": 1.06585,
+    "IsoTime": "2024-11-11T23:47:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:48:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06591,
+    "high": 1.06591,
+    "low": 1.06584,
+    "close": 1.06584,
+    "IsoTime": "2024-11-11T23:46:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:47:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06584,
+    "high": 1.06593,
+    "low": 1.06583,
+    "close": 1.06592,
+    "IsoTime": "2024-11-11T23:45:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:46:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06574,
+    "high": 1.06584,
+    "low": 1.06574,
+    "close": 1.06583,
+    "IsoTime": "2024-11-11T23:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:45:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06573,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06575,
+    "IsoTime": "2024-11-11T23:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:44:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06577,
+    "low": 1.06569,
+    "close": 1.06574,
+    "IsoTime": "2024-11-11T23:42:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:43:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T23:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:42:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:41:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:40:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06573,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:39:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06573,
+    "low": 1.06569,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:38:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06573,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T23:36:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:37:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T23:35:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:36:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06571,
+    "low": 1.06567,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:34:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:35:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.0657,
+    "low": 1.06566,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T23:33:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:34:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06574,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:32:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:33:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06574,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06574,
+    "IsoTime": "2024-11-11T23:31:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:32:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06575,
+    "low": 1.0657,
+    "close": 1.06575,
+    "IsoTime": "2024-11-11T23:30:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:31:16Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:29:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:30:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06571,
+    "low": 1.06567,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:28:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:29:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06567,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T23:27:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:28:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06573,
+    "low": 1.06568,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T23:26:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:27:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06574,
+    "low": 1.0657,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T23:25:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:26:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06573,
+    "low": 1.06571,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T23:24:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:25:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06575,
+    "high": 1.06575,
+    "low": 1.06573,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T23:23:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:24:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06575,
+    "low": 1.06571,
+    "close": 1.06574,
+    "IsoTime": "2024-11-11T23:22:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:23:34Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T23:20:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:22:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.0657,
+    "low": 1.06567,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T23:19:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:20:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06563,
+    "high": 1.0657,
+    "low": 1.06563,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T23:18:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:19:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06563,
+    "low": 1.06557,
+    "close": 1.06562,
+    "IsoTime": "2024-11-11T23:17:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:18:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06559,
+    "low": 1.06557,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T23:16:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:17:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.0656,
+    "low": 1.06558,
+    "close": 1.06559,
+    "IsoTime": "2024-11-11T23:15:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:16:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.0656,
+    "low": 1.06555,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T23:14:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:15:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06562,
+    "high": 1.06562,
+    "low": 1.06553,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T23:13:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:14:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06564,
+    "low": 1.06559,
+    "close": 1.06563,
+    "IsoTime": "2024-11-11T23:12:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:13:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T23:11:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:12:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.0656,
+    "low": 1.06558,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T23:10:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:11:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06561,
+    "low": 1.06559,
+    "close": 1.06559,
+    "IsoTime": "2024-11-11T23:09:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:10:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06561,
+    "low": 1.06559,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T23:08:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:09:41Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06563,
+    "low": 1.06559,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T23:07:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:08:28Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06566,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T23:06:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:07:17Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0655,
+    "high": 1.06566,
+    "low": 1.0655,
+    "close": 1.06563,
+    "IsoTime": "2024-11-11T23:05:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:06:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06547,
+    "high": 1.06548,
+    "low": 1.06545,
+    "close": 1.06547,
+    "IsoTime": "2024-11-11T23:04:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:05:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06544,
+    "high": 1.06548,
+    "low": 1.06544,
+    "close": 1.06545,
+    "IsoTime": "2024-11-11T23:03:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:04:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06541,
+    "high": 1.06543,
+    "low": 1.06539,
+    "close": 1.06543,
+    "IsoTime": "2024-11-11T23:02:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:03:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06554,
+    "high": 1.06554,
+    "low": 1.06538,
+    "close": 1.0654,
+    "IsoTime": "2024-11-11T23:01:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:02:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06551,
+    "high": 1.06567,
+    "low": 1.06547,
+    "close": 1.06553,
+    "IsoTime": "2024-11-11T23:00:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:01:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.06555,
+    "low": 1.06554,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T22:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T23:00:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06564,
+    "low": 1.06552,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T22:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:59:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06561,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T22:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:58:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06565,
+    "high": 1.06565,
+    "low": 1.06565,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T22:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:55:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06564,
+    "low": 1.06564,
+    "close": 1.06564,
+    "IsoTime": "2024-11-11T22:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:53:48Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06565,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T22:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:52:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06565,
+    "low": 1.06561,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T22:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06572,
+    "low": 1.06566,
+    "close": 1.06572,
+    "IsoTime": "2024-11-11T22:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:46:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06571,
+    "low": 1.06554,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T22:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:44:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.06556,
+    "low": 1.06555,
+    "close": 1.06556,
+    "IsoTime": "2024-11-11T22:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:43:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06551,
+    "high": 1.06556,
+    "low": 1.06551,
+    "close": 1.06556,
+    "IsoTime": "2024-11-11T22:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:41:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0655,
+    "high": 1.06553,
+    "low": 1.06544,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T22:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:40:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06554,
+    "high": 1.06559,
+    "low": 1.06549,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T22:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:39:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06555,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T22:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:38:16Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06556,
+    "low": 1.06552,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T22:36:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:37:18Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06562,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T22:35:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:36:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T22:34:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:35:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.0656,
+    "low": 1.06557,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T22:33:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:34:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06561,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T22:31:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:33:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T22:30:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:31:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06552,
+    "high": 1.06558,
+    "low": 1.06552,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T22:29:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:30:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06553,
+    "high": 1.06557,
+    "low": 1.06553,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T22:28:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:29:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06551,
+    "high": 1.06552,
+    "low": 1.0655,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T22:27:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:28:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06549,
+    "high": 1.06553,
+    "low": 1.06549,
+    "close": 1.0655,
+    "IsoTime": "2024-11-11T22:26:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:27:30Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06539,
+    "high": 1.06548,
+    "low": 1.06539,
+    "close": 1.06548,
+    "IsoTime": "2024-11-11T22:25:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:26:15Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06528,
+    "high": 1.06533,
+    "low": 1.06528,
+    "close": 1.06533,
+    "IsoTime": "2024-11-11T22:24:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:25:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06529,
+    "high": 1.06529,
+    "low": 1.06529,
+    "close": 1.06529,
+    "IsoTime": "2024-11-11T22:23:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:24:46Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06523,
+    "high": 1.06523,
+    "low": 1.06523,
+    "close": 1.06523,
+    "IsoTime": "2024-11-11T22:22:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:23:24Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06522,
+    "high": 1.06523,
+    "low": 1.06519,
+    "close": 1.06522,
+    "IsoTime": "2024-11-11T22:21:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:22:57Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06512,
+    "high": 1.06522,
+    "low": 1.06512,
+    "close": 1.06521,
+    "IsoTime": "2024-11-11T22:20:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:21:54Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06517,
+    "low": 1.06511,
+    "close": 1.06511,
+    "IsoTime": "2024-11-11T22:19:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:20:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0652,
+    "high": 1.0652,
+    "low": 1.06512,
+    "close": 1.06512,
+    "IsoTime": "2024-11-11T22:18:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:19:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06519,
+    "low": 1.0651,
+    "close": 1.06517,
+    "IsoTime": "2024-11-11T22:17:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:18:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06517,
+    "low": 1.0651,
+    "close": 1.06516,
+    "IsoTime": "2024-11-11T22:16:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:17:52Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06516,
+    "high": 1.06516,
+    "low": 1.06516,
+    "close": 1.06516,
+    "IsoTime": "2024-11-11T22:15:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:16:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.06517,
+    "low": 1.06513,
+    "close": 1.06517,
+    "IsoTime": "2024-11-11T22:13:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:15:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06515,
+    "high": 1.06516,
+    "low": 1.06508,
+    "close": 1.06514,
+    "IsoTime": "2024-11-11T22:12:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:13:13Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06509,
+    "high": 1.06516,
+    "low": 1.06506,
+    "close": 1.06507,
+    "IsoTime": "2024-11-11T22:11:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:12:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0651,
+    "high": 1.06511,
+    "low": 1.0651,
+    "close": 1.0651,
+    "IsoTime": "2024-11-11T22:10:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:11:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06508,
+    "high": 1.06508,
+    "low": 1.06508,
+    "close": 1.06508,
+    "IsoTime": "2024-11-11T22:09:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:10:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06508,
+    "high": 1.06508,
+    "low": 1.06502,
+    "close": 1.06502,
+    "IsoTime": "2024-11-11T22:08:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:09:54Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06489,
+    "high": 1.06503,
+    "low": 1.06489,
+    "close": 1.06503,
+    "IsoTime": "2024-11-11T22:07:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:08:25Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06488,
+    "high": 1.06511,
+    "low": 1.06451,
+    "close": 1.06488,
+    "IsoTime": "2024-11-11T22:06:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:07:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06513,
+    "high": 1.06517,
+    "low": 1.06495,
+    "close": 1.06495,
+    "IsoTime": "2024-11-11T22:05:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:06:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06553,
+    "high": 1.06555,
+    "low": 1.06548,
+    "close": 1.06553,
+    "IsoTime": "2024-11-11T21:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T22:01:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06556,
+    "low": 1.06548,
+    "close": 1.06552,
+    "IsoTime": "2024-11-11T21:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:59:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.0656,
+    "low": 1.0655,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T21:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:58:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.0656,
+    "low": 1.06556,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:56:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:57:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:55:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:56:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06555,
+    "high": 1.0656,
+    "low": 1.06555,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:54:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:55:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.0656,
+    "low": 1.06554,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T21:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:54:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06564,
+    "low": 1.0656,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:53:07Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06562,
+    "close": 1.06563,
+    "IsoTime": "2024-11-11T21:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:52:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06565,
+    "low": 1.0656,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:49:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06563,
+    "high": 1.06565,
+    "low": 1.06563,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:49:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06562,
+    "low": 1.06561,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T21:47:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:48:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06559,
+    "high": 1.06562,
+    "low": 1.06559,
+    "close": 1.06562,
+    "IsoTime": "2024-11-11T21:46:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:47:47Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06556,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:45:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:46:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:45:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:44:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06558,
+    "low": 1.06557,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:42:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:43:56Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06561,
+    "low": 1.06557,
+    "close": 1.06557,
+    "IsoTime": "2024-11-11T21:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:42:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06568,
+    "low": 1.06562,
+    "close": 1.06562,
+    "IsoTime": "2024-11-11T21:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:41:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06569,
+    "low": 1.06568,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:40:05Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06567,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:39:17Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T21:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:38:06Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06567,
+    "low": 1.06566,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:36:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:37:35Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06565,
+    "close": 1.06566,
+    "IsoTime": "2024-11-11T21:35:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:36:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06569,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T21:34:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:35:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:33:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:34:34Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:32:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:33:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06568,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:31:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:32:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06571,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:30:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:31:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06576,
+    "low": 1.06572,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T21:29:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:30:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06572,
+    "low": 1.06571,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:28:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:29:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06572,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:27:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:28:19Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06571,
+    "high": 1.06572,
+    "low": 1.0657,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:26:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:27:15Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06574,
+    "high": 1.06574,
+    "low": 1.0657,
+    "close": 1.0657,
+    "IsoTime": "2024-11-11T21:25:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:26:09Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06573,
+    "low": 1.06568,
+    "close": 1.06573,
+    "IsoTime": "2024-11-11T21:24:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:25:24Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06569,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:23:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:24:13Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06568,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:22:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:24:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.06569,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:21:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:22:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06567,
+    "high": 1.06568,
+    "low": 1.06566,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:20:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:21:23Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06569,
+    "low": 1.06566,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:19:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:20:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06568,
+    "low": 1.06564,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:18:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:19:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06569,
+    "high": 1.0657,
+    "low": 1.06568,
+    "close": 1.06569,
+    "IsoTime": "2024-11-11T21:17:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:18:08Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06568,
+    "low": 1.06567,
+    "close": 1.06568,
+    "IsoTime": "2024-11-11T21:16:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:17:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0657,
+    "high": 1.06571,
+    "low": 1.06566,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:15:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:16:43Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06568,
+    "high": 1.06572,
+    "low": 1.06568,
+    "close": 1.06571,
+    "IsoTime": "2024-11-11T21:14:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:15:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06565,
+    "high": 1.06568,
+    "low": 1.06565,
+    "close": 1.06567,
+    "IsoTime": "2024-11-11T21:13:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:14:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06567,
+    "low": 1.06556,
+    "close": 1.06566,
+    "IsoTime": "2024-11-11T21:12:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:13:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06556,
+    "high": 1.06556,
+    "low": 1.06554,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T21:11:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:12:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06561,
+    "low": 1.06555,
+    "close": 1.06555,
+    "IsoTime": "2024-11-11T21:10:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:11:20Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06564,
+    "low": 1.0656,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T21:09:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:10:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.0656,
+    "low": 1.06557,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:08:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:09:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06563,
+    "high": 1.06563,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:07:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:08:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06566,
+    "high": 1.06566,
+    "low": 1.06563,
+    "close": 1.06564,
+    "IsoTime": "2024-11-11T21:06:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:07:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06564,
+    "high": 1.06566,
+    "low": 1.06564,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:05:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:06:04Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06565,
+    "low": 1.06561,
+    "close": 1.06565,
+    "IsoTime": "2024-11-11T21:04:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:05:26Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06562,
+    "high": 1.06562,
+    "low": 1.06558,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:03:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:04:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0656,
+    "high": 1.06562,
+    "low": 1.06558,
+    "close": 1.06561,
+    "IsoTime": "2024-11-11T21:02:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:03:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06561,
+    "high": 1.06561,
+    "low": 1.06558,
+    "close": 1.06558,
+    "IsoTime": "2024-11-11T21:01:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:02:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06553,
+    "high": 1.0656,
+    "low": 1.06552,
+    "close": 1.0656,
+    "IsoTime": "2024-11-11T21:00:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:01:10Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06557,
+    "high": 1.06557,
+    "low": 1.06553,
+    "close": 1.06554,
+    "IsoTime": "2024-11-11T20:59:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T21:00:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06558,
+    "high": 1.06561,
+    "low": 1.06556,
+    "close": 1.06559,
+    "IsoTime": "2024-11-11T20:58:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:59:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06535,
+    "high": 1.06556,
+    "low": 1.06535,
+    "close": 1.06556,
+    "IsoTime": "2024-11-11T20:57:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:58:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06532,
+    "high": 1.06536,
+    "low": 1.0653,
+    "close": 1.06536,
+    "IsoTime": "2024-11-11T20:56:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:57:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06538,
+    "high": 1.06538,
+    "low": 1.06534,
+    "close": 1.06534,
+    "IsoTime": "2024-11-11T20:55:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:56:20Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06537,
+    "high": 1.06545,
+    "low": 1.06537,
+    "close": 1.06539,
+    "IsoTime": "2024-11-11T20:54:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:55:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06531,
+    "high": 1.06538,
+    "low": 1.06531,
+    "close": 1.06538,
+    "IsoTime": "2024-11-11T20:53:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:54:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0653,
+    "high": 1.06531,
+    "low": 1.0653,
+    "close": 1.0653,
+    "IsoTime": "2024-11-11T20:52:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:53:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06537,
+    "high": 1.06538,
+    "low": 1.0653,
+    "close": 1.06531,
+    "IsoTime": "2024-11-11T20:51:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:52:20Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06525,
+    "high": 1.06536,
+    "low": 1.06525,
+    "close": 1.06535,
+    "IsoTime": "2024-11-11T20:50:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:51:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06524,
+    "high": 1.06525,
+    "low": 1.0652,
+    "close": 1.06524,
+    "IsoTime": "2024-11-11T20:49:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:50:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06525,
+    "high": 1.0653,
+    "low": 1.06525,
+    "close": 1.06525,
+    "IsoTime": "2024-11-11T20:48:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:49:11Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06519,
+    "high": 1.06527,
+    "low": 1.06519,
+    "close": 1.06524,
+    "IsoTime": "2024-11-11T20:47:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:48:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06517,
+    "high": 1.0652,
+    "low": 1.06516,
+    "close": 1.0652,
+    "IsoTime": "2024-11-11T20:46:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:47:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0652,
+    "high": 1.06523,
+    "low": 1.06515,
+    "close": 1.06516,
+    "IsoTime": "2024-11-11T20:45:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:46:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06525,
+    "high": 1.06525,
+    "low": 1.06519,
+    "close": 1.06521,
+    "IsoTime": "2024-11-11T20:44:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:45:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06529,
+    "high": 1.0653,
+    "low": 1.06524,
+    "close": 1.06524,
+    "IsoTime": "2024-11-11T20:43:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:44:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06536,
+    "high": 1.06536,
+    "low": 1.06528,
+    "close": 1.06528,
+    "IsoTime": "2024-11-11T20:42:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:43:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.0654,
+    "high": 1.06541,
+    "low": 1.06527,
+    "close": 1.06535,
+    "IsoTime": "2024-11-11T20:41:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:42:00Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06539,
+    "high": 1.0654,
+    "low": 1.06532,
+    "close": 1.06539,
+    "IsoTime": "2024-11-11T20:40:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:41:02Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06539,
+    "high": 1.06539,
+    "low": 1.06532,
+    "close": 1.06538,
+    "IsoTime": "2024-11-11T20:39:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:40:01Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06536,
+    "high": 1.0654,
+    "low": 1.06535,
+    "close": 1.06538,
+    "IsoTime": "2024-11-11T20:38:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:39:03Z
+1669521823,CAPITALCOM:EURUSD, 1m,nan,{
+  "Candle": {
+    "asset": "EURUSD",
+    "broker" : "CAPITALCOM",
+    "open": 1.06538,
+    "high": 1.06539,
+    "low": 1.06535,
+    "close": 1.06535,
+    "IsoTime": "2024-11-11T20:37:00Z",
+    "timeFrame": 1
+    }
+},2024-11-11T20:38:13Z

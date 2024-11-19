@@ -29,6 +29,13 @@ class StrategyManager:
         if strategy in self.strategies:
             return self.strategies[strategy].returnDataDuration()
 
+    def updateFrameWorkHandler(self,_ids: list,relation:AssetBrokerStrategyRelation,timeFrame: int ) -> None:
+        if len(_ids) <= 0:
+            return None
+        self._PDArrayHandler.removePDArray(_ids,relation,timeFrame)
+        self._LevelHandler.removeLevel(_ids,relation,timeFrame)
+        self._StructureHandler.removeStructure(_ids,relation,timeFrame)
+
     def analyzeStrategy(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                         timeFrame: int) -> None:
             if len(candles) < 10:
@@ -46,6 +53,7 @@ class StrategyManager:
                         self._LevelHandler.addLevel(framework)
                     if framework.typ == "Structure":
                         self._StructureHandler.addStructure(framework)
+
 
     def getEntry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                         timeFrame: int):

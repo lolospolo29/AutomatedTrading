@@ -26,11 +26,11 @@ class CandleSeries:
         if len(self.candleSeries) > self.candleSeries.maxlen:
             self.candleSeries.pop()
 
-    def returnDataByIds(self, searchIds) -> list[Candle]:
-        # Collect multiple data points matching the IDs provided
-        dataPoints = []
-
-        return dataPoints
+    def returnCandleIDs(self) -> list:
+        """
+        Returns a list of all candle IDs in the series.
+        """
+        return [candle.id for candle in self.candleSeries]
 
     def toList(self) -> list[Candle]:
         """

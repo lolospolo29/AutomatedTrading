@@ -29,6 +29,7 @@ class Asset:
         for candleSeries in self.CandlesSeries:
             if not self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame,candleSeries):
                 self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
+                return
         if len(self.CandlesSeries) == 0:
             if self.isBrokerInBrokers(broker):
                 self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
@@ -42,13 +43,14 @@ class Asset:
         for candleSeries in self.CandlesSeries:
             if self.isBrokerAndTimeFrameInCandleSeries(candle.broker, candle.timeFrame,candleSeries):
                 candleSeries.addCandle(candle)
-                break
+                return
 
     def returnCandles(self, timeFrame: int,broker: str) -> list:
         for candleSeries in self.CandlesSeries:
             if self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, candleSeries):
                 return candleSeries.toList()
         return []
+
     def returnAllCandleSeries(self):
         candleSeries = []
         for candleSerie in self.CandlesSeries:

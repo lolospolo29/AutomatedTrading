@@ -6,11 +6,11 @@ class StructureHandler:
     def __init__(self):
         self.structures: list[Structure] = []
 
-    def addStructure(self, newLevel: Structure) -> None:
-        for level in self.structures:
-            if self.compareStructure(newLevel, level):
-                break
-            self.structures.append(level)
+    def addStructure(self, newStructure: Structure) -> None:
+        for structure in self.structures:
+            if self.compareStructure(newStructure, structure):
+                return
+        self.structures.append(newStructure)
 
     def returnStructure(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list:
         structures = []
@@ -19,13 +19,13 @@ class StructureHandler:
                 structures.append(structure)
         return structures
 
-    def removeStructure(self, _ids, assetBrokerStrategyRelation: AssetBrokerStrategyRelation):
+    def removeStructure(self, _ids: list, assetBrokerStrategyRelation: AssetBrokerStrategyRelation,
+                        timeFrame: int) -> None:
         for structure in self.structures:
-            if structure.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation):
-                for id in _ids:
-                    if structure.id == id:
-                        self.structures.remove(structure)
-                        continue
+            if (structure.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and
+                    structure.timeFrame == timeFrame):
+                if not structure.isIdPresent(_ids):
+                    self.structures.remove(structure)
 
     @staticmethod
     def compareStructure(structure1: Structure, structure2: Structure) -> bool:

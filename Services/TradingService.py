@@ -32,6 +32,10 @@ class TradingService:
         for relation in relations:
             self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)
 
+            _ids = [candle.id for candle in candles]
+            self._StrategyManager.updateFrameWorkHandler(_ids, relation, timeFrame)
+
+            self._StrategyManager.getEntry(candles, relation, timeFrame)
 
     def executeDailyTasks(self) -> None:
         """ Aufgaben, die täglich um 04:00 UTC (00:00 NY) ausgeführt werden """

@@ -1,5 +1,3 @@
-from numpy import sort
-
 from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from Models.StrategyAnalyse.Level import Level
 
@@ -8,11 +6,11 @@ class LevelHandler:
     def __init__(self):
         self.levels: list[Level] = []
 
-    def addLevel(self, newLevel: Level) -> None:
+    def addLevel(self, newLevel: Level) -> bool:
         for level in self.levels:
             if self.compareLevels(newLevel, level):
-                break
-            self.levels.append(level)
+                return False
+        self.levels.append(newLevel)
 
     def returnLevels(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list:
         levelList = []
@@ -21,18 +19,18 @@ class LevelHandler:
                 levelList.append(level)
         return levelList
 
-    def removeLevel(self, _ids, assetBrokerStrategyRelation: AssetBrokerStrategyRelation):
+    def removeLevel(self, _ids, assetBrokerStrategyRelation: AssetBrokerStrategyRelation, timeFrame: int) -> None:
         for level in self.levels:
-            if level.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation):
-                for id in _ids:
-                    if level.isIdPresent(id):
-                        self.levels.remove(level)
-                        continue
+            if level.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and level.timeFrame == timeFrame:
+                if not level.isIdPresent(_ids):
+                    self.levels.remove(level)
 
     @staticmethod
     def compareLevels(level1: Level, level2: Level) ->bool:
         if (level1.assetBrokerStrategyRelation.compare(level2.assetBrokerStrategyRelation) and
-                level1.name == level2.name and level1.level == level2.level and sort(level1.ids) == sort(level2.ids)
-                and level1.direction == level2.direction):
+                level1.name == level2.name and
+                level1.level == level2.level and
+                sorted(level1.ids) == sorted(level2.ids) and
+                level1.direction == level2.direction):
             return True
         return False
