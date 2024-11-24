@@ -8,11 +8,16 @@ class PDArray(FrameWork):
         super().__init__("PDArray")
         self.name: str = name
         self.direction: str = direction
-        self.Ids: list = []
+        self.Ids: set = set()  # Use a set for faster lookup
+        self.candles = []
 
     def addId(self, Id: Any) -> None:
-        if Id not in self.Ids:
-            self.Ids.append(Id)
+        # Add a single ID if not already present
+        self.Ids.add(Id)
+
+    def addCandles(self, candles) -> None:
+        # Efficiently add multiple candles
+        self.candles.extend(candles)
 
     def isIdPresent(self, ids_: list) -> bool:
         """

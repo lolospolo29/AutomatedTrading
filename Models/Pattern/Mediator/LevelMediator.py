@@ -35,11 +35,14 @@ class LevelMediator:
 
     def calculateLevels(self, levelType: str, candles: list, *args, **kwargs) -> list:
         if levelType == "OTE":
-            return self.ote.returnLevels(candles)
+            lookback = kwargs['lookback']
+            return self.ote.returnLevels(candles,lookback)
         if levelType == "PD":
-            self.pd.returnLevels(candles)
+            lookback = kwargs['lookback']
+            self.pd.returnLevels(candles,lookback)
         if levelType == "STDV":
-            self.stdv.returnLevels(candles)
+            lookback = kwargs['lookback']
+            self.stdv.returnLevels(candles,lookback)
         if levelType == "EQUALHL":
             if 'direction' in kwargs:
                 direction = kwargs['direction']

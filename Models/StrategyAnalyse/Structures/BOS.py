@@ -26,7 +26,7 @@ class BOS(IConfirmation):
             highs.append(candle.high)
             lows.append(candle.low)
             closes.append(candle.close)
-            ids.append(candle.high)
+            ids.append(candle.id)
 
         lastBullishHigh = None
         lastBullishHighId = None

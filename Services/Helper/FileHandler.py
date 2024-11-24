@@ -8,7 +8,6 @@ import pandas as pd
 from watchdog.events import FileSystemEventHandler
 
 from Initializing.GlobalStatements import setLockState, getLockState
-from Monitoring.TimeWrapper import logTime
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager
 
@@ -18,7 +17,6 @@ class NewFileHandler(FileSystemEventHandler):
         self._AssetManager: AssetManager = assetManager
         self._StrategyManager: StrategyManager = strategyManager
 
-    @logTime
     def on_created(self, event):
         # Only process the specific file name
 

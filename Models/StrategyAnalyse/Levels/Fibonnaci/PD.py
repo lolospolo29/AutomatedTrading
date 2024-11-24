@@ -8,7 +8,13 @@ class PD(ILevel):
         self.pdLevels: list[float] = [1.0, 0.5, 0]
         self.name = "PD"
 
-    def returnLevels(self, candles: list[Candle]) -> list:
+    def returnLevels(self, candles: list[Candle], lookback: int = None) -> list:
+        # Step 1: Apply lookback to limit the range of candles
+        if lookback is not None and len(candles) > lookback:
+            candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
+        if lookback is not None and len(candles) < lookback:
+            return []
+
         # Step 1: Extract high and low values from the data points
         allLevel = []
 

@@ -10,7 +10,13 @@ class Orderblock(IPDArray):
     def returnCandleRange(self, candles: list[Candle]):
         pass
 
-    def returnArrayList(self, candles: list[Candle]) -> list:
+    def returnArrayList(self, candles: list[Candle], lookback: int = None) -> list:
+        # Step 1: Apply lookback to limit the range of candles
+        if lookback is not None and len(candles) > lookback:
+            candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
+
+        if lookback is not None and len(candles) < lookback:
+            return []
 
         if len(candles) < 2:
             return []

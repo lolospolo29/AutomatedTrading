@@ -11,7 +11,6 @@ class BPR(IPDArray):
         pass
 
     def returnArrayList(self, candles: list[Candle]) -> list:
-
         if len(candles) < 6 :
             return []
 
@@ -38,8 +37,8 @@ class BPR(IPDArray):
             # Check for Bearish FVG (Sell-side FVG)
             if low1 > high3 and close2 < low1:
                 bearishFvgList.append({
-                    'high': low1,  # Top of FVG range
-                    'low': high3,  # Bottom of FVG range
+                    'high': low2,  # Top of FVG range
+                    'low': high2,  # Bottom of FVG range
                     'ids': [id1, id2, id3],
                     'index': [i, i-1,i-2]
                 })
@@ -47,8 +46,8 @@ class BPR(IPDArray):
             # Check for Bullish FVG (Buy-side FVG)
             if high1 < low3 and close2 > high1:
                 bullishFvgList.append({
-                    'high': low3,  # Top of FVG range
-                    'low': high1,  # Bottom of FVG range
+                    'high': low2,  # Top of FVG range
+                    'low': high2,  # Bottom of FVG range
                     'ids': [id1, id2, id3],
                     'index': [i, i - 1, i - 2]
                 })

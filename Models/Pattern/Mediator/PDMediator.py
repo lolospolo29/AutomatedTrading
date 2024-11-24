@@ -30,23 +30,38 @@ class PDMediator:
             self.volumeImbalance: VolumeImbalance = VolumeImbalance()
             self.initialized: bool = True  # Mark as initialized
 
-    def calculatePDArray(self, pdType: str, candles: list) -> list:
+    def calculatePDArray(self, pdType: str, candles: list, *args, **kwargs) -> list:
         if pdType == "BPR":
             return self.bpr.returnArrayList(candles)
         if pdType == "FVG":
+            if 'lookback' in kwargs:
+                lookback = kwargs['lookback']
+                return self.fvg.returnArrayList(candles,lookback)
             return self.fvg.returnArrayList(candles)
         if pdType == "BRK":
             return self.breaker.returnArrayList(candles)
         if pdType == "LV":
             return self.liquidityVoid.returnArrayList(candles)
         if pdType == "OB":
+            if 'lookback' in kwargs:
+                lookback = kwargs['lookback']
+                return self.orderBlock.returnArrayList(candles,lookback)
             return self.orderBlock.returnArrayList(candles)
         if pdType == "RB":
             return self.rejectionBlock.returnArrayList(candles)
         if pdType == "Swings":
+            if 'lookback' in kwargs:
+                lookback = kwargs['lookback']
+                return self.swings.returnArrayList(candles,lookback)
             return self.swings.returnArrayList(candles)
         if pdType == "Void":
+            if 'lookback' in kwargs:
+                lookback = kwargs['lookback']
+                return self.void.returnArrayList(candles,lookback)
             return self.void.returnArrayList(candles)
         if pdType == "VI":
+            if 'lookback' in kwargs:
+                lookback = kwargs['lookback']
+                return self.volumeImbalance.returnArrayList(candles,lookback)
             return self.volumeImbalance.returnArrayList(candles)
 

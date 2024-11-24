@@ -28,8 +28,6 @@ class Candle:
 
         self.timeFrame: int = FlyweightFactory.getFlyweight(timeFrame)
 
-        print(f"Type of isoTime: {type(self.isoTime)}")  # Erwartet: <class 'datetime.datetime'>
-
     def toDict(self) -> dict:
         """Gibt alle Datenpunkte als Dictionary zurück"""
         return {

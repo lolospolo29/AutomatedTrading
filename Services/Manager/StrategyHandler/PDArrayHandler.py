@@ -1,4 +1,5 @@
 from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Models.Main.Asset.Candle import Candle
 from Models.StrategyAnalyse.PDArray import PDArray
 
 
@@ -11,6 +12,21 @@ class PDArrayHandler:
             if self.comparePDArrays(pdArray, pd):
                 return False
         self.pdArray.append(pdArray)
+
+    def addCandleToPDArrayByIds(self, candles: list[Candle],timeFrame: int,
+                                assetBrokerStrategyRelation: AssetBrokerStrategyRelation):
+        for pd in self.pdArray:
+            if pd.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and pd.timeFrame == timeFrame:
+
+                existing_ids = {candle.id for candle in pd.candles}  # Cache existing IDs
+                new_candles = [
+                    candle for candle in candles
+                    if candle.id in pd.Ids and candle.id not in existing_ids
+                ]
+
+                # Assuming pd.addCandles accepts a list of candles
+                if new_candles:
+                    pd.addCandles(new_candles)
 
     def returnPDArrays(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list:
         arrayList = []

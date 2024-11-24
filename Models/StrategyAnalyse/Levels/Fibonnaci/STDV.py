@@ -10,7 +10,13 @@ class STDV(ILevel):
         self.extensionLevels: list[float] = [1.5, 2, 3, 4]
         self.name = "STDV"
 
-    def returnLevels(self,candles: list[Candle]) -> list:
+    def returnLevels(self, candles: list[Candle], lookback: int = None) -> list:
+        # Step 1: Apply lookback to limit the range of candles
+            if lookback is not None and len(candles) > lookback:
+                candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
+            if lookback is not None and len(candles) < lookback:
+                return []
+
             allLevel = []
             # Step 2: Calculate Fibonacci levels down to the breaker candle
             high = -1
