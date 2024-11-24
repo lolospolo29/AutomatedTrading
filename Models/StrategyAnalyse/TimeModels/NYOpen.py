@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytz
 
 from Interfaces.RiskManagement.ITimeWindow import ITimeWindow
@@ -8,20 +6,12 @@ berlinTimezone = pytz.timezone('Europe/Berlin')
 
 
 class NYOpen(ITimeWindow):
-    def IsInExitWindow(self) -> bool:
-        # Get the current time in Berlin
-        currentTimeBerlin = datetime.now(berlinTimezone)
-
-        # Check if the current hour is 12 (noon)
-        if currentTimeBerlin.hour == 21:
+    def IsInExitWindow(self,time) -> bool:
+        if  15 >= time.hour >= 12 :
             return True
         return False
 
-    def IsInEntryWindow(self) -> bool:
-        # Get the current time in Berlin
-        currentTimeBerlin = datetime.now(berlinTimezone)
-
-        # Check if the current hour is between 8 AM and 11 AM (inclusive)
-        if 14 <= currentTimeBerlin.hour <= 17:
+    def IsInEntryWindow(self,time) -> bool:
+        if  15 >= time.hour >= 12 :
             return True
         return False

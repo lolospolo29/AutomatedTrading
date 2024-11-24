@@ -7,6 +7,7 @@ from Models.StrategyAnalyse.Level import Level
 from Models.StrategyAnalyse.PDArray import PDArray
 from Models.StrategyAnalyse.Structure import Structure
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
+from Models.StrategyAnalyse.TimeModels.NYOpen import NYOpen
 
 
 class FVGSession(Strategy):
@@ -18,6 +19,7 @@ class FVGSession(Strategy):
         self._LevelMediator = LevelMediator()
 
         self._TimeWindow = LondonOpen()
+        self._TimeWindow2 = NYOpen()
 
         self.expectedTimeFrames = []
 
@@ -36,10 +38,10 @@ class FVGSession(Strategy):
         frameWorks = []
         if len(candles) > 10:
             if timeFrame == 15:
+
                 bos = self._ConfirmationMediator.calculateConfirmation("BOS", candles)
                 fvg = self._PDMediator.calculatePDArray("FVG", candles,lookback=3)
                 swings = self._PDMediator.calculatePDArray("Swings", candles,lookback=3)
-                ote = self._LevelMediator.calculateLevels("OTE",candles,lookback=15)
 
                 if len(bos) > 0 or len(fvg) > 0 or len(swings) > 0:
                     frameWorks.extend(bos)
@@ -47,23 +49,31 @@ class FVGSession(Strategy):
                     frameWorks.extend(swings)
 
             if timeFrame == 1:
-                choch = self._ConfirmationMediator.calculateConfirmation("CHOCH", candles)
-                fvg = self._PDMediator.calculatePDArray("FVG", candles,lookback=3)
 
-                if len(choch) > 0  or len(fvg) > 0:
-                    frameWorks.extend(choch)
+                last_candle = candles[-1]
+                time = last_candle.isoTime
+
+                if self.isInTime(time):
+                    fvg = self._PDMediator.calculatePDArray("FVG", candles, lookback=3)
                     frameWorks.extend(fvg)
 
-        return frameWorks
+                choch = self._ConfirmationMediator.calculateConfirmation("CHOCH", candles)
 
-    def isInTime(self):
-        if self._TimeWindow.IsInEntryWindow() and self._TimeWindow.IsInExitWindow():
-            return True
-        return False
+                if len(choch) > 0:
+                    frameWorks.extend(choch)
+
+        return frameWorks
 
     def getEntry(self, candles: list, timeFrame: int, pds: list[PDArray],
                  levels:list[Level], structures: list[Structure]):
         if candles and pds and structures:
+
+            last_candle = candles[-1]
+            time = last_candle.isoTime
+
+            if not self.isInTime(time):
+                return
+
             if timeFrame == 1 and len(candles) > 10:
 
                 latest_structures = {}
@@ -77,8 +87,6 @@ class FVGSession(Strategy):
                 if fifteenMStructure == "" or oneMStructures == "":
                     return
 
-                fifteenMDirectionPDs = []
-                oneMDirectionPDs = []
                 direction = ""
                 if fifteenMStructure.direction == "Bullish" and oneMStructures.direction == "Bullish":
                     direction = "Bullish"
@@ -89,13 +97,20 @@ class FVGSession(Strategy):
                 if direction == "":
                     return
 
+                fifteenMDirectionPDs = []
+                oneMDirectionPDs = []
+
                 for pd in pds:
                     if pd.direction == direction:
                         if pd.timeFrame == 1:
                             oneMDirectionPDs.append(pd)
                         if pd.timeFrame == 15:
                             fifteenMDirectionPDs.append(pd)
-                last_candle = candles[-1]
+
+    def isInTime(self,time) -> bool:
+        if self._TimeWindow.IsInEntryWindow(time) or self._TimeWindow2.IsInEntryWindow(time):
+            return True
+        return False
 
     def getExit(self):
         pass

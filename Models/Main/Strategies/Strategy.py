@@ -14,7 +14,7 @@ class Strategy(IStrategy):
         pass
     def getEntry(self, candles: list, timeFrame: int, pd: list, level:list, structure: list):
         pass
-    def isInTime(self):
+    def isInTime(self,time):
         pass
     def analyzeSMT(self):
         pass

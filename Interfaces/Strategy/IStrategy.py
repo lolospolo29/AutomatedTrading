@@ -9,7 +9,7 @@ class IStrategy(ABC):
     def analyzeData(self, candles: list, timeFrame: int) -> list:
         pass
     @abstractmethod
-    def isInTime(self):
+    def isInTime(self,time):
         pass
 
     @abstractmethod

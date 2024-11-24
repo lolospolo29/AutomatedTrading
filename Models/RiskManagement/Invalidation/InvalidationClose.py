@@ -2,7 +2,7 @@ from Interfaces.RiskManagement.IRiskInvalidation import IRiskInvalidation
 from Models.Main.Asset.Candle import Candle
 
 
-class InvalidationSteady(IRiskInvalidation):
+class InvalidationClose(IRiskInvalidation):
     def checkInvalidation(self, stopLoss: float, candle: Candle, tradeDirection: str) -> bool:
         if tradeDirection == 'long':
             if candle.close < stopLoss:
