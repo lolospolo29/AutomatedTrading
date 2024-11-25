@@ -41,12 +41,12 @@ class FVGSession(Strategy):
 
                 bos = self._ConfirmationMediator.calculateConfirmation("BOS", candles)
                 fvg = self._PDMediator.calculatePDArray("FVG", candles,lookback=3)
-                swings = self._PDMediator.calculatePDArray("Swings", candles,lookback=3)
+           #     swings = self._PDMediator.calculatePDArray("Swings", candles,lookback=3)
 
-                if len(bos) > 0 or len(fvg) > 0 or len(swings) > 0:
+                if len(bos) > 0 or len(fvg) > 0:
                     frameWorks.extend(bos)
                     frameWorks.extend(fvg)
-                    frameWorks.extend(swings)
+         #           frameWorks.extend(swings)
 
             if timeFrame == 1:
 
@@ -106,6 +106,11 @@ class FVGSession(Strategy):
                             oneMDirectionPDs.append(pd)
                         if pd.timeFrame == 15:
                             fifteenMDirectionPDs.append(pd)
+
+                currentFifteenMPD = None
+
+                for pd in fifteenMDirectionPDs:
+                    pass
 
     def isInTime(self,time) -> bool:
         if self._TimeWindow.IsInEntryWindow(time) or self._TimeWindow2.IsInEntryWindow(time):

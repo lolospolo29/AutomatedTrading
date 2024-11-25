@@ -7,8 +7,26 @@ class FVG(IPDArray):
     def __init__(self):
         self.name = "FVG"
 
-    def returnCandleRange(self, candles: list[Candle]):
-        pass
+    def returnCandleRange(self, pdArray: PDArray) -> dict:
+        """
+        Returns the gap between two Fair Value Gaps (FVGs) within the Balanced Price Range (BPR).
+
+        :param pdArray: A PDArray object that contains the IDs of the six candles forming the BPR.
+        :return: A dictionary containing the gap range {'low': ..., 'high': ...}.
+        """
+
+        # Extract prices from the candles
+        highs = [candle.high for candle in pdArray.candles]
+        lows = [candle.low for candle in pdArray.candles]
+
+        high = max(lows)
+        low = min(highs)
+
+        # Return the gap range
+        return {
+            'low': low,
+            'high': high
+        }
 
     def returnArrayList(self, candles: list[Candle], lookback: int = None) -> list:
         # Step 1: Apply lookback to limit the range of candles

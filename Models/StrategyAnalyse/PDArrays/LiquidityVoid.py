@@ -8,8 +8,25 @@ class LiquidityVoid(IPDArray):
         self.minCandlesInRow: int = minCandlesInRow
         self.name: str = "LV"
 
-    def returnCandleRange(self, candles: list[Candle]):
-        pass
+    def returnCandleRange(self, pdArray: PDArray) -> dict:
+        """
+        Returns the high and Low of the LV.
+
+        :param pdArray: A PDArray the candles.
+        :return: A dictionary containing the range {'low': ..., 'high': ...}.
+        """
+
+        # Extract prices from the candles
+        highs = [candle.high for candle in pdArray.candles]
+        lows = [candle.low for candle in pdArray.candles]
+
+        low = min(lows)
+        high = max(highs)
+
+        return {
+            'low': low,
+            'high': high
+        }
 
     def returnArrayList(self, candles: list[Candle]) -> list:
 

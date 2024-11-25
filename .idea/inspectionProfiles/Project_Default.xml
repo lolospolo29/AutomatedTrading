@@ -23,6 +23,7 @@
           <option value="list" />
           <option value="exit" />
           <option value="id" />
+          <option value="range" />
         </list>
       </option>
     </inspection_tool>

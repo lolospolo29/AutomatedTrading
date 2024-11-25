@@ -1,3 +1,4 @@
+from Models.StrategyAnalyse.PDArray import PDArray
 from Models.StrategyAnalyse.PDArrays.BPR import BPR
 from Models.StrategyAnalyse.PDArrays.Breaker import Breaker
 from Models.StrategyAnalyse.PDArrays.FVG import FVG
@@ -64,4 +65,25 @@ class PDMediator:
                 lookback = kwargs['lookback']
                 return self.volumeImbalance.returnArrayList(candles,lookback)
             return self.volumeImbalance.returnArrayList(candles)
+
+    def returnCandleRange(self,pdType, pdArray: PDArray) -> dict:
+        if pdType == "BPR":
+            return self.bpr.returnCandleRange(pdArray)
+        if pdType == "FVG":
+            return self.fvg.returnCandleRange(pdArray)
+        if pdType == "BRK":
+            return self.breaker.returnCandleRange(pdArray)
+        if pdType == "LV":
+            return self.liquidityVoid.returnCandleRange(pdArray)
+        if pdType == "OB":
+            return self.orderBlock.returnCandleRange(pdArray)
+        if pdType == "RB":
+            return self.rejectionBlock.returnCandleRange(pdArray)
+        if pdType == "Swings":
+            return self.swings.returnCandleRange(pdArray)
+        if pdType == "Void":
+            return self.void.returnCandleRange(pdArray)
+        if pdType == "VI":
+            return self.volumeImbalance.returnCandleRange(pdArray)
+
 

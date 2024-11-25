@@ -7,8 +7,25 @@ class Orderblock(IPDArray):
     def __init__(self):
         self.name: str = "OB"
 
-    def returnCandleRange(self, candles: list[Candle]):
-        pass
+    def returnCandleRange(self, pdArray: PDArray) -> dict:
+        """
+        Returns the high and low of the OB.
+
+        :param pdArray: A PDArray object that contains candles.
+        :return: A dictionary containing the gap range {'low': ..., 'high': ...}.
+        """
+
+        # Extract prices from the candles
+        highs = [candle.high for candle in pdArray.candles]
+        lows = [candle.low for candle in pdArray.candles]
+
+        high = max(highs)
+        low = min(lows)
+
+        return {
+            'low': low,
+            'high': high
+        }
 
     def returnArrayList(self, candles: list[Candle], lookback: int = None) -> list:
         # Step 1: Apply lookback to limit the range of candles

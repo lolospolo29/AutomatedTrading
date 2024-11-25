@@ -7,8 +7,25 @@ class Swings(IPDArray):  # id need to be fixed
     def __init__(self):
         self.name = "Swing"
 
-    def returnCandleRange(self, candles: list[Candle]):
-        pass
+    def returnCandleRange(self, pdArray: PDArray) -> dict:
+        """
+        Returns the high and low of the Swing
+
+        :param pdArray: A PDArray object that contains the candles.
+        :return: A dictionary containing the range {'low': ..., 'high': ...}.
+        """
+
+        # Extract price from the candles
+        high = [candle.high for candle in pdArray.candles]
+        low = [candle.low for candle in pdArray.candles]
+
+        high = max(high)
+        low = min(low)
+
+        return {
+            'low': low,
+            'high': high
+        }
 
     def returnArrayList(self, candles: list[Candle], lookback: int = None) -> list:
         # Step 1: Apply lookback to limit the range of candles

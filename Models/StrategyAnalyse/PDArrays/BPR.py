@@ -7,8 +7,36 @@ class BPR(IPDArray):
     def __init__(self):
         self.name = "BPR"
 
-    def returnCandleRange(self, candles: list[Candle]):
-        pass
+    def returnCandleRange(self,pdArray: PDArray) -> dict:
+        """
+        Returns the gap between two Fair Value Gaps (FVGs) within the Balanced Price Range (BPR).
+
+        :param candles: List of Candle objects.
+        :param pdArray: A PDArray object that contains the IDs of the six candles forming the BPR.
+        :return: A dictionary containing the gap range {'low': ..., 'high': ...}.
+        """
+        # Retrieve the candles corresponding to the IDs in pdArray
+
+        # Extract prices from the candles
+        highs = [candle.high for candle in pdArray.candles]
+        lows = [candle.low for candle in pdArray.candles]
+
+        # Identify the FVGs from the first 3 and the last 3 candles
+        bearish_fvg_high = max(lows[:3])  # Bearish FVG range (first three candles)
+        bearish_fvg_low = min(highs[:3])
+
+        bullish_fvg_high = max(lows[3:])  # Bullish FVG range (last three candles)
+        bullish_fvg_low = min(highs[3:])
+
+        # Calculate the gap based on the direction of the BPR
+        gap_high = min(bullish_fvg_high, bearish_fvg_high)
+        gap_low = max(bullish_fvg_low, bearish_fvg_low)
+
+        # Return the gap range
+        return {
+            'low': gap_low,
+            'high': gap_high
+        }
 
     def returnArrayList(self, candles: list[Candle]) -> list:
         if len(candles) < 6 :
@@ -37,8 +65,8 @@ class BPR(IPDArray):
             # Check for Bearish FVG (Sell-side FVG)
             if low1 > high3 and close2 < low1:
                 bearishFvgList.append({
-                    'high': low2,  # Top of FVG range
-                    'low': high2,  # Bottom of FVG range
+                    'high': low1,  # Top of FVG range
+                    'low': high3,  # Bottom of FVG range
                     'ids': [id1, id2, id3],
                     'index': [i, i-1,i-2]
                 })
@@ -46,8 +74,8 @@ class BPR(IPDArray):
             # Check for Bullish FVG (Buy-side FVG)
             if high1 < low3 and close2 > high1:
                 bullishFvgList.append({
-                    'high': low2,  # Top of FVG range
-                    'low': high2,  # Bottom of FVG range
+                    'high': low3,  # Top of FVG range
+                    'low': high1,  # Bottom of FVG range
                     'ids': [id1, id2, id3],
                     'index': [i, i - 1, i - 2]
                 })

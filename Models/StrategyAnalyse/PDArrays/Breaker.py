@@ -9,8 +9,25 @@ class Breaker(IPDArray):  # id need to be fixed
         self.lookback: int = lookback
         self.name = "Breaker"
 
-    def returnCandleRange(self, candles: list[Candle]):
-        pass
+    def returnCandleRange(self, pdArray: PDArray) -> dict:
+        """
+        Returns the Breaker Candle high to low.
+
+        :param pdArray: A PDArray object that contains the candles.
+        :return: A dictionary containing the range {'low': ..., 'high': ...}.
+        """
+
+        # Extract price from the candles
+        high = [candle.high for candle in pdArray.candles]
+        low = [candle.low for candle in pdArray.candles]
+
+        high = max(high)
+        low = min(low)
+
+        return {
+            'low': low,
+            'high': high
+        }
 
     def findSwingPoints(self, high: list, low: list):
         lookback = self.lookback
