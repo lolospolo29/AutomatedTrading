@@ -20,7 +20,8 @@ class LevelHandler:
         return levelList
 
     def removeLevel(self, _ids, assetBrokerStrategyRelation: AssetBrokerStrategyRelation, timeFrame: int) -> None:
-        for level in self.levels:
+        levels = self.levels.copy()
+        for level in levels:
             if level.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and level.timeFrame == timeFrame:
                 if not level.isIdPresent(_ids):
                     self.levels.remove(level)

@@ -1,3 +1,5 @@
+import sys
+
 from Interfaces.Strategy.ILevel import ILevel
 from Models.Main.Asset import Candle
 from Models.StrategyAnalyse.Level import Level
@@ -19,10 +21,10 @@ class PD(ILevel):
         allLevel = []
 
         # Step 1: Extract high and low values from the data points
-        high = None
-        highId = None
-        low = None
-        lowId = None
+        high = -1
+        highId = -1
+        low = sys.maxsize
+        lowId = -1
 
         for candle in candles:
             if high  < candle.high:

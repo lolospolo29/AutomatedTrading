@@ -17,7 +17,7 @@ class ConfirmationMediator:
     def __init__(self):
         if not hasattr(self, "initialized"):  # Prevent re-initialization
             self.bos = BOS(10)
-            self.choch = Choch(10)
+            self.choch = Choch(20)
             self.smt = SMT()
             self.cisd = CISD(5)
             self.initialized: bool = True  # Mark as initialized

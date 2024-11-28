@@ -2,7 +2,6 @@ from Models.StrategyAnalyse.PDArray import PDArray
 from Models.StrategyAnalyse.PDArrays.BPR import BPR
 from Models.StrategyAnalyse.PDArrays.Breaker import Breaker
 from Models.StrategyAnalyse.PDArrays.FVG import FVG
-from Models.StrategyAnalyse.PDArrays.LiquidityVoid import LiquidityVoid
 from Models.StrategyAnalyse.PDArrays.OrderBlock import Orderblock
 from Models.StrategyAnalyse.PDArrays.RejectionBlock import RejectionBlock
 from Models.StrategyAnalyse.PDArrays.Swings import Swings
@@ -23,7 +22,6 @@ class PDMediator:
             self.bpr: BPR = BPR()
             self.fvg = FVG()
             self.breaker: Breaker = Breaker(5)
-            self.liquidityVoid: LiquidityVoid = LiquidityVoid(4)
             self.orderBlock: Orderblock = Orderblock()
             self.rejectionBlock: RejectionBlock = RejectionBlock(10)
             self.swings: Swings = Swings()
@@ -41,8 +39,6 @@ class PDMediator:
             return self.fvg.returnArrayList(candles)
         if pdType == "BRK":
             return self.breaker.returnArrayList(candles)
-        if pdType == "LV":
-            return self.liquidityVoid.returnArrayList(candles)
         if pdType == "OB":
             if 'lookback' in kwargs:
                 lookback = kwargs['lookback']
@@ -73,8 +69,6 @@ class PDMediator:
             return self.fvg.returnCandleRange(pdArray)
         if pdType == "BRK":
             return self.breaker.returnCandleRange(pdArray)
-        if pdType == "LV":
-            return self.liquidityVoid.returnCandleRange(pdArray)
         if pdType == "OB":
             return self.orderBlock.returnCandleRange(pdArray)
         if pdType == "RB":

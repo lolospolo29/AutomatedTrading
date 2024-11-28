@@ -19,8 +19,8 @@ class FVG(IPDArray):
         highs = [candle.high for candle in pdArray.candles]
         lows = [candle.low for candle in pdArray.candles]
 
-        high = max(lows)
         low = min(highs)
+        high = max(lows)
 
         # Return the gap range
         return {
@@ -66,4 +66,4 @@ class FVG(IPDArray):
                     pdarray.addId(id3)
                     pdArrays.append(pdarray)
 
-            return pdArrays
+        return pdArrays

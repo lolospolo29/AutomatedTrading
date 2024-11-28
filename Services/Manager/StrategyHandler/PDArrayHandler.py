@@ -37,7 +37,8 @@ class PDArrayHandler:
 
     def removePDArray(self, _ids: list, assetBrokerStrategyRelation: AssetBrokerStrategyRelation,
                       timeFrame: int) -> None:
-        for pd in self.pdArray:
+        pdArrays = self.pdArray.copy()
+        for pd in pdArrays:
             if pd.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and pd.timeFrame == timeFrame:
                 if not pd.isIdPresent(_ids):
                     self.pdArray.remove(pd)

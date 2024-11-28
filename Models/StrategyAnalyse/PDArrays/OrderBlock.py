@@ -54,12 +54,12 @@ class Orderblock(IPDArray):
             open1, high1, low1, close1, id1 = opens[i - 1], highs[i - 1], lows[i - 1], close[i - 1], ids[i - 1]
             open2, high2, low2, close2, id2 = opens[i], highs[i], lows[i], close[i], ids[i]
 
-            if close1 < open1 and close2 > open2 and low1 > low2 and close2 > high1:
+            if close1 < open1 and close2 > open2 and low1 > low2:
                 pdArray = PDArray(name="OB",direction="Bullish")
                 pdArray.addId(id1)
                 pdArray.addId(id2)
                 pdArrays.append(pdArray)
-            if close1 > open1 and close2 < open2 and high1 < high2 and low1 > close2:
+            if close1 > open1 and close2 < open2 and high1 < high2:
                 pdArray = PDArray(name="OB",direction="Bearish")
                 pdArray.addId(id1)
                 pdArray.addId(id2)

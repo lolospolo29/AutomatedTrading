@@ -21,7 +21,8 @@ class StructureHandler:
 
     def removeStructure(self, _ids: list, assetBrokerStrategyRelation: AssetBrokerStrategyRelation,
                         timeFrame: int) -> None:
-        for structure in self.structures:
+        structures = self.structures.copy()
+        for structure in structures:
             if (structure.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and
                     structure.timeFrame == timeFrame):
                 if not structure.isIdPresent(_ids):

@@ -38,7 +38,7 @@ class StrategyManager:
 
     def analyzeStrategy(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                         timeFrame: int) -> None:
-            if len(candles) < 10:
+            if len(candles) <= 0:
                 return None
             if relation.strategy in self.strategies:
                 frameworks:list = self.strategies[relation.strategy].analyzeData(candles,timeFrame)
@@ -59,7 +59,7 @@ class StrategyManager:
     def getEntry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                         timeFrame: int):
 
-        if len (candles) < 10:
+        if len (candles) <= 0:
             return None
         if relation.strategy in self.strategies:
             pd: list = self._PDArrayHandler.returnPDArrays(relation)
