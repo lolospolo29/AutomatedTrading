@@ -10,6 +10,7 @@ class PDArray(FrameWork):
         self.direction: str = direction
         self.Ids: set = set()  # Use a set for faster lookup
         self.candles = []
+        self.status = ""
 
     def addId(self, Id: Any) -> None:
         # Add a single ID if not already present
@@ -18,6 +19,9 @@ class PDArray(FrameWork):
     def addCandles(self, candles) -> None:
         # Efficiently add multiple candles
         self.candles.extend(candles)
+
+    def addStatus(self, status) -> None:
+        self.status = status
 
     def isIdPresent(self, ids_: list) -> bool:
         """

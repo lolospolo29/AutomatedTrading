@@ -1,10 +1,10 @@
 from Interfaces.RiskManagement.ITimeWindow import ITimeWindow
 
-class LondonOpen(ITimeWindow):
-    def IsInExitWindow(self,time) -> bool :
+class Asia(ITimeWindow):
+    def IsInExitWindow(self,time) -> bool:
         return self.IsInEntryWindow(time)
 
     def IsInEntryWindow(self,time) -> bool:
-        if  10 >= time.hour >= 7 :
+        if  5 >= time.hour >= 0 :
             return True
         return False

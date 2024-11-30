@@ -11,7 +11,7 @@ from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 from Models.StrategyAnalyse.TimeModels.NYOpen import NYOpen
 
 
-class FVGSession(Strategy):
+class FirstStrategy(Strategy):
     def __init__(self, name: str):
         super().__init__(name,False,0)
 

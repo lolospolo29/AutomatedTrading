@@ -62,7 +62,7 @@ class PDMediator:
                 return self.volumeImbalance.returnArrayList(candles,lookback)
             return self.volumeImbalance.returnArrayList(candles)
 
-    def returnCandleRange(self,pdType, pdArray: PDArray) -> dict:
+    def returnCandleRange(self,pdType: str, pdArray: PDArray) -> dict:
         if pdType == "BPR":
             return self.bpr.returnCandleRange(pdArray)
         if pdType == "FVG":
@@ -79,5 +79,13 @@ class PDMediator:
             return self.void.returnCandleRange(pdArray)
         if pdType == "VI":
             return self.volumeImbalance.returnCandleRange(pdArray)
+
+    def checkForInverse(self,pdType: str, pdArray: PDArray, candles: list) -> str:
+        if pdType == "FVG":
+            return self.fvg.checkForInverse(pdArray, candles)
+        if pdType == "OB":
+            return self.orderBlock.checkForInverse(pdArray, candles)
+        return pdArray.direction
+
 
 

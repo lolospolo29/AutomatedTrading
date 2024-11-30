@@ -7,11 +7,46 @@ class FVG(IPDArray):
     def __init__(self):
         self.name = "FVG"
 
+    def checkForInverse(self,pdArray: PDArray, candles: list[Candle]) ->str:
+
+        if len(pdArray.Ids) != 3:
+            raise ValueError("PDArray must contain exactly 3 IDs.")
+
+        # Extract the two IDs from the PDArray
+        id1, id2,id3 = list(pdArray.Ids)
+
+        # Find the indices of these two IDs in the list of candles
+        index1 = next((i for i, c in enumerate(candles) if c.id == id1), None)
+        index2 = next((i for i, c in enumerate(candles) if c.id == id2), None)
+        index3 = next((i for i, c in enumerate(candles) if c.id == id3), None)
+
+        if index1 is None or index2 is None:
+            raise ValueError("One or both IDs from PDArray not found in the candle list.")
+
+        # Determine the older index (the one with the higher value)
+        older_index = min(index1, index2,index3)
+
+        start_index = older_index + 1
+
+        # Extract and return the candles
+        neighbors = candles[start_index:]
+
+        if len(neighbors) > 0:
+            for candle in neighbors:
+                fvgRange = self.returnCandleRange(pdArray)
+                if pdArray.direction == "Bullish":
+                    if candle.close < fvgRange.get('low'):
+                        return "Bearish"
+                if pdArray.direction == "Bearish":
+                    if candle.close > fvgRange.get('high'):
+                        return "Bullish"
+        return pdArray.direction
+
     def returnCandleRange(self, pdArray: PDArray) -> dict:
         """
-        Returns the gap between two Fair Value Gaps (FVGs) within the Balanced Price Range (BPR).
+        Returns the gap in the FVG.
 
-        :param pdArray: A PDArray object that contains the IDs of the six candles forming the BPR.
+        :param pdArray: A PDArray object that contains the IDs of the six candles forming the FVG.
         :return: A dictionary containing the gap range {'low': ..., 'high': ...}.
         """
 

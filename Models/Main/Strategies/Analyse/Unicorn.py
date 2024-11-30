@@ -10,8 +10,9 @@ from Models.StrategyAnalyse.Structure import Structure
 from Models.StrategyAnalyse.TimeModels.London import LondonOpen
 from Models.StrategyAnalyse.TimeModels.NYOpen import NYOpen
 
+# Unicorn Entry with 4H PD Range Bias
 
-class FVGSession(Strategy):
+class Unicorn(Strategy):
     def __init__(self, name: str):
         super().__init__(name,False,0)
 
@@ -44,15 +45,20 @@ class FVGSession(Strategy):
 
     def analyzeData(self, candles: list, timeFrame: int) -> list:
             frameWorks = []
-            last_candle = candles[-1]
-            time = last_candle.isoTime
+            if timeFrame == 240:
+                ote = self._LevelMediator.calculateLevels("PD",candles,lookback=1)
+                frameWorks.extend(ote)
 
             if timeFrame == 5:
 
-                fvg = self._PDMediator.calculatePDArray("FVG", candles, lookback=3)
-                frameWorks.extend(fvg)
+                last_candle = candles[-1]
+                time = last_candle.isoTime
 
-            if timeFrame == 1:
+                if self.isInTime(time):
+                    breaker = self._PDMediator.calculatePDArray("BRK",candles)
+                    if len(breaker) > 0:
+                        frameWorks.extend(breaker)
+
                 if self.isInTime(time):
                     fvg = self._PDMediator.calculatePDArray("FVG", candles, lookback=3)
                     frameWorks.extend(fvg)

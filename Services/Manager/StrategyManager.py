@@ -50,6 +50,7 @@ class StrategyManager:
                     if framework.typ == "PDArray":
                         self._PDArrayHandler.addPDArray(framework)
                         self._PDArrayHandler.addCandleToPDArrayByIds(candles,timeFrame,relation)
+                        self._PDArrayHandler.updatePDArrays(candles,timeFrame,relation)
                     if framework.typ == "Level":
                         self._LevelHandler.addLevel(framework)
                     if framework.typ == "Structure":

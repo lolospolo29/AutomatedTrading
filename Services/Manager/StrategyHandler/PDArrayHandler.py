@@ -1,11 +1,13 @@
 from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from Models.Main.Asset.Candle import Candle
+from Models.Pattern.Mediator.PDMediator import PDMediator
 from Models.StrategyAnalyse.PDArray import PDArray
 
 
 class PDArrayHandler:
     def __init__(self):
         self.pdArray: list[PDArray] = []
+        self._PDMediator: PDMediator = PDMediator()
 
     def addPDArray(self, pdArray: PDArray):
         for pd in self.pdArray:
@@ -27,6 +29,24 @@ class PDArrayHandler:
                 # Assuming pd.addCandles accepts a list of candles
                 if new_candles:
                     pd.addCandles(new_candles)
+
+    def updatePDArrays(self, candles: list[Candle],timeFrame: int,
+                                assetBrokerStrategyRelation: AssetBrokerStrategyRelation):
+        for pd in self.pdArray:
+            if pd.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and pd.timeFrame == timeFrame:
+
+                direction = self._PDMediator.checkForInverse(pd.name,pd,candles)
+                if direction != pd.direction:
+                    pd.direction = direction
+
+                    if pd.status == "":
+                        pd.status = "Inversed"
+
+                    if pd.status == "Inversed":
+                        pd.status = "Normal"
+
+                    if pd.status == "Normal":
+                        pd.status = "Inversed"
 
     def returnPDArrays(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list:
         arrayList = []

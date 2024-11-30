@@ -7,6 +7,40 @@ class Orderblock(IPDArray):
     def __init__(self):
         self.name: str = "OB"
 
+    def checkForInverse(self,pdArray: PDArray, candles: list[Candle]) -> str:
+
+        if len(pdArray.Ids) != 2:
+            raise ValueError("PDArray must contain exactly 3 IDs.")
+
+        # Extract the two IDs from the PDArray
+        id1, id2 = list(pdArray.Ids)
+
+        # Find the indices of these two IDs in the list of candles
+        index1 = next((i for i, c in enumerate(candles) if c.id == id1), None)
+        index2 = next((i for i, c in enumerate(candles) if c.id == id2), None)
+
+        if index1 is None or index2 is None:
+            raise ValueError("One or both IDs from PDArray not found in the candle list.")
+
+        # Determine the older index (the one with the higher value)
+        older_index = min(index1, index2)
+
+        start_index = older_index + 1
+
+        # Extract and return the candles
+        neighbors = candles[start_index:]
+
+        if len(neighbors) > 0:
+            for candle in neighbors:
+                fvgRange = self.returnCandleRange(pdArray)
+                if pdArray.direction == "Bullish":
+                    if candle.close < fvgRange.get('low'):
+                        return "Bearish"
+                if pdArray.direction == "Bearish":
+                    if candle.close > fvgRange.get('high'):
+                        return "Bullish"
+        return pdArray.direction
+
     def returnCandleRange(self, pdArray: PDArray) -> dict:
         """
         Returns the high and low of the OB.
