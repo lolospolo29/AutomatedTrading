@@ -50,7 +50,6 @@ class StrategyManager:
                     if framework.typ == "PDArray":
                         self._PDArrayHandler.addPDArray(framework)
                         self._PDArrayHandler.addCandleToPDArrayByIds(candles,timeFrame,relation)
-                        self._PDArrayHandler.updatePDArrays(candles,timeFrame,relation)
                     if framework.typ == "Level":
                         self._LevelHandler.addLevel(framework)
                     if framework.typ == "Structure":
@@ -59,12 +58,13 @@ class StrategyManager:
 
     def getEntry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                         timeFrame: int):
-
         if len (candles) <= 0:
             return None
         if relation.strategy in self.strategies:
+            self._PDArrayHandler.updatePDArrays(candles, timeFrame, relation)
             pd: list = self._PDArrayHandler.returnPDArrays(relation)
             level: list = self._LevelHandler.returnLevels(relation)
             structure: list = self._StructureHandler.returnStructure(relation)
+
 
             self.strategies[relation.strategy].getEntry(candles,timeFrame,pd,level,structure)

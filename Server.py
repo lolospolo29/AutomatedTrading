@@ -87,5 +87,5 @@ if __name__ == '__main__':
 
 # API Secrets
 # Name : DemoApiKey
-# Api Key : Ifp91Iy8fOY6x22bVG
+# API Key : Ifp91Iy8fOY6x22bVG
 # Secret: eagubhmZG5nY0gbycEeJNGR50GuT5YnpZA37

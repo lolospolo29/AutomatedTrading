@@ -37,16 +37,12 @@ class PDArrayHandler:
 
                 direction = self._PDMediator.checkForInverse(pd.name,pd,candles)
                 if direction != pd.direction:
-                    pd.direction = direction
-
-                    if pd.status == "":
                         pd.status = "Inversed"
+                        continue
 
-                    if pd.status == "Inversed":
+                if direction == pd.direction:
                         pd.status = "Normal"
-
-                    if pd.status == "Normal":
-                        pd.status = "Inversed"
+                        continue
 
     def returnPDArrays(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list:
         arrayList = []

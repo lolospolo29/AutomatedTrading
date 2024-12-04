@@ -46,11 +46,11 @@ class FVGSession(Strategy):
             frameWorks = []
             last_candle = candles[-1]
             time = last_candle.isoTime
+            if timeFrame == 240:
+                range = self._LevelMediator.calculateLevels("PD",candles,lookback=1)
 
-            if timeFrame == 5:
-
-                fvg = self._PDMediator.calculatePDArray("FVG", candles, lookback=3)
-                frameWorks.extend(fvg)
+                if len(range) > 0:
+                    frameWorks.extend(range)
 
             if timeFrame == 1:
                 if self.isInTime(time):
@@ -61,41 +61,42 @@ class FVGSession(Strategy):
 
     def getEntry(self, candles: list, timeFrame: int, pds: list[PDArray],
                  levels:list[Level], structures: list[Structure]):
-        if candles and pds:
+        if candles and pds and len(candles) > 5 and timeFrame == 1:
 
-            last_candle: Candle = candles[-1]
-            time = last_candle.isoTime
+                last_candle: Candle = candles[-1]
+                prelast_candle: Candle = candles[-2]
+                time = last_candle.isoTime
 
-            if not self.isInTime(time):
-                return
+                if not self.isInTime(time):
+                    return
 
-            if timeFrame == 5 and len(candles) > 10:
-                breakers = [brk for brk in pds if brk.name == "Breaker"]
-                fvgs = [brk for brk in pds if brk.name == "FVG"]
+                if len(levels) <= 0:
+                    return
 
-                for breaker in breakers:
-                    breakerRange = self._PDMediator.returnCandleRange("BRK",breaker)
-                    for fvg in fvgs:
-                        fvgRange = self._PDMediator.returnCandleRange("FVG",fvg)
+                fourHourCandle = levels[-1]
 
-                        fvgLow = fvgRange.get('low')
-                        fvgHigh = fvgRange.get('high')
-                        breakerLow = breakerRange.get('low')
-                        breakerHigh = breakerRange.get('high')
+                directionSweep = ""
 
-                        # Check if FVG and Breaker overlap
-                        if fvgLow <= breakerHigh and fvgHigh >= breakerLow:
-                            in_fvg_range = fvgLow <= last_candle.close <= fvgHigh
+                for candle in candles:
+                    if candle.close < fourHourCandle.level and fourHourCandle.direction == "Low":
+                        directionSweep = "Bullish"
+                    if candle.close < fourHourCandle.level and fourHourCandle.direction == "High":
+                        directionSweep = "Bearish"
 
-                            # Prüfen, ob der Schlusskurs in der Breaker-Range ist
-                            in_breaker_range = breakerLow <= last_candle.close <= breakerHigh
 
-                            # Prüfen, ob der Schlusskurs in beiden Ranges ist
-                            if in_fvg_range and in_breaker_range:
-                                if fvg.direction == "Bullish" and breaker.direction == "Bullish" :
-                                    return "BUY"
-                                if fvg.direction == "Bearish" and breaker.direction == "Bearish" :
-                                    return "SELL"
+                oneMFvgs = [fvg for fvg in pds if fvg.name == "FVG" and fvg.status == "Inversed" and fvg.timeFrame == 1]
+
+                currentInversed = []
+
+                if len(oneMFvgs) > 0:
+                    for fvg in oneMFvgs:
+                        fvgRange = self._PDMediator.returnCandleRange(fvg.name,fvg)
+                        if fvg.direction == "Bullish":
+                            if prelast_candle.close > fvgRange.get('low') > last_candle.close:
+                                currentInversed.append(fvg)
+                        if fvg.direction == "Bearish":
+                            if last_candle.close > fvgRange.get('high') > prelast_candle.close:
+                                currentInversed.append(fvg)
 
     def getExit(self):
         pass

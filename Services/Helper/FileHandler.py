@@ -29,20 +29,24 @@ class NewFileHandler(FileSystemEventHandler):
                 candlesCSV = self.parseCandleData(event.src_path)
                 for candle in candlesCSV:
                     asset, broker, timeFrame = self._AssetManager.addCandle(candle)
-                    candles: list = self._AssetManager.returnCandles(asset, broker, timeFrame)
-                    relations: list = self._AssetManager.returnRelations(asset, broker)
-                    for relation in relations:
-                        self._StrategyManager.analyzeStrategy(candles, relation,timeFrame)
-
-                        _ids = [candle.id for candle in candles]
-
-                        self._StrategyManager.updateFrameWorkHandler(_ids, relation, timeFrame)
-
-                        self._StrategyManager.getEntry(candles, relation, timeFrame)
+                    self.testing(asset, broker, timeFrame)
 
                 self.moveToArchive(event.src_path)
                 self.archive()
                 setLockState(False)
+
+    def testing(self,asset, broker, timeFrame):
+        candles: list = self._AssetManager.returnCandles(asset, broker, timeFrame)
+        relations: list = self._AssetManager.returnRelations(asset, broker)
+        for relation in relations:
+            self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)
+
+            _ids = [candle.id for candle in candles]
+
+            self._StrategyManager.updateFrameWorkHandler(_ids, relation, timeFrame)
+
+            self._StrategyManager.getEntry(candles, relation, timeFrame)
+
 
     @staticmethod
     def parseCandleData(csv_filename) -> list:

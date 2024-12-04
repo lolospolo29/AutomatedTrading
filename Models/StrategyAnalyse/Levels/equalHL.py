@@ -11,25 +11,29 @@ class equalHL(ILevel):  ### Implement threshold for every Asset every Timeframe
         self.mintick: float = mintick
 
         # Determine the threshold for equalness
-        if self.mintick >= 0.1:
-            self.threshold: float = self.threshold_index * self.mintick
-        else:
-            self.threshold: float = self.threshold_stocks * self.mintick
+        # if self.mintick >= 0.1:
+        #     self.threshold: float = self.threshold_index * self.mintick
+        # else:
+        #     self.threshold: float = self.threshold_stocks * self.mintick
+        self.threshold = 150
 
     def returnLevels(self, candles: list[Candle], detect: str) -> list:
         equalLevels = []
         equalLows = []
         equalHighs = []
 
+        lastcandle = candles[-1]
+        timeframe = lastcandle.timeFrame
+
         # Detect equal lows
         if detect == "low" or detect == "both":
             filteredCandles = self.filterCandles(candles,"low")
-            equalLows += self._detect_equal_lows(filteredCandles)
+            equalLows += self._detect_equal_lows(filteredCandles,timeframe)
 
         # Detect equal highs
         if detect == "high" or detect == "both":
             filteredCandles = self.filterCandles(candles,"high")
-            equalHighs += self._detect_equal_highs(filteredCandles)
+            equalHighs += self._detect_equal_highs(filteredCandles,timeframe)
 
         # Filter equal levels to only keep the lowest or highest in the same threshold range
         equalLevels += self._filter_levels(equalLows)
@@ -51,7 +55,7 @@ class equalHL(ILevel):  ### Implement threshold for every Asset every Timeframe
         return filteredCandles
 
 
-    def _detect_equal_lows(self, candles: list[Candle]) -> list[Level]:
+    def _detect_equal_lows(self, candles: list[Candle], timeframe) -> list[Level]:
         equalLows = []
         lows = []
         ids = []
@@ -86,17 +90,19 @@ class equalHL(ILevel):  ### Implement threshold for every Asset every Timeframe
                                 isInLows = True
                         if not isInLows:
                             level = Level(name="EqualLow", level=similarLows[k])
+                            level.timeFrame = timeframe
                             level.setFibLevel(0.0, "EQL", [similarIds[k]])
                             equalLows.append(level)
                 if len(equalLows) <= 0:
                     for k in range(len(similarLows)):
                         level = Level(name="EqualLow", level=similarLows[k])
+                        level.timeFrame = timeframe
                         level.setFibLevel(0.0, "EQL", [similarIds[k]])
                         equalLows.append(level)
 
         return equalLows
 
-    def _detect_equal_highs(self, candles: list[Candle]) -> list[Level]:
+    def _detect_equal_highs(self, candles: list[Candle],timeFrame) -> list[Level]:
         equalHighs = []
         highs = []
         ids = []
@@ -130,11 +136,13 @@ class equalHL(ILevel):  ### Implement threshold for every Asset every Timeframe
                                     isInEqualHighs = True
                             if not isInEqualHighs:
                                 level = Level(name="EqualHigh", level=similarHighs[k])
+                                level.timeFrame = timeFrame
                                 level.setFibLevel(0.0, "EQH", [similarIds[k]])
                                 equalHighs.append(level)
                 if len(equalHighs) <= 0:
                     for k in range(len(similarHighs)):
                         level = Level(name="EqualHigh", level=similarHighs[k])
+                        level.timeFrame = timeFrame
                         level.setFibLevel(0.0, "EQH", [similarIds[k]])
                         equalHighs.append(level)
 

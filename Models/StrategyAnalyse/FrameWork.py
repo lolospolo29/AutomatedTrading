@@ -9,5 +9,6 @@ class FrameWork:
 
     def addRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> None:
         self.assetBrokerStrategyRelation = assetBrokerStrategyRelation
+
     def setTimeFrame(self, timeFrame: int) -> None:
         self.timeFrame = timeFrame

@@ -1,0 +1,18 @@
+GET https://api-testnet.bybit.com
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2024-12-03T173144.200.txt
+
+###
+
+GET https://api-testnet.bybit.com
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2024-12-03T171225.200.txt
+
+###
+

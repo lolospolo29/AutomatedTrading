@@ -1,7 +1,7 @@
 from Interfaces.IFactory import IFactory
 from Models.Main.Brokers.Broker import Broker
-from Models.Main.Brokers.Bybit import Bybit
-from Models.Main.Brokers.ProxyBroker import ProxyBroker
+from Models.Main.Brokers.Crypto.Bybit import Bybit
+from Models.Main.Brokers.Forex.ProxyBroker import ProxyBroker
 
 
 class BrokerFactory(IFactory):
