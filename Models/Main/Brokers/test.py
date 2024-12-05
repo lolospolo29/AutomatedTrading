@@ -6,7 +6,7 @@ from typing import Any, Dict
 
 import requests
 
-from Models.API.Brokers.Bybit.GET.Response.LinearInverseTickers import LinearInverseTickers
+from Models.API.Brokers.Bybit.GET.Response.TickersLinearInverse import TickersLinearInverse
 
 api_key='hDrBURkbD5u57sB3aQ'
 secret_key='TEfdN38XDQZjSa6u8j7p1A8IgLFfXT2z0f1Y'
@@ -99,5 +99,5 @@ endpoint="/v5/market/tickers"
 method="GET"
 params='category=linear&symbol=BTCUSDT'
 a = HTTP_Request(endpoint,method,params,"Balance")
-example = from_dict(LinearInverseTickers, a.get('result'))
+example = from_dict(TickersLinearInverse, a.get('result'))
 print(example)

@@ -5,7 +5,7 @@ from Models.API.ResponseParams import ResponseParams
 
 
 @dataclass
-class LinearInverseTickers(ResponseParams):
+class TickersLinearInverse(ResponseParams):
 
     category: Optional[str] = field(default=None)
     symbol: Optional[str] = field(default=None)
