@@ -4,6 +4,10 @@ from typing import Optional
 from Models.API.GETParams import GETParams
 
 
+# GET /v5/market/tickers
+# Query for the latest price snapshot, best bid/ask price,
+# and trading volume in the last 24 hours.
+# Covers: Spot / USDT perpetual / USDC contract / Inverse contract / Option
 @dataclass
 class Tickers(GETParams):
     # Required parameter

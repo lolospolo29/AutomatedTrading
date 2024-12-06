@@ -1,12 +1,14 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from Models.API.POSTParams import POSTParams
+from Models.API.GETParams import GETParams
 
 
-# POST /v5/order/cancel-all
+# GET /v5/position/list
+# Query real-time position data,
+# such as position size, cumulative realizedPNL.
 @dataclass
-class CancelAllOrders(POSTParams):
+class PositionInfo(GETParams):
     # Required parameter
     category: str
 
@@ -14,8 +16,8 @@ class CancelAllOrders(POSTParams):
     symbol: Optional[str] = field(default=None)
     baseCoin: Optional[str] = field(default=None)
     settleCoin: Optional[str] = field(default=None)
-    orderFilter: Optional[str] = field(default=None)
-    stopOrderType: Optional[str] = field(default=None)
+    limit: Optional[str] = field(default=None)
+    cursor: Optional[str] = field(default=None)
 
     def validate(self):
         """Validate required parameters."""

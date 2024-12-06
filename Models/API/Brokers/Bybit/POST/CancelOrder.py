@@ -4,6 +4,8 @@ from typing import Optional
 from Models.API.POSTParams import POSTParams
 
 
+# POST /v5/order/cancel
+# You can only cancel unfilled or partially filled orders.
 @dataclass
 class CancelOrder(POSTParams):
     # Required parameter

@@ -1,12 +1,10 @@
 import hashlib
 import hmac
 import time
-from dataclasses import fields, is_dataclass
-from typing import Any, Dict
 
 import requests
 
-from Models.API.Brokers.Bybit.GET.Response.TickersLinearInverse import TickersLinearInverse
+from Models.API.Brokers.Bybit.GET.Tickers import Tickers
 
 api_key='hDrBURkbD5u57sB3aQ'
 secret_key='TEfdN38XDQZjSa6u8j7p1A8IgLFfXT2z0f1Y'
@@ -74,30 +72,10 @@ def genSignature(payload):
 # HTTP_Request(endpoint,method,params,"Balance")
 
 
-def from_dict(dataclass_type: Any, data: Dict[str, Any]) -> Any:
-    """
-    Convert a dictionary into a dataclass instance of type `dataclass_type`.
-    """
-    # Check if the dataclass_type is actually a dataclass
-    if not is_dataclass(dataclass_type):
-        raise TypeError(f"{dataclass_type} is not a dataclass")
-
-    # Prepare the arguments for the dataclass constructor
-    fieldnames = {field.name for field in fields(dataclass_type)}
-    filtered_data = {key: value for key, value in data.items() if key in fieldnames}
-
-    # For each field, if the field is a dataclass, recursively convert it
-    for field in fields(dataclass_type):
-        if is_dataclass(field.type) and field.name in filtered_data:
-            filtered_data[field.name] = from_dict(field.type, filtered_data[field.name])
-
-    # Create and return the dataclass instance
-    return dataclass_type(**filtered_data)
-
 # Price Tickers
 endpoint="/v5/market/tickers"
 method="GET"
 params='category=linear&symbol=BTCUSDT'
-a = HTTP_Request(endpoint,method,params,"Balance")
-example = from_dict(TickersLinearInverse, a.get('result'))
-print(example)
+tickers = Tickers(category="linear",symbol="BTCUSDT")
+tickersParam = tickers.toQueryString()
+a = HTTP_Request(endpoint,method,tickersParam,"Balance")

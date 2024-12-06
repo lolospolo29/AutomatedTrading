@@ -4,6 +4,10 @@ from typing import Optional
 from Models.API.GETParams import GETParams
 
 
+# GET /v5/order/realtime
+# Primarily query unfilled or partially filled orders in real-time,
+# but also supports querying recent 500 closed status (Cancelled, Filled)
+# orders.
 @dataclass
 class OpenAndClosedOrders(GETParams):
     # Required parameter
@@ -15,12 +19,14 @@ class OpenAndClosedOrders(GETParams):
     settleCoin: Optional[str] = field(default=None)
     orderId: Optional[str] = field(default=None)
     orderLinkId: Optional[str] = field(default=None)
-    openOnly: Optional[str] = field(default=None)
+    openOnly: Optional[int] = field(default=None)
     orderFilter: Optional[str] = field(default=None)
-    limit: Optional[str] = field(default=None)
+    limit: Optional[int] = field(default=None)
     cursor: Optional[str] = field(default=None)
 
-    def validate(self):
+    def validate(self) -> bool:
         """Validate required parameters."""
         if not self.category:
-            raise ValueError("The 'category' parameter is required.")
+            return False
+        return True
+

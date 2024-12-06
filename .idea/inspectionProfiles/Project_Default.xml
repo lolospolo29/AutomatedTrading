@@ -24,6 +24,7 @@
           <option value="exit" />
           <option value="id" />
           <option value="range" />
+          <option value="hash" />
         </list>
       </option>
     </inspection_tool>
