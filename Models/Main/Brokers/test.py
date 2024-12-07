@@ -2,9 +2,9 @@ import hashlib
 import hmac
 import time
 
-import requests
+import requests as requests
 
-from Models.API.Brokers.Bybit.GET.Tickers import Tickers
+from Models.API.Brokers.Bybit.GET.PostionInfo import PositionInfo
 
 api_key='hDrBURkbD5u57sB3aQ'
 secret_key='TEfdN38XDQZjSa6u8j7p1A8IgLFfXT2z0f1Y'
@@ -24,6 +24,7 @@ def HTTP_Request(endPoint,method,payload,Info):
         'X-BAPI-RECV-WINDOW': recv_window,
         'Content-Type': 'application/json'
     }
+
     if(method=="POST"):
         response = httpClient.request(method, url+endPoint, headers=headers, data=payload)
     else:
@@ -36,35 +37,39 @@ def HTTP_Request(endPoint,method,payload,Info):
 
 def genSignature(payload):
     param_str= str(time_stamp) + api_key + recv_window + payload
+
     hash = hmac.new(bytes(secret_key, "utf-8"), param_str.encode("utf-8"),hashlib.sha256)
     signature = hash.hexdigest()
+
     return signature
 
 # Create Order
 # endpoint="/v5/order/create"
 # method="POST"
 # orderLinkId=uuid.uuid4().hex
-# params='{"category":"linear","symbol": "BTCUSDT","side": "Buy","positionIdx": 0,"orderType": "Limit","qty": "0.01","price": "95300","takeProfit": "95700","timeInForce": "GTC","orderLinkId": "' + orderLinkId + '"}'
+# params='{"category":"linear","symbol": "ETHUSDT","side": "Buy","positionIdx": 0,"orderType": "Limit","qty": "0.01","price": "3333","takeProfit": "100300","timeInForce": "GTC","orderLinkId": "' + orderLinkId + '"}'
 # HTTP_Request(endpoint,method,params,"Create")
+# time.sleep(2)
 #
-# #Get unfilled Orders
-# endpoint="/v5/order/realtime"
-# method="GET"
-# params='category=linear&settleCoin=USDT'
+#Get unfilled Orders
+# endpoint = "/v5/order/realtime"
+# method = "GET"
+# params = 'category=linear&settleCoin=BTCUSDT'
 # HTTP_Request(endpoint,method,params,"UnFilled")
-
-# #Cancel Order
+# time.sleep(2)
+#Cancel Order
 # endpoint="/v5/order/cancel"
 # method="POST"
 # params='{"category":"linear","symbol": "BTCUSDT","orderLinkId": "'+orderLinkId+'"}'
 # HTTP_Request(endpoint,method,params,"Cancel")
-
-# Cancel All Orders
+# time.sleep(2)
+#Cancel All Orders
 # endpoint="/v5/order/cancel-all"
 # method="POST"
-# params='{"category":"linear"}'
+# order = CancelAllOrders(category="linear",symbol="BTCUSDT")
+# params = order.toDict()
 # HTTP_Request(endpoint,method,params,"Cancel")
-
+# time.sleep(2)
 # Get Position
 # endpoint="/v5/position/list"
 # method="GET"
@@ -72,10 +77,19 @@ def genSignature(payload):
 # HTTP_Request(endpoint,method,params,"Balance")
 
 
-# Price Tickers
-endpoint="/v5/market/tickers"
+# # Price Tickers
+# endpoint="/v5/market/tickers"
+# method="GET"
+# tickers = Tickers(category="linear",symbol="BTCUSDT")
+# tickersParam = tickers.toQueryString()
+# a = HTTP_Request(endpoint,method,tickersParam,"Balance")
+
+# # Price Tickers
+endpoint="/v5/position/list"
 method="GET"
-params='category=linear&symbol=BTCUSDT'
-tickers = Tickers(category="linear",symbol="BTCUSDT")
+tickers = PositionInfo(category="linear",symbol="BTCUSDT")
 tickersParam = tickers.toQueryString()
 a = HTTP_Request(endpoint,method,tickersParam,"Balance")
+
+
+

@@ -6,6 +6,7 @@ class GETParams(ABC):
     @abstractmethod
     def validate(self):
         pass
+
     def toQueryString(self) -> str:
         """Convert the dataclass fields to a URL-encoded query string."""
         # Convert the dataclass to a dictionary and filter out None values

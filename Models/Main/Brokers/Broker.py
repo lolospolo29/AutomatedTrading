@@ -8,24 +8,8 @@ class Broker(ABC, metaclass=SingletonMeta):
         self.name: str = name
 
     @abstractmethod
-    def trailStop(self):
+    def sendRequest(self,endPoint,method,payload):
         pass
     @abstractmethod
-    def cancelOrder(self):
-        pass
-
-    @abstractmethod
-    def getOrderInformation(self):
-        pass
-
-    @abstractmethod
-    def executeMarketOrder(self):
-        pass
-
-    @abstractmethod
-    def setLimitOrder(self):
-        pass
-
-    @abstractmethod
-    def getBalance(self):
+    def genSignature(self,payload):
         pass
