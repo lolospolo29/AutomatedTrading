@@ -18,7 +18,16 @@ class Tickers(GETParams):
     baseCoin: Optional[str] = field(default=None)
     expDate: Optional[str] = field(default=None)
 
-    def validate(self):
+    def validate(self) -> bool:
         """Validate required parameters."""
-        if not self.category:
-            raise ValueError("The 'category' parameter is required.")
+        if self.category:
+            return self.validateOption()
+        return False
+
+    def validateOption(self) -> bool:
+        """Validate option parameters."""
+        if self.category == "option":
+            if self.symbol or self.baseCoin:
+                return True
+            return False
+        return True

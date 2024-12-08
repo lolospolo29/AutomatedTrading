@@ -18,5 +18,6 @@ class AddOrReduceMargin(POSTParams):
 
     def validate(self):
         """Validate required parameters."""
-        if not self.category and self.symbol and self.margin:
-            raise ValueError("The 'category' parameter is required.")
+        if self.category and self.symbol and self.margin:
+            return True
+        return False

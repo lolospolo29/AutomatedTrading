@@ -7,7 +7,6 @@ from Models.API.ResponseParams import ResponseParams
 @dataclass
 class AddOrReduceMarginAll(ResponseParams):
 
-    category: Optional[str] = field(default=None)
     symbol: Optional[str] = field(default=None)
     positionIdx: Optional[str] = field(default=None)
     riskId: Optional[int] = field(default=None)

@@ -29,7 +29,15 @@ class AmendOrder(POSTParams):
     tpLimitPrice: Optional[str] = field(default=None)
     slLimitPrice: Optional[str] = field(default=None)
 
-    def validate(self):
+    def validate(self) -> bool:
         """Validate required parameters."""
-        if not self.category and self.symbol and (self.orderId or self.orderLinkId):
-            raise ValueError("The 'category' parameter is required.")
+        if  self.category and self.symbol and (self.orderId or self.orderLinkId):
+            return True
+        return False
+
+    def validateOrderlv(self) -> bool:
+        if self.orderlv:
+            if self.category == "option":
+                return True
+            return False
+        return True

@@ -7,6 +7,8 @@ from Models.API.GETParams import GETParams
 # GET /v5/position/list
 # Query real-time position data,
 # such as position size, cumulative realizedPNL.
+# symbol parameter is supported to be passed with multiple symbols
+# up to 10, e.g., "symbol=BTCUSD,ETHUSD"
 @dataclass
 class PositionInfo(GETParams):
     # Required parameter
@@ -19,7 +21,24 @@ class PositionInfo(GETParams):
     limit: Optional[str] = field(default=None)
     cursor: Optional[str] = field(default=None)
 
-    def validate(self):
+    def validate(self) -> bool:
         """Validate required parameters."""
-        if not self.category:
-            raise ValueError("The 'category' parameter is required.")
+        if self.category:
+            if self.validateLinear() and self.validateBaseCoin():
+                return True
+        return False
+
+    def validateBaseCoin(self) -> bool:
+        """Validate base coin parameters."""
+        if self.baseCoin:
+            if self.category == "option":
+                return True
+            return False
+        return True
+
+    def validateLinear(self):
+        if self.category == "linear":
+            if self.settleCoin or self.symbol:
+                return True
+            return False
+        return True
