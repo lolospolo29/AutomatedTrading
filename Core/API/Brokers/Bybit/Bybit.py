@@ -33,10 +33,6 @@ class Bybit(Broker):
             response = self.session.request(method, self.baseUrl + endPoint, headers=headers, data=payload)
         else:
             response = self.session.request(method, self.baseUrl + endPoint + "?" + payload, headers=headers)
-        print(response.text)
-        print(response.headers)
-        print(" Elapsed Time : " + str(response.elapsed))
-        print(response.status_code)
         return response.json()
 
     def genSignature(self,payload,timeStamp):

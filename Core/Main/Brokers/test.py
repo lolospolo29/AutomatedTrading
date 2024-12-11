@@ -1,11 +1,9 @@
 import hashlib
 import hmac
+import json
 import time
 
 import requests as requests
-
-from Core.API.Brokers.Bybit.POST.CancelAllOrers import CancelAllOrders
-from Core.API.Brokers.Bybit.POST.PlaceOrder import PlaceOrder
 
 api_key='hDrBURkbD5u57sB3aQ'
 secret_key='TEfdN38XDQZjSa6u8j7p1A8IgLFfXT2z0f1Y'
@@ -30,10 +28,6 @@ def HTTP_Request(endPoint,method,payload,Info):
         response = httpClient.request(method, url+endPoint, headers=headers, data=payload)
     else:
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
-    print(response.text)
-    print(response.headers)
-    print(Info + " Elapsed Time : " + str(response.elapsed))
-    print(response.status_code)
     return response.json()
 
 def genSignature(payload):
@@ -45,13 +39,13 @@ def genSignature(payload):
     return signature
 
 # Create Order
-endpoint="/v5/order/create"
-method="POST"
-create = PlaceOrder(category="linear", symbol="ETHUSDT", side="Buy", orderType="Limit", qty="0.3",price="3000")
-params = create.toDict()
-createRes = HTTP_Request(endpoint, method, params, "Create")
-orderId = createRes["result"]["orderId"]
-time.sleep(2)
+# endpoint="/v5/order/create"
+# method="POST"
+# create = PlaceOrder(category="linear", symbol="ETHUSDT", side="Buy", orderType="Limit", qty="0.3",price="3000")
+# params = create.toDict()
+# createRes = HTTP_Request(endpoint, method, params, "Create")
+# orderId = createRes["result"]["orderId"]
+# time.sleep(2)
 
 # Create Order
 # endpoint="/v5/order/amend"
@@ -76,12 +70,12 @@ time.sleep(2)
 # time.sleep(2)
 
 #Cancel All Orders
-endpoint="/v5/order/cancel-all"
-method="POST"
-order = CancelAllOrders(category="linear",symbol="ETHUSDT")
-params = order.toDict()
-HTTP_Request(endpoint,method,params,"Cancel")
-time.sleep(2)
+# endpoint="/v5/order/cancel-all"
+# method="POST"
+# order = CancelAllOrders(category="linear",symbol="ETHUSDT")
+# params = order.toDict()
+# HTTP_Request(endpoint,method,params,"Cancel")
+# time.sleep(2)
 
 # Get Position
 # endpoint="/v5/position/list"
@@ -104,5 +98,34 @@ time.sleep(2)
 # tickersParam = tickers.toDict()
 # a = HTTP_Request(endpoint,method,tickersParam,"Balance")
 
-
+# Batch Place Order
+endpoint="/v5/order/create-batch"
+method="POST"
+payload = {
+  "category": "spot",
+  "request": [
+    {
+      "symbol": "BTCUSDT",
+      "side": "Buy",
+      "orderType": "Limit",
+      "isLeverage": 0,
+      "qty": "0.05",
+      "price": "30000",
+      "timeInForce": "GTC",
+      "orderLinkId": "spot-btc-03"
+    },
+    {
+      "symbol": "ATOMUSDT",
+      "side": "Sell",
+      "orderType": "Limit",
+      "isLeverage": 0,
+      "qty": "2",
+      "price": "12",
+      "timeInForce": "GTC",
+      "orderLinkId": "spot-atom-03"
+    }
+  ]
+}
+a = HTTP_Request(endpoint,method,json.dumps(payload),"Balance")
+b = a
 

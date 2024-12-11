@@ -6,7 +6,7 @@ from Core.API.ResponseParams import ResponseParams
 
 
 @dataclass
-class BatchPlaceOrderAll(ResponseParams):
+class BatchPlaceOrder(ResponseParams):
 
     category: Optional[List[BatchPlacedOrder]] = field(default=List[BatchPlacedOrder])
 

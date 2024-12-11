@@ -1,3 +1,7 @@
+import json
+import threading
+import time
+
 from Core.API.Brokers.Bybit.Bybit import Bybit
 from Core.API.Brokers.Bybit.GET.OpenAndClosedOrders import OpenAndClosedOrders
 from Core.API.Brokers.Bybit.GET.PostionInfo import PositionInfo
@@ -14,7 +18,9 @@ from Core.API.Brokers.Bybit.POST.CancelOrder import CancelOrder
 from Core.API.Brokers.Bybit.POST.PlaceOrder import PlaceOrder
 from Core.API.Brokers.Bybit.POST.Response.AddOrReduceMarginAll import AddOrReduceMarginAll
 from Core.API.Brokers.Bybit.POST.Response.AmendOrderAll import AmendOrderAll
-from Core.API.Brokers.Bybit.POST.Response.BatchAmendOrder import BatchAmendOrderAll
+from Core.API.Brokers.Bybit.POST.Response.BatchAmendOrder import BatchAmendOrder
+from Core.API.Brokers.Bybit.POST.Response.BatchCancelOrder import BatchCancelOrder
+from Core.API.Brokers.Bybit.POST.Response.BatchPlaceOrder import BatchPlaceOrder
 from Core.API.Brokers.Bybit.POST.Response.CancelAllOrdersAll import CancelAllOrdersAll
 from Core.API.Brokers.Bybit.POST.Response.CancelOrderAll import CancelOrderAll
 from Core.API.Brokers.Bybit.POST.Response.PlaceOrderAll import PlaceOrderAll
@@ -24,10 +30,19 @@ from Core.API.ResponseParams import ResponseParams
 
 
 class BybitHandler:
-    def __init__(self, broker: Bybit):
-        self.broker: Bybit = broker
+    def __init__(self):
+        self.name = "Bybit"
+        self.broker: Bybit = Bybit("Bybit")
         self.isLockActive = False
-        self.amendBatch: list[AmendOrder] = []
+
+        self.amendBatch: dict[str, list[AmendOrder]] = {}
+        self.amendLockStatus: dict[str, bool] = {}  # Kategorie -> Lock-Status
+
+        self.cancelOrderBatch: dict[str, list[CancelOrder]] = {}
+        self.cancelLockStatus: dict[str, bool] = {}  # Kategorie -> Lock-Status
+
+        self.placeOrderBatch: dict[str, list[PlaceOrder]] = {}
+        self.placeLockStatus: dict[str, bool] = {}  # Kategorie -> Lock-Status
 
     # region GET Methods
 
@@ -239,32 +254,178 @@ class BybitHandler:
     # endregion
 
     # region Batch Methods
-    def batchAmendOrder(self,**kwargs)-> BatchAmendOrderAll:
+    def batchAmendOrder(self, category, **kwargs) -> BatchAmendOrder:
         amendOrder: AmendOrder = AmendOrder(**kwargs)
 
         # Validierung der Eingabeparameter
         if not amendOrder.validate():
             raise ValueError("The Fields that were required were not given")
 
-        self.amendBatch.append(amendOrder)
+        # Initialisiere die Kategorie, falls sie nicht existiert
+        if category not in self.amendBatch:
+            self.amendBatch[category] = []
+            self.amendLockStatus[category] = False
 
-        if len(self.amendBatch) == 1:
+        # Warte, falls die Kategorie gesperrt ist
+        while self.amendLockStatus[category]:
+            time.sleep(1)
 
+        # Füge die Order zur Kategorie-Liste hinzu
+        self.amendBatch[category].append(amendOrder)
+
+        # Verarbeite die Batch-Order, wenn dies die erste Order der Kategorie ist
+        if len(self.amendBatch[category]) == 1:
             endPoint = "/v5/order/amend-batch"
             method = "POST"
 
-            responseJson = self.broker.sendRequest(endPoint, method, params)
+            time.sleep(60)
+
+            # Sperre die Kategorie
+            self.amendLockStatus[category] = True
+
+            # Erstelle Payload für die aktuelle Kategorie
+            payload = {
+                "category": category,
+                "request": [
+                    {k: v for k, v in vars(order).items() if v is not None and k not in ["category"]}
+                    for order in self.amendBatch[category]
+                ]
+            }
+
+            responseJson = self.broker.sendRequest(endPoint, method, payload)
+
+            # Nach dem Senden der Anfrage: Liste leeren und Lock aufheben
+            self.amendBatch[category] = []
+            self.amendLockStatus[category] = False
+
+            # Verarbeite die Antwort
             responseParams = ResponseParams()
-            result = responseParams.fromDict(responseJson['result'], BatchAmendOrderAll)
+            result = responseParams.fromDict(responseJson['result'], BatchAmendOrder)
+
+            return result
+
+    def batchCancelOrder(self, category, **kwargs) -> BatchCancelOrder:
+        cancelOrder: CancelOrder = CancelOrder(**kwargs)
+
+        # Validierung der Eingabeparameter
+        if not cancelOrder.validate():
+            raise ValueError("The Fields that were required were not given")
+
+        # Initialisiere die Kategorie, falls sie nicht existiert
+        if category not in self.cancelOrderBatch:
+            self.cancelOrderBatch[category] = []
+            self.cancelLockStatus[category] = False
+
+        # Warte, falls die Kategorie gesperrt ist
+        while self.cancelLockStatus[category]:
+            time.sleep(1)
+
+        # Füge die Order zur Kategorie-Liste hinzu
+        self.cancelOrderBatch[category].append(cancelOrder)
+
+        # Verarbeite die Batch-Order, wenn dies die erste Order der Kategorie ist
+        if len(self.cancelOrderBatch[category]) == 1:
+            endPoint = "/v5/order/cancel-batch"
+            method = "POST"
+
+            time.sleep(60)
+
+            # Sperre die Kategorie
+            self.cancelLockStatus[category] = True
+
+            # Erstelle Payload für die aktuelle Kategorie
+            payload = {
+                "category": category,
+                "request": [
+                    {k: v for k, v in vars(order).items() if v is not None and k not in ["category"]}
+                    for order in self.cancelOrderBatch[category]
+                ]
+            }
+
+            responseJson = self.broker.sendRequest(endPoint, method, payload)
+
+            # Nach dem Senden der Anfrage: Liste leeren und Lock aufheben
+            self.cancelOrderBatch[category] = []
+            self.cancelLockStatus[category] = False
+
+            # Verarbeite die Antwort
+            responseParams = ResponseParams()
+            result = responseParams.fromDict(responseJson['result'], BatchCancelOrder)
+
+            return result
+
+    def batchPlaceOrder(self, category, **kwargs) -> BatchPlaceOrder:
+        placeOrder: PlaceOrder = PlaceOrder(**kwargs)
+
+        # Validierung der Eingabeparameter
+        if not placeOrder.validate(batchOrder=True):
+            raise ValueError("The Fields that were required were not given")
+
+        # Initialisiere die Kategorie, falls sie nicht existiert
+        if category not in self.placeOrderBatch:
+            self.placeOrderBatch[category] = []
+            self.placeLockStatus[category] = False
+
+        # Warte, falls die Kategorie gesperrt ist
+        while self.placeLockStatus[category]:
+            time.sleep(1)
+
+        # Füge die Order zur Kategorie-Liste hinzu
+        self.placeOrderBatch[category].append(placeOrder)
+
+        # Verarbeite die Batch-Order, wenn dies die erste Order der Kategorie ist
+        if len(self.placeOrderBatch[category]) == 1:
+            endPoint = "/v5/order/create-batch"
+            method = "POST"
+
+            time.sleep(10)
+
+            # Sperre die Kategorie
+            self.placeLockStatus[category] = True
+
+            # Erstelle Payload für die aktuelle Kategorie
+            payload = {
+                "category": category,
+                "request": [
+                    {k: v for k, v in vars(order).items() if v is not None and k not in ["category"]}
+                    for order in self.placeOrderBatch[category]
+                ]
+            }
+
+            responseJson = self.broker.sendRequest(endPoint, method,json.dumps(payload))
+
+            # Nach dem Senden der Anfrage: Liste leeren und Lock aufheben
+            self.placeOrderBatch[category] = []
+            self.placeLockStatus[category] = False
+
+            # Verarbeite die Antwort
+            responseParams = ResponseParams()
+            result = responseParams.fromDict(responseJson['result'], BatchAmendOrder)
 
             return result
 
     # endregion
 
+handler = BybitHandler()
 
+def place_single_order(category, symbol, side, orderType, qty, price,orderLinkId,timeInForce):
+    handler.batchPlaceOrder(category,symbol=symbol, side=side, orderType=orderType, qty=qty, price=price,orderLinkId=orderLinkId,timeInForce=timeInForce)
 
+# Parameter für die Orders
+order1 = {"category": "linear", "symbol": "ETHUSDT", "side": "Buy", "orderType": "Market", "qty": "0.3", "price": "3000","orderLinkId":"12313131","timeInForce":"PostOnly"}
+order2 = {"category": "linear", "symbol": "BTCUSDT", "side": "Buy", "orderType": "Market", "qty": "0.4", "price": "3030","orderLinkId":"331313","timeInForce":"PostOnly" }
 
-handler = BybitHandler(broker=Bybit("Bybit"))
+# Starte separate Threads für jede Order
+thread1 = threading.Thread(target=place_single_order, kwargs=order1)
+thread2 = threading.Thread(target=place_single_order, kwargs=order2)
 
-# Aufruf mit nur einigen Parametern
-response = handler.returnTickersLinearInverse(category="linear", symbol="BTCUSDT")
+# Threads starten
+thread1.start()
+time.sleep(4)
+thread2.start()
+
+# Warten, bis die Threads abgeschlossen sind
+thread1.join()
+thread2.join()
+
+print("Jede Order wurde in einem separaten Thread getestet!")

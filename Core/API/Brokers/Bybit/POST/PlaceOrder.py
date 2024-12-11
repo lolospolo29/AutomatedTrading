@@ -8,11 +8,13 @@ from Core.API.POSTParams import POSTParams
 @dataclass
 class PlaceOrder(POSTParams):
     # Required parameter
-    category: str
     symbol: str
     side: str
     orderType: str
     qty: str
+
+    #Optional Because Batch must be set with Normal Place Order
+    category: Optional[str] = field(default=None)
 
     # Optional parameters
     isLeverage: Optional[int] = field(default=None)
@@ -40,8 +42,11 @@ class PlaceOrder(POSTParams):
     tpOrderType: Optional[str] = field(default=None)
     slOrderType: Optional[str] = field(default=None)
 
-    def validate(self) -> bool:
+    def validate(self,batchOrder = False) -> bool:
         """Validate required parameters."""
-        if self.category and self.symbol and self.side and self.orderType and self.qty:
-            return True
+        if self.symbol and self.side and self.orderType and self.qty:
+            if batchOrder:
+                return True
+            if self.category:
+                return True
         return False
