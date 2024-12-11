@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from Models.Main.Asset.Candle import Candle
+from Core.Main.Asset.Candle import Candle
 
 
 class IRiskInvalidation(ABC):

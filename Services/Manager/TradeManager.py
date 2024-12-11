@@ -1,4 +1,4 @@
-from Models.Main.Trade import Trade
+from Core.Main.Trade import Trade
 from Services.DBService import DBService
 from Services.Manager.StrategyManager import StrategyManager
 from Services.Manager.TradeHandler.BrokerManager import BrokerManager

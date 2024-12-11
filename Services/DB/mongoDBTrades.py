@@ -1,8 +1,8 @@
 from typing import Any
 
-from Models.DB.MongoDB import MongoDB
-from Models.Main.Trade import Trade
-from Services.Helper.Mapper.Mapper import Mapper
+from Core.DB.MongoDB import MongoDB
+from Core.Main.Trade import Trade
+from Services.Helper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
 
 

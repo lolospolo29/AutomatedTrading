@@ -1,4 +1,4 @@
-from Models.Main.Brokers.Broker import Broker
+from Core.Main.Brokers.Broker import Broker
 
 
 class BrokerManager:

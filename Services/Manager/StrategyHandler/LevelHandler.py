@@ -1,5 +1,5 @@
-from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from Models.StrategyAnalyse.Level import Level
+from Core.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Core.StrategyAnalyse.Level import Level
 
 
 class LevelHandler:

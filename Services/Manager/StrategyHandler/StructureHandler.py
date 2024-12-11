@@ -1,5 +1,5 @@
-from Models.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from Models.StrategyAnalyse.Structure import Structure
+from Core.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Core.StrategyAnalyse.Structure import Structure
 
 
 class StructureHandler:

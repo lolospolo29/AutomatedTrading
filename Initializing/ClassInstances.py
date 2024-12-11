@@ -7,15 +7,15 @@ import pytz
 from watchdog.observers import Observer
 
 from Controller.SignalController import SignalControler
-from Models.Pattern.Factory.BrokerFactory import BrokerFactory
-from Models.Pattern.Factory.StrategyFactory import StrategyFactory
+from Core.Pattern.Factory.BrokerFactory import BrokerFactory
+from Core.Pattern.Factory.StrategyFactory import StrategyFactory
 from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.DB.mongoDBData import mongoDBData
 from Services.DB.mongoDBTrades import mongoDBTrades
 from Services.DBService import DBService
 from Services.Helper.ConfigManager import ConfigManager
 from Services.Helper.FileHandler import NewFileHandler
-from Services.Helper.Mapper.Mapper import Mapper
+from Services.Helper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyHandler.LevelHandler import LevelHandler

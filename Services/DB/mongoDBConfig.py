@@ -1,7 +1,7 @@
 from typing import Any
 
-from Models.DB.MongoDB import MongoDB
-from Services.Helper.Mapper.Mapper import Mapper
+from Core.DB.MongoDB import MongoDB
+from Services.Helper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
 
 
