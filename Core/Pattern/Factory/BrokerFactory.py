@@ -1,6 +1,6 @@
 from Core.API.Brokers.Bybit.Bybit import Bybit
-from Core.Main.Brokers.Broker import Broker
-from Core.Main.Brokers.Forex.ProxyBroker import ProxyBroker
+from Core.API.Brokers.Broker import Broker
+from Core.API.Brokers.FOREXCOM.ProxyBroker import ProxyBroker
 from Interfaces.IFactory import IFactory
 
 

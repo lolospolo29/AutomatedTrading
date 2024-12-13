@@ -1,7 +1,7 @@
 from typing import Dict, Any
 
 
-class SignalControler:
+class SignalController:
     def __init__(self, TradingController):
         self._TradingController = TradingController
 

@@ -4,7 +4,7 @@ import time
 
 import requests as requests
 
-from Core.Main.Brokers.Broker import Broker
+from Core.API.Brokers.Broker import Broker
 
 
 class Bybit(Broker):

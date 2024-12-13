@@ -80,10 +80,9 @@ class NewFileHandler(FileSystemEventHandler):
     def archive():
 
         # Pfade definieren
-        observed_folder = r"C:\AutomatedTrading\ObservedFolder\archive"
+        observed_folder = r"/Users/lauris/PycharmProjects/AutomatedTrading/ObservedFolder/archive"
         # Sicherstellen, dass der Archivordner existiert
 
-        # Alle Dateien im ObservedFolder iterieren
         # Alle Dateien im ObservedFolder iterieren
         for filename in os.listdir(observed_folder):
             file_path = os.path.join(observed_folder, filename)
