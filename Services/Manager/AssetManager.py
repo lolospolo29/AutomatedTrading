@@ -3,7 +3,7 @@ from typing import Any
 from Core.Main.Asset.Asset import Asset
 from Core.Main.Asset.Candle import Candle
 from Core.Main.Asset.CandleSeries import CandleSeries
-from Services.DBService import DBService
+from Services.DB.DBService import DBService
 
 
 class AssetManager:

@@ -1,3 +1,4 @@
+
 from Core.Main.Asset.Asset import Asset
 from Core.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from Core.Main.Asset.SMTPair import SMTPair
@@ -9,16 +10,14 @@ from Monitoring.TimeWrapper import logTime
 from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager
-from Services.Manager.TradeHandler.BrokerManager import BrokerManager
 
 
 class ConfigManager:
-    def __init__(self, configDB: mongoDBConfig, assetManager: AssetManager, brokerManager: BrokerManager,
+    def __init__(self, configDB: mongoDBConfig, assetManager: AssetManager,
                  strategyManager: StrategyManager, brokerFactory: BrokerFactory, strategyFactory: StrategyFactory):
 
         self._MongoDBConfig: mongoDBConfig = configDB
         self._AssetManager: AssetManager = assetManager
-        self._BrokerManager: BrokerManager = brokerManager
         self._StrategyManager: StrategyManager = strategyManager
         self._BrokerFactory: BrokerFactory = brokerFactory
         self._StrategyFactory: StrategyFactory = strategyFactory
@@ -50,7 +49,6 @@ class ConfigManager:
         for doc in dbList:
 
             self.isTypAssetAddAsset(typ, doc)
-            self.isTypBrokerAddBroker(typ, doc)
             self.isTypStrategyAddStrategy(typ,doc)
             self.isTypRelationAddRelation(typ,doc)
             self.isTypSMTPairAddPair(typ,doc)
@@ -61,11 +59,6 @@ class ConfigManager:
 
             asset: Asset = Asset((doc.get(typ)).get("name"))
             self.assets.append(asset)
-
-    def isTypBrokerAddBroker(self, typ: str, doc: dict) -> None:
-        if typ == "Broker":
-            broker: Broker = self._BrokerFactory.returnClass((doc.get(typ)).get("name"))
-            self.brokers.append(broker)
 
     def isTypStrategyAddStrategy(self,typ: str, doc: dict) -> None:
         if typ == "Strategy":
@@ -105,8 +98,6 @@ class ConfigManager:
             self.smtPairs.append(SMTPair(strategy,smtPairList,doc.get(typ).get("correlation")))
     @logTime
     def runOverList(self):
-        for broker in self.brokers:
-            self._BrokerManager.registerBroker(broker)
         for strategy in self.strategies:
             self._StrategyManager.registerStrategy(strategy)
         for asset in self.assets:

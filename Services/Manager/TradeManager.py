@@ -1,16 +1,14 @@
 from Core.Main.Trade import Trade
-from Services.DBService import DBService
+from Services.DB.DBService import DBService
 from Services.Manager.StrategyManager import StrategyManager
-from Services.Manager.TradeHandler.BrokerManager import BrokerManager
-from Services.Manager.TradeHandler.RiskManager import RiskManager
+from Services.Manager.RiskHandler import RiskManager
 
 
 class TradeManager:
-    def __init__(self, dbService: DBService, brokerManager: BrokerManager, strategyManager: StrategyManager,
+    def __init__(self, dbService: DBService, strategyManager: StrategyManager,
                  riskManager: RiskManager):
         self.openTrades: list[Trade] = []
         self._DBService: DBService = dbService
-        self._BrokerManager: BrokerManager = brokerManager
         self._StrategyManager: StrategyManager = strategyManager
         self._RiskManager: RiskManager = riskManager
 

@@ -12,7 +12,7 @@ from Core.Pattern.Factory.StrategyFactory import StrategyFactory
 from Services.DB.mongoDBConfig import mongoDBConfig
 from Services.DB.mongoDBData import mongoDBData
 from Services.DB.mongoDBTrades import mongoDBTrades
-from Services.DBService import DBService
+from Services.DB.DBService import DBService
 from Services.Helper.ConfigManager import ConfigManager
 from Services.Helper.FileHandler import NewFileHandler
 from Services.Helper.Mapper import Mapper
@@ -22,8 +22,7 @@ from Services.Manager.StrategyHandler.LevelHandler import LevelHandler
 from Services.Manager.StrategyHandler.PDArrayHandler import PDArrayHandler
 from Services.Manager.StrategyHandler.StructureHandler import StructureHandler
 from Services.Manager.StrategyManager import StrategyManager
-from Services.Manager.TradeHandler.BrokerManager import BrokerManager
-from Services.Manager.TradeHandler.RiskManager import RiskManager
+from Services.Manager.RiskHandler import RiskManager
 from Services.Manager.TradeManager import TradeManager
 from Services.TradingService import TradingService
 
@@ -62,13 +61,12 @@ strategyManager = StrategyManager(assetManager, pdArrayHandler,levelHandler,stru
 
 riskManager = RiskManager(2, 1)
 
-brokerManager = BrokerManager()
 
-tradeManager = TradeManager(dbService, brokerManager, strategyManager, riskManager)
+tradeManager = TradeManager(dbService, strategyManager, riskManager)
 
 tradingService = TradingService(assetManager, tradeManager, strategyManager)
 
-configManager = ConfigManager(mongoDBConfig,assetManager,brokerManager,strategyManager,brokerFactory,strategyFactory)
+configManager = ConfigManager(mongoDBConfig,assetManager,strategyManager,brokerFactory,strategyFactory)
 
 # FileHandler
 newFileHandler = NewFileHandler(assetManager,strategyManager)
