@@ -111,5 +111,5 @@ thread = Thread(target=partial(job, tradingService))
 thread.start()
 
 
-thread = Thread(target=partial(monitorFolder, newFileHandler, "C:\\AutomatedTrading\\ObservedFolder"))
+thread = Thread(target=partial(monitorFolder, newFileHandler, "/Users/lauris/PycharmProjects/AutomatedTrading/ObservedFolder"))
 thread.start()
