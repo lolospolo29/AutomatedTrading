@@ -1,9 +1,9 @@
 from typing import Any
 
-from Core.StrategyAnalyse.Structures.BOS import BOS
-from Core.StrategyAnalyse.Structures.CISD import CISD
-from Core.StrategyAnalyse.Structures.Choch import Choch
-from Core.StrategyAnalyse.Structures.SMT import SMT
+from Core.Main.Strategy.FrameWorks.Structures.BOS import BOS
+from Core.Main.Strategy.FrameWorks.Structures.CISD import CISD
+from Core.Main.Strategy.FrameWorks.Structures.Choch import Choch
+from Core.Main.Strategy.FrameWorks.Structures.SMT import SMT
 
 
 class ConfirmationMediator:

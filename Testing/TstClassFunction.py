@@ -1,6 +1,6 @@
 from Monitoring.Monitoring import Monitoring
 
-from Core.DB.MongoDB import MongoDB
+from Services.DB.MongoDB import MongoDB
 from Services.Helper.Mapper import Mapper
 from Services.Helper.SecretsManager import SecretsManager
 

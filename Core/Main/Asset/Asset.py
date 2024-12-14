@@ -1,7 +1,7 @@
-from Core.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from Core.Main.Asset.Candle import Candle
-from Core.Main.Asset.CandleSeries import CandleSeries
-from Core.Main.Asset.SMTPair import SMTPair
+from Core.Main.Asset.SubModels.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Core.Main.Asset.SubModels.Candle import Candle
+from Core.Main.Asset.SubModels.CandleSeries import CandleSeries
+from Core.Main.Asset.SubModels.SMTPair import SMTPair
 
 
 class Asset:

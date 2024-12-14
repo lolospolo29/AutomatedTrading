@@ -1,8 +1,8 @@
 from typing import Any
 
 from Core.Main.Asset.Asset import Asset
-from Core.Main.Asset.Candle import Candle
-from Core.Main.Asset.CandleSeries import CandleSeries
+from Core.Main.Asset.SubModels.Candle import Candle
+from Core.Main.Asset.SubModels.CandleSeries import CandleSeries
 from Services.DB.DBService import DBService
 
 

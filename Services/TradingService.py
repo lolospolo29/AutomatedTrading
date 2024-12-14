@@ -1,8 +1,8 @@
 import time
 from typing import Any, Dict
 
-from Core.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from Initializing.GlobalStatements import getLockState, setLockState
+from Core.Main.Asset.SubModels.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Config.GlobalStatements import getLockState, setLockState
 from Monitoring.TimeWrapper import logTime
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager

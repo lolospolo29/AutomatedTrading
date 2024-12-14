@@ -1,25 +1,23 @@
 
 from Core.Main.Asset.Asset import Asset
-from Core.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from Core.Main.Asset.SMTPair import SMTPair
+from Core.Main.Asset.SubModels.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Core.Main.Asset.SubModels.SMTPair import SMTPair
 from Core.API.Brokers.Broker import Broker
-from Core.Main.Strategies.Strategy import Strategy
-from Core.Pattern.Factory.BrokerFactory import BrokerFactory
+from Core.Main.Strategy.Strategy import Strategy
 from Core.Pattern.Factory.StrategyFactory import StrategyFactory
 from Monitoring.TimeWrapper import logTime
-from Services.DB.mongoDBConfig import mongoDBConfig
+from Services.DB.SubModules.mongoDBConfig import mongoDBConfig
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager
 
 
 class ConfigManager:
     def __init__(self, configDB: mongoDBConfig, assetManager: AssetManager,
-                 strategyManager: StrategyManager, brokerFactory: BrokerFactory, strategyFactory: StrategyFactory):
+                 strategyManager: StrategyManager, strategyFactory: StrategyFactory):
 
         self._MongoDBConfig: mongoDBConfig = configDB
         self._AssetManager: AssetManager = assetManager
         self._StrategyManager: StrategyManager = strategyManager
-        self._BrokerFactory: BrokerFactory = brokerFactory
         self._StrategyFactory: StrategyFactory = strategyFactory
         self.assets: list[Asset] = []
         self.brokers: list[Broker] = []

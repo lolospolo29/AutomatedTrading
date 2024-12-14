@@ -7,7 +7,7 @@ from datetime import datetime
 import pandas as pd
 from watchdog.events import FileSystemEventHandler
 
-from Initializing.GlobalStatements import setLockState, getLockState
+from Config.GlobalStatements import setLockState, getLockState
 from Services.Manager.AssetManager import AssetManager
 from Services.Manager.StrategyManager import StrategyManager
 

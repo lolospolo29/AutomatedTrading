@@ -1,13 +1,13 @@
-from Core.StrategyAnalyse.Levels.CBDR import CBDR
-from Core.StrategyAnalyse.Levels.Fibonnaci.OTE import OTE
-from Core.StrategyAnalyse.Levels.Fibonnaci.PD import PD
-from Core.StrategyAnalyse.Levels.Fibonnaci.STDV import STDV
-from Core.StrategyAnalyse.Levels.Opens.NDOG import NDOG
-from Core.StrategyAnalyse.Levels.Opens.NWOG import NWOG
-from Core.StrategyAnalyse.Levels.Previous.PreviousDaysLevels import PreviousDaysLevels
-from Core.StrategyAnalyse.Levels.Previous.PreviousSessionLevels import PreviousSessionLevels
-from Core.StrategyAnalyse.Levels.Previous.PreviousWeekLevels import PreviousWeekLevels
-from Core.StrategyAnalyse.Levels.equalHL import equalHL
+from Core.Main.Strategy.FrameWorks.Levels.CBDR import CBDR
+from Core.Main.Strategy.FrameWorks.Levels.Fibonnaci.OTE import OTE
+from Core.Main.Strategy.FrameWorks.Levels.Fibonnaci.PD import PD
+from Core.Main.Strategy.FrameWorks.Levels.Fibonnaci.STDV import STDV
+from Core.Main.Strategy.FrameWorks.Levels.Opens.NDOG import NDOG
+from Core.Main.Strategy.FrameWorks.Levels.Opens.NWOG import NWOG
+from Core.Main.Strategy.FrameWorks.Levels.Previous.PreviousDaysLevels import PreviousDaysLevels
+from Core.Main.Strategy.FrameWorks.Levels.Previous.PreviousSessionLevels import PreviousSessionLevels
+from Core.Main.Strategy.FrameWorks.Levels.Previous.PreviousWeekLevels import PreviousWeekLevels
+from Core.Main.Strategy.FrameWorks.Levels.equalHL import equalHL
 
 
 class LevelMediator:

@@ -1,10 +1,10 @@
-from Core.Main.Asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from Core.Main.Asset.Candle import Candle
-from Core.Main.Strategies.Strategy import Strategy
+from Core.Main.Asset.SubModels.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from Core.Main.Asset.SubModels.Candle import Candle
+from Core.Main.Strategy.Strategy import Strategy
 from Services.Manager.AssetManager import AssetManager
-from Services.Manager.StrategyHandler.LevelHandler import LevelHandler
-from Services.Manager.StrategyHandler.PDArrayHandler import PDArrayHandler
-from Services.Manager.StrategyHandler.StructureHandler import StructureHandler
+from Core.Main.Strategy.FrameWorkStorage.LevelHandler import LevelHandler
+from Core.Main.Strategy.FrameWorkStorage.PDArrayHandler import PDArrayHandler
+from Core.Main.Strategy.FrameWorkStorage.StructureHandler import StructureHandler
 
 
 class StrategyManager:

@@ -1,5 +1,6 @@
-from Core.Main.Strategies.Analyse.FVGSession import FVGSession
-from Core.Main.Strategies.Strategy import Strategy
+from Core.Main.Strategy.Analyse.FVGSession import FVGSession
+from Core.Main.Strategy.Analyse.Unicorn import Unicorn
+from Core.Main.Strategy.Strategy import Strategy
 from Interfaces.IFactory import IFactory
 
 
@@ -8,3 +9,5 @@ class StrategyFactory(IFactory):
 
         if typ == "FVGSession":
             return FVGSession(typ)
+        if typ == "Unicorn":
+            return Unicorn(typ)

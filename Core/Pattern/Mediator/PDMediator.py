@@ -1,12 +1,12 @@
-from Core.StrategyAnalyse.PDArray import PDArray
-from Core.StrategyAnalyse.PDArrays.BPR import BPR
-from Core.StrategyAnalyse.PDArrays.Breaker import Breaker
-from Core.StrategyAnalyse.PDArrays.FVG import FVG
-from Core.StrategyAnalyse.PDArrays.OrderBlock import Orderblock
-from Core.StrategyAnalyse.PDArrays.RejectionBlock import RejectionBlock
-from Core.StrategyAnalyse.PDArrays.Swings import Swings
-from Core.StrategyAnalyse.PDArrays.Void import Void
-from Core.StrategyAnalyse.PDArrays.VolumeImbalance import VolumeImbalance
+from Core.Main.Strategy.FrameWorks.PDArray import PDArray
+from Core.Main.Strategy.FrameWorks.PDArrays.BPR import BPR
+from Core.Main.Strategy.FrameWorks.PDArrays.Breaker import Breaker
+from Core.Main.Strategy.FrameWorks.PDArrays.FVG import FVG
+from Core.Main.Strategy.FrameWorks.PDArrays.OrderBlock import Orderblock
+from Core.Main.Strategy.FrameWorks.PDArrays.RejectionBlock import RejectionBlock
+from Core.Main.Strategy.FrameWorks.PDArrays.Swings import Swings
+from Core.Main.Strategy.FrameWorks.PDArrays.Void import Void
+from Core.Main.Strategy.FrameWorks.PDArrays.VolumeImbalance import VolumeImbalance
 
 
 class PDMediator:

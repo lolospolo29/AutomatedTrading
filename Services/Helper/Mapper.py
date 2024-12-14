@@ -1,6 +1,6 @@
 from typing import Any
 
-from Core.Main.Asset.Candle import Candle
+from Core.Main.Asset.SubModels.Candle import Candle
 from Core.Main.Trade.Order import Order
 from Core.Main.Trade.Trade import Trade
 

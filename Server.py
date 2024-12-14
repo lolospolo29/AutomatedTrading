@@ -6,7 +6,7 @@ from threading import Thread
 
 from flask import Flask, request, Response, render_template
 
-from Initializing.ClassInstances import signalController
+from Config.Initializing.ClassInstances import signalController
 
 app = Flask(__name__)
 
