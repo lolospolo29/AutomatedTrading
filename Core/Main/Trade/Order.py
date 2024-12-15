@@ -1,19 +1,40 @@
+from dataclasses import dataclass, field
+from typing import Optional
+
+@dataclass
 class Order:
-    def __init__(self):
-        self.status: str = ""
-        self.id: int = 0
-        self.stopLoss: float = 0.0
-        self.takeProfit: float = 0.0
-        self.riskPercentage: float = 0.0
+    # Required parameters
+    status: bool
+    riskPercentage: float
+    moneyAtRisk: float
+    leverage: float
+    unrealisedPnL: float
+    orderLinkId: str
 
-    def toDict(self):
-        """Gibt alle Datenpunkte als Dictionary zurück, inklusive timeStamp."""
-        # Zeitformatierung: Entfernt Datum und gibt nur die Uhrzeit zurück
+    symbol: str
+    category: str
+    side: str
+    takeProfit: str
+    stopLoss: str
+    qty: str
 
-        return {
-            "status": self.status,
-            "id": self.id,
-            "stopLoss": self.stopLoss,
-            "takeProfit": self.takeProfit,
-            "riskPercentage": self.riskPercentage,
-        }
+    # Must be set after sending Request
+    orderId: Optional[str] = field(default=None)
+
+    # Specific attributes (optional)
+    timeInForce: Optional[str] = field(default=None)
+    closeOnTrigger: Optional[bool] = field(default=False)
+    reduceOnly: Optional[bool] = field(default=False)
+    orderType: Optional[str] = field(default=None)
+    tpOrderType: Optional[str] = field(default=None)
+    slOrderType: Optional[str] = field(default=None)
+    triggerDirection: Optional[int] = field(default=None)
+    tpTriggerBy: Optional[str] = field(default=None)
+    slTriggerBy: Optional[str] = field(default=None)
+
+    # Limit Logic attributes (optional)
+    tpslMode: Optional[str] = field(default=None)
+    orderPrice: Optional[str] = field(default=None)
+    triggerPrice: Optional[str] = field(default=None)
+    tpLimitPrice: Optional[str] = field(default=None)
+    slLimitPrice: Optional[str] = field(default=None)

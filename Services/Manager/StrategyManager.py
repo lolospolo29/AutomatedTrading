@@ -8,10 +8,9 @@ from Core.Main.Strategy.FrameWorkStorage.StructureHandler import StructureHandle
 
 
 class StrategyManager:
-    def __init__(self, assetManager : AssetManager, pdArrayHandler: PDArrayHandler, levelHandler: LevelHandler,
+    def __init__(self, pdArrayHandler: PDArrayHandler, levelHandler: LevelHandler,
                  structureHandler: StructureHandler):
         self.strategies: dict = {}
-        self._AssetManager: AssetManager = assetManager
         self._PDArrayHandler: PDArrayHandler = pdArrayHandler
         self._LevelHandler: LevelHandler = levelHandler
         self._StructureHandler: StructureHandler = structureHandler

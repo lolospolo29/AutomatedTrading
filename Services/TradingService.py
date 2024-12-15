@@ -28,6 +28,8 @@ class TradingService:
     @logTime
     def analyzeStrategy(self, asset: str, broker: str, timeFrame:int,candles:list) -> None:
 
+        # Analyze Foreach Strategy that correlates with Broker
+
         relations: list = self._AssetManager.returnRelations(asset, broker)
 
         for relation in relations:

@@ -2,6 +2,7 @@
 import json
 import threading
 import time
+from typing import Any
 
 from Core.API.Brokers.Bybit.Bybit import Bybit
 from Core.API.Brokers.Bybit.GET.OpenAndClosedOrders import OpenAndClosedOrders
@@ -85,7 +86,7 @@ class BybitHandler:
 
         return result
 
-    def returnTickers(self, **kwargs):
+    def returnTickers(self, **kwargs) -> Any:
 
         tickers: Tickers = Tickers(**kwargs)
 
@@ -406,6 +407,8 @@ class BybitHandler:
             return result
 
     # endregion
+
+    # Logic for Handling Failed Requests and Logging
 
 handler = BybitHandler()
 

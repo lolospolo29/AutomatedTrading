@@ -54,7 +54,7 @@ structureHandler = StructureHandler()
 # Manager / Services
 assetManager = AssetManager(dbService)
 
-strategyManager = StrategyManager(assetManager, pdArrayHandler,levelHandler,structureHandler)
+strategyManager = StrategyManager(pdArrayHandler,levelHandler,structureHandler)
 
 riskManager = RiskManager(2, 1)
 
