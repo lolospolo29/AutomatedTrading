@@ -1,8 +1,6 @@
 from Core.Main.Asset.SubModels.Candle import Candle
-from Interfaces.RiskManagement.IStrategicStop import IStrategicStop
 
-
-class SwingStop(IStrategicStop):
+class SwingStop:
     def getStrategyStop(self, candle: Candle):
         if candle.close < candle.open:
             return candle.high

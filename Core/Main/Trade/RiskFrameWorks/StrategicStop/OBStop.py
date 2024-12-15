@@ -1,9 +1,9 @@
 from Core.Main.Asset.SubModels.Candle import Candle
-from Interfaces.RiskManagement.IStrategicStop import IStrategicStop
 
 
-class OBStop(IStrategicStop):
-    def getStrategyStop(self, candle: Candle,mode: str)->float:
+class OBStop:
+    @staticmethod
+    def getStrategyStop(candle: Candle, mode: str)->float:
         if mode == "Wick":
             if candle.close < candle.open:
                 return candle.high

@@ -1,4 +1,4 @@
-from Core.Main.Trade.RiskFrameWorks.Ratio.ProfitStopEntry import ProfitStopEntry
+from Core.Main.Trade.RiskFrameWorks.Ratio.Models.ProfitStopEntry import ProfitStopEntry
 
 
 class FixedRatio:
@@ -25,10 +25,10 @@ class FixedRatio:
     def calculateEntryPrice(stop:float, profitLevel:float, ratio:float) -> float:
         if stop < profitLevel:
             difference = profitLevel - stop
-            return difference * (ratio / 100)
+            return difference / (ratio + 1)
         if stop > profitLevel:
             difference = stop - profitLevel
-            return difference * (ratio / 100)
+            return difference / (ratio + 1)
         if stop == profitLevel:
             return 0
 
