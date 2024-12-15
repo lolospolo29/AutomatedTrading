@@ -1,8 +1,9 @@
-from Interfaces.RiskManagement.IOrderWeightage import IOrderWeightage
 
 
-class OrderWeightage(IOrderWeightage):
-    def sortOrderToTPLevel(self, orderAmount: int, tpLevel: list[float], direction: str,
+class OrderWeightage:
+
+    @staticmethod
+    def sortOrderToTPLevel(orderAmount: int, tpLevel: list[float], direction: str,
                            mode: int) -> list[tuple[int, float]]:
         """
         Ordnet die TP-Level den Orders zu, basierend auf dem Modus und der Richtung.
@@ -15,24 +16,24 @@ class OrderWeightage(IOrderWeightage):
         if len(tpLevel) < orderAmount:
             raise ValueError("Nicht genügend TP-Level für die Anzahl der Orders.")
 
-        if direction == "long":
+        if direction == "Buy":
             tpLevel.sort()  # Aufsteigend für Long
-        elif direction == "short":
+        elif direction == "Sell":
             tpLevel.sort(reverse=True)  # Absteigend für Short
         else:
             raise ValueError("Unbekannte Richtung. 'long' oder 'short' erwartet.")
 
         if mode == "aggressiv":
-            if direction == "long":
+            if direction == "Buy":
                 assigned_tp = tpLevel[-orderAmount:][::-1]
-            elif direction == "short":
+            elif direction == "Sell":
                 assigned_tp = tpLevel[:orderAmount]
         elif mode == "gleichmäßig":
             assigned_tp = tpLevel[:orderAmount]
         elif mode == "risikoarm":
-            if direction == "long":
+            if direction == "Buy":
                 closest_tp = tpLevel[0]
-            elif direction == "short":
+            elif direction == "Sell":
                 closest_tp = tpLevel[0]
 
             tpLevel.remove(closest_tp)

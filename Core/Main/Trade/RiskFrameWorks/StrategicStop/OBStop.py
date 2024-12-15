@@ -3,7 +3,7 @@ from Interfaces.RiskManagement.IStrategicStop import IStrategicStop
 
 
 class OBStop(IStrategicStop):
-    def getStrategyStop(self, candle: Candle,mode: str):
+    def getStrategyStop(self, candle: Candle,mode: str)->float:
         if mode == "Wick":
             if candle.close < candle.open:
                 return candle.high
@@ -15,5 +15,6 @@ class OBStop(IStrategicStop):
             if candle.close > candle.open:
                 return candle.close
         if mode == "50":
-            return (candle.open + candle.close) * 0,5
+            fiftyPercent:float = (candle.open + candle.close) * 0.5
+            return fiftyPercent
 

@@ -1,4 +1,4 @@
-from Interfaces.RiskManagement.ITimeWindow import ITimeWindow
+from Interfaces.Strategy.ITimeWindow import ITimeWindow
 
 # AM Macro
 class FirstNYMacro(ITimeWindow):

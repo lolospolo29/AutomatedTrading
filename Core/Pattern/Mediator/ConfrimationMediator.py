@@ -29,8 +29,10 @@ class ConfirmationMediator:
             return self.choch.returnConfirmation(candles)
         if confirmationType == "CISD":
             return self.cisd.returnConfirmation(candles)
+
+        # region SMT should be put as an Extra Strategy implementation & logic
         if confirmationType == "SMT":
             if 'candlesAsset2' in kwargs:
                 candlesAsset2 = kwargs['candlesAsset2']
                 return self.smt.returnConfirmation(candles, candlesAsset2)
-
+        # endregion

@@ -1,6 +1,7 @@
 from Core.Main.Asset.SubModels.Candle import Candle
 from Core.Main.Strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from Core.Main.Strategy.Strategy import Strategy
+from Core.Main.Strategy.StrategyOrder import StrategyOrder
 from Core.Pattern.Mediator.ConfrimationMediator import ConfirmationMediator
 from Core.Pattern.Mediator.LevelMediator import LevelMediator
 from Core.Pattern.Mediator.PDMediator import PDMediator
@@ -9,6 +10,8 @@ from Core.Main.Strategy.FrameWorks.PDArray import PDArray
 from Core.Main.Strategy.FrameWorks.Structure import Structure
 from Core.Main.Strategy.FrameWorks.TimeModels.London import LondonOpen
 from Core.Main.Strategy.FrameWorks.TimeModels.NYOpen import NYOpen
+from Core.Pattern.Mediator.RiskMediator import RiskMediator
+
 
 # Unicorn Entry with 4H PD Range Bias
 
@@ -19,9 +22,12 @@ class Unicorn(Strategy):
         self._PDMediator = PDMediator()
         self._ConfirmationMediator = ConfirmationMediator()
         self._LevelMediator : LevelMediator= LevelMediator()
+        self._RiskMediator : RiskMediator= RiskMediator()
 
         self._TimeWindow = LondonOpen()
         self._TimeWindow2 = NYOpen()
+
+        self.category = "linear"
 
         self.expectedTimeFrames = []
 
@@ -46,7 +52,7 @@ class Unicorn(Strategy):
     def analyzeData(self, candles: list, timeFrame: int) -> list:
             frameWorks = []
             if timeFrame == 240:
-                ote = self._LevelMediator.calculateLevels("PD",candles,lookback=1)
+                ote = self._LevelMediator.calculateFibonacci("PD",candles,lookback=1)
                 frameWorks.extend(ote)
 
             if timeFrame == 5:
@@ -66,24 +72,23 @@ class Unicorn(Strategy):
             return frameWorks
 
     def getEntry(self, candles: list, timeFrame: int, pds: list[PDArray],
-                 levels:list[Level], structures: list[Structure]):
+                 levels:list[Level], structures: list[Structure]) ->list[StrategyOrder]:
         if candles and pds:
 
             last_candle: Candle = candles[-1]
             time = last_candle.isoTime
 
             if not self.isInTime(time):
-                return
+                return []
 
             if timeFrame == 5 and len(candles) > 10:
-                breakers = [brk for brk in pds if brk.name == "Breaker"]
-                fvgs = [brk for brk in pds if brk.name == "FVG"]
+                breakers:list[PDArray] = [brk for brk in pds if brk.name == "Breaker"]
+                fvgs:list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
 
                 for breaker in breakers:
                     breakerRange = self._PDMediator.returnCandleRange("BRK",breaker)
                     for fvg in fvgs:
                         fvgRange = self._PDMediator.returnCandleRange("FVG",fvg)
-
                         fvgLow = fvgRange.get('low')
                         fvgHigh = fvgRange.get('high')
                         breakerLow = breakerRange.get('low')
@@ -99,9 +104,19 @@ class Unicorn(Strategy):
                             # Prüfen, ob der Schlusskurs in beiden Ranges ist
                             if in_fvg_range and in_breaker_range:
                                 if fvg.direction == "Bullish" and breaker.direction == "Bullish" :
-                                    return "BUY"
+                                    pass
+
                                 if fvg.direction == "Bearish" and breaker.direction == "Bearish" :
                                     return "SELL"
+    def returnOrder(self, lastCandle:Candle,candles: list, timeFrame: int,direction: str) -> StrategyOrder:
+
+        middleCandle = candles[0]
+
+        stop = self._RiskMediator.calculateRisk("EndOfImbalance",middleCandle)
+
+
+        return StrategyOrder(category=self.category,side=direction,takeProfit=x,stopLoss=x,orderType=x,timeFrame=timeFrame,price=x)
+
 
     def getExit(self):
         pass

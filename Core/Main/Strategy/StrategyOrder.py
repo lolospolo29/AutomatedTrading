@@ -2,25 +2,15 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 @dataclass
-class Order:
+class StrategyOrder:
     # Required parameters
-    status: bool
-    riskPercentage: float
-    moneyAtRisk: float
-    leverage: float
-    unrealisedPnL: float
-    orderLinkId: str
-    orderType:str
-
-    symbol: str
     category: str
     side: str
     takeProfit: str
     stopLoss: str
-    qty: str
-
-    # Must be set after sending Request
-    orderId: Optional[str] = field(default=None)
+    orderType: str
+    timeFrame: int
+    price: float
 
     # Specific attributes (optional)
     timeInForce: Optional[str] = field(default=None)

@@ -1,20 +1,16 @@
-from typing import Any
-
-from Core.RiskManagement.Invalidation.InvalidationClose import InvalidationClose
-from Core.RiskManagement.Invalidation.InvalidationSteady import InvalidationSteady
-from Core.RiskManagement.Martingale.AntiMartingale import AntiMartingale
-from Core.RiskManagement.Martingale.Martingale import Martingale
-from Core.RiskManagement.OrderWeightage.OrderWeightage import OrderWeightage
-from Core.RiskManagement.Ratio.FixedRatio import FixedRatio
-from Core.RiskManagement.Ratio.RangeRatio import RangeRatio
-from Core.RiskManagement.StrategicStop.EndOfmbalance import EndOfImbalance
-from Core.RiskManagement.StrategicStop.OBStop import OBStop
-from Core.RiskManagement.StrategicStop.Swing import SwingStop
-from Core.RiskManagement.TechnicalEntry.CE import CE
-from Core.RiskManagement.TechnicalEntry.Drill import DrillEntry
-from Core.RiskManagement.TechnicalEntry.Fill import FillEntry
-from Core.RiskManagement.TechnicalStop.BreakEven import BreakEven
-from Core.RiskManagement.TechnicalStop.TrailingStop import TrailingStop
+from Core.Main.Trade.RiskFrameWorks.Invalidation.InvalidationClose import InvalidationClose
+from Core.Main.Trade.RiskFrameWorks.Invalidation.InvalidationSteady import InvalidationSteady
+from Core.Main.Trade.RiskFrameWorks.OrderWeightage.OrderWeightage import OrderWeightage
+from Core.Main.Trade.RiskFrameWorks.Ratio.FixedRatio import FixedRatio
+from Core.Main.Trade.RiskFrameWorks.Ratio.RangeRatio import RangeRatio
+from Core.Main.Trade.RiskFrameWorks.StrategicStop.EndOfmbalance import EndOfImbalance
+from Core.Main.Trade.RiskFrameWorks.StrategicStop.OBStop import OBStop
+from Core.Main.Trade.RiskFrameWorks.StrategicStop.Swing import SwingStop
+from Core.Main.Trade.RiskFrameWorks.TechnicalEntry.CE import CE
+from Core.Main.Trade.RiskFrameWorks.TechnicalEntry.Drill import DrillEntry
+from Core.Main.Trade.RiskFrameWorks.TechnicalEntry.Fill import FillEntry
+from Core.Main.Trade.RiskFrameWorks.TechnicalStop.BreakEven import BreakEven
+from Core.Main.Trade.RiskFrameWorks.TechnicalStop.TrailingStop import TrailingStop
 
 
 class RiskMediator:
@@ -29,8 +25,6 @@ class RiskMediator:
         if not hasattr(self, "initialized"):  # Prevent re-initialization
             self.invalidationClose: InvalidationClose = InvalidationClose()
             self.invalidationSteady: InvalidationSteady = InvalidationSteady()
-            self.antiMartingale: AntiMartingale = AntiMartingale()
-            self.martingale: Martingale = Martingale()
             self.orderWeightage: OrderWeightage = OrderWeightage()
             self.fixedRatio: FixedRatio = FixedRatio()
             self.rangeRatio: RangeRatio = RangeRatio()
@@ -44,93 +38,47 @@ class RiskMediator:
             self.trailingStop: TrailingStop = TrailingStop()
             self.initialized: bool = True  # Mark as initialized
 
-    def calculateRisk(self,riskType,*args, **kwargs) -> Any:
-
+    def isInvalidationHit(self,riskType,stop,candle,direction) -> bool:
         if riskType == "Close" or riskType == "Steady":
-            stopLoss = kwargs['stopLoss']
-            candle = kwargs['candle']
-            tradeDirection = kwargs['tradeDirection']
             if riskType == "Close":
-                return self.invalidationClose.checkInvalidation(stopLoss,candle,tradeDirection)
+                return self.invalidationClose.checkInvalidation(stop, candle, direction)
             if riskType == "Steady":
-                return self.invalidationSteady.checkInvalidation(stopLoss, candle, tradeDirection)
+                return self.invalidationSteady.checkInvalidation(stop, candle, direction)
 
-        if riskType == "MartingaleOrder":
-            ratio = kwargs['ratio']
-            mode = kwargs['mode']
-            return self.martingale.getOrderAmount(ratio, mode)
+    def returnSortedTPLevelsToOrders(self,orderAmount: int, tpLevel: list[float], direction: str,mode: int) ->\
+            list[tuple[int, float]]:
+        return self.orderWeightage.sortOrderToTPLevel(orderAmount,tpLevel,direction,mode)
 
-        if riskType == "MartingaleModel":
-            currentDrawdown = kwargs['currentDrawdown']
-            return self.martingale.getMartingaleModel(currentDrawdown)
+    def returnPercentagePerLevel(self,percentage: float, order_tp_assignments: list,mode: int) -> list[tuple[int, float, float]]:
+        return self.orderWeightage.getPercentagePerLevel(percentage,order_tp_assignments,mode)
 
-        if riskType == "AntiMartingaleOrder":
-            ratio = kwargs['ratio']
-            mode = kwargs['mode']
-            return self.antiMartingale.getOrderAmount(ratio, mode)
+    def returnFixedTPLevelByRatio(self,entryPrice,stop,ratio) -> float:
+        return self.fixedRatio.getRatio(entryPrice,stop,ratio)
 
-        if riskType == "AntiMartingaleModel":
-            currentDrawdown = kwargs['currentDrawdown']
-            return self.antiMartingale.getMartingaleModel(currentDrawdown)
+    def returnRangeRatio(self,stop,takeProfits,range)->list:
+        return self.rangeRatio.getRatio(stop, takeProfits, range)
 
-        if riskType == "OrderWeightageTPLevel":
-            orderAmount = kwargs['orderAmount']
-            tpLevel = kwargs['tpLevel']
-            direction = kwargs['direction']
-            mode = kwargs['mode']
-            return self.orderWeightage.sortOrderToTPLevel(orderAmount,tpLevel,direction,mode)
+    def returnImbalanceStop(self,candle)->float:
+        return self.endOfImbalance.getStrategyStop(candle)
 
-        if riskType == "OrderWeightagePercentage":
-            percentage = kwargs['percentage']
-            order_tp_assignments = kwargs['order_tp_assignments']
-            mode = kwargs['mode']
-            return self.orderWeightage.getPercentagePerLevel(percentage,order_tp_assignments,mode)
+    def returnSwingStop(self,candle) -> float:
+        return self.swingStop.getStrategyStop(candle)
 
-        if riskType == "FixedRatio":
-            stop = kwargs['stop']
-            ratio = kwargs['ratio']
-            return self.fixedRatio.getRatio(stop,ratio)
+    def returnOBStop(self,candle,mode)->float:
+        return self.obStop.getStrategyStop(candle, mode)
 
-        if riskType == "RangeRatio":
-            stop = kwargs['stop']
-            takeProfits = kwargs['takeProfits']
-            range = kwargs['range']
-            return self.rangeRatio.getRatio(stop, takeProfits, range)
-
-        if riskType == "EndOfImbalance":
-            candle = kwargs['candle']
-            return self.endOfImbalance.getStrategyStop(candle)
-
-        if riskType == "OBStop":
-            candle = kwargs['candle']
-            mode = kwargs['mode']
-            return self.obStop.getStrategyStop(candle, mode)
-
-        if riskType == "Swing":
-            candle = kwargs['candle']
-            return self.swingStop.getStrategyStop(candle)
-
+    def returnEntryPrice(self,riskType,candle) -> float:
         if riskType == "CE":
-            candle = kwargs['candle']
             return self.ce.getEntry(candle)
 
         if riskType == "Drill":
-            candle = kwargs['candle']
             return self.drill.getEntry(candle)
 
         if riskType == "Fill":
-            candle = kwargs['candle']
             return self.fill.getEntry(candle)
 
-        if riskType == "BE":
-            currentPrice = kwargs['currentPrice']
-            entry = kwargs['entry']
-            takeProfit = kwargs['takeProfit']
-            return self.be.moveExit(currentPrice, entry, takeProfit)
+    def returnBreakEven(self,currentPrice, entry, takeProfit) -> float:
+        return self.be.moveExit(currentPrice, entry, takeProfit)
 
-        if riskType == "TrailingStop":
-            currentPrice = kwargs['currentPrice']
-            stops = kwargs['stops']
-            currentStop = kwargs['currentStop']
-            direction = kwargs['direction']
+    def returnTrailingStop(self,currentPrice, stops, currentStop, direction) -> float:
             return self.trailingStop.moveExit(currentPrice, stops, currentStop, direction)

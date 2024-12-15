@@ -1,15 +1,16 @@
 from Core.Main.Asset.SubModels.Candle import Candle
-from Interfaces.RiskManagement.IRiskInvalidation import IRiskInvalidation
 
 
-class InvalidationClose(IRiskInvalidation):
-    def checkInvalidation(self, stopLoss: float, candle: Candle, tradeDirection: str) -> bool:
-        if tradeDirection == 'long':
-            if candle.close < stopLoss:
+class InvalidationClose:
+
+    @staticmethod
+    def checkInvalidation(stop: float, candle: Candle, direction: str) -> bool:
+        if direction == 'Buy':
+            if candle.close < stop:
                 return True
             return False
-        if tradeDirection == 'short':
-            if candle.close > stopLoss:
+        if direction == 'Sell':
+            if candle.close > stop:
                 return True
             return False
 

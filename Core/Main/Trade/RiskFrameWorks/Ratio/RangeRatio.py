@@ -1,7 +1,5 @@
-from Interfaces.RiskManagement.IRatio import IRatio
 
-
-class RangeRatio(IRatio):
+class RangeRatio:
     def getRatio(self, stop: float, takeProfits: list[float], range: list[int]) -> list[float]:
         """
         Generiert eine Liste von Ratios basierend auf den gegebenen Stop- und Take-Profit-Werten,

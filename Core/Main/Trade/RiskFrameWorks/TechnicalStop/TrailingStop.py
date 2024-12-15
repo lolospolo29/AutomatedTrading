@@ -1,7 +1,4 @@
-from Interfaces.RiskManagement.ITechnicalStop import ITechnicalStop
-
-
-class TrailingStop(ITechnicalStop):
+class TrailingStop():
     def moveExit(self, currentPrice: float, stops: list[float], currentStop: float, direction: str) -> float:
         """
         Passt den Stop dynamisch an, basierend auf der Richtung und Mindestentfernung.

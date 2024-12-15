@@ -34,34 +34,31 @@ class LevelMediator:
             self.initialized: bool = True  # Mark as initialized
 
     def calculateLevels(self, levelType: str, candles: list, *args, **kwargs) -> list:
-        if levelType == "OTE":
-            lookback = kwargs['lookback']
-            return self.ote.returnLevels(candles,lookback)
-        if levelType == "PD":
-            lookback = kwargs['lookback']
-            return self.pd.returnLevels(candles,lookback)
-        if levelType == "STDV":
-            lookback = kwargs['lookback']
-            return self.stdv.returnLevels(candles,lookback)
-        if levelType == "EQUALHL":
-            if 'direction' in kwargs:
-                direction = kwargs['direction']
-                return self.equal.returnLevels(candles,direction)
         if levelType == "CBDR":
             return self.cbdr.returnLevels(candles)
-        if levelType == "NWOG":
-            preCandle = kwargs['preCandle']
-            midnightCandle = kwargs['midnightCandle']
-            return self.nwog.returnLevels(preCandle,midnightCandle)
-        if levelType == "NDOG":
-            preCandle = kwargs['preCandle']
-            midnightCandle = kwargs['midnightCandle']
-            return self.ndog.returnLevels(preCandle,midnightCandle)
         if levelType == "previousDaysLevels":
             return self.previousDaysLevel.returnLevels(candles)
         if levelType == "PreviousSessionLevels":
             return self.previousSessionLevel.returnLevels(candles)
         if levelType == "PreviousWeekLevels":
             return self.previousWeekLevels.returnLevels(candles)
+
+    def calculateEqualLevels(self, candles: list,direction) -> list:
+        return self.equal.returnLevels(candles, direction)
+
+    def calculateFibonacci(self,levelType ,candles: list,lookback) -> list:
+        if levelType == "OTE":
+            return self.ote.returnLevels(candles,lookback)
+        if levelType == "PD":
+            return self.pd.returnLevels(candles,lookback)
+        if levelType == "STDV":
+            return self.stdv.returnLevels(candles,lookback)
+
+    def returnOpeningGap(self,levelType,preCandle,midnightCandle):
+        if levelType == "NWOG":
+            return self.nwog.returnLevels(preCandle,midnightCandle)
+        if levelType == "NDOG":
+            return self.ndog.returnLevels(preCandle,midnightCandle)
+
 
 

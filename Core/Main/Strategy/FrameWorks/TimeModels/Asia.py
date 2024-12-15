@@ -1,4 +1,4 @@
-from Interfaces.RiskManagement.ITimeWindow import ITimeWindow
+from Interfaces.Strategy.ITimeWindow import ITimeWindow
 
 class Asia(ITimeWindow):
     def IsInExitWindow(self,time) -> bool:
