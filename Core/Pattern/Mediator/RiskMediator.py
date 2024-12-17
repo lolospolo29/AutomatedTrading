@@ -56,7 +56,7 @@ class RiskMediator:
         return self.fixedRatio.getRatio(entryPrice,stop,ratio)
 
     def returnRangeRatio(self,stop,takeProfits,range)->list:
-        return self.rangeRatio.getRatio(stop, takeProfits, range)
+        return self.rangeRatio.calculateRangeMatrixByStopAndEntry(stop, takeProfits, range)
 
     def returnImbalanceStop(self,candle)->float:
         return self.endOfImbalance.getStrategyStop(candle)
