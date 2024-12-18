@@ -1,3 +1,5 @@
+from typing import Any
+
 from Core.Main.Trade.RiskFrameWorks.Ratio.BaseRatio import BaseRatio
 from Core.Main.Trade.RiskFrameWorks.Ratio.FixedRatio import FixedRatio
 from Core.Main.Trade.RiskFrameWorks.Ratio.Models.ProfitStopEntry import ProfitStopEntry
@@ -50,13 +52,13 @@ class RangeRatio(BaseRatio):
             profitsWithFixedRatio = fxr.calculateProfitsByEntryAndStop(entry, stop, r, mode,direction)
             profitStopEntryList.extend(profitsWithFixedRatio)
 
+        adjustedStopEntryList = []
+
         if len(profitStopEntryList) > 0:
             for e in entry:
-                for p in profitStopEntryList:
-                    if p.entry == e:
-                        pass
-
-
+                eProfits = [p for p in profitStopEntryList if p.profit == e]
+                eProfits.sort(key=lambda x: x.profit)
+                adjustedStopEntryList.append(self._returnElementBasedOnMode(eProfits, mode))
 
         return profitStopEntryList
 
@@ -69,7 +71,7 @@ class RangeRatio(BaseRatio):
         return False
 
     @staticmethod
-    def _returnElementBasedOnMode(referencePrices:list[float], mode: str) -> float:
+    def _returnElementBasedOnMode(referencePrices:list[Any], mode: str) -> Any:
         if not len(referencePrices) > 0:
             raise ValueError
 
