@@ -28,13 +28,11 @@ class FixedRatio(BaseRatio):
                 if direction == "Buy":
                     tpLevel = self._returnHighestLevel(profit)
                     stop = self.calculateStop(entryPrice, tpLevel, ratio)
-                    stop = entryPrice - stop
                     if len(profit) > 1:
                         profit.remove(tpLevel)
 
                     if not stop  < entryPrice < tpLevel:
                         stop = self.calculateStop(entryPrice, highestTp, ratio)
-                        stop = entryPrice - stop
                         profit.append(tpLevel)
                         tpLevel = highestTp
                         if not stop  < entryPrice < tpLevel:
@@ -45,13 +43,11 @@ class FixedRatio(BaseRatio):
                 if direction == "Sell":
                     tpLevel = self._returnLowestLevel(profit)
                     stop = self.calculateStop(entryPrice, tpLevel, ratio)
-                    stop = entryPrice + stop
                     if len(profit) > 1:
                         profit.remove(tpLevel)
 
                     if not stop > entryPrice > tpLevel:
                         stop = self.calculateStop(entryPrice, lowestTp, ratio)
-                        stop = entryPrice + stop
                         profit.append(tpLevel)
                         tpLevel = lowestTp
                         if not stop > entryPrice > tpLevel:
@@ -69,13 +65,11 @@ class FixedRatio(BaseRatio):
                     else:  # Three or more TP levels
                         tpLevel = profit[3 * len(profit) // 4]  # Third quartile
                     stop = self.calculateStop(entryPrice, tpLevel, ratio)
-                    stop = entryPrice - stop
 
                     if len(profit) > 1:
                         profit.remove(tpLevel)
                     if not stop < entryPrice < tpLevel:
                         stop = self.calculateStop(entryPrice, highestTp, ratio)
-                        stop = entryPrice - stop
                         profit.append(tpLevel)
                         tpLevel = highestTp
                         if not stop < entryPrice < tpLevel:
@@ -94,12 +88,10 @@ class FixedRatio(BaseRatio):
                         tpLevel = profit[len(profit) // 4]  # First quartile
 
                     stop = self.calculateStop(entryPrice, tpLevel, ratio)
-                    stop = entryPrice + stop
                     if len(profit) > 1:
                         profit.remove(tpLevel)
                     if not stop > entryPrice > tpLevel:
                         stop = self.calculateStop(entryPrice, lowestTp, ratio)
-                        stop = entryPrice + stop
                         profit.append(tpLevel)
                         tpLevel = lowestTp
                         if not stop > entryPrice > tpLevel:
@@ -111,16 +103,14 @@ class FixedRatio(BaseRatio):
                 if direction == "Buy":
                     tpLevel = self._returnLowestLevel(profit)
                     stop = self.calculateStop(entryPrice, tpLevel, ratio)
-                    stop = entryPrice - stop
                     if len(profit) > 1:
                         profit.remove(tpLevel)
 
                     if not stop < entryPrice < tpLevel:
                         stop = self.calculateStop(entryPrice, highestTp, ratio)
-                        stop = entryPrice - stop
                         profit.append(tpLevel)
                         tpLevel = highestTp
-                        if not stop < entryPrice > tpLevel:
+                        if not stop < entryPrice < tpLevel:
                             continue
 
                     profitStopEntryList.append(ProfitStopEntry(tpLevel, stop, entryPrice))
@@ -128,13 +118,11 @@ class FixedRatio(BaseRatio):
                 if direction == "Sell":
                     tpLevel = self._returnHighestLevel(profit)
                     stop = self.calculateStop(entryPrice, tpLevel, ratio)
-                    stop = entryPrice + stop
                     if len(profit) > 1:
                         profit.remove(tpLevel)
 
                     if not stop > entryPrice > tpLevel:
                         stop = self.calculateStop(entryPrice, lowestTp, ratio)
-                        stop = entryPrice + stop
                         profit.append(tpLevel)
                         tpLevel = lowestTp
                         if not stop > entryPrice > tpLevel:
@@ -167,36 +155,32 @@ class FixedRatio(BaseRatio):
                 if direction == "Buy":
                     stopLevel = self._returnLowestLevel(stops)
                     profit = self.calculateProfit(entryPrice, stopLevel, ratio)
-                    profit = entryPrice + profit
                     if len(stops) > 1:
                         stops.remove(stopLevel)
 
                     if not stopLevel < entryPrice < profit :
                         profit = self.calculateProfit(entryPrice, lowestStop, ratio)
-                        profit = entryPrice + profit
                         stops.append(stopLevel)
                         stopLevel = lowestStop
                         if not stopLevel < entryPrice < profit:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(stopLevel, profit, entryPrice))
+                    profitStopEntryList.append(ProfitStopEntry(profit, stopLevel, entryPrice))
 
                 if direction == "Sell":
                     stopLevel = self._returnHighestLevel(stops)
                     profit = self.calculateProfit(entryPrice, stopLevel, ratio)
-                    profit = entryPrice - profit
                     if len(stops) > 1:
                         stops.remove(stopLevel)
 
                     if not stopLevel > entryPrice > profit:
                         profit = self.calculateProfit(entryPrice, highestStop, ratio)
-                        profit = entryPrice - profit
                         stops.append(stopLevel)
                         stopLevel = highestStop
                         if not stopLevel > entryPrice > profit:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(stopLevel, profit, entryPrice))
+                    profitStopEntryList.append(ProfitStopEntry(profit, stopLevel, entryPrice))
 
             if mode == "moderat":
                 if direction == "Buy":
@@ -208,19 +192,17 @@ class FixedRatio(BaseRatio):
                     else:  # Three or more TP levels
                         stopLevel = stops[3 * len(stops) // 4]  # Third quartile
                     profit = self.calculateProfit(entryPrice, stopLevel, ratio)
-                    profit = entryPrice + profit
 
                     if len(stops) > 1:
                         stops.remove(stopLevel)
                     if not stopLevel < entryPrice < profit:
                         profit = self.calculateProfit(entryPrice, lowestStop, ratio)
-                        profit = entryPrice + profit
                         stops.append(stopLevel)
                         stopLevel = lowestStop
                         if not stopLevel < entryPrice > profit:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(stopLevel, profit, entryPrice))
+                    profitStopEntryList.append(ProfitStopEntry(profit, stopLevel, entryPrice))
 
                 if direction == "Sell":
                     stopLevel = 0
@@ -233,53 +215,47 @@ class FixedRatio(BaseRatio):
                         stopLevel = stops[len(stops) // 4]  # First quartile
 
                     profit = self.calculateProfit(entryPrice, stopLevel, ratio)
-                    profit = entryPrice - profit
                     if len(stops) > 1:
                         stops.remove(stopLevel)
-                    if stopLevel > entryPrice > profit:
+                    if not stopLevel > entryPrice > profit:
                         profit = self.calculateProfit(entryPrice, highestStop, ratio)
-                        profit = entryPrice - profit
                         stops.append(stopLevel)
                         stopLevel = highestStop
-                        if stopLevel > entryPrice > profit:
+                        if not stopLevel > entryPrice > profit:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(stopLevel, profit, entryPrice))
+                    profitStopEntryList.append(ProfitStopEntry(profit, stopLevel, entryPrice))
 
             if mode == "safe":
                 if direction == "Buy":
                     stopLevel = self._returnHighestLevel(stops)
                     profit = self.calculateProfit(entryPrice, stopLevel, ratio)
-                    profit = entryPrice + profit
 
                     if len(stops) > 1:
                         stops.remove(stopLevel)
-                    if stopLevel < entryPrice < profit:
+                    if not stopLevel < entryPrice < profit:
                         profit = self.calculateProfit(entryPrice, lowestStop, ratio)
-                        profit = entryPrice + profit
                         stops.append(stopLevel)
                         stopLevel = lowestStop
-                        if stopLevel < entryPrice > profit:
+                        if not stopLevel < entryPrice < profit:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(stopLevel, profit, entryPrice))
+                    profitStopEntryList.append(ProfitStopEntry(profit, stopLevel, entryPrice))
 
                 if direction == "Sell":
                     stopLevel = self._returnLowestLevel(stops)
                     profit = self.calculateProfit(entryPrice, stopLevel, ratio)
-                    profit = entryPrice - profit
 
                     if len(stops) > 1:
                         stops.remove(stopLevel)
-                    if stopLevel > entryPrice > profit:
+                    if not stopLevel > entryPrice > profit:
                         profit = self.calculateProfit(entryPrice, highestStop, ratio)
-                        profit = entryPrice - profit
                         stops.append(stopLevel)
                         stopLevel = highestStop
-                        if stopLevel > entryPrice > profit:
+                        if not stopLevel > entryPrice > profit:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(stopLevel, profit, entryPrice))
+                    profitStopEntryList.append(ProfitStopEntry(profit, stopLevel, entryPrice))
 
         return profitStopEntryList
     
@@ -300,42 +276,38 @@ class FixedRatio(BaseRatio):
         profitStopEntryList = []
 
         for i in range(len(stop)):
-            stop = stop[i]
+            stopPrice = stop[i]
 
             if mode == "aggressive":
                 if direction == "Buy":
                     tpLevel = self._returnHighestLevel(profit)
-                    entry = self.calculateEntryPrice(stop, tpLevel, ratio)
-                    entry = stop + entry
+                    entry = self.calculateEntryPrice(stopPrice, tpLevel, ratio)
                     if len(profit) > 1:
                         profit.remove(tpLevel)
 
-                    if not stop < entry < tpLevel :
-                        entry = self.calculateEntryPrice(stop, highestTp, ratio)
-                        entry = stop + entry
+                    if not stopPrice < entry < tpLevel :
+                        entry = self.calculateEntryPrice(stopPrice, highestTp, ratio)
                         profit.append(tpLevel)
                         tpLevel = highestTp
-                        if not stop < entry < tpLevel:
+                        if not stopPrice < entry < tpLevel:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(tpLevel, entry, stop))
+                    profitStopEntryList.append(ProfitStopEntry(tpLevel, stopPrice, entry))
 
                 if direction == "Sell":
                     tpLevel = self._returnLowestLevel(profit)
-                    entry = self.calculateEntryPrice(stop, tpLevel, ratio)
-                    entry = stop - entry
+                    entry = self.calculateEntryPrice(stopPrice, tpLevel, ratio)
                     if len(profit) > 1:
                         profit.remove(tpLevel)
 
-                    if not tpLevel < entry < stop:
-                        entry = self.calculateProfit(stop, lowestTp, ratio)
-                        entry = stop - entry
+                    if not tpLevel < entry < stopPrice:
+                        entry = self.calculateProfit(stopPrice, lowestTp, ratio)
                         profit.append(tpLevel)
                         tpLevel = lowestTp
-                        if not tpLevel < entry < stop:
+                        if not tpLevel < entry < stopPrice:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(tpLevel, entry, stop))
+                    profitStopEntryList.append(ProfitStopEntry(tpLevel, stopPrice, entry))
 
             if mode == "moderat":
                 if direction == "Buy":
@@ -346,20 +318,18 @@ class FixedRatio(BaseRatio):
                         tpLevel = profit[1]
                     else:  # Three or more TP levels
                         tpLevel = profit[3 * len(profit) // 4]  # Third quartile
-                    entry = self.calculateEntryPrice(stop, tpLevel, ratio)
-                    entry = stop + entry
+                    entry = self.calculateEntryPrice(stopPrice, tpLevel, ratio)
 
                     if len(profit) > 1:
                         profit.remove(tpLevel)
-                    if not stop < entry < tpLevel:
-                        entry = self.calculateEntryPrice(stop, highestTp, ratio)
-                        entry = stop + entry
+                    if not stopPrice < entry < tpLevel:
+                        entry = self.calculateEntryPrice(stopPrice, highestTp, ratio)
                         profit.append(tpLevel)
                         tpLevel = highestTp
-                        if not stop < entry < tpLevel:
+                        if not stopPrice < entry < tpLevel:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(tpLevel, entry, stop))
+                    profitStopEntryList.append(ProfitStopEntry(tpLevel, stopPrice, entry))
 
                 if direction == "Sell":
                     tpLevel = 0
@@ -371,55 +341,49 @@ class FixedRatio(BaseRatio):
                     else:  # Three or more TP levels
                         tpLevel = profit[len(profit) // 4]  # First quartile
 
-                    entry = self.calculateEntryPrice(stop, tpLevel, ratio)
-                    entry = stop - entry
+                    entry = self.calculateEntryPrice(stopPrice, tpLevel, ratio)
 
                     if len(profit) > 1:
                         profit.remove(tpLevel)
-                    if not tpLevel < entry < stop:
-                        entry = self.calculateEntryPrice(stop, lowestTp, ratio)
-                        entry = stop - entry
+                    if not tpLevel < entry < stopPrice:
+                        entry = self.calculateEntryPrice(stopPrice, lowestTp, ratio)
                         profit.append(tpLevel)
                         tpLevel = lowestTp
-                        if not tpLevel < entry < stop:
+                        if not tpLevel < entry < stopPrice:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(tpLevel, entry, stop))
+                    profitStopEntryList.append(ProfitStopEntry(tpLevel, stopPrice, entry))
 
             if mode == "safe":
                 if direction == "Buy":
                     tpLevel = self._returnLowestLevel(profit)
-                    entry = self.calculateEntryPrice(stop, tpLevel, ratio)
-                    entry = stop + entry
+                    entry = self.calculateEntryPrice(stopPrice, tpLevel, ratio)
 
                     if len(profit) > 1:
                         profit.remove(tpLevel)
-                    if not stop < entry < tpLevel:
-                        entry = self.calculateEntryPrice(stop, lowestTp, ratio)
-                        entry = stop + entry
+                    if not stopPrice < entry < tpLevel:
+                        entry = self.calculateEntryPrice(stopPrice, lowestTp, ratio)
                         profit.append(tpLevel)
-                        tpLevel = highestTp
-                        if not stop < entry < tpLevel:
+                        tpLevel = lowestTp
+                        if not stopPrice < entry < tpLevel:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(tpLevel, entry, stop))
+                    profitStopEntryList.append(ProfitStopEntry(tpLevel, stopPrice, entry))
 
                 if direction == "Sell":
                     tpLevel = self._returnHighestLevel(profit)
-                    entry = self.calculateEntryPrice(stop, tpLevel, ratio)
-                    entry = stop - entry
+                    entry = self.calculateEntryPrice(stopPrice, tpLevel, ratio)
 
                     if len(profit) > 1:
                         profit.remove(tpLevel)
-                    if not tpLevel < entry < stop:
-                        entry = self.calculateEntryPrice(stop, highestTp, ratio)
-                        entry = stop - entry
+                    if not tpLevel < entry < stopPrice:
+                        entry = self.calculateEntryPrice(stopPrice, highestTp, ratio)
                         profit.append(tpLevel)
-                        tpLevel = lowestTp
-                        if not tpLevel < entry < stop:
+                        tpLevel = highestTp
+                        if not tpLevel < entry < stopPrice:
                             continue
 
-                    profitStopEntryList.append(ProfitStopEntry(tpLevel, entry, stop))
+                    profitStopEntryList.append(ProfitStopEntry(tpLevel, stopPrice, entry))
 
         return profitStopEntryList
 

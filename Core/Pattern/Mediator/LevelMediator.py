@@ -1,3 +1,4 @@
+from Core.Main.Asset.SubModels.Candle import Candle
 from Core.Main.Strategy.FrameWorks.Levels.CBDR import CBDR
 from Core.Main.Strategy.FrameWorks.Levels.Fibonnaci.OTE import OTE
 from Core.Main.Strategy.FrameWorks.Levels.Fibonnaci.PD import PD
@@ -33,7 +34,7 @@ class LevelMediator:
 
             self.initialized: bool = True  # Mark as initialized
 
-    def calculateLevels(self, levelType: str, candles: list, *args, **kwargs) -> list:
+    def calculateLevels(self, levelType: str, candles: list[Candle], *args, **kwargs) -> list:
         if levelType == "CBDR":
             return self.cbdr.returnLevels(candles)
         if levelType == "previousDaysLevels":
@@ -43,10 +44,10 @@ class LevelMediator:
         if levelType == "PreviousWeekLevels":
             return self.previousWeekLevels.returnLevels(candles)
 
-    def calculateEqualLevels(self, candles: list,direction) -> list:
+    def calculateEqualLevels(self, candles: list[Candle],direction: str) -> list:
         return self.equal.returnLevels(candles, direction)
 
-    def calculateFibonacci(self,levelType ,candles: list,lookback) -> list:
+    def calculateFibonacci(self,levelType ,candles: list[Candle],lookback) -> list:
         if levelType == "OTE":
             return self.ote.returnLevels(candles,lookback)
         if levelType == "PD":

@@ -14,40 +14,40 @@ class Asset:
         self.brokerStrategyAssignment: list[AssetBrokerStrategyRelation] = []
 
     def addBroker(self, broker: str) -> None:
-        if not self.isBrokerInBrokers(broker):
+        if not self._isBrokerInBrokers(broker):
             self.brokers.append(broker)
 
     def addStrategy(self, strategy: str) -> None:
-        if not self.isStrategyInStrategies(strategy):
+        if not self._isStrategyInStrategies(strategy):
             self.strategies.append(strategy)
 
     def addSMTPair(self, pair: SMTPair) -> None:
-        if not self.isPairInSMTPairs(pair):
+        if not self._isPairInSMTPairs(pair):
             self.smtPairs.append(pair)
 
     def addCandleSeries(self, timeFrame: int, maxlen: int, broker: str) -> None:
         for candleSeries in self.CandlesSeries:
-            if not self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame,candleSeries):
+            if not self._isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, candleSeries):
                 self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
                 return
         if len(self.CandlesSeries) == 0:
-            if self.isBrokerInBrokers(broker):
+            if self._isBrokerInBrokers(broker):
                 self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
 
     def addBrokerStrategyAssignment(self, broker: str, strategy: str) -> None:
-            if not self.isBrokerAndStrategyInAssignment(broker, strategy):
-                if self.isBrokerInBrokers(broker) and self.isStrategyInStrategies(strategy):
+            if not self._isBrokerAndStrategyInAssignment(broker, strategy):
+                if self._isBrokerInBrokers(broker) and self._isStrategyInStrategies(strategy):
                     self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
 
     def addCandle(self, candle: Candle) -> None:
         for candleSeries in self.CandlesSeries:
-            if self.isBrokerAndTimeFrameInCandleSeries(candle.broker, candle.timeFrame,candleSeries):
+            if self._isBrokerAndTimeFrameInCandleSeries(candle.broker, candle.timeFrame, candleSeries):
                 candleSeries.addCandle(candle)
                 return
 
     def returnCandles(self, timeFrame: int,broker: str) -> list:
         for candleSeries in self.CandlesSeries:
-            if self.isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, candleSeries):
+            if self._isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, candleSeries):
                 return candleSeries.toList()
         return []
 
@@ -77,17 +77,17 @@ class Asset:
                 strategies.append(assignment)
         return strategies
 
-    def isBrokerInBrokers(self, broker: str) -> bool:
+    def _isBrokerInBrokers(self, broker: str) -> bool:
         if broker in self.brokers:
             return True
         return False
 
-    def isStrategyInStrategies(self, strategy: str) -> bool:
+    def _isStrategyInStrategies(self, strategy: str) -> bool:
         if strategy in self.strategies:
             return True
         return False
 
-    def isPairInSMTPairs(self, pair: SMTPair) -> bool:
+    def _isPairInSMTPairs(self, pair: SMTPair) -> bool:
         for existingPair in self.smtPairs:
             if (existingPair.strategy == pair.strategy and
                     existingPair.correlation == pair.correlation and
@@ -96,13 +96,14 @@ class Asset:
                 print("Duplicate SMTPair found. Not adding to smtPairs.")
                 return True
         return False
+
     @staticmethod
-    def isBrokerAndTimeFrameInCandleSeries(broker: str, timeFrame: int, candleSeries: CandleSeries)-> bool:
+    def _isBrokerAndTimeFrameInCandleSeries(broker: str, timeFrame: int, candleSeries: CandleSeries)-> bool:
         if candleSeries.broker == broker and candleSeries.timeFrame == timeFrame:
             return True
         return False
 
-    def isBrokerAndStrategyInAssignment(self, broker: str, strategy: str) -> bool:
+    def _isBrokerAndStrategyInAssignment(self, broker: str, strategy: str) -> bool:
         for assignement in self.brokerStrategyAssignment:
             if assignement.strategy == strategy and assignement.broker == broker:
                 return True

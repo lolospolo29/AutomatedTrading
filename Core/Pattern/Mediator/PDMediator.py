@@ -1,3 +1,4 @@
+from Core.Main.Asset.SubModels.Candle import Candle
 from Core.Main.Strategy.FrameWorks.PDArray import PDArray
 from Core.Main.Strategy.FrameWorks.PDArrays.BPR import BPR
 from Core.Main.Strategy.FrameWorks.PDArrays.Breaker import Breaker
@@ -29,7 +30,7 @@ class PDMediator:
             self.volumeImbalance: VolumeImbalance = VolumeImbalance()
             self.initialized: bool = True  # Mark as initialized
 
-    def calculatePDArrayWithLookback(self,pdType: str, candles: list,lookback) -> list:
+    def calculatePDArrayWithLookback(self,pdType: str, candles: list[Candle],lookback) -> list:
         if pdType == "FVG":
                 return self.fvg.returnArrayList(candles,lookback)
         if pdType == "OB":
@@ -41,7 +42,7 @@ class PDMediator:
         if pdType == "VI":
                 return self.volumeImbalance.returnArrayList(candles,lookback)
 
-    def calculatePDArray(self, pdType: str, candles: list) -> list:
+    def calculatePDArray(self, pdType: str, candles: list[Candle]) -> list:
         if pdType == "BPR":
             return self.bpr.returnArrayList(candles)
         if pdType == "FVG":
@@ -77,7 +78,7 @@ class PDMediator:
         if pdType == "VI":
             return self.volumeImbalance.returnCandleRange(pdArray)
 
-    def checkForInverse(self,pdType: str, pdArray: PDArray, candles: list) -> str:
+    def checkForInverse(self,pdType: str, pdArray: PDArray, candles: list[Candle]) -> str:
         if pdType == "FVG":
             return self.fvg.checkForInverse(pdArray, candles)
         if pdType == "OB":

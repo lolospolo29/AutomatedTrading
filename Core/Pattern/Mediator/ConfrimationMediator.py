@@ -1,5 +1,6 @@
 from typing import Any
 
+from Core.Main.Asset.SubModels.Candle import Candle
 from Core.Main.Strategy.FrameWorks.Structures.BOS import BOS
 from Core.Main.Strategy.FrameWorks.Structures.CISD import CISD
 from Core.Main.Strategy.FrameWorks.Structures.Choch import Choch
@@ -22,7 +23,7 @@ class ConfirmationMediator:
             self.cisd = CISD(5)
             self.initialized: bool = True  # Mark as initialized
 
-    def calculateConfirmation(self, confirmationType: str, candles: list, *args, **kwargs) -> Any:
+    def calculateConfirmation(self, confirmationType: str, candles: list[Candle], *args, **kwargs) -> Any:
         if confirmationType == "BOS":
             return self.bos.returnConfirmation(candles)
         if confirmationType == "CHOCH":
@@ -30,9 +31,6 @@ class ConfirmationMediator:
         if confirmationType == "CISD":
             return self.cisd.returnConfirmation(candles)
 
-        # region SMT should be put as an Extra Strategy implementation & logic
-        if confirmationType == "SMT":
-            if 'candlesAsset2' in kwargs:
-                candlesAsset2 = kwargs['candlesAsset2']
-                return self.smt.returnConfirmation(candles, candlesAsset2)
-        # endregion
+
+    def calculateSMT(self,candlesAsset1: list[Candle],candlesAsset2: list[Candle]):
+        return self.smt.returnConfirmation(candlesAsset1, candlesAsset2)
