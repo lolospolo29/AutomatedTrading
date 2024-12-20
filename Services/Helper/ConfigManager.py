@@ -4,7 +4,7 @@ from Core.Main.Asset.SubModels.AssetBrokerStrategyRelation import AssetBrokerStr
 from Core.Main.Asset.SubModels.SMTPair import SMTPair
 from Core.API.Brokers.Broker import Broker
 from Core.Main.Strategy.Strategy import Strategy
-from Core.Pattern.Factory.StrategyFactory import StrategyFactory
+from Core.Main.Strategy.StrategyFactory import StrategyFactory
 from Monitoring.TimeWrapper import logTime
 from Services.DB.SubModules.mongoDBConfig import mongoDBConfig
 from Services.Manager.AssetManager import AssetManager

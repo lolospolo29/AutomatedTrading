@@ -1,8 +1,8 @@
 from typing import Any
 
-from Core.Main.Trade.RiskFrameWorks.Ratio.BaseRatio import BaseRatio
-from Core.Main.Trade.RiskFrameWorks.Ratio.FixedRatio import FixedRatio
-from Core.Main.Trade.RiskFrameWorks.Ratio.Models.ProfitStopEntry import ProfitStopEntry
+from Core.Main.Trade.RiskFrameWorks.Entry.Ratio.BaseRatio import BaseRatio
+from Core.Main.Trade.RiskFrameWorks.Entry.Ratio.FixedRatio import FixedRatio
+from Core.Main.Trade.RiskFrameWorks.Entry.Ratio.Models.ProfitStopEntry import ProfitStopEntry
 
 
 class RangeRatio(BaseRatio):
@@ -10,6 +10,7 @@ class RangeRatio(BaseRatio):
     def __init__(self):
         self.fixedRatio = FixedRatio()
 
+    # region Calculate Profit Stop Entry With Matrix Calculation
     def calculateProfitByEntryAndStopWithRangeMatrix(self, entry: float, stop: float, rangeRatio: list[int]
                                                      , mode: str,direction: str) -> float:
         estimatedProfits = []
@@ -54,7 +55,9 @@ class RangeRatio(BaseRatio):
             estimatedEntries.sort(reverse=True)
 
         return self._returnElementBasedOnMode(estimatedEntries, mode)
+    # endregion
 
+    # region Calculate Profit Stop Entry With Matrix List Calculation
     def calculateProfitsByEntryAndStopWithRangeMatrix(self, entry: list[float], stop: list[float],rangeRatio:
     list[int], mode: str,direction: str) -> list[ProfitStopEntry]:
         profitStopEntryList:list[ProfitStopEntry] = []
@@ -117,28 +120,4 @@ class RangeRatio(BaseRatio):
                 adjustedStopEntryList.append(self._returnElementBasedOnMode(eProfits, mode))
 
         return adjustedStopEntryList
-
-    @staticmethod
-    def _isConditionFullFilled(entry: float, stop: float, profit: float) -> bool:
-        if stop < entry < profit:
-            return True
-        if stop > entry > profit:
-            return True
-        return False
-
-    @staticmethod
-    def _returnElementBasedOnMode(referencePrices:list[Any], mode: str) -> Any:
-        if not len(referencePrices) > 0:
-            return referencePrices
-
-        if mode == "aggressive":
-            return referencePrices[-1]
-        if mode == "moderat":
-            if len(referencePrices) == 1:  # Only one TP level
-                return referencePrices[0]
-            elif len(referencePrices) == 2:  # Two TP levels
-                return referencePrices[1]
-            else:  # Three or more TP levels
-                return referencePrices[3 * len(referencePrices) // 4]  # Third quartile
-        if mode == "safe":
-            return referencePrices[0]
+    # endregion

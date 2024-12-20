@@ -1,16 +1,16 @@
-from Core.Main.Trade.RiskFrameWorks.Invalidation.InvalidationClose import InvalidationClose
-from Core.Main.Trade.RiskFrameWorks.Invalidation.InvalidationSteady import InvalidationSteady
-from Core.Main.Trade.RiskFrameWorks.OrderWeightage.OrderWeightage import OrderWeightage
-from Core.Main.Trade.RiskFrameWorks.Ratio.FixedRatio import FixedRatio
-from Core.Main.Trade.RiskFrameWorks.Ratio.RangeRatio import RangeRatio
-from Core.Main.Trade.RiskFrameWorks.StrategicStop.EndOfmbalance import EndOfImbalance
-from Core.Main.Trade.RiskFrameWorks.StrategicStop.OBStop import OBStop
-from Core.Main.Trade.RiskFrameWorks.StrategicStop.Swing import SwingStop
-from Core.Main.Trade.RiskFrameWorks.TechnicalEntry.CE import CE
-from Core.Main.Trade.RiskFrameWorks.TechnicalEntry.Drill import DrillEntry
-from Core.Main.Trade.RiskFrameWorks.TechnicalEntry.Fill import FillEntry
-from Core.Main.Trade.RiskFrameWorks.TechnicalStop.BreakEven import BreakEven
-from Core.Main.Trade.RiskFrameWorks.TechnicalStop.TrailingStop import TrailingStop
+from Core.Main.Trade.RiskFrameWorks.Exit.Invalidation.InvalidationClose import InvalidationClose
+from Core.Main.Trade.RiskFrameWorks.Exit.Invalidation.InvalidationSteady import InvalidationSteady
+from Core.Main.Trade.RiskFrameWorks.Entry.OrderWeightage.OrderWeightage import OrderWeightage
+from Core.Main.Trade.RiskFrameWorks.Entry.Ratio.FixedRatio import FixedRatio
+from Core.Main.Trade.RiskFrameWorks.Entry.Ratio.RangeRatio import RangeRatio
+from Core.Main.Trade.RiskFrameWorks.Entry.StrategicStop.EndOfmbalance import EndOfImbalance
+from Core.Main.Trade.RiskFrameWorks.Entry.StrategicStop.OBStop import OBStop
+from Core.Main.Trade.RiskFrameWorks.Entry.StrategicStop.Swing import SwingStop
+from Core.Main.Trade.RiskFrameWorks.Entry.TechnicalEntry.CE import CE
+from Core.Main.Trade.RiskFrameWorks.Entry.TechnicalEntry.Drill import DrillEntry
+from Core.Main.Trade.RiskFrameWorks.Entry.TechnicalEntry.Fill import FillEntry
+from Core.Main.Trade.RiskFrameWorks.Exit.TechnicalStop.BreakEven import BreakEven
+from Core.Main.Trade.RiskFrameWorks.Exit.TechnicalStop.TrailingStop import TrailingStop
 
 
 class RiskMediator:

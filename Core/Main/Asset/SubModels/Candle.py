@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from Core.Pattern.Decorator.IDDecorator import IDDecorator
-from Core.Pattern.Factory.FlyweightFactory import FlyweightFactory
+from Core.Main.Asset.Decorator.IDDecorator import IDDecorator
+from Core.Main.Asset.FlyweightFactory import FlyweightFactory
 
 
 @IDDecorator

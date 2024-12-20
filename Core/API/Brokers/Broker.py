@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from Core.Pattern.Singleton.SingletonMeta import SingletonMeta
+from Core.API.Brokers.SingletonMeta import SingletonMeta
 
 
 class Broker(ABC, metaclass=SingletonMeta):

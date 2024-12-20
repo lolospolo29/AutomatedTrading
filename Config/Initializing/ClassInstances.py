@@ -7,7 +7,7 @@ import pytz
 from watchdog.observers import Observer
 
 from Controller.SignalController import SignalController
-from Core.Pattern.Factory.StrategyFactory import StrategyFactory
+from Core.Main.Strategy.StrategyFactory import StrategyFactory
 from Services.DB.SubModules.mongoDBConfig import mongoDBConfig
 from Services.DB.SubModules.mongoDBData import mongoDBData
 from Services.DB.SubModules.mongoDBTrades import mongoDBTrades

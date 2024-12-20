@@ -1,7 +1,12 @@
 from abc import ABC
 
+from Core.Main.Trade.OrderDirectionEnum import OrderDirection
+from Core.Main.Trade.RiskFrameWorks.Entry.Ratio.Models.ProfitStopEntry import ProfitStopEntry
+from Core.Main.Trade.RiskFrameWorks.RiskModeEnum import RiskMode
+
 
 class BaseRatio(ABC):
+    # region Profit Stop Entry Calculation
     @staticmethod
     def calculateProfit(entry:float, stop: float, ratio: float) -> float:
         if stop < entry:
@@ -36,4 +41,14 @@ class BaseRatio(ABC):
             return stop - entry if stop - entry > 0 else entry
         if stop == profit:
             return stop
+    # endregion
 
+    @staticmethod
+    def isConditionFullFilled(profit: float, stop: float, entry: float,orderDirection: OrderDirection) -> bool:
+        if orderDirection == OrderDirection.BUY:
+            if stop < entry < profit:
+                return True
+        if orderDirection == OrderDirection.SELL:
+            if stop > entry > profit:
+                return True
+        return False

@@ -1,6 +1,6 @@
 from Core.Main.Asset.SubModels.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from Core.Main.Asset.SubModels.Candle import Candle
-from Core.Pattern.Mediator.PDMediator import PDMediator
+from Core.Main.Strategy.Mediator.PDMediator import PDMediator
 from Core.Main.Strategy.FrameWorks.PDArray import PDArray
 
 
