@@ -1,6 +1,7 @@
-from Interfaces.RiskManagement.ITechnicalEntry import ITechnicalEntry
+from Core.Main.Asset.SubModels.Candle import Candle
 
 
-class FillEntry(ITechnicalEntry):
-    def getEntry(self, candle):
+class FillEntry:
+    @staticmethod
+    def getEntry(candle: Candle) -> float:
             return candle.open

@@ -1,31 +1,46 @@
+from Core.Main.Trade.RiskFrameWorks.Entry.Ratio.Models.ProfitStopEntry import ProfitStopEntry
+from Core.Main.Trade.RiskFrameWorks.RiskModeEnum import RiskMode
 
 
 class OrderWeightage:
 
-    def getPercentagePerLevel(self, percentage: float, order_tp_assignments: list[tuple[int, float]],
-                              mode: int) -> list[
-        tuple[int, float, float]]:
-        """
-        Verarbeitet die TP-Zuordnungen und verteilt den Prozentsatz basierend auf dem Modus.
-        :param mode:
-        :param percentage: Gesamtprozentsatz, der auf die Orders verteilt wird.
-        :param order_tp_assignments: Liste von Zuordnungen (Order-Index, TP-Level).
-        :return: Liste von Zuordnungen (Order-Index, TP-Level, Prozentsatz).
-        """
-        orderAmount = len(order_tp_assignments)
-        if mode == "aggressiv":
-            weights = [1 / (i + 1) for i in range(orderAmount)]
-        elif mode == "gleichmäßig":
-            weights = [1 / orderAmount] * orderAmount
-        elif mode == "risikoarm":
-            weights = [0.5] + [0.5 / (orderAmount - 1) for _ in range(orderAmount - 1)]
-        else:
-            raise ValueError("Unbekannter Modus. 'aggressiv', 'gleichmäßig' oder 'risikoarm' erwartet.")
+    def setPercentagesBasedOnMode(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
+        total_entries = len(entries)
+        if total_entries == 0:
+            return entries
 
-        # Normalisiere die Gewichte
-        total_weight = sum(weights)
-        normalized_weights = [w / total_weight for w in weights]
+        if mode == RiskMode.AGGRESSIVE:
+            # Aggressive mode: heavier weight to early entries
+            return self._setAggressiveWeightage(entries)
+        elif mode == RiskMode.MODERAT:
+            # Moderate mode: equal distribution of percentage across entries
+            return self._setModerateWeightage(entries)
+        elif mode == RiskMode.SAFE:
+            # Safe mode: heavier weight to later entries
+            return self._setSafeWeightage(entries)
 
-        # Verteile die Prozentsätze entsprechend der Gewichte
-        return [(order, tp, round(percentage * weight, 2)) for (order, tp), weight in
-                zip(order_tp_assignments, normalized_weights)]
+    @staticmethod
+    def _setAggressiveWeightage(entries:list[ProfitStopEntry]):
+        total_entries = len(entries)
+        for i, entry in enumerate(entries):
+            # Aggressive: More weight on early entries, less on later ones
+            weight = (total_entries - i) / total_entries
+            entry.setPercentage(weight * 100)
+        return entries
+
+    @staticmethod
+    def _setModerateWeightage(entries:list[ProfitStopEntry]):
+        # Moderate: Distribute percentages equally
+        total_entries = len(entries)
+        for entry in entries:
+            entry.setPercentage(100 / total_entries)
+        return entries
+
+    @staticmethod
+    def _setSafeWeightage(entries:list[ProfitStopEntry]):
+        total_entries = len(entries)
+        for i, entry in enumerate(entries):
+            # Safe: More weight on later entries, less on earlier ones
+            weight = (i + 1) / total_entries
+            entry.setPercentage(weight * 100)
+        return entries

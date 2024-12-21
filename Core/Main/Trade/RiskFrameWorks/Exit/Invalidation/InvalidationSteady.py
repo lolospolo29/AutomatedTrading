@@ -1,14 +1,15 @@
 from Core.Main.Asset.SubModels.Candle import Candle
+from Core.Main.Trade.OrderDirectionEnum import OrderDirection
 
 
 class InvalidationSteady:
     @staticmethod
-    def checkInvalidation(stopLoss: float, candle: Candle, tradeDirection: str) ->bool:
-        if tradeDirection == 'Buy':
-            if candle.low < stopLoss:
+    def checkInvalidation(stop: float, candle: Candle, direction: OrderDirection) ->bool:
+        if direction == OrderDirection.BUY:
+            if candle.low < stop:
                 return True
             return False
-        if tradeDirection == 'Sell':
-            if candle.high > stopLoss:
+        if direction == OrderDirection.SELL:
+            if candle.high > stop:
                 return True
             return False

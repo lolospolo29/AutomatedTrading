@@ -10,7 +10,7 @@ from Core.Main.Strategy.FrameWorks.PDArray import PDArray
 from Core.Main.Strategy.FrameWorks.Structure import Structure
 from Core.Main.Strategy.FrameWorks.TimeModels.London import LondonOpen
 from Core.Main.Strategy.FrameWorks.TimeModels.NYOpen import NYOpen
-from Core.Main.Strategy.Mediator.RiskMediator import RiskMediator
+from Core.Main.Trade.RiskFrameWorks.RiskMediator import RiskMediator
 
 
 # Unicorn Entry with 4H PD Range Bias

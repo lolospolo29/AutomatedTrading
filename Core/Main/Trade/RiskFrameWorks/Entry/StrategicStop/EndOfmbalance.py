@@ -8,3 +8,4 @@ class EndOfImbalance:
             return candle.high
         if candle.close > candle.open:
             return candle.low
+        return 0

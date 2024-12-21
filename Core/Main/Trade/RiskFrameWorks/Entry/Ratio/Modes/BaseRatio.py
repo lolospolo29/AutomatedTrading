@@ -30,7 +30,7 @@ class BaseRatio(ABC):
             return entry
 
     @staticmethod
-    def calculateEntryPrice(stop:float, profit:float, ratio:float) -> float:
+    def calculateEntry(stop:float, profit:float, ratio:float) -> float:
         if stop < profit:
             difference = profit - stop
             entry = difference / (ratio + 1)
