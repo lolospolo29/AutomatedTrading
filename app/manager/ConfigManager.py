@@ -1,6 +1,6 @@
 import threading
 
-from app.api.Brokers.Broker import Broker
+from app.api.brokers.Broker import Broker
 from app.db.modules.mongoDBConfig import mongoDBConfig
 from app.helper.factories.StrategyFactory import StrategyFactory
 from app.manager.AssetManager import AssetManager

@@ -1,13 +1,13 @@
 from typing import Dict, Any
 
-from app.Services.TradingService import TradingService
+from app.services.TradingService import TradingService
 
 
 class SignalController:
 
     # region Initializing
-    def __init__(self, tradingService: TradingService):
-        self._TradingService: TradingService = tradingService
+    def __init__(self):
+        self._TradingService: TradingService = TradingService()
     # endregion
 
     # region TradingView Handling

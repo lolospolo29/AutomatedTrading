@@ -6,20 +6,18 @@ from threading import Thread
 import pytz
 from watchdog.observers import Observer
 
-ny_tz = pytz.timezone('America/New_York')
+from app.controller.SignalController import SignalController
+from app.helper.FileHandler import FileHandler
+from app.manager.ConfigManager import ConfigManager
 
-tradeManager = TradeManager(dbService, strategyManager, riskManager)
-
-tradingService = TradingService(assetManager, tradeManager, strategyManager)
-
-configManager = ConfigManager(mongoDBConfig,assetManager,strategyManager,strategyFactory)
+configManager = ConfigManager()
 
 # FileHandler
-newFileHandler = FileHandler(assetManager, strategyManager)
+newFileHandler = FileHandler()
 
 # controller
 
-signalController = SignalController(tradingService)
+signalController = SignalController()
 
 # Logic
 

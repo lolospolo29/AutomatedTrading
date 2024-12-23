@@ -48,7 +48,7 @@ sys.stdout = StreamToLogger(logger, logging.INFO)
 sys.stderr = StreamToLogger(logger, logging.ERROR)
 
 
-@app.route('/tradingview', methods=['POST'])
+@app.route('/tradingview', methods=['post'])
 def receive_signal():
     jsonData = request.get_json()
 
