@@ -6,7 +6,7 @@ from threading import Thread
 
 from flask import Flask, request, Response, render_template
 
-from Config.Initializing.ClassInstances import signalController
+from app.ClassInstances import signalController
 
 app = Flask(__name__)
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
     
 
-# API Secrets
+# api Secrets
 # Name : DemoApiKey
-# API Key : Ifp91Iy8fOY6x22bVG
+# api Key : Ifp91Iy8fOY6x22bVG
 # Secret: eagubhmZG5nY0gbycEeJNGR50GuT5YnpZA37
