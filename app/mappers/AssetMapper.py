@@ -7,15 +7,15 @@ class AssetMapper:
 
     @staticmethod
     def mapCandleFromTradingView(json: dict) -> Candle:
-        mainData = json.get("Candle")
-        asset = json.get("asset")
-        broker = json.get("broker")
-        open = json.get("open")
-        close = mainData.get("close")
-        high = mainData.get("high")
-        low = mainData.get("low")
-        IsoTime = mainData.get("IsoTime")
-        timeFrame = mainData.get("timeFrame")
+        candle = json.get("Candle")
+        asset = candle.get("asset")
+        broker = candle.get("broker")
+        open = candle.get("open")
+        close = candle.get("close")
+        high = candle.get("high")
+        low = candle.get("low")
+        IsoTime = candle.get("IsoTime")
+        timeFrame = candle.get("timeFrame")
 
         return Candle(asset, broker, open, high, low, close, IsoTime, timeFrame)
 

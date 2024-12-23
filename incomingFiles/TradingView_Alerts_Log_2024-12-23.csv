@@ -1,0 +1,13 @@
+Alert ID,Ticker,Name,Description,Time
+1661734571,"BYBIT:BTCUSDT.P, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT.P"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 93166.1,
+    ""high"": 93352,
+    ""low"": 93166.1,
+    ""close"": 93288.4,
+    ""IsoTime"": ""2024-12-23T18:37:00Z"",
+    ""timeFrame"": 1
+    }
+}",2024-12-23T18:38:01Z

@@ -43,16 +43,16 @@ class ConfigManager:
     @logTime
     def runStartingSetup(self):
 
-        assets: list = self._MongoDBConfig.loadData("asset",None)
+        assets: list = self._MongoDBConfig.loadData("Asset",None)
         brokers: list = self._MongoDBConfig.loadData("Broker",None)
-        strategies: list = self._MongoDBConfig.loadData("strategy",None)
+        strategies: list = self._MongoDBConfig.loadData("Strategy",None)
         assetBrokerStrategyRelations: list = self._MongoDBConfig.loadData("AssetBrokerStrategyRelation"
                                                                           ,None)
         smtPairs: list = self._MongoDBConfig.loadData("SMTPairs",None)
 
-        self._addDataToList("asset", assets)
+        self._addDataToList("Asset", assets)
         self._addDataToList("Broker", brokers)
-        self._addDataToList("strategy", strategies)
+        self._addDataToList("Strategy", strategies)
         self._addDataToList("AssetBrokerStrategyRelation",
                             assetBrokerStrategyRelations)
         self._addDataToList("SMTPairs", smtPairs)
@@ -91,13 +91,13 @@ class ConfigManager:
 
     def _isTypAssetAddAsset(self, typ: str, doc: dict) -> None:
 
-        if typ == "asset":
+        if typ == "Asset":
 
             asset: Asset = Asset((doc.get(typ)).get("name"))
             self._assets.append(asset)
 
     def _isTypStrategyAddStrategy(self, typ: str, doc: dict) -> None:
-        if typ == "strategy":
+        if typ == "Strategy":
 
             strategyDict = doc.get(typ)
             name = strategyDict.get("name")
@@ -109,26 +109,26 @@ class ConfigManager:
     def _isTypRelationAddRelation(self, typ: str, doc: dict) -> None:
         if typ == "AssetBrokerStrategyRelation":
 
-            asset: str = self._MongoDBConfig.findById("asset","assetId",(doc.get(typ)).get("assetId"),
+            asset: str = self._MongoDBConfig.findById("Asset","assetId",(doc.get(typ)).get("assetId"),
                                                       "name")
 
             broker: str = self._MongoDBConfig.findById("Broker","brokerId",(doc.get(typ)).get("brokerId"),
                                                        "name")
 
-            strategy: str = self._MongoDBConfig.findById("strategy","strategyId",
+            strategy: str = self._MongoDBConfig.findById("Strategy","strategyId",
                                                          (doc.get(typ)).get("strategyId"),"name")
             self._relations.append(AssetBrokerStrategyRelation(asset, broker, strategy))
 
     def _isTypSMTPairAddPair(self, typ: str, doc: dict)->None:
         if typ == "SMTPairs":
-            strategy: str = self._MongoDBConfig.findById("strategy", "strategyId",
+            strategy: str = self._MongoDBConfig.findById("Strategy", "strategyId",
                                                          (doc.get(typ)).get("strategyId"), "name")
             smtPairs: list = doc.get(typ).get("smtPairIds")
 
             smtPairList: list = []
 
             for pair in smtPairs:
-                smtPairList.append(self._MongoDBConfig.findById("asset", "assetId", pair,
+                smtPairList.append(self._MongoDBConfig.findById("Asset", "assetId", pair,
                                              "name"))
 
             self._smtPairs.append(SMTPair(strategy, smtPairList, doc.get(typ).get("correlation")))

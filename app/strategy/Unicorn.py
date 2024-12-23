@@ -71,7 +71,7 @@ class Unicorn(Strategy):
             return frameWorks
 
     def getEntry(self, candles: list, timeFrame: int, pds: list[PDArray],
-                 levels:list[Level], structures: list[Structure]) ->list[StrategyOrder]:
+                 levels:list[Level], structures: list[Structure]) ->list[Order]:
         if candles and pds:
 
             last_candle: Candle = candles[-1]
@@ -107,14 +107,12 @@ class Unicorn(Strategy):
 
                                 if fvg.direction == "Bearish" and breaker.direction == "Bearish" :
                                     return "SELL"
+
     def returnOrder(self, lastCandle:Candle,candles: list, timeFrame: int,direction: str) -> Order:
 
         middleCandle = candles[0]
 
-        stop = self._RiskMediator.calculateRisk("EndOfImbalance",middleCandle)
-
-
-        return StrategyOrder(category=self.category,side=direction,takeProfit=x,stopLoss=x,orderType=x,timeFrame=timeFrame,price=x)
+        pass
 
 
     def getExit(self):

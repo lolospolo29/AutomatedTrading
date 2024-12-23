@@ -1,9 +1,7 @@
-import datetime
 import time
 from functools import partial
 from threading import Thread
 
-import pytz
 from watchdog.observers import Observer
 
 from app.controller.SignalController import SignalController

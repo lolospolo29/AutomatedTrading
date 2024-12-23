@@ -83,9 +83,3 @@ def stream_logs():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
-    
-
-# api Secrets
-# Name : DemoApiKey
-# api Key : Ifp91Iy8fOY6x22bVG
-# Secret: eagubhmZG5nY0gbycEeJNGR50GuT5YnpZA37

@@ -10,6 +10,7 @@ from watchdog.events import FileSystemEventHandler
 
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
+from app.models.asset.Candle import Candle
 
 
 class FileHandler(FileSystemEventHandler):
@@ -25,12 +26,14 @@ class FileHandler(FileSystemEventHandler):
         return cls._instance
 
     # region Initializing
+
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
 
             self._AssetManager: AssetManager = AssetManager()
             self._StrategyManager: StrategyManager = StrategyManager()
             self._initialized = True  # Markiere als initialisiert
+
     # endregion
 
     # region Watcher
@@ -43,14 +46,14 @@ class FileHandler(FileSystemEventHandler):
                 print(f"New file detected: {event.src_path}")
                 candlesCSV = self._parseCandleData(event.src_path)
                 for candle in candlesCSV:
-                    asset, broker, timeFrame = self._AssetManager.addCandle(candle)
-                    self._testingStrategy(asset, broker, timeFrame)
+                    candle: Candle = self._AssetManager.addCandle(candle)
+                    self._testingStrategy(candle.asset, candle.broker, candle.timeFrame)
 
                 self._moveToArchive(event.src_path)
                 self._archive()
 
     def _testingStrategy(self, asset, broker, timeFrame):
-        candles: list = self._AssetManager.returnCandles(asset, broker, timeFrame)
+        candles: list[Candle] = self._AssetManager.returnCandles(asset, broker, timeFrame)
         relations: list = self._AssetManager.returnRelations(asset, broker)
         for relation in relations:
             self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)

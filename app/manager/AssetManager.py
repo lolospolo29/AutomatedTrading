@@ -30,11 +30,13 @@ class AssetManager:
     # endregion
 
     # region Register And Return Assets
-    def registerAsset(self, asset: Asset) -> None:
+    def registerAsset(self, asset: Asset) -> bool:
         if not asset in self.assets:
             self.assets[asset.name] = asset
             print(f"Asset '{asset.name}' created and added to Asset Manager.")
+            return True
         print(f"Asset '{asset.name}' already exists.")
+        return False
 
     def returnAllAssets(self):
         assets = []

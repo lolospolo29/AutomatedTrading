@@ -14,7 +14,7 @@ class SecretsManager:
         return cls._instance
 
     # region Initializing
-    def __init__(self, configFile='/Users/lauris/PycharmProjects/AutomatedTrading/config/config.ini'):
+    def __init__(self, configFile='/Users/lauris/PycharmProjects/AutomatedTrading/app/config.ini'):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
 
             self._configFile = configFile
