@@ -1,13 +1,38 @@
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
+from app.models.riskCalculations.RiskModeEnum import RiskMode
+from app.models.trade.OrderDirectionEnum import OrderDirection
 
 
 class Breaker(IPDArray):  # id need to be fixed
 
+
     def __init__(self, lookback: int):
         self.lookback: int = lookback
         self.name = "Breaker"
+
+    def returnEntry(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
+        range =self.returnCandleRange(pdArray)
+        if orderDirection.BUY:
+            if riskMode.SAFE:
+                return range.get("low")
+            if riskMode.AGGRESSIVE:
+                return range.get("high")
+
+        if orderDirection.SELL:
+            if riskMode.SAFE:
+                return range.get("high")
+            if riskMode.AGGRESSIVE:
+                return range.get("low")
+
+        if riskMode.MODERAT:
+            low = range.get("low")
+            high = range.get("high")
+            return (low + high) / 2
+
+    def returnStop(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
+        return self.returnEntry(pdArray, orderDirection, riskMode)
 
     def returnCandleRange(self, pdArray: PDArray) -> dict:
         """

@@ -10,7 +10,7 @@ from app.models.frameworks.Structure import Structure
 from app.models.frameworks.time.London import LondonOpen
 from app.models.frameworks.time.NYOpen import NYOpen
 from app.models.trade.Order import Order
-from app.helper.mediator.RiskMediator import RiskMediator
+from app.helper.RiskCalculator import RiskCalculator
 
 # Unicorn Entry with 4H PD Range Bias
 
@@ -21,12 +21,10 @@ class Unicorn(Strategy):
         self._PDMediator = PDMediator()
         self._ConfirmationMediator = StructureMediator()
         self._LevelMediator : LevelMediator= LevelMediator()
-        self._RiskMediator : RiskMediator= RiskMediator()
+        self._RiskMediator : RiskCalculator= RiskCalculator()
 
         self._TimeWindow = LondonOpen()
         self._TimeWindow2 = NYOpen()
-
-        self.category = "linear"
 
         self.expectedTimeFrames = []
 
@@ -65,7 +63,7 @@ class Unicorn(Strategy):
                         frameWorks.extend(breaker)
 
                 if self.isInTime(time):
-                    fvg = self._PDMediator.calculatePDArray("FVG", candles, lookback=3)
+                    fvg = self._PDMediator.calculatePDArrayWithLookback("FVG", candles, lookback=3)
                     frameWorks.extend(fvg)
 
             return frameWorks

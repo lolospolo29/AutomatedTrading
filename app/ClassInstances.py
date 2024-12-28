@@ -5,7 +5,7 @@ from threading import Thread
 from watchdog.observers import Observer
 
 from app.controller.SignalController import SignalController
-from app.helper.FileHandler import FileHandler
+from app.helper.handler.FileHandler import FileHandler
 from app.manager.ConfigManager import ConfigManager
 
 configManager = ConfigManager()

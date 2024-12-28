@@ -1,18 +1,15 @@
 from typing import Tuple, Any
 
+from app.models.riskCalculations.ProfitStopAnalyzer import ProfitStopAnalyzer
 from app.models.asset.Candle import Candle
+from app.models.frameworks.PDArray import PDArray
 from app.models.riskCalculations.RiskModeEnum import RiskMode
+from app.models.riskCalculations.entry.PDRiskCalculator import PDRiskCalculator
 from app.models.riskCalculations.entry.orderWeightage.OrderWeightage import OrderWeightage
-from app.models.riskCalculations.entry.ratio.Models.ProfitStopEntry import ProfitStopEntry
+from app.models.riskCalculations.ProfitStopEntry import ProfitStopEntry
+from app.models.riskCalculations.entry.ratio.Modes.BaseRatio import BaseRatio
 from app.models.riskCalculations.entry.ratio.Modes.FixedRatio import FixedRatio
 from app.models.riskCalculations.entry.ratio.Modes.RangeRatio import RangeRatio
-from app.models.riskCalculations.entry.strategicStop.EndOfmbalance import EndOfImbalance
-from app.models.riskCalculations.entry.strategicStop.OBStop import OBStop
-from app.models.riskCalculations.entry.strategicStop.OBStopEnum import OrderBlockStop
-from app.models.riskCalculations.entry.strategicStop.Swing import SwingStop
-from app.models.riskCalculations.entry.technicalEntry.CE import CE
-from app.models.riskCalculations.entry.technicalEntry.Drill import DrillEntry
-from app.models.riskCalculations.entry.technicalEntry.Fill import FillEntry
 from app.models.riskCalculations.exit.invalidation.InvalidationClose import InvalidationClose
 from app.models.riskCalculations.exit.invalidation.InvalidationSteady import InvalidationSteady
 from app.models.riskCalculations.exit.technicalStop.BreakEven import BreakEven
@@ -20,46 +17,77 @@ from app.models.riskCalculations.exit.technicalStop.TrailingStop import Trailing
 from app.models.trade.OrderDirectionEnum import OrderDirection
 
 
-class RiskMediator:
+class RiskCalculator:
+
+    # region Initializing
     _instance = None  # Class-level attribute to hold the singleton instance
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super(RiskMediator, cls).__new__(cls)
+            cls._instance = super(RiskCalculator, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prevent re-initialization
             self._orderWeightage = OrderWeightage()
+            self._baseRatio = BaseRatio()
             self._fixedRatio = FixedRatio()
             self._rangeRatio = RangeRatio()
-            self._swingStop = SwingStop()
-            self._obStop = OBStop()
-            self._endOfImbalance = EndOfImbalance()
-            self._ce = CE()
-            self._drill = DrillEntry()
-            self._fill = FillEntry()
             self._invalidationClose = InvalidationClose()
             self._invalidationSteady = InvalidationSteady()
             self._be = BreakEven()
             self._trailingStop = TrailingStop()
+            self._pdRiskCalculator = PDRiskCalculator()
+            self.profitStopAnalyzer = ProfitStopAnalyzer()
             self._initialized: bool = True  # Mark as initialized
+    # endregion
+
+    # region Order Weightage
 
     def setOrderWeightagePercent(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
         return self._orderWeightage.setPercentagesBasedOnMode(entries, mode)
 
-    # region  Entry Single Fixed Ratio Input
-    def calculateFixedRatioStop(self,entry: float,profit: float,ratio: float,direction: OrderDirection)->Tuple[Any,bool]:
-        return self._fixedRatio.calculateFixedRatioStop(entry, profit, ratio, direction)
+    # endregion
+
+    # region Calculate Stops PD's
+    def calculatePDStops(self, pdArrays: list[PDArray], orderDirection: OrderDirection) -> list[float]:
+        return self._pdRiskCalculator.calculateAllStops(pdArrays, orderDirection)
+
+    def calculatePDStopsSpecific(self,pdArrays: list[PDArray], orderDirection: OrderDirection,riskMode: RiskMode) -> list[float]:
+        return self._pdRiskCalculator.calculateStopsSpecific(pdArrays, orderDirection, riskMode)
+    # endregion
+
+    # region Calculate Entries PD's
+    def calculatePDEntries(self, pdArrays: list[PDArray], orderDirection: OrderDirection) -> list[float]:
+        return self._pdRiskCalculator.calculateAllEntries(pdArrays, orderDirection)
+    def calculatePDEntriesSpecific(self,pdArrays: list[PDArray], orderDirection: OrderDirection,riskMode: RiskMode) -> list[float]:
+        return self._pdRiskCalculator.calculateEntriesSpecific(pdArrays, orderDirection, riskMode)
+    # endregion
+
+    # region Single Base Ratio Input
+    def calculateBaseProfit(self,entry:float, stop: float, ratio: float) -> float:
+        return self._baseRatio.calculateProfit(entry, stop, ratio)
+
+    def calculateBaseStop(self,entry:float, profit: float, ratio: float) -> float:
+        return self._baseRatio.calculateStop(entry, profit, ratio)
+
+    def calculateBaseEntry(self,stop:float, profit:float, ratio:float) -> float:
+        return self._baseRatio.calculateEntry(stop, profit, ratio)
+    # endregion
+
+    # region  Single Fixed Ratio Input
 
     def calculateFixedProfit(self,entry: float,stop: float,ratio: float,direction: OrderDirection)->Tuple[Any,bool]:
         return self._fixedRatio.calculateFixedProfit(entry, stop, ratio, direction)
+
+    def calculateFixedRatioStop(self,entry: float,profit: float,ratio: float,direction: OrderDirection)->Tuple[Any,bool]:
+        return self._fixedRatio.calculateFixedRatioStop(entry, profit, ratio, direction)
 
     def calculateFixedEntry(self, stop: float, profit: float, ratio: float, direction: OrderDirection)->Tuple[Any,bool]:
         return self._fixedRatio.calculateFixedEntry(stop, profit, ratio, direction)
     # endregion
 
-    # region Entry List Fixed Ratio Input
+    # region List Fixed Ratio Input
     def calculateProfitsFixed(self, entries: list[float], stops: list[float], ratio: float,
                          direction: OrderDirection)-> list[ProfitStopEntry]:
         return self._fixedRatio.calculateProfits(entries, stops, ratio, direction)
@@ -73,7 +101,7 @@ class RiskMediator:
         return self._fixedRatio.calculateEntries(stops, profits, ratio, direction)
     # endregion
 
-    # region Entry Single Range Ratio Input
+    # region Single Range Ratio Input
     def calculateRangeProfits(self, entry: float, stop: float, rangeRatio: list[float],
                               direction: OrderDirection) -> list[ProfitStopEntry]:
         return self._rangeRatio.calculateRangeProfits(entry, stop, rangeRatio, direction)
@@ -87,7 +115,7 @@ class RiskMediator:
         return self._rangeRatio.calculateRangeEntries(stop, profit, rangeRatio, direction)
     # endregion
 
-    # region Entry List Range Ratio Input
+    # region List Range Ratio Input
     def calculateProfitsRange(self, entries: list[float], stops: list[float], rangeRatio:
     list[int], direction: OrderDirection) -> list[ProfitStopEntry]:
         return self._rangeRatio.calculateProfits(entries, stops, rangeRatio, direction)
@@ -99,28 +127,6 @@ class RiskMediator:
     def calculateEntriesRange(self, stops: list[float], profits: list[float], rangeRatio:
     list[int], direction: OrderDirection) -> list[ProfitStopEntry]:
         return self._rangeRatio.calculateEntries(stops, profits, rangeRatio, direction)
-    # endregion
-
-    # region Entry strategy Stop
-    def getSwingStop(self,candle: Candle) -> float:
-        return self._swingStop.getStrategyStop(candle)
-
-    def getOBStop(self,candle: Candle,mode: OrderBlockStop) -> float:
-        return self._obStop.getStrategyStop(candle, mode)
-
-    def getImbalanceStop(self,candle: Candle) -> float:
-        return self._endOfImbalance.getStrategyStop(candle)
-    # endregion
-
-    # region Entry Type
-    def getCEEntry(self,candle: Candle) -> float:
-        return self._ce.getEntry(candle)
-
-    def getDrillEntry(self,candle: Candle) -> float:
-        return self._drill.getEntry(candle)
-
-    def getFillEntry(self,candle: Candle) -> float:
-        return self._fill.getEntry(candle)
     # endregion
 
     # region Invalidation Exit

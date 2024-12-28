@@ -1,5 +1,5 @@
 from app.models.riskCalculations.RiskModeEnum import RiskMode
-from app.models.riskCalculations.entry.ratio.Models.ProfitStopEntry import ProfitStopEntry
+from app.models.riskCalculations.ProfitStopEntry import ProfitStopEntry
 
 
 class OrderWeightage:

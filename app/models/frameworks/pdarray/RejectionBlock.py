@@ -1,13 +1,45 @@
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
+from app.models.riskCalculations.RiskModeEnum import RiskMode
+from app.models.trade.OrderDirectionEnum import OrderDirection
 
 
 class RejectionBlock(IPDArray):
+
     def __init__(self, lookback):
         self.lookback = lookback
         self.name = "RB"
 
+    def returnEntry(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode) -> float:
+        range = self.returnCandleRange(pdArray)
+        if orderDirection.BUY:
+            if riskMode.AGGRESSIVE:
+                return range.get("high")
+
+        if orderDirection.SELL:
+            if riskMode.AGGRESSIVE:
+                return range.get("low")
+
+        if riskMode.MODERAT or riskMode.SAFE:
+            low = range.get("low")
+            high = range.get("high")
+            return (low + high) / 2
+
+    def returnStop(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
+        range = self.returnCandleRange(pdArray)
+        if orderDirection.BUY:
+            if riskMode.SAFE:
+                return range.get("low")
+
+        if orderDirection.SELL:
+            if riskMode.SAFE:
+                return range.get("high")
+
+        if riskMode.MODERAT or riskMode.AGGRESSIVE:
+            low = range.get("low")
+            high = range.get("high")
+            return (low + high) / 2
 
     def returnCandleRange(self, pdArray: PDArray) -> dict:
         """
@@ -25,14 +57,14 @@ class RejectionBlock(IPDArray):
 
         if pdArray.direction == "Bullish":
             low = min(lows)
-            high = min(opens, closes)
+            high = min(opens,closes)
             return {
                 'low': low,
                 'high': high
             }
         if pdArray.direction == "Bearish":
-            low = min(lows)
-            high = max(opens, closes)
+            low = max(opens,closes)
+            high = max(highs)
             return {
                 'low': low,
                 'high': high

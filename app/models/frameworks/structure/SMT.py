@@ -8,7 +8,7 @@ class SMT:
     def __init__(self):
         self.name = "SMT"
 
-    def returnConfirmation(self, candlesAsset1: list[Candle], candlesAsset2: list[Candle]) -> list[Structure]:
+    def returnConfirmation(self, candlesAsset1: list[Candle], candlesAsset2: list[Candle]) -> Structure:
         """
         Determine if an SMT divergence is detected between two asset data points.
 
@@ -23,10 +23,10 @@ class SMT:
 
         # Compare isoTime values
         if last_candle_asset1.isoTime != last_candle_asset2.isoTime:
-            return False
+            return []
 
         if len(candlesAsset1) != len(candlesAsset2):
-            return False
+            return []
         highs1 = []
         ids1 = []
         highs2 = []

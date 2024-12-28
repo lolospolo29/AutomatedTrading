@@ -1,11 +1,27 @@
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
+from app.models.riskCalculations.RiskModeEnum import RiskMode
+from app.models.trade.OrderDirectionEnum import OrderDirection
 
 
-class Swings(IPDArray):  # id need to be fixed
+class Swings(IPDArray):
+
+
     def __init__(self):
         self.name = "Swing"
+
+    def returnEntry(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
+        pass
+
+    def returnStop(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode) -> float:
+        high = [candle.high for candle in pdArray.candles]
+        low = [candle.low for candle in pdArray.candles]
+
+        if riskMode == RiskMode.BUY:
+            return min (low)
+        if riskMode == RiskMode.SELL:
+            return max (high)
 
     def returnCandleRange(self, pdArray: PDArray) -> dict:
         """

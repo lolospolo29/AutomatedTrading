@@ -1,6 +1,6 @@
 from typing import Tuple, Any
 
-from app.models.riskCalculations.entry.ratio.Models.ProfitStopEntry import ProfitStopEntry
+from app.models.riskCalculations.ProfitStopEntry import ProfitStopEntry
 from app.models.riskCalculations.entry.ratio.Modes.BaseRatio import BaseRatio
 from app.models.trade.OrderDirectionEnum import OrderDirection
 
