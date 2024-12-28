@@ -1,4 +1,5 @@
 import threading
+from typing import Optional, Tuple
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
@@ -6,6 +7,7 @@ from app.models.strategy.Strategy import Strategy
 from app.helper.handler.LevelHandler import LevelHandler
 from app.helper.handler.PDArrayHandler import PDArrayHandler
 from app.helper.handler.StructureHandler import StructureHandler
+from app.models.trade.Trade import Trade
 
 
 class StrategyManager:
@@ -89,7 +91,7 @@ class StrategyManager:
                 self._addNewFrameWorksToHandler(frameworks, relation, candles, timeFrame)
 
     def getEntry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                        timeFrame: int):
+                        timeFrame: int) -> Optional[Trade]:
         if len (candles) <= 0:
             return None
         if relation.strategy in self.strategies:
@@ -98,6 +100,10 @@ class StrategyManager:
             level: list = self._LevelHandler.returnLevels(relation)
             structure: list = self._StructureHandler.returnStructure(relation)
 
+            tradeFound,trade = self.strategies[relation.strategy].getEntry(candles,timeFrame,pd,level,structure)
 
-            self.strategies[relation.strategy].getEntry(candles,timeFrame,pd,level,structure)
+            if tradeFound:
+                return trade
+            if not tradeFound:
+                return None
     # endregion

@@ -1,3 +1,6 @@
+import string
+import random
+
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.frameworks.FrameWork import FrameWork
 from app.models.trade.Order import Order
@@ -5,6 +8,7 @@ from app.models.trade.OrderDirectionEnum import OrderDirection
 from app.models.trade.OrderTypeEnum import OrderTypeEnum
 from app.models.trade.TPSLModeEnum import TPSLModeEnum
 from app.models.trade.TimeInForceEnum import TimeInForceEnum
+from app.models.trade.Trade import Trade
 from app.models.trade.TriggerByEnum import TriggerByEnum
 from app.models.trade.TriggerDirectionEnum import TriggerDirection
 
@@ -16,6 +20,10 @@ class OrderBuilder:
         if cls._instance is None:
             cls._instance = super(OrderBuilder, cls).__new__(cls)
         return cls._instance
+
+    @staticmethod
+    def createTrade(assetBrokerStrategyRelation:AssetBrokerStrategyRelation, orders:list[Order]) -> Trade:
+        return Trade(assetBrokerStrategyRelation,orders)
 
     def createOrder(self,assetBrokerStrategyRelation:AssetBrokerStrategyRelation,entryFrameWork:
     FrameWork, symbol:str,confirmations:list[FrameWork], category:str, side:OrderDirection,
@@ -96,6 +104,7 @@ class OrderBuilder:
             order.slOrderType = slOrderType.value
         if tpOrderType is not None:
             order.tpOrderType = tpOrderType.value
+        order.orderType = OrderTypeEnum.LIMIT.value
         return order
 
 
@@ -123,8 +132,9 @@ class OrderBuilder:
         broker_part = broker[:3].upper()
         strategy_part = strategy[:3].upper()
 
+        random_part = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
+
         # Format the orderLinkId
-        order_link_id = f"{timestamp}-{currency_part}-{broker_part}-{strategy_part}-{order_number:03}"
+        order_link_id = f"{timestamp}-{currency_part}-{broker_part}-{strategy_part}-{order_number:03}-{random_part}"
 
         return order_link_id
-

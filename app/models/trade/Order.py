@@ -1,8 +1,6 @@
 import queue
 import threading
-from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 
 from app.models.frameworks.FrameWork import FrameWork
 
@@ -93,10 +91,3 @@ class Order:
         super().__setattr__(key, value)
         if key != 'updatedAt':  # Avoid recursive updates
             super().__setattr__('updatedAt', datetime.now())
-
-    def __getattribute__(self, key):
-        if key != 'updatedAt':
-            object.__setattr__(self, 'updatedAt', datetime.now())
-        return super().__getattribute__(key)
-
-

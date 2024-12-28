@@ -1,6 +1,7 @@
 import threading
 
 from app.db.DBService import DBService
+from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.trade import Trade
 from app.manager.StrategyManager import StrategyManager
 from app.manager.RiskManager import RiskManager
@@ -20,36 +21,25 @@ class TradeManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.openTrades: list[Trade] = []
+            self.openTrades:dict = {}
             self._DBService: DBService = DBService()
             self._StrategyManager: StrategyManager = StrategyManager()
             self._RiskManager: RiskManager = RiskManager()
             self._initialized = True  # Markiere als initialisiert
 
+    def registerTrade(self, trade: Trade) -> None:
+        if trade not in self.openTrades:
+            self.openTrades[trade.relation] = trade
+            print(f"Trade:'{trade.relation}' created and added to the Trade Manager.")
+        else:
+            print(f"Trade '{trade.relation}' already exists in the Trade Manager.")
 
-    def addTradeToDB(self,trade):
-        self._DBService.addTradeToDB(trade)
+    def isTrade(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> bool:
+        if assetBrokerStrategyRelation.strategy not in self.openTrades:
+            return False
+        return True
 
-    def isTradeOpen(self):
-        pass
-
-    def handleEntry(self):
-        pass
-
-    def handleExit(self):
-        pass
-
-    def archiveTrades(self):
-        for trade in self.openTrades:
-            if trade.status == "closed":
-                tradeData = trade.toDict()
-                self._DBService.archiveCloseTrade(tradeData)
-            if trade.status == "open":
-                tradeData = trade.toDict()
-                self.addTradeToDB(tradeData)
-
-    def clearOpenTrades(self):
-        self.openTrades = []
-
-    def findOpenTrades(self):
-        self.openTrades = self._DBService.returnOpenTrades()
+    def returnTrade(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> Trade:
+        if assetBrokerStrategyRelation.strategy in self.openTrades:
+            trade = self.openTrades[assetBrokerStrategyRelation]
+            return trade

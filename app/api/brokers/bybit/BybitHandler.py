@@ -12,6 +12,7 @@ from app.api.brokers.bybit.get.Response.PositionInfoAll import PositionInfoAll
 from app.api.brokers.bybit.get.Response.TickersLinearInverse import TickersLinearInverse
 from app.api.brokers.bybit.get.Response.TickersOption import TickersOption
 from app.api.brokers.bybit.get.Response.TickersSpot import TickersSpot
+from app.api.brokers.bybit.get.Tickers import Tickers
 from app.api.brokers.bybit.post.AddOrReduceMargin import AddOrReduceMargin
 from app.api.brokers.bybit.post.AmendOrder import AmendOrder
 from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
