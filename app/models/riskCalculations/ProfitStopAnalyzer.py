@@ -188,22 +188,49 @@ class ProfitStopAnalyzer:
         """Finde die x Einträge mit dem niedrigsten Entry-Wert."""
         return sorted(entries, key=lambda e: e.entry)[:x]
 
-entries = [
-    ProfitStopEntry(profit=100, stop=50, entry=10),
-    ProfitStopEntry(profit=120, stop=40, entry=15),
-    ProfitStopEntry(profit=80, stop=30, entry=5),
-    ProfitStopEntry(profit=150, stop=70, entry=20),
-]
-
-# Analyze by the 'profit' attribute and get the top 2 entries
-top_profit_entries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=2, attribute='profit')
-for entry in top_profit_entries:
-    print(entry)
-
-# Analyze by the 'entry' attribute and get the top 2 entries
-top_entry_entries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=2, attribute='entry')
-for entry in top_entry_entries:
-    print(entry)
+# entries = [
+#     ProfitStopEntry(profit=100, stop=25, entry=50),
+#     ProfitStopEntry(profit=120, stop=40, entry=60),
+#     ProfitStopEntry(profit=80, stop=30, entry=40),
+#     ProfitStopEntry(profit=150, stop=50, entry=60),
+#     ProfitStopEntry(profit=200, stop=50, entry=60),
+#     ProfitStopEntry(profit=300, stop=50, entry=60),
+#     ProfitStopEntry(profit=400, stop=50, entry=60),
+# ]
+#
+# # Analyze by the 'profit' attribute and get the top 2 entries
+# profitentries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=4, attribute='profit')
+# for entry in profitentries:
+#     print(entry)
+# print()
+#
+# # Analyze by the 'entry' attribute and get the top 2 entries
+# entryentries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=4, attribute='entry')
+# for entry in entryentries:
+#     print(entry)
+#
+# print()
+#
+# stopentries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=4, attribute='stop')
+# for entry in stopentries:
+#     print(entry)
+#
+# print()
+#
+# riskmodesafe = ProfitStopAnalyzer.analyzeRiskMode(entries, x=2, risk_mode=RiskMode.SAFE)
+# for entry in riskmodesafe:
+#     print(entry)
+#
+# print()
+# riskmodemoderat = ProfitStopAnalyzer.analyzeRiskMode(entries, x=2, risk_mode=RiskMode.MODERAT)
+# for entry in riskmodemoderat:
+#     print(entry)
+#
+# print()
+#
+# riskmodeaggressive = ProfitStopAnalyzer.analyzeRiskMode(entries, x=2, risk_mode=RiskMode.AGGRESSIVE)
+# for entry in riskmodeaggressive:
+#     print(entry)
 
 # Generate a list of test entries
 #
