@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 from app.api.ResponseParams import ResponseParams
-from app.api.brokers.bybit.get.Response.SubModels.TickerLinearInverse import TickerLinearInverse
+from app.api.brokers.bybit.models.get.TickerLinearInverse import TickerLinearInverse
 
 
 @dataclass

@@ -7,7 +7,7 @@ from app.models.frameworks.FrameWork import FrameWork
 
 class Order:
     # Required parameters
-    status: bool
+    status: str
 
     entryFrameWork: FrameWork
     confirmations: list[FrameWork]
@@ -55,7 +55,6 @@ class Order:
 
     # Limit Logic attributes (optional)
     tpslMode: str
-    orderPrice: str
     triggerPrice: str
     tpLimitPrice: str
     slLimitPrice: str

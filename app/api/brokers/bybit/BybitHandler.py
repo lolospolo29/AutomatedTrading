@@ -5,29 +5,31 @@ from typing import Any
 
 from app.api.ResponseParams import ResponseParams
 from app.api.brokers.bybit.Bybit import Bybit
+from app.api.brokers.bybit.BybitMapper import BybitMapper
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
-from app.api.brokers.bybit.get.Response.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
-from app.api.brokers.bybit.get.Response.PositionInfoAll import PositionInfoAll
-from app.api.brokers.bybit.get.Response.TickersLinearInverse import TickersLinearInverse
-from app.api.brokers.bybit.get.Response.TickersOption import TickersOption
-from app.api.brokers.bybit.get.Response.TickersSpot import TickersSpot
+from app.api.brokers.bybit.reponse.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
+from app.api.brokers.bybit.reponse.get.PositionInfoAll import PositionInfoAll
+from app.api.brokers.bybit.reponse.get.TickersLinearInverse import TickersLinearInverse
+from app.api.brokers.bybit.reponse.get.TickersOption import TickersOption
+from app.api.brokers.bybit.reponse.get.TickersSpot import TickersSpot
 from app.api.brokers.bybit.get.Tickers import Tickers
 from app.api.brokers.bybit.post.AddOrReduceMargin import AddOrReduceMargin
 from app.api.brokers.bybit.post.AmendOrder import AmendOrder
 from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
 from app.api.brokers.bybit.post.CancelOrder import CancelOrder
 from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
-from app.api.brokers.bybit.post.Response.AddOrReduceMarginAll import AddOrReduceMarginAll
-from app.api.brokers.bybit.post.Response.AmendOrderAll import AmendOrderAll
-from app.api.brokers.bybit.post.Response.BatchAmendOrder import BatchAmendOrder
-from app.api.brokers.bybit.post.Response.BatchCancelOrder import BatchCancelOrder
-from app.api.brokers.bybit.post.Response.BatchPlaceOrder import BatchPlaceOrder
-from app.api.brokers.bybit.post.Response.CancelAllOrdersAll import CancelAllOrdersAll
-from app.api.brokers.bybit.post.Response.CancelOrderAll import CancelOrderAll
-from app.api.brokers.bybit.post.Response.PlaceOrderAll import PlaceOrderAll
+from app.api.brokers.bybit.reponse.post.AddOrReduceMarginAll import AddOrReduceMarginAll
+from app.api.brokers.bybit.reponse.post.AmendOrderAll import AmendOrderAll
+from app.api.brokers.bybit.reponse.post.BatchAmendOrder import BatchAmendOrder
+from app.api.brokers.bybit.reponse.post.BatchCancelOrder import BatchCancelOrder
+from app.api.brokers.bybit.reponse.post.BatchPlaceOrder import BatchPlaceOrder
+from app.api.brokers.bybit.reponse.post.CancelAllOrdersAll import CancelAllOrdersAll
+from app.api.brokers.bybit.reponse.post.CancelOrderAll import CancelOrderAll
+from app.api.brokers.bybit.reponse.post.PlaceOrderAll import PlaceOrderAll
 from app.api.brokers.bybit.post.SetLeverage import SetLeverage
 from app.api.brokers.bybit.post.TradingStop import TradingStop
+from app.models.trade.Order import Order
 
 
 # endregion
@@ -36,6 +38,7 @@ class BybitHandler:
     def __init__(self):
         self.name = "bybit"
         self.broker: Bybit = Bybit("bybit")
+        self._bybitMapper = BybitMapper()
         self.isLockActive = False
 
         self.amendBatch: dict[str, list[AmendOrder]] = {}
@@ -201,8 +204,9 @@ class BybitHandler:
 
         return result
 
-    def placeOrder(self, **kwargs) -> PlaceOrderAll:
-        placeOrder: PlaceOrder = PlaceOrder(**kwargs)
+    def placeOrder(self, order: Order) -> PlaceOrderAll:
+
+        placeOrder: PlaceOrder = self._bybitMapper.mapOrderToPlaceOrder(order)
 
         # Validierung der Eingabeparameter
         if not placeOrder.validate():

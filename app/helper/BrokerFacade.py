@@ -8,4 +8,4 @@ class BrokerFacade:
 
     def sendSingleOrder(self,broker:str,order:Order):
         if broker == self._bybit.name:
-            self._bybit.placeOrder()
+            return self._bybit.placeOrder(order)
