@@ -6,6 +6,9 @@ from typing import Any
 from app.api.ResponseParams import ResponseParams
 from app.api.brokers.bybit.Bybit import Bybit
 from app.api.brokers.bybit.BybitMapper import BybitMapper
+from app.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
+
+from app.api.brokers.bybit.enums.OpenOnlyEnum import OpenOnlyEnum
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
 from app.api.brokers.bybit.reponse.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
@@ -52,9 +55,11 @@ class BybitHandler:
 
     # region get Methods
 
-    def returnOpenAndClosedOrder(self,**kwargs) -> OpenAndClosedOrdersAll:
+    def returnOpenAndClosedOrder(self,order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:OpenOnlyEnum=None
+                                 ,limit:int=20,cursor:str=None) -> OpenAndClosedOrdersAll:
 
-        openAndClosedOrders: OpenAndClosedOrders = OpenAndClosedOrders(**kwargs)
+        openAndClosedOrders: OpenAndClosedOrders = (self._bybitMapper.mapOrderToOpenAndClosedOrders
+                                                    (order,baseCoin,settleCoin,openOnly,limit,cursor))
 
         # Validierung der Eingabeparameter
         if not openAndClosedOrders.validate():
@@ -62,7 +67,7 @@ class BybitHandler:
 
         params = openAndClosedOrders.toQueryString()
 
-        endPoint = "/v5/order/realtime"
+        endPoint = EndPointEnum.OPENANDCLOSED.value
         method = "get"
 
         responseJson = self.broker.sendRequest(endPoint, method, params)
@@ -71,9 +76,10 @@ class BybitHandler:
 
         return result
 
-    def returnPositionInfo(self, **kwargs) -> PositionInfo:
+    def returnPositionInfo(self,order: Order,baseCoin:str=None,settleCoin:str=None
+                                 ,limit:int=20,cursor:str=None) -> PositionInfoAll:
 
-        positionInfo: PositionInfo = PositionInfo(**kwargs)
+        positionInfo: PositionInfo = self._bybitMapper.mapOrderToPositionInfo(order,baseCoin,settleCoin,limit,cursor)
 
         # Validierung der Eingabeparameter
         if not positionInfo.validate():
@@ -81,7 +87,7 @@ class BybitHandler:
 
         params = positionInfo.toQueryString()
 
-        endPoint = "/v5/position/list"
+        endPoint = EndPointEnum.POSITIONINFO.value
         method = "get"
 
         responseJson = self.broker.sendRequest(endPoint, method, params)
