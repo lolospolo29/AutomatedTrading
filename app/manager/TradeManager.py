@@ -21,31 +21,32 @@ class TradeManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.openTrades:dict[AssetBrokerStrategyRelation,Trade] = {}
+            self.openTrades:list[Trade] = []
             self._DBService: DBService = DBService()
             self._StrategyManager: StrategyManager = StrategyManager()
             self._RiskManager: RiskManager = RiskManager()
             self._initialized = True  # Markiere als initialisiert
 
     def registerTrade(self, trade: Trade) -> None:
-        if trade not in self.openTrades:
-            self.openTrades[trade.relation] = trade
-            print(f"Trade for '{trade.relation.broker}' created and added to the Trade Manager.")
-        else:
-            print(f"Trade for '{trade.relation.broker}' already exists in the Trade Manager.")
+        if len(list(filter(lambda x: x.id == trade.id, self.openTrades))) < 1:
+            self.openTrades.append(trade)
+            print(f"Trade for '{trade.relation.broker}' with ID: {trade.id} created and added to the Trade Manager.")
+            return
+        print(f"Trade for '{trade.id}' already exists.")
 
-    def isTrade(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> bool:
-        if assetBrokerStrategyRelation not in self.openTrades:
+    def isTradeActive(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> bool:
+        if len(self.returnTradesForRelation(assetBrokerStrategyRelation)) < 1:
             return False
         return True
 
-    def returnTrade(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> Trade:
-        if assetBrokerStrategyRelation in self.openTrades:
-            trade = self.openTrades[assetBrokerStrategyRelation]
-            print(trade)
-            return trade
+    def returnTradesForRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
+        return [x for x in self.openTrades if x.relation.compare(assetBrokerStrategyRelation)]
 
-t = Trade(AssetBrokerStrategyRelation("BTC","APC","S"),[])
-tradeManager = TradeManager()
-tradeManager.registerTrade(t)
-tradeManager.returnTrade(AssetBrokerStrategyRelation("BTC","APC","S"))
+# t = Trade(AssetBrokerStrategyRelation("BTC","APC","S"),[])
+# print(t.id)
+# tradeManager = TradeManager()
+# tradeManager.registerTrade(t)
+# a = tradeManager.returnTrade(AssetBrokerStrategyRelation("BTC","APC","S"))
+# for trade in a:
+#     print(trade.id)
+# tradeManager.registerTrade(t)

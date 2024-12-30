@@ -69,19 +69,19 @@ class Order:
     def acquire(self, priority, thread_name):
         with self._lock:
             self._priority_queue.put((priority, thread_name))
-            print(f"{thread_name} mit Priorität {priority} wartet.")
+            #print(f"{thread_name} mit Priorität {priority} wartet.")
 
             while self._priority_queue.queue[0][1] != thread_name or self._current_thread is not None:
                 self._condition.wait()
 
             self._priority_queue.get()
             self._current_thread = thread_name
-            print(f"{thread_name} hat den Lock übernommen.")
+            #print(f"{thread_name} hat den Lock übernommen.")
 
     def release(self, thread_name):
         with self._lock:
             if self._current_thread == thread_name:
-                print(f"{thread_name} gibt den Lock frei.")
+                #print(f"{thread_name} gibt den Lock frei.")
                 self._current_thread = None
                 self._condition.notify_all()
 
