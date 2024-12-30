@@ -4,8 +4,8 @@ from app.models.trade.Order import Order
 
 class BrokerFacade:
     def __init__(self):
-        self._bybit = BybitHandler()
+        self.__bybitHandler = BybitHandler()
 
     def sendSingleOrder(self,broker:str,order:Order):
-        if broker == self._bybit.name:
-            return self._bybit.placeOrder(order)
+        if broker == self.__bybitHandler.name:
+            return self.__bybitHandler.placeOrder(order)

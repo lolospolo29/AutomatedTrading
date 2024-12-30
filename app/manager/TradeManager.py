@@ -2,7 +2,7 @@ import threading
 
 from app.db.DBService import DBService
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.trade import Trade
+from app.models.trade.Trade import Trade
 from app.manager.StrategyManager import StrategyManager
 from app.manager.RiskManager import RiskManager
 
@@ -21,7 +21,7 @@ class TradeManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.openTrades:dict = {}
+            self.openTrades:dict[AssetBrokerStrategyRelation,Trade] = {}
             self._DBService: DBService = DBService()
             self._StrategyManager: StrategyManager = StrategyManager()
             self._RiskManager: RiskManager = RiskManager()
@@ -30,16 +30,22 @@ class TradeManager:
     def registerTrade(self, trade: Trade) -> None:
         if trade not in self.openTrades:
             self.openTrades[trade.relation] = trade
-            print(f"Trade:'{trade.relation}' created and added to the Trade Manager.")
+            print(f"Trade for '{trade.relation.broker}' created and added to the Trade Manager.")
         else:
-            print(f"Trade '{trade.relation}' already exists in the Trade Manager.")
+            print(f"Trade for '{trade.relation.broker}' already exists in the Trade Manager.")
 
     def isTrade(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> bool:
-        if assetBrokerStrategyRelation.strategy not in self.openTrades:
+        if assetBrokerStrategyRelation not in self.openTrades:
             return False
         return True
 
     def returnTrade(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> Trade:
-        if assetBrokerStrategyRelation.strategy in self.openTrades:
+        if assetBrokerStrategyRelation in self.openTrades:
             trade = self.openTrades[assetBrokerStrategyRelation]
+            print(trade)
             return trade
+
+t = Trade(AssetBrokerStrategyRelation("BTC","APC","S"),[])
+tradeManager = TradeManager()
+tradeManager.registerTrade(t)
+tradeManager.returnTrade(AssetBrokerStrategyRelation("BTC","APC","S"))

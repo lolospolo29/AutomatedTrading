@@ -1,6 +1,5 @@
 import threading
 
-from app.api.brokers.Broker import Broker
 from app.db.modules.mongoDBConfig import mongoDBConfig
 from app.helper.factories.StrategyFactory import StrategyFactory
 from app.manager.AssetManager import AssetManager
@@ -32,7 +31,7 @@ class ConfigManager:
         self._StrategyManager: StrategyManager = StrategyManager()
         self._StrategyFactory: StrategyFactory = StrategyFactory()
         self._assets: list[Asset] = []
-        self._brokers: list[Broker] = []
+        self._brokers: list = []
         self._strategies: list[Strategy] = []
         self._relations: list[AssetBrokerStrategyRelation] = []
         self._smtPairs: list[SMTPair] = []

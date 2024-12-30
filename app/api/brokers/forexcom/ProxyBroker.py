@@ -1,7 +1,5 @@
-from app.API.Brokers.Broker import Broker
 
-
-class ProxyBroker(Broker):
+class ProxyBroker:
     def genSignature(self, payload):
         pass
 

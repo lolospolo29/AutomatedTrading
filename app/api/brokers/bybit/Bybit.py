@@ -4,16 +4,17 @@ import time
 
 import requests as requests
 
-from app.api.brokers.Broker import Broker
+from app.manager.SecretsManager import SecretsManager
 
 
-class Bybit(Broker):
+class Bybit:
 
     def __init__(self,name: str):
         super().__init__(name)
-        self.apiKey: str = 'hDrBURkbD5u57sB3aQ'
-        self.apiSecret: str = 'TEfdN38XDQZjSa6u8j7p1A8IgLFfXT2z0f1Y'
-        self.baseUrl = "https://api-demo.bybit.com"
+        self._SecretManager: SecretsManager = SecretsManager()
+        self.apiKey: str = self._SecretManager.returnSecret("demoBybitAPiKey")
+        self.apiSecret: str = self._SecretManager.returnSecret("demoBybitAPiSecret")
+        self.baseUrl = self._SecretManager.returnSecret("demoBybitUrl")
         self.recvWindow = str(5000)
         self.session = requests.Session()
 
