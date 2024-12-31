@@ -41,14 +41,15 @@ class TradingService:
 
         candle: Candle = self._AssetManager.addCandle(jsonData)
         candles : list[Candle] = self._AssetManager.returnCandles(candle.asset,candle.broker,candle.timeFrame)
-        self.analyzeStrategy(candle.asset,candle.broker,candle.timeFrame, candles)
+        relations: list[AssetBrokerStrategyRelation] = self._AssetManager.returnRelations(candle.asset, candle.broker)
+        self.analyzeStrategy(candle.asset,candle.broker,candle.timeFrame, candles,relations)
+
 
     @logTime
-    def analyzeStrategy(self, asset: str, broker: str, timeFrame:int,candles:list[Candle]) -> None:
+    def analyzeStrategy(self, timeFrame:int,candles:list[Candle],
+                        relations:list[AssetBrokerStrategyRelation]) -> None:
 
         # Analyze Foreach strategy that correlates with Broker
-
-        relations: list[AssetBrokerStrategyRelation] = self._AssetManager.returnRelations(asset, broker)
 
         for relation in relations:
             self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)

@@ -8,4 +8,3 @@ class Trade:
         self.orders : list[Order] = []
         self.relation: AssetBrokerStrategyRelation = relation
         self.id = uuid.uuid4()
-        self.timeFrame: int = 0

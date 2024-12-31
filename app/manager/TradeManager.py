@@ -1,9 +1,10 @@
 import threading
 
 from app.db.DBService import DBService
+from app.helper.BrokerFacade import BrokerFacade
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
-from app.manager.StrategyManager import StrategyManager
 from app.manager.RiskManager import RiskManager
 
 
@@ -23,7 +24,7 @@ class TradeManager:
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.openTrades:list[Trade] = []
             self._DBService: DBService = DBService()
-            self._StrategyManager: StrategyManager = StrategyManager()
+            self._BrokerFacade = BrokerFacade()
             self._RiskManager: RiskManager = RiskManager()
             self._initialized = True  # Markiere als initialisiert
 
@@ -33,6 +34,37 @@ class TradeManager:
             print(f"Trade for '{trade.relation.broker}' with ID: {trade.id} created and added to the Trade Manager.")
             return
         print(f"Trade for '{trade.id}' already exists.")
+
+    def removeTrade(self, trade: Trade) -> None:
+        if trade.id in self.openTrades:
+            self.openTrades.remove(trade)
+
+
+    def writeTradeToDB(self, trade: Trade):
+        self._DBService.addTradeToDB(trade)
+
+    def updateTradInDB(self, trade: Trade) -> None:
+        pass
+
+    def archiveTradeInDB(self, trade: Trade) -> None:
+        pass
+
+    def calculateRisk(self,order:Order):
+        pass
+
+    def createOrder(self,broker:str,order: Order):
+        self._BrokerFacade.sendSingleOrder(broker, order)
+
+    def amendOrder(self,order:Order):
+        pass
+
+    def cancelOrder(self, order:Order):
+        pass
+
+    def returnCurrentBalance(self):
+        pass
+    def returnCurrentPnl(self):
+        pass
 
     def isTradeActive(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> bool:
         if len(self.returnTradesForRelation(assetBrokerStrategyRelation)) < 1:

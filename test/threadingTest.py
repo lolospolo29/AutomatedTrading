@@ -168,3 +168,48 @@ def main5():
         if i == 1:
             threading.Thread(target=workerB).start()
 # endregion
+
+# region Barrier wait Party Size till all Waiting then Release
+b = threading.Barrier(3, timeout=5)
+
+def start_server():
+    print("start server")
+
+def server():
+    time.sleep(3)
+    b.wait()
+    start_server()
+
+def client():
+    b.wait()
+    print("client done")
+
+def main6():
+    s = threading.Thread(target=server)
+    s.start()
+    c = threading.Thread(target=client)
+    c.start()
+    i = b.wait()
+#main6()
+# endregion
+
+# region Lock Basic
+lock = threading.Lock()
+def uselock():
+    with lock:
+        time.sleep(uniform(1, 3))
+        print("uselock done")
+# is equivalent to
+def uselockAlternative():
+    lock.acquire()
+    try:
+        time.sleep(uniform(1, 3))
+        print("uselock Alternative done")
+    finally:
+        lock.release()
+def main7():
+    a = threading.Thread(target=uselock)
+    a.start()
+    b = threading.Thread(target=uselockAlternative)
+    b.start()
+# endregion
