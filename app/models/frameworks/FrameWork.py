@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 
 
@@ -12,3 +14,7 @@ class FrameWork:
 
     def setTimeFrame(self, timeFrame: int) -> None:
         self.timeFrame = timeFrame
+
+    @abstractmethod
+    def toDict(self):
+        pass

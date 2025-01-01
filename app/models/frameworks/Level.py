@@ -24,3 +24,23 @@ class Level(FrameWork):
         :return: True, wenn alle IDs von `self. Ids` in `ids_` enthalten sind, sonst False
         """
         return all(id_ in ids_ for id_ in self.ids)
+
+    def toDict(self) -> dict:
+        """
+        Converts the object to a dictionary representation.
+
+        :return: A dictionary where the class name is the key and attributes that are not None are the value.
+        """
+        attributes = {
+            "typ" : self.typ,
+            "name": self.name,
+            "direction": self.direction,
+            "ids": self.ids if self.ids else None,
+            "level": self.level if self.level else None,
+            "fibLevel": self.fibLevel if self.fibLevel else None,
+        }
+
+        # Filter out attributes with None values
+        filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
+
+        return {self.__class__.__name__: filtered_attributes}

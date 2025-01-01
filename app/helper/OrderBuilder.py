@@ -5,6 +5,7 @@ from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRela
 from app.models.frameworks.FrameWork import FrameWork
 from app.models.trade.Order import Order
 from app.models.trade.OrderDirectionEnum import OrderDirection
+from app.models.trade.OrderStatusEnum import OrderStatusEnum
 from app.models.trade.OrderTypeEnum import OrderTypeEnum
 from app.models.trade.TPSLModeEnum import TPSLModeEnum
 from app.models.trade.TimeInForceEnum import TimeInForceEnum
@@ -27,8 +28,10 @@ class OrderBuilder:
 
     def createOrder(self,assetBrokerStrategyRelation:AssetBrokerStrategyRelation,entryFrameWork:
     FrameWork, symbol:str,confirmations:list[FrameWork], category:str, side:OrderDirection,
-                    riskPercentage:float,orderNumber:int)->Order:
+                    riskPercentage:float,orderNumber:int,tradeId:str)->Order:
         o = Order()
+        o.tradeId = tradeId
+        o.status = OrderStatusEnum.CREATED.value
         orderlinkId = self._generate_order_link_id(assetBrokerStrategyRelation.asset,assetBrokerStrategyRelation.broker,
                                      assetBrokerStrategyRelation.strategy,orderNumber)
         o.orderlinkId = orderlinkId

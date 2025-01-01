@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, overload
 
 from app.models.frameworks.FrameWork import FrameWork
 
@@ -31,3 +31,24 @@ class PDArray(FrameWork):
         :return: True, wenn alle IDs von `self.Ids` in `ids_` enthalten sind, sonst False
         """
         return all(id_ in ids_ for id_ in self.Ids)
+
+    def toDict(self) -> dict:
+        """
+        Converts the object to a dictionary representation.
+
+        :return: A dictionary where the class name is the key and attributes that are not None are the value.
+        """
+        attributes = {
+            "typ" : self.typ,
+            "timeFrame" : self.timeFrame,
+            "name": self.name,
+            "direction": self.direction,
+            "Ids": list(self.Ids) if self.Ids else None,
+            "candles": self.candles if self.candles else None,
+            "status": self.status if self.status else None,
+        }
+
+        # Filter out attributes with None values
+        filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
+
+        return {self.__class__.__name__: filtered_attributes}

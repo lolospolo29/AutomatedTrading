@@ -8,3 +8,16 @@ class Trade:
         self.orders : list[Order] = []
         self.relation: AssetBrokerStrategyRelation = relation
         self.id = uuid.uuid4()
+
+
+    def toDict(self):
+        """Gibt alle Datenpunkte als Dictionary zurück"""
+        return {
+            "Trade": {
+                "id": str(self.id),
+                "orders": [order.orderLinkId for order in self.orders],
+                "asset": self.relation.asset ,
+                "broker": self.relation.broker ,
+                "strategy": self.relation.strategy,
+            }
+        }

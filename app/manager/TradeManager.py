@@ -1,7 +1,10 @@
 import threading
 
 from app.db.DBService import DBService
+from app.db.modules.mongoDBTrades import mongoDBTrades
 from app.helper.BrokerFacade import BrokerFacade
+from app.helper.registry.LockRegistry import LockRegistry
+from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
@@ -10,6 +13,7 @@ from app.manager.RiskManager import RiskManager
 
 class TradeManager:
 
+    # region Initializing
     _instance = None
     _lock = threading.Lock()
 
@@ -22,26 +26,41 @@ class TradeManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.openTrades:list[Trade] = []
-            self._DBService: DBService = DBService()
+            self._TradeRegistry = TradeSemaphoreRegistry()
+            self._LockRegistry = LockRegistry()
+            self.openTrades:dict[str,Trade] = {}
+            self._mongoDBTrades: mongoDBTrades = mongoDBTrades()
             self._BrokerFacade = BrokerFacade()
             self._RiskManager: RiskManager = RiskManager()
             self._initialized = True  # Markiere als initialisiert
+    # endregion
 
+    # region Register Remove Dict
     def registerTrade(self, trade: Trade) -> None:
-        if len(list(filter(lambda x: x.id == trade.id, self.openTrades))) < 1:
-            self.openTrades.append(trade)
-            print(f"Trade for '{trade.relation.broker}' with ID: {trade.id} created and added to the Trade Manager.")
-            return
-        print(f"Trade for '{trade.id}' already exists.")
+        with self._lock:
+            tradeLock = self._LockRegistry.get_lock(trade.id)
+            with tradeLock:
+                self._TradeRegistry.register_relation(trade.relation)
+                self._TradeRegistry.acquire_trade(trade.relation)
+                if trade.id not in self.openTrades:
+                    self.openTrades[trade.id] = trade
+                    print(f"Trade for '{trade.relation.broker}' "
+                          f"with ID: {trade.id} created and added to the Trade Manager.")
 
     def removeTrade(self, trade: Trade) -> None:
-        if trade.id in self.openTrades:
-            self.openTrades.remove(trade)
-
+        with self._lock:
+            tradeLock = self._LockRegistry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.openTrades:
+                    self.openTrades.pop(trade.id)
+    # endregion
 
     def writeTradeToDB(self, trade: Trade):
-        self._DBService.addTradeToDB(trade)
+        with self._lock:
+            tradeLock = self._LockRegistry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.openTrades:
+                    self._mongoDBTrades.addTradeToDB(trade)
 
     def updateTradInDB(self, trade: Trade) -> None:
         pass
@@ -49,8 +68,15 @@ class TradeManager:
     def archiveTradeInDB(self, trade: Trade) -> None:
         pass
 
-    def calculateRisk(self,order:Order):
+    def writeOrderToDB(self, order: Order) -> None:
         pass
+
+    def updateOrderInDB(self, order: Order) -> None:
+        pass
+
+    def archiveOrderInDB(self, order: Order) -> None:
+        pass
+
 
     def createOrder(self,broker:str,order: Order):
         self._BrokerFacade.sendSingleOrder(broker, order)
@@ -61,24 +87,28 @@ class TradeManager:
     def cancelOrder(self, order:Order):
         pass
 
-    def returnCurrentBalance(self):
+    def calculateRisk(self,order:Order):
         pass
-    def returnCurrentPnl(self):
+
+    def getPositionInfo(self, order:Order):
         pass
+
+    def returnTradePnl(self, trade:Trade):
+        pass
+
+    def returnOrdersStatus(self,trade:Trade):
+        pass
+
+    def returnOrdersPnl(self, trade:Trade):
+        pass
+
+    def returnAllTrades(self):
+        pass
+
+    def returnTradesForRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
+        return [x for x in self.openTrades if x.relation.compare(assetBrokerStrategyRelation)]
 
     def isTradeActive(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> bool:
         if len(self.returnTradesForRelation(assetBrokerStrategyRelation)) < 1:
             return False
         return True
-
-    def returnTradesForRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
-        return [x for x in self.openTrades if x.relation.compare(assetBrokerStrategyRelation)]
-
-# t = Trade(AssetBrokerStrategyRelation("BTC","APC","S"),[])
-# print(t.id)
-# tradeManager = TradeManager()
-# tradeManager.registerTrade(t)
-# a = tradeManager.returnTrade(AssetBrokerStrategyRelation("BTC","APC","S"))
-# for trade in a:
-#     print(trade.id)
-# tradeManager.registerTrade(t)
