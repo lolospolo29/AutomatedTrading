@@ -10,7 +10,7 @@ from app.manager.SecretsManager import SecretsManager
 class Bybit:
 
     def __init__(self,name: str):
-        super().__init__(name)
+        self.name = name
         self._SecretManager: SecretsManager = SecretsManager()
         self.apiKey: str = self._SecretManager.returnSecret("demoBybitAPiKey")
         self.apiSecret: str = self._SecretManager.returnSecret("demoBybitAPiSecret")

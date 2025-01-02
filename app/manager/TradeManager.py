@@ -1,15 +1,13 @@
 import threading
 
-from app.db.DBService import DBService
 from app.db.modules.mongoDBTrades import mongoDBTrades
 from app.helper.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
+from app.manager.RiskManager import RiskManager
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
-from app.manager.RiskManager import RiskManager
-from test.bybitTst import orderId
 
 
 class TradeManager:
@@ -56,8 +54,19 @@ class TradeManager:
                     self.openTrades.pop(trade.id)
     # endregion
 
+    # region CRUD DB
     def findTradeOrTradesInDB(self,trade:Trade=None) -> list[Trade]:
-        return self.find()
+        with self._lock:
+            if trade is None:
+                return self._mongoDBTrades.findTradeOrTradesById()
+            else:
+                return self._mongoDBTrades.findTradeOrTradesById(trade.id)
+
+    def findOrderOrOrdersInDB(self,order:Order=None) -> list[Order]:
+        if order is None:
+            return self._mongoDBTrades.findOrderOrOrdersById()
+        else:
+            return self._mongoDBTrades.findOrderOrOrdersById(order.orderLinkId)
 
     def writeTradeToDB(self, trade: Trade):
         with self._lock:
@@ -94,10 +103,12 @@ class TradeManager:
         orderLock = self._LockRegistry.get_lock(order.orderLinkId)
         with orderLock:
             self._mongoDBTrades.archiveOrder(order)
-
+    # endregion
 
     def createOrder(self,broker:str,order: Order):
-        self._BrokerFacade.sendSingleOrder(broker, order)
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            self._BrokerFacade.sendSingleOrder(broker, order)
 
     def amendOrder(self,order:Order):
         pass

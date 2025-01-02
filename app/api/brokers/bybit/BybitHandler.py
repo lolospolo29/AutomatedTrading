@@ -1,44 +1,42 @@
 # region Imports
-import json
-import time
 from typing import Any
-from unicodedata import category
+
+import self
 
 from app.api.ResponseParams import ResponseParams
 from app.api.brokers.bybit.Bybit import Bybit
 from app.api.brokers.bybit.BybitMapper import BybitMapper
 from app.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
-
 from app.api.brokers.bybit.enums.OpenOnlyEnum import OpenOnlyEnum
 from app.api.brokers.bybit.enums.OrderFilterEnum import OrderFilterEnum
+from app.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
-from app.api.brokers.bybit.reponse.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
-from app.api.brokers.bybit.reponse.get.PositionInfoAll import PositionInfoAll
-from app.api.brokers.bybit.reponse.get.TickersLinearInverse import TickersLinearInverse
-from app.api.brokers.bybit.reponse.get.TickersOption import TickersOption
-from app.api.brokers.bybit.reponse.get.TickersSpot import TickersSpot
 from app.api.brokers.bybit.get.Tickers import Tickers
 from app.api.brokers.bybit.post.AddOrReduceMargin import AddOrReduceMargin
 from app.api.brokers.bybit.post.AmendOrder import AmendOrder
 from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
 from app.api.brokers.bybit.post.CancelOrder import CancelOrder
 from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
+from app.api.brokers.bybit.post.SetLeverage import SetLeverage
+from app.api.brokers.bybit.reponse.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
+from app.api.brokers.bybit.reponse.get.PositionInfoAll import PositionInfoAll
+from app.api.brokers.bybit.reponse.get.TickersLinearInverse import TickersLinearInverse
+from app.api.brokers.bybit.reponse.get.TickersOption import TickersOption
+from app.api.brokers.bybit.reponse.get.TickersSpot import TickersSpot
 from app.api.brokers.bybit.reponse.post.AddOrReduceMarginAll import AddOrReduceMarginAll
 from app.api.brokers.bybit.reponse.post.AmendOrderAll import AmendOrderAll
-from app.api.brokers.bybit.reponse.post.BatchAmendOrder import BatchAmendOrder
-from app.api.brokers.bybit.reponse.post.BatchCancelOrder import BatchCancelOrder
-from app.api.brokers.bybit.reponse.post.BatchPlaceOrder import BatchPlaceOrder
 from app.api.brokers.bybit.reponse.post.CancelAllOrdersAll import CancelAllOrdersAll
 from app.api.brokers.bybit.reponse.post.CancelOrderAll import CancelOrderAll
 from app.api.brokers.bybit.reponse.post.PlaceOrderAll import PlaceOrderAll
-from app.api.brokers.bybit.post.SetLeverage import SetLeverage
-from app.api.brokers.bybit.post.TradingStop import TradingStop
+from app.helper.registry.RateLimitRegistry import RateLimitRegistry
 from app.models.trade.CategoryEnum import CategoryEnum
 from app.models.trade.Order import Order
 
 
 # endregion
+
+rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
 class BybitHandler:
 
@@ -47,18 +45,9 @@ class BybitHandler:
         self.__broker: Bybit = Bybit("bybit")
         self._bybitMapper = BybitMapper()
         self.isLockActive = False
-
-        self.__amendBatch: dict[str, list[AmendOrder]] = {}
-        self.__amendLockStatus: dict[str, bool] = {}  # Kategorie -> Lock-Status
-
-        self.__cancelOrderBatch: dict[str, list[CancelOrder]] = {}
-        self.__cancelLockStatus: dict[str, bool] = {}  # Kategorie -> Lock-Status
-
-        self.__placeOrderBatch: dict[str, list[PlaceOrder]] = {}
-        self.__placeLockStatus: dict[str, bool] = {}  # Kategorie -> Lock-Status
+        self._rateLimitRegistry = RateLimitRegistry(RateLimitEnum)
 
     # region get Methods
-
     def returnOpenAndClosedOrder(self,order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:OpenOnlyEnum=None
                                  ,limit:int=20,cursor:str=None) -> OpenAndClosedOrdersAll:
 
@@ -103,7 +92,7 @@ class BybitHandler:
     def returnTickers(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None)\
             -> Any:
 
-        tickers: Tickers = self._bybitMapper.mapOrderToTickers(category,symbol,baseCoin,expDate)
+        tickers: Tickers = self._bybitMapper.mapInputToTickers(category,symbol,baseCoin,expDate)
 
         # Validierung der Eingabeparameter
         if not tickers.validate():
@@ -143,6 +132,7 @@ class BybitHandler:
     # endregion
 
     # region post Methods
+    @rate_limit_registry.rate_limited
     def addOrReduceMargin(self,order:Order,margin:str=None) -> AddOrReduceMarginAll:
 
         addOrReduceMargin: AddOrReduceMargin = self._bybitMapper.mapOrderToModifyMargin(order,margin)
@@ -256,179 +246,8 @@ class BybitHandler:
             return True
         return False
 
-    def setTradingStop(self,order:Order,activePrice:str=None,trailinStop:str=None) -> bool:
-        tradingStop: TradingStop = self._bybitMapper.mapOrderToSetTradingStop(order,activePrice,trailinStop)
-
-        # Validierung der Eingabeparameter
-        if not tradingStop.validate():
-            raise ValueError("The Fields that were required were not given")
-
-        params = tradingStop.toDict()
-
-        endPoint = EndPointEnum.SETTRADINGSTOP.value
-        method = "post"
-
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        if responseJson.get("retMsg") == "OK":
-            return True
-        return False
-
-    # endregion
-
-    # region Batch Methods
-    def batchAmendOrder(self,order:Order) -> BatchAmendOrder:
-        amendOrder: AmendOrder = self._bybitMapper.mapOrderToAmendOrder(order)
-        category = amendOrder.category
-
-        # Validierung der Eingabeparameter
-        if not amendOrder.validate():
-            raise ValueError("The Fields that were required were not given")
-
-        # Initialisiere die Kategorie, falls sie nicht existiert
-        if category not in self.__amendBatch:
-            self.__amendBatch[category] = []
-            self.__amendLockStatus[category] = False
-
-        # Warte, falls die Kategorie gesperrt ist
-        while self.__amendLockStatus[category]:
-            time.sleep(1)
-
-        # Füge die Order zur Kategorie-Liste hinzu
-        self.__amendBatch[category].append(amendOrder)
-
-        # Verarbeite die Batch-Order, wenn dies die erste Order der Kategorie ist
-        if len(self.__amendBatch[category]) == 1:
-            endPoint = EndPointEnum.AMENDBATCH.value
-            method = "post"
-
-            time.sleep(60)
-
-            # Sperre die Kategorie
-            self.__amendLockStatus[category] = True
-
-            # Erstelle Payload für die aktuelle Kategorie
-            payload = {
-                "category": category,
-                "request": [
-                    {k: v for k, v in vars(order).items() if v is not None and k not in ["category"]}
-                    for order in self.__amendBatch[category]
-                ]
-            }
-
-            responseJson = self.__broker.sendRequest(endPoint, method, payload)
-
-            # Nach dem Senden der Anfrage: Liste leeren und Lock aufheben
-            self.__amendBatch[category] = []
-            self.__amendLockStatus[category] = False
-
-            # Verarbeite die Antwort
-            responseParams = ResponseParams()
-            result = responseParams.fromDict(responseJson['result'], BatchAmendOrder)
-
-            return result
-
-    def batchCancelOrder(self,order:Order) -> BatchCancelOrder:
-        cancelOrder: CancelOrder = self._bybitMapper.mapOrderToCancelOrder(order)
-        category = cancelOrder.category
-
-        # Validierung der Eingabeparameter
-        if not cancelOrder.validate():
-            raise ValueError("The Fields that were required were not given")
-
-        # Initialisiere die Kategorie, falls sie nicht existiert
-        if category not in self.__cancelOrderBatch:
-            self.__cancelOrderBatch[category] = []
-            self.__cancelLockStatus[category] = False
-
-        # Warte, falls die Kategorie gesperrt ist
-        while self.__cancelLockStatus[category]:
-            time.sleep(1)
-
-        # Füge die Order zur Kategorie-Liste hinzu
-        self.__cancelOrderBatch[category].append(cancelOrder)
-
-        # Verarbeite die Batch-Order, wenn dies die erste Order der Kategorie ist
-        if len(self.__cancelOrderBatch[category]) == 1:
-            endPoint = EndPointEnum.CANCELBATCH.value
-            method = "post"
-
-            time.sleep(60)
-
-            # Sperre die Kategorie
-            self.__cancelLockStatus[category] = True
-
-            # Erstelle Payload für die aktuelle Kategorie
-            payload = {
-                "category": category,
-                "request": [
-                    {k: v for k, v in vars(order).items() if v is not None and k not in ["category"]}
-                    for order in self.__cancelOrderBatch[category]
-                ]
-            }
-
-            responseJson = self.__broker.sendRequest(endPoint, method, payload)
-
-            # Nach dem Senden der Anfrage: Liste leeren und Lock aufheben
-            self.__cancelOrderBatch[category] = []
-            self.__cancelLockStatus[category] = False
-
-            # Verarbeite die Antwort
-            responseParams = ResponseParams()
-            result = responseParams.fromDict(responseJson['result'], BatchCancelOrder)
-
-            return result
-
-    def batchPlaceOrder(self,order:Order) -> BatchPlaceOrder:
-        placeOrder: PlaceOrder = self._bybitMapper.mapOrderToPlaceOrder(order)
-        category = placeOrder.category
-
-        # Validierung der Eingabeparameter
-        if not placeOrder.validate(batchOrder=True):
-            raise ValueError("The Fields that were required were not given")
-
-        # Initialisiere die Kategorie, falls sie nicht existiert
-        if category not in self.__placeOrderBatch:
-            self.__placeOrderBatch[category] = []
-            self.__placeLockStatus[category] = False
-
-        # Warte, falls die Kategorie gesperrt ist
-        while self.__placeLockStatus[category]:
-            time.sleep(1)
-
-        # Füge die Order zur Kategorie-Liste hinzu
-        self.__placeOrderBatch[category].append(placeOrder)
-
-        # Verarbeite die Batch-Order, wenn dies die erste Order der Kategorie ist
-        if len(self.__placeOrderBatch[category]) == 1:
-            endPoint = EndPointEnum.BATCHPLACE.value
-            method = "post"
-
-            time.sleep(10)
-
-            # Sperre die Kategorie
-            self.__placeLockStatus[category] = True
-
-            # Erstelle Payload für die aktuelle Kategorie
-            payload = {
-                "category": category,
-                "request": [
-                    {k: v for k, v in vars(order).items() if v is not None and k not in ["category"]}
-                    for order in self.__placeOrderBatch[category]
-                ]
-            }
-
-            responseJson = self.__broker.sendRequest(endPoint, method, json.dumps(payload))
-
-            # Nach dem Senden der Anfrage: Liste leeren und Lock aufheben
-            self.__placeOrderBatch[category] = []
-            self.__placeLockStatus[category] = False
-
-            # Verarbeite die Antwort
-            responseParams = ResponseParams()
-            result = responseParams.fromDict(responseJson['result'], BatchAmendOrder)
-
-            return result
-
     # endregion
 
     # Logic for Handling Failed Requests and Logging
+bh = BybitHandler()
+bh.addOrReduceMargin()
