@@ -9,6 +9,7 @@ from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRela
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 from app.manager.RiskManager import RiskManager
+from test.bybitTst import orderId
 
 
 class TradeManager:
@@ -55,6 +56,9 @@ class TradeManager:
                     self.openTrades.pop(trade.id)
     # endregion
 
+    def findTradeOrTradesInDB(self,trade:Trade=None) -> list[Trade]:
+        return self.find()
+
     def writeTradeToDB(self, trade: Trade):
         with self._lock:
             tradeLock = self._LockRegistry.get_lock(trade.id)
@@ -63,19 +67,33 @@ class TradeManager:
                     self._mongoDBTrades.addTradeToDB(trade)
 
     def updateTradInDB(self, trade: Trade) -> None:
-        pass
+        with self._lock:
+            tradeLock = self._LockRegistry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.openTrades:
+                    self._mongoDBTrades.updateTrade(trade)
 
     def archiveTradeInDB(self, trade: Trade) -> None:
-        pass
+        with self._lock:
+            tradeLock = self._LockRegistry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.openTrades:
+                    self._mongoDBTrades.archiveTrade(trade)
 
     def writeOrderToDB(self, order: Order) -> None:
-        pass
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+                self._mongoDBTrades.addOrderToDB(order)
 
     def updateOrderInDB(self, order: Order) -> None:
-        pass
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            self._mongoDBTrades.updateOrder(order)
 
     def archiveOrderInDB(self, order: Order) -> None:
-        pass
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            self._mongoDBTrades.archiveOrder(order)
 
 
     def createOrder(self,broker:str,order: Order):

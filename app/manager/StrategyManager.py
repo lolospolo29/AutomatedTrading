@@ -70,10 +70,12 @@ class StrategyManager:
             framework.setTimeFrame(timeFrame)
             if framework.typ == "PDArray":
                 self._PDArrayHandler.addPDArray(framework)
-                self._PDArrayHandler.addCandleToPDArrayByIds(candles, timeFrame, relation)
+                self._PDArrayHandler.addCandleByIds(candles, timeFrame, relation)
             if framework.typ == "Level":
+                self._LevelHandler.addCandleByIds(candles, timeFrame, relation)
                 self._LevelHandler.addLevel(framework)
             if framework.typ == "Structure":
+                self._StructureHandler.addCandleByIds(candles, timeFrame, relation)
                 self._StructureHandler.addStructure(framework)
         _ids = [candle.id for candle in candles]
         self._updateFrameWorkHandler(_ids, relation, timeFrame)

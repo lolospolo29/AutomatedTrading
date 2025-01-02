@@ -1,6 +1,7 @@
 import threading
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
 
 
@@ -38,6 +39,21 @@ class LevelHandler:
                 levelList.append(level)
         return levelList
     # endregion
+
+    def addCandleByIds(self, candles: list[Candle], timeFrame: int,
+                       assetBrokerStrategyRelation: AssetBrokerStrategyRelation)-> None:
+        for level in self.levels:
+            if level.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and level.timeFrame == timeFrame:
+
+                existing_ids = {candle.id for candle in level.candles}  # Cache existing IDs
+                new_candles = [
+                    candle for candle in candles
+                    if candle.id in level.Ids and candle.id not in existing_ids
+                ]
+
+                # Assuming pd.addCandles accepts a list of candles
+                if new_candles:
+                    level.addCandles(new_candles)
 
     # region Compare and Remove
     def removeLevel(self, _ids, assetBrokerStrategyRelation: AssetBrokerStrategyRelation, timeFrame: int) -> None:

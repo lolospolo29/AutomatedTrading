@@ -5,7 +5,7 @@ import uuid
 class Trade:
 
     def __init__(self, relation: AssetBrokerStrategyRelation, orders: list[Order]):
-        self.orders : list[Order] = []
+        self.orders : list[Order] = orders
         self.relation: AssetBrokerStrategyRelation = relation
         self.id = uuid.uuid4()
 

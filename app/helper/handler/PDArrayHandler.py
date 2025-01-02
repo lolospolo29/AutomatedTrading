@@ -36,8 +36,8 @@ class PDArrayHandler:
         self.pdArray.append(pdArray)
         return True
 
-    def addCandleToPDArrayByIds(self, candles: list[Candle],timeFrame: int,
-                                assetBrokerStrategyRelation: AssetBrokerStrategyRelation)-> None:
+    def addCandleByIds(self, candles: list[Candle], timeFrame: int,
+                       assetBrokerStrategyRelation: AssetBrokerStrategyRelation)-> None:
         for pd in self.pdArray:
             if pd.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and pd.timeFrame == timeFrame:
 

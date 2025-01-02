@@ -44,7 +44,7 @@ class PDArray(FrameWork):
             "name": self.name,
             "direction": self.direction,
             "Ids": list(self.Ids) if self.Ids else None,
-            "candles": self.candles if self.candles else None,
+            "candles": [candle.toDict() for candle in self.candles],
             "status": self.status if self.status else None,
         }
 

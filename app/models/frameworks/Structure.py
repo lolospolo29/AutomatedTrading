@@ -1,5 +1,6 @@
 from typing import Any
 
+from app.models.asset.Candle import Candle
 from app.models.frameworks.FrameWork import FrameWork
 
 
@@ -10,6 +11,10 @@ class Structure(FrameWork):
         self.name: str = name
         self.direction: str = direction
         self.id = id
+        self.candle = None
+
+    def addCandle(self, candle: Candle):
+        self.candle = candle
 
     def isIdPresent(self, ids_: list) -> bool:
         """
@@ -29,6 +34,7 @@ class Structure(FrameWork):
             "typ" : self.typ,
             "name": self.name,
             "direction": self.direction,
+            "candles": ["" if not hasattr(self,"candle") else self.candle.toDict()],
             "ids": self.id if self.id else None,
         }
 

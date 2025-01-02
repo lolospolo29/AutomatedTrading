@@ -70,54 +70,22 @@ class Order:
         super().__setattr__(key, value)
         if key != 'updatedAt':  # Avoid recursive updates
             super().__setattr__('updatedAt', datetime.now())
+
     def toDict(self):
+        def transform_value(key, value):
+            """Applies necessary transformations to specific fields."""
+            if isinstance(value, list):
+                return [item.toDict() for item in value if hasattr(item, "toDict")]
+            elif isinstance(value, datetime):
+                return value.isoformat()
+            elif hasattr(value, "toDict"):
+                return value.toDict()
+            return value
+
         return {
-            "Order":{
-                "tradeId": "" if not hasattr(self,"tradeId") else self.tradeId,
-                "status": "" if not hasattr(self,"status") else self.status,
-                "entryFrameWork": "" if not hasattr(self,"entryFrameWork") else self.entryFrameWork.toDict(),
-                "confirmations": [framework.toDict() for framework in self.confirmations if not framework is None],
-                "createdAt": "" if not hasattr(self,"createdAt") else self.createdAt.isoformat(),
-                "openedAt": self.createdAt.isoformat() if not hasattr(self,"openedAt") else self.openedAt.isoformat(),
-                "closedAt": self.createdAt.isoformat() if not hasattr(self,"closedAt") else self.closedAt.isoformat(),
-                "updatedAt": self.createdAt.isoformat() if not hasattr(self,"updatedAt") else self.updatedAt.isoformat(),
-                "riskPercentage": "" if not hasattr(self,"riskPercentage") else self.riskPercentage,
-                "moneyAtRisk": "" if not hasattr(self,"moneyAtRisk") else self.moneyAtRisk,
-                "unrealisedPnL": "" if not hasattr(self,"unrealisedPnL") else self.unrealisedPnL,
-                "orderLinkId": "" if not hasattr(self,"orderLinkId") else self.orderLinkId,
-                "orderType": "" if not hasattr(self,"orderType") else self.orderType,
-                "symbol": "" if not hasattr(self,"symbol") else self.symbol,
-                "category": "" if not hasattr(self,"category") else self.category,
-                "side": "" if not hasattr(self,"side") else self.side,
-                "qty": "" if not hasattr(self,"qty") else self.qty,
-                "orderId": "" if not hasattr(self,"orderId") else self.orderId,
-                "isLeverage": "" if not hasattr(self,"isLeverage") else self.isLeverage,
-                "marketUnit": "" if not hasattr(self,"marketUnit") else self.marketUnit,
-                "orderFilter": "" if not hasattr(self,"orderFilter") else self.orderFilter,
-                "orderlv": "" if not hasattr(self,"orderlv") else self.orderlv,
-                "stopLoss": "" if not hasattr(self,"stopLoss") else self.stopLoss,
-                "takeProfit": "" if not hasattr(self,"takeProfit") else self.takeProfit,
-                "price": "" if not hasattr(self,"price") else self.price,
-                "timeInForce": "" if not hasattr(self,"timeInForce") else self.timeInForce,
-                "closeOnTrigger": "" if not hasattr(self,"closeOnTrigger") else self.closeOnTrigger,
-                "reduceOnly": "" if not hasattr(self,"reduceOnly") else self.reduceOnly,
-                "triggerPrice": "" if not hasattr(self,"triggerPrice") else self.triggerPrice,
-                "triggerBy": "" if not hasattr(self,"triggerBy") else self.triggerBy,
-                "tpTriggerBy": "" if not hasattr(self,"tpTriggerBy") else self.tpTriggerBy,
-                "slTriggerBy": "" if not hasattr(self,"slTriggerBy") else self.slTriggerBy,
-                "tpslMode": "" if not hasattr(self,"tpslMode") else self.tpslMode,
-                "tpLimitPrice": "" if not hasattr(self,"tpLimitPrice") else self.tpLimitPrice,
-                "tpOrderType": "" if not hasattr(self,"tpOrderType") else self.tpOrderType,
-                "slOrderType": "" if not hasattr(self,"slOrderType") else self.slOrderType,
-                "slLimitPrice": "" if not hasattr(self,"slLimitPrice") else self.slLimitPrice,
+            "Order": {
+                key: transform_value(key, getattr(self, key))
+                if hasattr(self, key) else None
+                for key in self.__annotations__.keys()
             }
         }
-frameWork = PDArray("name","BUY")
-
-o = Order()
-o.tradeId = "123"
-o.status = "PENDING"
-o.entryFrameWork = frameWork
-o.confirmations = []
-o.confirmations.append(frameWork)
-print(o.toDict())

@@ -1,6 +1,7 @@
 import threading
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 
 
@@ -31,6 +32,22 @@ class StructureHandler:
             if self._compareStructure(newStructure, structure):
                 return
         self.structures.append(newStructure)
+
+    def addCandleByIds(self, candles: list[Candle], timeFrame: int,
+                       assetBrokerStrategyRelation: AssetBrokerStrategyRelation)-> None:
+        for struct in self.structures:
+            if struct.assetBrokerStrategyRelation.compare(assetBrokerStrategyRelation) and struct.timeFrame == timeFrame:
+
+                existing_id = struct.candle.id  # Cache existing IDs
+                new_candle = None
+                for candle in candles:
+                    if candle.id == existing_id:
+                        new_candle = candle
+
+                # Assuming pd.addCandles accepts a list of candles
+                if new_candle:
+                    struct.addCandle(new_candle)
+
 
     def returnStructure(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list:
         structures = []

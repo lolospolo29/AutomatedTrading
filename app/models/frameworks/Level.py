@@ -9,12 +9,17 @@ class Level(FrameWork):
         self.level: float = level
         self.fibLevel: float = 0.0
         self.ids: list= []
+        self.candles = []
 
     def setFibLevel(self, fibLevel: float, direction: str, ids: list):
         self.fibLevel = fibLevel
         self.direction = direction
         for id in ids:
             self.ids.append(id)
+
+    def addCandles(self, candles) -> None:
+        # Efficiently add multiple candles
+        self.candles.extend(candles)
 
     def isIdPresent(self, ids_: list) -> bool:
         """
@@ -37,6 +42,7 @@ class Level(FrameWork):
             "direction": self.direction,
             "ids": self.ids if self.ids else None,
             "level": self.level if self.level else None,
+            "candles": [candle.toDict() for candle in self.candles],
             "fibLevel": self.fibLevel if self.fibLevel else None,
         }
 
