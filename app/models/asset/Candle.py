@@ -1,18 +1,18 @@
+import uuid
 from datetime import datetime
 
-from app.models.asset.decorator.IDDecorator import IDDecorator
-
-@IDDecorator
 class Candle:
 
     def __init__(self, asset: str, broker: str, open: float, high: float, low: float, close: float,
-                 IsoTime: datetime, timeFrame: int):
+                 IsoTime: datetime, timeFrame: int,id:str=None):
         self.asset: str = asset
         self.broker: str = broker
         self.open: float = open
         self.high: float = high
         self.low: float = low
         self.close: float = close
+        if id is None:
+            self.id: str = str(uuid.uuid4())
 
         # Konvertiere oder validiere IsoTime
         if isinstance(IsoTime, str):
