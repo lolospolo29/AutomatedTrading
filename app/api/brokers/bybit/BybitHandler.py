@@ -1,4 +1,6 @@
 # region Imports
+import time
+from threading import Thread
 from typing import Any
 
 import self
@@ -48,6 +50,7 @@ class BybitHandler:
         self._rateLimitRegistry = RateLimitRegistry(RateLimitEnum)
 
     # region get Methods
+    @rate_limit_registry.rate_limited
     def returnOpenAndClosedOrder(self,order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:OpenOnlyEnum=None
                                  ,limit:int=20,cursor:str=None) -> OpenAndClosedOrdersAll:
 
@@ -69,6 +72,7 @@ class BybitHandler:
 
         return result
 
+    @rate_limit_registry.rate_limited
     def returnPositionInfo(self,order: Order,baseCoin:str=None,settleCoin:str=None
                                  ,limit:int=20,cursor:str=None) -> PositionInfoAll:
 
@@ -89,6 +93,7 @@ class BybitHandler:
 
         return result
 
+    @rate_limit_registry.rate_limited
     def returnTickers(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None)\
             -> Any:
 
@@ -119,13 +124,16 @@ class BybitHandler:
             result = responseParams.fromDict(responseJson['result'], TickersSpot)
             return result
 
+    @rate_limit_registry.rate_limited
     def returnTickersLinearInverse(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None)\
             -> TickersLinearInverse:
         return self.returnTickers(category,symbol,baseCoin,expDate)
 
+    @rate_limit_registry.rate_limited
     def returnTickersOption(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None) -> TickersOption:
         return self.returnTickers(category,symbol,baseCoin,expDate)
 
+    @rate_limit_registry.rate_limited
     def returnTickersSpot(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None) -> TickersSpot:
         return self.returnTickers(category,symbol,baseCoin,expDate)
 
@@ -152,6 +160,7 @@ class BybitHandler:
 
         return result
 
+    @rate_limit_registry.rate_limited
     def amendOrder(self,order:Order) -> AmendOrderAll:
         amendOrder: AmendOrder = self._bybitMapper.mapOrderToAmendOrder(order)
 
@@ -170,6 +179,7 @@ class BybitHandler:
 
         return result
 
+    @rate_limit_registry.rate_limited
     def cancelAllOrders(self,category:CategoryEnum=None,symbol:str=None,baseCoin:str=None,settleCoin:str=None,
                         orderFilter:OrderFilterEnum=None,stopOrderType:bool=False) -> CancelAllOrdersAll:
 
@@ -191,6 +201,7 @@ class BybitHandler:
 
         return result
 
+    @rate_limit_registry.rate_limited
     def cancelOrder(self,order:Order) -> CancelOrderAll:
         cancelOrder: CancelOrder = self._bybitMapper.mapOrderToCancelOrder(order)
 
@@ -209,6 +220,7 @@ class BybitHandler:
 
         return result
 
+    @rate_limit_registry.rate_limited
     def placeOrder(self, order: Order) -> PlaceOrderAll:
 
         placeOrder: PlaceOrder = self._bybitMapper.mapOrderToPlaceOrder(order)
@@ -228,6 +240,7 @@ class BybitHandler:
 
         return result
 
+    @rate_limit_registry.rate_limited
     def setLeverage(self,category:CategoryEnum=None,symbol:str=None,buyLeverage:str=None,sellLeverage:str=None) -> bool:
         setLeverage: SetLeverage = self._bybitMapper.mapInputToSetLeverage(category,symbol,buyLeverage,sellLeverage)
 
@@ -244,10 +257,9 @@ class BybitHandler:
 
         if responseJson.get("retMsg") == "OK":
             return True
+
         return False
 
     # endregion
 
     # Logic for Handling Failed Requests and Logging
-bh = BybitHandler()
-bh.addOrReduceMargin()

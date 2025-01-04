@@ -18,9 +18,10 @@ class TradeMapper:
         asset = trade.get("asset")
         broker = trade.get("broker")
         strategy = trade.get("strategy")
-        relation = AssetBrokerStrategyRelation(asset=asset,broker=broker,strategy=strategy)
+        orders = trade.get("orders")
+        relation = AssetBrokerStrategyRelation(asset=asset,broker=broker,strategy=strategy,maxTrades=1)
 
-        mappedTrade = Trade(relation=relation,orders=[])
+        mappedTrade = Trade(relation=relation,orders=orders)
         mappedTrade.id = id
         return mappedTrade
 

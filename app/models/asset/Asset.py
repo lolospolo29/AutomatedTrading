@@ -46,10 +46,10 @@ class Asset:
                 return True
             return False
 
-    def addBrokerStrategyAssignment(self, broker: str, strategy: str) -> bool:
-            if not self._isBrokerAndStrategyInAssignment(broker, strategy):
-                if self._isBrokerInBrokers(broker) and self._isStrategyInStrategies(strategy):
-                    self.brokerStrategyAssignment.append(AssetBrokerStrategyRelation(self.name, broker, strategy))
+    def addRelation(self, relation:AssetBrokerStrategyRelation) -> bool:
+            if not self._isBrokerAndStrategyInAssignment(relation.broker, relation.strategy):
+                if self._isBrokerInBrokers(relation.broker) and self._isStrategyInStrategies(relation.strategy):
+                    self.brokerStrategyAssignment.append(relation)
                     return True
             return False
 

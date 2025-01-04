@@ -1,13 +1,18 @@
 import threading
 
 from app.db.modules.mongoDBConfig import mongoDBConfig
+from app.db.modules.mongoDBTrades import mongoDBTrades
 from app.helper.factories.StrategyFactory import StrategyFactory
+from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
+from app.manager.TradeManager import TradeManager
 from app.models.asset.Asset import Asset
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.SMTPair import SMTPair
 from app.models.strategy.Strategy import Strategy
+from app.models.trade.Order import Order
+from app.models.trade.Trade import Trade
 from app.monitoring.TimeWrapper import logTime
 
 
@@ -27,6 +32,9 @@ class ConfigManager:
     def __init__(self):
 
         self._MongoDBConfig: mongoDBConfig = mongoDBConfig()
+        self._mongoDBTrades: mongoDBTrades = mongoDBTrades()
+        self._TradeManager: TradeManager = TradeManager()
+        self._TradeSemaphoreRegistry: TradeSemaphoreRegistry = TradeSemaphoreRegistry()
         self._AssetManager: AssetManager = AssetManager()
         self._StrategyManager: StrategyManager = StrategyManager()
         self._StrategyFactory: StrategyFactory = StrategyFactory()
@@ -35,6 +43,8 @@ class ConfigManager:
         self._strategies: list[Strategy] = []
         self._relations: list[AssetBrokerStrategyRelation] = []
         self._smtPairs: list[SMTPair] = []
+        self._Trades: list[Trade] = []
+        self._Orders: list[Order] = []
 
     # endregion
 
@@ -48,6 +58,11 @@ class ConfigManager:
         assetBrokerStrategyRelations: list = self._MongoDBConfig.loadData("AssetBrokerStrategyRelation"
                                                                           ,None)
         smtPairs: list = self._MongoDBConfig.loadData("SMTPairs",None)
+        trades: list = self._mongoDBTrades.findTradeOrTradesById()
+        orders: list = self._mongoDBTrades.findOrderOrOrdersById()
+
+        self._Trades.extend(trades)
+        self._Orders.extend(orders)
 
         self._addDataToList("Asset", assets)
         self._addDataToList("Broker", brokers)
@@ -58,7 +73,6 @@ class ConfigManager:
 
         self._InitializeManagers()
 
-    @logTime
     def _InitializeManagers(self):
         for strategy in self._strategies:
             self._StrategyManager.registerStrategy(strategy)
@@ -67,7 +81,8 @@ class ConfigManager:
                 if relation.asset == asset.name:
                     asset.addBroker(relation.broker)
                     asset.addStrategy(relation.strategy)
-                    asset.addBrokerStrategyAssignment(relation.broker, relation.strategy)
+                    asset.addRelation(relation)
+                    self._TradeSemaphoreRegistry.register_relation(relation)
                     expectedTimeFrames: list = self._StrategyManager.returnExpectedTimeFrame(relation.strategy)
 
                     for expectedTimeFrame in expectedTimeFrames:
@@ -116,7 +131,8 @@ class ConfigManager:
 
             strategy: str = self._MongoDBConfig.findById("Strategy","strategyId",
                                                          (doc.get(typ)).get("strategyId"),"name")
-            self._relations.append(AssetBrokerStrategyRelation(asset, broker, strategy))
+            maxTrades = doc.get(typ)["maxTrades"]
+            self._relations.append(AssetBrokerStrategyRelation(asset, broker, strategy,maxTrades))
 
     def _isTypSMTPairAddPair(self, typ: str, doc: dict)->None:
         if typ == "SMTPairs":
@@ -131,5 +147,6 @@ class ConfigManager:
                                              "name"))
 
             self._smtPairs.append(SMTPair(strategy, smtPairList, doc.get(typ).get("correlation")))
+
     # endregion
 
