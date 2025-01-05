@@ -1,9 +1,4 @@
 # region Imports
-import time
-from threading import Thread
-from typing import Any
-
-import self
 
 from app.api.ResponseParams import ResponseParams
 from app.api.brokers.bybit.Bybit import Bybit
@@ -14,7 +9,6 @@ from app.api.brokers.bybit.enums.OrderFilterEnum import OrderFilterEnum
 from app.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
-from app.api.brokers.bybit.get.Tickers import Tickers
 from app.api.brokers.bybit.post.AddOrReduceMargin import AddOrReduceMargin
 from app.api.brokers.bybit.post.AmendOrder import AmendOrder
 from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
@@ -23,9 +17,6 @@ from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
 from app.api.brokers.bybit.post.SetLeverage import SetLeverage
 from app.api.brokers.bybit.reponse.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
 from app.api.brokers.bybit.reponse.get.PositionInfoAll import PositionInfoAll
-from app.api.brokers.bybit.reponse.get.TickersLinearInverse import TickersLinearInverse
-from app.api.brokers.bybit.reponse.get.TickersOption import TickersOption
-from app.api.brokers.bybit.reponse.get.TickersSpot import TickersSpot
 from app.api.brokers.bybit.reponse.post.AddOrReduceMarginAll import AddOrReduceMarginAll
 from app.api.brokers.bybit.reponse.post.AmendOrderAll import AmendOrderAll
 from app.api.brokers.bybit.reponse.post.CancelAllOrdersAll import CancelAllOrdersAll
@@ -34,7 +25,8 @@ from app.api.brokers.bybit.reponse.post.PlaceOrderAll import PlaceOrderAll
 from app.helper.registry.RateLimitRegistry import RateLimitRegistry
 from app.models.trade.CategoryEnum import CategoryEnum
 from app.models.trade.Order import Order
-
+from app.models.trade.OrderDirectionEnum import OrderDirection
+from app.models.trade.OrderTypeEnum import OrderTypeEnum
 
 # endregion
 
@@ -93,73 +85,9 @@ class BybitHandler:
 
         return result
 
-    @rate_limit_registry.rate_limited
-    def returnTickers(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None)\
-            -> Any:
-
-        tickers: Tickers = self._bybitMapper.mapInputToTickers(category,symbol,baseCoin,expDate)
-
-        # Validierung der Eingabeparameter
-        if not tickers.validate():
-            raise ValueError("The Fields that were required were not given")
-
-        params = tickers.toQueryString()
-
-        endPoint = EndPointEnum.TICKERS.value
-        method = "get"
-
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-
-        responseParams = ResponseParams()
-
-        if tickers.category == "linear" or tickers.category == "inverse":
-            result = responseParams.fromDict(responseJson['result'], TickersLinearInverse)
-            return result
-
-        elif tickers.category == "option":
-            result = responseParams.fromDict(responseJson['result'], TickersOption)
-            return result
-
-        elif tickers.category == "spot":
-            result = responseParams.fromDict(responseJson['result'], TickersSpot)
-            return result
-
-    @rate_limit_registry.rate_limited
-    def returnTickersLinearInverse(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None)\
-            -> TickersLinearInverse:
-        return self.returnTickers(category,symbol,baseCoin,expDate)
-
-    @rate_limit_registry.rate_limited
-    def returnTickersOption(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None) -> TickersOption:
-        return self.returnTickers(category,symbol,baseCoin,expDate)
-
-    @rate_limit_registry.rate_limited
-    def returnTickersSpot(self,category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None) -> TickersSpot:
-        return self.returnTickers(category,symbol,baseCoin,expDate)
-
     # endregion
 
     # region post Methods
-    @rate_limit_registry.rate_limited
-    def addOrReduceMargin(self,order:Order,margin:str=None) -> AddOrReduceMarginAll:
-
-        addOrReduceMargin: AddOrReduceMargin = self._bybitMapper.mapOrderToModifyMargin(order,margin)
-
-        # Validierung der Eingabeparameter
-        if not addOrReduceMargin.validate():
-            raise ValueError("The Fields that were required were not given")
-
-        params = addOrReduceMargin.toDict()
-
-        endPoint = EndPointEnum.MARGIN.value
-        method = "post"
-
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
-        result = responseParams.fromDict(responseJson['result'], AddOrReduceMarginAll)
-
-        return result
-
     @rate_limit_registry.rate_limited
     def amendOrder(self,order:Order) -> AmendOrderAll:
         amendOrder: AmendOrder = self._bybitMapper.mapOrderToAmendOrder(order)
@@ -260,6 +188,25 @@ class BybitHandler:
 
         return False
 
+    @rate_limit_registry.rate_limited
+    def addOrReduceMargin(self,order:Order,margin:str=None) -> AddOrReduceMarginAll:
+
+        addOrReduceMargin: AddOrReduceMargin = self._bybitMapper.mapOrderToModifyMargin(order,margin)
+
+        # Validierung der Eingabeparameter
+        if not addOrReduceMargin.validate():
+            raise ValueError("The Fields that were required were not given")
+
+        params = addOrReduceMargin.toDict()
+
+        endPoint = EndPointEnum.MARGIN.value
+        method = "post"
+
+        responseJson = self.__broker.sendRequest(endPoint, method, params)
+        responseParams = ResponseParams()
+        result = responseParams.fromDict(responseJson['result'], AddOrReduceMarginAll)
+
+        return result
     # endregion
 
     # Logic for Handling Failed Requests and Logging

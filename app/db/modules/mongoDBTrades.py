@@ -37,7 +37,14 @@ class mongoDBTrades:
             query = self._MongoDBTrades.buildQuery("Trade", "id", str(id))
             res = self._MongoDBTrades.find(MongoEndPointEnum.OPENTRADES.value, query)
         for tradeInRes in res:
-            trades.append(self._TradeMapper.mapTradeFromDB(tradeInRes))
+            trade = self._TradeMapper.mapTradeFromDB(tradeInRes)
+            orders = []
+            for order in trade.orders:
+                order = self.findOrderOrOrdersById(order)
+                orders.append(order)
+            trade.orders = []
+            trade.orders.extend(orders)
+            trades.append(trade)
         return trades
 
     def findOrderOrOrdersById(self, id: str=None) -> list[Order]:

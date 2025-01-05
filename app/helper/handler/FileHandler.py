@@ -44,6 +44,7 @@ class FileHandler(FileSystemEventHandler):
 
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
                 print(f"New file detected: {event.src_path}")
+                self._StrategyManager.setLockWithTimeout()
                 candlesCSV = self._parseCandleData(event.src_path)
                 for candle in candlesCSV:
                     candle: Candle = self._AssetManager.addCandle(candle)
@@ -58,7 +59,6 @@ class FileHandler(FileSystemEventHandler):
         for relation in relations:
             self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)
 
-            self._StrategyManager.getEntry(candles, relation, timeFrame)
     # endregion
 
     # region CSV Parsing

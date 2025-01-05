@@ -3,6 +3,7 @@ import random
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.frameworks.FrameWork import FrameWork
+from app.models.trade.CategoryEnum import CategoryEnum
 from app.models.trade.Order import Order
 from app.models.trade.OrderDirectionEnum import OrderDirection
 from app.models.trade.OrderStatusEnum import OrderStatusEnum
@@ -27,7 +28,7 @@ class OrderBuilder:
         return Trade(assetBrokerStrategyRelation,orders)
 
     def createOrder(self,assetBrokerStrategyRelation:AssetBrokerStrategyRelation,entryFrameWork:
-    FrameWork, symbol:str,confirmations:list[FrameWork], category:str, side:OrderDirection,
+    FrameWork, symbol:str,confirmations:list[FrameWork], category:CategoryEnum, side:OrderDirection,
                     riskPercentage:float,orderNumber:int,tradeId:str)->Order:
         o = Order()
         o.tradeId = tradeId
@@ -38,7 +39,7 @@ class OrderBuilder:
         o.confirmations = confirmations
         o.entryFrameWork = entryFrameWork
         o.symbol = symbol
-        o.category = category
+        o.category = category.value
         o.side = side.value
         o.moneyAtRisk = 0.0
         o.unrealizedProfit = 0.0

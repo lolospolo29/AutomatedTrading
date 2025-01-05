@@ -45,6 +45,7 @@ class ConfigManager:
         self._smtPairs: list[SMTPair] = []
         self._Trades: list[Trade] = []
         self._Orders: list[Order] = []
+        self._assetClasses: dict[int, str] = {}
 
     # endregion
 
@@ -58,12 +59,13 @@ class ConfigManager:
         assetBrokerStrategyRelations: list = self._MongoDBConfig.loadData("AssetBrokerStrategyRelation"
                                                                           ,None)
         smtPairs: list = self._MongoDBConfig.loadData("SMTPairs",None)
+        assetClasses:list = self._MongoDBConfig.loadData("AssetClasses",None)
         trades: list = self._mongoDBTrades.findTradeOrTradesById()
-        orders: list = self._mongoDBTrades.findOrderOrOrdersById()
+
 
         self._Trades.extend(trades)
-        self._Orders.extend(orders)
 
+        self._addDataToList("AssetClass", assetClasses)
         self._addDataToList("Asset", assets)
         self._addDataToList("Broker", brokers)
         self._addDataToList("Strategy", strategies)
@@ -92,6 +94,8 @@ class ConfigManager:
                     if pair == asset.name:
                         asset.addSMTPair(smtPair)
             self._AssetManager.registerAsset(asset)
+        for trade in self._Trades:
+            self._TradeManager.registerTrade(trade)
     # endregion
 
     # region Checkings
@@ -102,12 +106,13 @@ class ConfigManager:
             self._isTypStrategyAddStrategy(typ, doc)
             self._isTypRelationAddRelation(typ, doc)
             self._isTypSMTPairAddPair(typ, doc)
+            self._isTypAssetClass(typ, doc)
 
     def _isTypAssetAddAsset(self, typ: str, doc: dict) -> None:
 
         if typ == "Asset":
 
-            asset: Asset = Asset((doc.get(typ)).get("name"))
+            asset: Asset = Asset((doc.get(typ)).get("name"),self._assetClasses[doc.get(typ).get("assetClass")])
             self._assets.append(asset)
 
     def _isTypStrategyAddStrategy(self, typ: str, doc: dict) -> None:
@@ -140,13 +145,17 @@ class ConfigManager:
                                                          (doc.get(typ)).get("strategyId"), "name")
             smtPairs: list = doc.get(typ).get("smtPairIds")
 
-            smtPairList: list = []
+            smtPairList: list[str] = []
 
             for pair in smtPairs:
                 smtPairList.append(self._MongoDBConfig.findById("Asset", "assetId", pair,
                                              "name"))
 
             self._smtPairs.append(SMTPair(strategy, smtPairList, doc.get(typ).get("correlation")))
+
+    def _isTypAssetClass(self, typ: str, doc: dict)->None:
+        if typ == "AssetClass":
+            self._assetClasses[doc.get(typ).get("assetClassId")] = doc.get(typ).get("name")
 
     # endregion
 

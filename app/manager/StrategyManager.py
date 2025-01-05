@@ -48,6 +48,9 @@ class StrategyManager:
             return self.strategies[strategy].returnExpectedTimeFrame()
         return []
 
+    def setLockWithTimeout(self,timeout:int=15):
+        self._lock.acquire(timeout=timeout)
+
     # endregion
 
     # region FrameWork Functions

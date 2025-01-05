@@ -105,10 +105,18 @@ class TradeManager:
             self._mongoDBTrades.archiveOrder(order)
     # endregion
 
-    def createOrder(self,broker:str,order: Order):
+    def placeTrade(self, trade: Trade) -> None:
+        with self._lock:
+            tradeLock = self._LockRegistry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.openTrades:
+                    self.openTrades[trade.id] = trade
+                    print(f"Trade for '{trade.relation.broker}'")
+
+    def placeOrder(self, broker:str, order: Order):
         orderLock = self._LockRegistry.get_lock(order.orderLinkId)
         with orderLock:
-            self._BrokerFacade.sendSingleOrder(broker, order)
+            order = self._BrokerFacade.placeOrder(broker, order)
 
     def amendOrder(self,order:Order):
         pass
@@ -122,22 +130,8 @@ class TradeManager:
     def getPositionInfo(self, order:Order):
         pass
 
-    def returnTradePnl(self, trade:Trade):
-        pass
-
-    def returnOrdersStatus(self,trade:Trade):
-        pass
-
-    def returnOrdersPnl(self, trade:Trade):
-        pass
-
-    def returnAllTrades(self):
-        pass
+    def returnAllTrades(self)->list[Trade]:
+        return [trade for trade in self.openTrades.values()]
 
     def returnTradesForRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
-        return [x for x in self.openTrades if x.relation.compare(assetBrokerStrategyRelation)]
-
-    def isTradeActive(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> bool:
-        if len(self.returnTradesForRelation(assetBrokerStrategyRelation)) < 1:
-            return False
-        return True
+        return [x for x in self.openTrades.values() if x.relation.compare(assetBrokerStrategyRelation)]

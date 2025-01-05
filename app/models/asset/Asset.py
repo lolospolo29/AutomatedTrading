@@ -7,8 +7,9 @@ from app.models.asset.SMTPair import SMTPair
 class Asset:
 
     # region Initializing
-    def __init__(self, name: str):
+    def __init__(self, name: str,assetClass:str):
         self.name: str = name
+        self.assetClass = assetClass
         self.brokers: list[str] = []
         self.strategies: list[str] = []
         self.smtPairs: list[SMTPair] = []

@@ -2,14 +2,12 @@ from app.api.brokers.bybit.enums.OpenOnlyEnum import OpenOnlyEnum
 from app.api.brokers.bybit.enums.OrderFilterEnum import OrderFilterEnum
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
-from app.api.brokers.bybit.get.Tickers import Tickers
 from app.api.brokers.bybit.post.AddOrReduceMargin import AddOrReduceMargin
 from app.api.brokers.bybit.post.AmendOrder import AmendOrder
 from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
 from app.api.brokers.bybit.post.CancelOrder import CancelOrder
 from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
 from app.api.brokers.bybit.post.SetLeverage import SetLeverage
-from app.api.brokers.bybit.post.TradingStop import TradingStop
 from app.models.trade.CategoryEnum import CategoryEnum
 from app.models.trade.Order import Order
 
@@ -68,20 +66,6 @@ class BybitMapper:
                 mappedObject.limit = limit
             if cursor is not None:
                 mappedObject.cursor = cursor
-
-            return mappedObject
-        except Exception as e:
-            print(e)
-    @staticmethod
-    def mapInputToTickers(category:CategoryEnum,symbol:str=None,baseCoin:str=None,expDate:str=None):
-        try:
-            mappedObject = Tickers(str(category.value))
-            if symbol is not None:
-                mappedObject.symbol = symbol
-            if baseCoin is not None:
-                mappedObject.baseCoin = baseCoin
-            if expDate is not None:
-                mappedObject.expDate = expDate
 
             return mappedObject
         except Exception as e:
@@ -185,25 +169,5 @@ class BybitMapper:
         try:
             mappedObject = SetLeverage(category=str(category.value),symbol=symbol,buyLeverage=buyLeverage,sellLeverage=sellLeverage)
             return mappedObject
-        except Exception as e:
-            print(e)
-    @staticmethod
-    def mapOrderToSetTradingStop(order:Order,activePrice:str=None,trailinStop:str=None)->TradingStop:
-        try:
-            mappingFields = TradingStop.__annotations__
-
-            mappingData = {}
-            for field in mappingFields:
-                if hasattr(order, field):
-                    mappingData[field] = getattr(order, field)
-                else:
-                    continue
-            stop = TradingStop(**mappingData)
-            if activePrice is not None:
-                stop.activePrice = activePrice
-            if trailinStop is not None:
-                stop.trailinStop = trailinStop
-
-            return stop
         except Exception as e:
             print(e)
