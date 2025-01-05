@@ -18,13 +18,14 @@ class RiskManager:
             self.maxDrawdown: float = maxDrawdown  # Maximaler Verlust in %
             self.currentDrawdown: float = 0.0  # Aktueller Drawdown
             self.maxRiskPercentage: float = maxRiskPercentage
+            self.accountBalance = 1000
             self._initialized = True  # Markiere als initialisiert
 
 
     def returnCurrentDrawdown(self) -> float:
         return self.currentDrawdown
 
-    def calculateCurrentDrawdownFromClosedPnl(self,closedPnl: list[float]) -> None:
+    def addClosedPnlToDrawdown(self, closedPnl: list[float]) -> None:
         for pnl in closedPnl:
             self.currentDrawdown += pnl
 
@@ -32,11 +33,11 @@ class RiskManager:
     def setNewsTime(time):
         return None
 
-    def calculate_money_at_risk(self,account_balance):
+    def calculate_money_at_risk(self):
         """
         Calculates money at risk based on account balance and risk percentage.
         """
-        return account_balance * (self.maxRiskPercentage / 100)
+        return self.accountBalance * (self.maxRiskPercentage / 100)
 
     @staticmethod
     def calculate_crypto_trade_size(money_at_risk, stop_loss_distance):
@@ -47,7 +48,7 @@ class RiskManager:
         return money_at_risk / stop_loss_distance
 
     @staticmethod
-    def calculate_indices_commodities_trade_size(money_at_risk, stop_loss_points, value_per_point):
+    def calculate_indices_commodities_trade_size(money_at_risk, stop_loss_points, value_per_point=100):
         """
         Calculates trade size for indices and commodities.
         Formula: Trade Size (Contracts) = Money at Risk / (Stop Loss Points * Value per Point)
@@ -55,7 +56,7 @@ class RiskManager:
         return money_at_risk / (stop_loss_points * value_per_point)
 
     @staticmethod
-    def calculate_forex_trade_size_non_jpy(money_at_risk, stop_loss_pips, pip_value):
+    def calculate_forex_trade_size_non_jpy(money_at_risk, stop_loss_pips, pip_value=1):
         """
         Calculates trade size for non-JPY Forex pairs.
         Formula: Trade Size (Units) = Money at Risk / (Stop Loss in Pips * Pip Value)
@@ -63,7 +64,7 @@ class RiskManager:
         return money_at_risk / (stop_loss_pips * pip_value)
 
     @staticmethod
-    def calculate_forex_trade_size_jpy(money_at_risk, stop_loss_pips, exchange_rate):
+    def calculate_forex_trade_size_jpy(money_at_risk, stop_loss_pips, exchange_rate=0.01):
         """
         Calculates trade size for JPY Forex pairs.
         Formula: Trade Size (Units) = Money at Risk / (Stop Loss Pips * Pip Value)
@@ -72,36 +73,39 @@ class RiskManager:
         pip_value = 0.01 / exchange_rate  # Adjusted pip value for JPY pairs
         return money_at_risk / (stop_loss_pips * pip_value)
 
-#
-# # Input variables
-# account_balance = 10000  # Your account balance in USD
-# risk_percentage = 2  # Risk percentage
+# #
+# # # Input variables
+# rm = RiskManager()
+# account_balance = 1000  # Your account balance in USD
 #
 # # Example 1: Cryptocurrency example
-# crypto_open_price = 100649.11000
-# crypto_close_price = 98636.12780
+# crypto_open_price = 98000
+# crypto_close_price = 97000
 # crypto_stop_loss_distance = crypto_open_price - crypto_close_price  # Distance in price
-# money_at_risk = calculate_money_at_risk(account_balance, risk_percentage)
-# crypto_trade_size = calculate_crypto_trade_size(money_at_risk, crypto_stop_loss_distance)
+# money_at_risk = rm.calculate_money_at_risk(account_balance)
+# print(money_at_risk)
+# crypto_trade_size = rm.calculate_crypto_trade_size(money_at_risk, crypto_stop_loss_distance)
+# print(crypto_trade_size)
 #
 # # Example 2: Indices/Commodities example
-# stop_loss_points = 20  # Example stop loss distance in points
-# value_per_point = 10  # Example $10 per point (typical for indices/commodities)
-# indices_commodities_trade_size = calculate_indices_commodities_trade_size(
+# stop_loss_points = 10  # Example stop loss distance in points
+# value_per_point = 100  # Example $10 per point (typical for indices/commodities)
+# indices_commodities_trade_size = rm.calculate_indices_commodities_trade_size(
 #     money_at_risk, stop_loss_points, value_per_point
 # )
+# print(indices_commodities_trade_size)
 #
 # # Example 3: Forex Non-JPY
-# stop_loss_pips_non_jpy = 50  # Example stop loss of 50 pips
-# pip_value_non_jpy = 0.0001  # Pip value for non-JPY pairs
-# forex_non_jpy_trade_size = calculate_forex_trade_size_non_jpy(
+# stop_loss_pips_non_jpy = 100  # Example stop loss of 50 pips
+# pip_value_non_jpy = 1  # Pip value for non-JPY pairs
+# forex_non_jpy_trade_size = rm.calculate_forex_trade_size_non_jpy(
 #     money_at_risk, stop_loss_pips_non_jpy, pip_value_non_jpy
 # )
-#
+# print(forex_non_jpy_trade_size)
 # # Example 4: Forex JPY
-# stop_loss_pips_jpy = 50  # Example stop loss of 50 pips
-# exchange_rate_jpy = 120  # Example exchange rate for USD/JPY
-# forex_jpy_trade_size = calculate_forex_trade_size_jpy(
+# stop_loss_pips_jpy = 100
+# exchange_rate_jpy = 0.01  # Example exchange rate for USD/JPY
+# forex_jpy_trade_size = rm.calculate_forex_trade_size_jpy(
 #     money_at_risk, stop_loss_pips_jpy, exchange_rate_jpy
 # )
-
+# print(forex_jpy_trade_size)

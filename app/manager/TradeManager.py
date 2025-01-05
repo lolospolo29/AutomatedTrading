@@ -1,4 +1,6 @@
+import datetime
 import threading
+from threading import Thread
 
 from app.db.modules.mongoDBTrades import mongoDBTrades
 from app.helper.BrokerFacade import BrokerFacade
@@ -6,7 +8,11 @@ from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.trade.Order import Order
+from app.models.trade.OrderDirectionEnum import OrderDirection
+from app.models.trade.OrderTypeEnum import OrderTypeEnum
+from app.models.trade.RequestParameters import RequestParameters
 from app.models.trade.Trade import Trade
 
 
@@ -105,33 +111,98 @@ class TradeManager:
             self._mongoDBTrades.archiveOrder(order)
     # endregion
 
-    def placeTrade(self, trade: Trade) -> None:
-        with self._lock:
+    # region API Requests
+    def placeTrade(self, trade: Trade,assetClass:str) -> None:
             tradeLock = self._LockRegistry.get_lock(trade.id)
             with tradeLock:
                 if trade.id in self.openTrades:
-                    self.openTrades[trade.id] = trade
-                    print(f"Trade for '{trade.relation.broker}'")
+                    trade = self.openTrades[trade.id]
+                    threads = []
+                    for order in trade.orders:
+                        t:Thread = threading.Thread(target=self.placeOrder, args=(trade.relation.broker,assetClass,order,))
+                        threads.append(t)
+                    for t in threads:
+                        t.start()
+                    areThreadsStillActive = False
+                    for t in threads:
+                        if t.is_alive():
+                            areThreadsStillActive = True
 
-    def placeOrder(self, broker:str, order: Order):
+
+    def placeOrder(self,broker:str,assetClass:str,order: Order):
         orderLock = self._LockRegistry.get_lock(order.orderLinkId)
         with orderLock:
+            if order.orderType == OrderTypeEnum.MARKET.value:
+                order.qty = str(self._calculateQtyMarket(assetClass, order))
+            if order.orderType == OrderTypeEnum.LIMIT.value:
+                order.qty = str(self._calculateQtyLimit(assetClass, order))
             order = self._BrokerFacade.placeOrder(broker, order)
 
-    def amendOrder(self,order:Order):
-        pass
+    def amendOrder(self,broker:str,order:Order):
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            order = self._BrokerFacade.amendOrder(broker, order)
 
-    def cancelOrder(self, order:Order):
-        pass
+    def cancelOrder(self,broker:str,order:Order):
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            order = self._BrokerFacade.amendOrder(broker, order)
 
-    def calculateRisk(self,order:Order):
-        pass
+    def getPositionInfo(self,broker:str, order:Order,requestParameters:RequestParameters):
+        order = self._BrokerFacade.getPositionInfo(broker, order,requestParameters)
 
-    def getPositionInfo(self, order:Order):
-        pass
+    # endregion
 
+    # region Risk Management
+
+    def _calculateQtyMarket(self, assetClass:str, order:Order)->float:
+        moneyatrisk = self._RiskManager.calculate_money_at_risk()
+        qty = 0.00
+        if order.orderType == OrderTypeEnum.MARKET.value:
+            if assetClass == AssetClassEnum.CRYPTO.value:
+                if order.side == OrderDirection.BUY.value:
+                    qty = self._RiskManager.calculate_crypto_trade_size(moneyatrisk,(float(order.price)-float(order.stopLoss)))
+                if order.side == OrderDirection.SELL.value:
+                    qty = self._RiskManager.calculate_crypto_trade_size(moneyatrisk,(float(order.stopLoss)-float(order.price)))
+        return abs(qty)
+    def _calculateQtyLimit(self, assetClass:str, order:Order)->float:
+        moneyatrisk = self._RiskManager.calculate_money_at_risk()
+        qty = 0.00
+        if order.orderType == OrderTypeEnum.LIMIT.value:
+            if assetClass == AssetClassEnum.CRYPTO:
+                if order.side == OrderDirection.BUY.value:
+                    qty = (self._RiskManager.calculate_crypto_trade_size
+                           (moneyatrisk, abs(float(order.price) - float(order.slLimitPrice))))
+                if order.side == OrderDirection.SELL.value:
+                    qty = (self._RiskManager.calculate_crypto_trade_size
+                           (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
+        return qty
+
+        # todo calculate conditional split orders one tp order one entry one stop loss
+
+    # endregion
+
+    # region Functions
     def returnAllTrades(self)->list[Trade]:
         return [trade for trade in self.openTrades.values()]
 
     def returnTradesForRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
         return [x for x in self.openTrades.values() if x.relation.compare(assetBrokerStrategyRelation)]
+    # endregion
+
+tm = TradeManager()
+order = Order()
+order.orderLinkId = "131"
+order.category = "linear"
+order.symbol = "BTCUSDT"
+order.price = str(98000)
+order.stopLoss = str(99000)
+
+order.side = OrderDirection.BUY.value
+order.orderType = OrderTypeEnum.MARKET.value
+
+relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",1)
+
+trade = Trade(relation,[order])
+tm.registerTrade(trade)
+tm.placeTrade(trade,"Crypto")

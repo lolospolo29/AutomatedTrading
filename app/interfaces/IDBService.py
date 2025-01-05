@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class IDBService(ABC):
-    # Abstract method: must be implemented by subclasses
     @abstractmethod
     def add(self):
         pass
@@ -30,6 +29,7 @@ class IDBService(ABC):
     @abstractmethod
     def find(self):
         pass
+
     @abstractmethod
     def buildQuery(self):
         pass

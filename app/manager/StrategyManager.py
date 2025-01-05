@@ -112,3 +112,5 @@ class StrategyManager:
             if not tradeFound:
                 return None
     # endregion
+
+    # todo exit strategy

@@ -35,15 +35,15 @@ rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 class BybitHandler:
 
     def __init__(self):
-        self.name = "bybit"
-        self.__broker: Bybit = Bybit("bybit")
+        self.name = "BYBIT"
+        self.__broker: Bybit = Bybit("BYBIT")
         self._bybitMapper = BybitMapper()
         self.isLockActive = False
         self._rateLimitRegistry = RateLimitRegistry(RateLimitEnum)
 
     # region get Methods
     @rate_limit_registry.rate_limited
-    def returnOpenAndClosedOrder(self,order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:OpenOnlyEnum=None
+    def returnOpenAndClosedOrder(self,order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:str=None
                                  ,limit:int=20,cursor:str=None) -> OpenAndClosedOrdersAll:
 
         openAndClosedOrders: OpenAndClosedOrders = (self._bybitMapper.mapOrderToOpenAndClosedOrders
@@ -84,6 +84,10 @@ class BybitHandler:
         result = responseParams.fromDict(responseJson['result'], PositionInfoAll)
 
         return result
+    def returnInstrumentsInfo(self,category:str,symbol:str=None,status:str=None,
+                              baseCoin:str=None,limit:int=None,cursor:str=None):
+        # todo response modell and call
+        pass
 
     # endregion
 
@@ -108,8 +112,8 @@ class BybitHandler:
         return result
 
     @rate_limit_registry.rate_limited
-    def cancelAllOrders(self,category:CategoryEnum=None,symbol:str=None,baseCoin:str=None,settleCoin:str=None,
-                        orderFilter:OrderFilterEnum=None,stopOrderType:bool=False) -> CancelAllOrdersAll:
+    def cancelAllOrders(self,category:str,symbol:str=None,baseCoin:str=None,settleCoin:str=None,
+                        orderFilter:str=None,stopOrderType:bool=False) -> CancelAllOrdersAll:
 
         cancelOrders: CancelAllOrders = self._bybitMapper.mapInputToCancelAllOrders(category,symbol,baseCoin,settleCoin,
                                                                                     orderFilter,stopOrderType)
@@ -169,7 +173,7 @@ class BybitHandler:
         return result
 
     @rate_limit_registry.rate_limited
-    def setLeverage(self,category:CategoryEnum=None,symbol:str=None,buyLeverage:str=None,sellLeverage:str=None) -> bool:
+    def setLeverage(self,category:str=None,symbol:str=None,buyLeverage:str=None,sellLeverage:str=None) -> bool:
         setLeverage: SetLeverage = self._bybitMapper.mapInputToSetLeverage(category,symbol,buyLeverage,sellLeverage)
 
         # Validierung der Eingabeparameter

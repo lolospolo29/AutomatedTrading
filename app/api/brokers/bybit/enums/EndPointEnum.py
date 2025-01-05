@@ -15,3 +15,4 @@ class EndPointEnum(Enum):
     BATCHPLACE = "/v5/order/create-batch"
     AMENDBATCH = "/v5/order/amend-batch"
     CANCELBATCH = "/v5/order/cancel-batch"
+    INSTRUMENT = "/v5/market/instruments-info"

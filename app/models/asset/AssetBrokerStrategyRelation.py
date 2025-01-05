@@ -1,5 +1,5 @@
 class AssetBrokerStrategyRelation:
-    def __init__(self, asset: str,broker: str, strategy: str,maxTrades:int):
+    def __init__(self, asset: str,broker: str, strategy: str,maxTrades:int=1):
         self.asset = asset
         self.broker = broker
         self.strategy = strategy

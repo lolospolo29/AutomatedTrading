@@ -1,5 +1,3 @@
-from app.api.brokers.bybit.enums.OpenOnlyEnum import OpenOnlyEnum
-from app.api.brokers.bybit.enums.OrderFilterEnum import OrderFilterEnum
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
 from app.api.brokers.bybit.post.AddOrReduceMargin import AddOrReduceMargin
@@ -8,7 +6,6 @@ from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
 from app.api.brokers.bybit.post.CancelOrder import CancelOrder
 from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
 from app.api.brokers.bybit.post.SetLeverage import SetLeverage
-from app.models.trade.CategoryEnum import CategoryEnum
 from app.models.trade.Order import Order
 
 
@@ -16,7 +13,7 @@ class BybitMapper:
 
     # region Order To GET Mapping
     @staticmethod
-    def mapOrderToOpenAndClosedOrders (order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:OpenOnlyEnum=None
+    def mapOrderToOpenAndClosedOrders (order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:str=None
                                  ,limit:int=20,cursor:str=None) ->OpenAndClosedOrders:
         try:
             fieldsMapped = OpenAndClosedOrders.__annotations__
@@ -110,10 +107,10 @@ class BybitMapper:
             print(e)
 
     @staticmethod
-    def mapInputToCancelAllOrders(category:CategoryEnum=None,symbol:str=None,baseCoin:str=None,settleCoin:str=None,
-                        orderFilter:OrderFilterEnum=None,stopOrderType:bool=False):
+    def mapInputToCancelAllOrders(category:str=None,symbol:str=None,baseCoin:str=None,settleCoin:str=None,
+                        orderFilter:str=None,stopOrderType:bool=False):
         try:
-            mappedObject = CancelAllOrders(str(category.value))
+            mappedObject = CancelAllOrders(str(category))
             if symbol is not None:
                 mappedObject.symbol = symbol
             if baseCoin is not None:
@@ -121,7 +118,7 @@ class BybitMapper:
             if settleCoin is not None:
                 mappedObject.settleCoin = settleCoin
             if orderFilter is not None:
-                mappedObject.orderFilter = orderFilter.value
+                mappedObject.orderFilter = orderFilter
             if stopOrderType:
                 mappedObject.stopOrderType = 'Stop'
             return mappedObject
@@ -165,9 +162,9 @@ class BybitMapper:
             print(e)
 
     @staticmethod
-    def mapInputToSetLeverage(category:CategoryEnum=None,symbol:str=None,buyLeverage:str=None,sellLeverage:str=None):
+    def mapInputToSetLeverage(category:str=None,symbol:str=None,buyLeverage:str=None,sellLeverage:str=None):
         try:
-            mappedObject = SetLeverage(category=str(category.value),symbol=symbol,buyLeverage=buyLeverage,sellLeverage=sellLeverage)
+            mappedObject = SetLeverage(category=str(category),symbol=symbol,buyLeverage=buyLeverage,sellLeverage=sellLeverage)
             return mappedObject
         except Exception as e:
             print(e)
