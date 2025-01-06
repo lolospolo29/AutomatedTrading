@@ -1,7 +1,10 @@
-import datetime
 import threading
+import uuid
 from threading import Thread
 
+from app.api.brokers.bybit.reponse.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
+from app.api.brokers.bybit.reponse.get.PositionInfoAll import PositionInfoAll
+from app.api.brokers.bybit.reponse.post.PlaceOrderAll import PlaceOrderAll
 from app.db.modules.mongoDBTrades import mongoDBTrades
 from app.helper.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
@@ -11,6 +14,7 @@ from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRela
 from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.trade.Order import Order
 from app.models.trade.OrderDirectionEnum import OrderDirection
+from app.models.trade.OrderStatusEnum import OrderStatusEnum
 from app.models.trade.OrderTypeEnum import OrderTypeEnum
 from app.models.trade.RequestParameters import RequestParameters
 from app.models.trade.Trade import Trade
@@ -117,16 +121,48 @@ class TradeManager:
             with tradeLock:
                 if trade.id in self.openTrades:
                     trade = self.openTrades[trade.id]
-                    threads = []
+                    from multiprocessing.pool import ThreadPool
+                    pool = ThreadPool(processes=len(trade.orders))
+                    asyncPlaceOrderResults = []
                     for order in trade.orders:
-                        t:Thread = threading.Thread(target=self.placeOrder, args=(trade.relation.broker,assetClass,order,))
-                        threads.append(t)
-                    for t in threads:
-                        t.start()
-                    areThreadsStillActive = False
-                    for t in threads:
-                        if t.is_alive():
-                            areThreadsStillActive = True
+                        placeOrderAsync = pool.apply_async(self.placeOrder, (trade.relation.broker,assetClass,order))
+                        asyncPlaceOrderResults.append(placeOrderAsync)
+                        # do some other stuff in the main process
+
+                    for placeOrderAsync in asyncPlaceOrderResults:
+                        orderResult = placeOrderAsync.get()# get the return value from your function.
+                        if isinstance(orderResult, Exception):
+                            print("Order Failed with Trade-ID"+trade.id)
+
+                    asyncOpenAndClosedResults = []
+
+                    for order in trade.orders:
+
+                        openAndClosedAsync = pool.apply_async(self.getOpenAndClosedOrders,
+                                                        (trade.relation.broker,order,RequestParameters()))
+                        asyncOpenAndClosedResults.append(openAndClosedAsync)
+                        # todo map res to order
+
+                    for openAndClosedAsync in asyncOpenAndClosedResults:
+                        ocResult:OpenAndClosedOrdersAll = openAndClosedAsync.get()  # get the return value from your function.
+                        if isinstance(ocResult, Exception):
+                            print("Order Failed with Trade-ID" + trade.id)
+
+
+                    asyncPositionInfoResults = []
+
+                    for order in trade.orders:
+
+                        positionInfoAsync = pool.apply_async(self.getPositionInfo,
+                                                        (trade.relation.broker,order,RequestParameters()))
+                        asyncPositionInfoResults.append(positionInfoAsync)
+                        # todo map res to order
+
+                    for positionInfosAsync in asyncPositionInfoResults:
+                        pIResult:PositionInfoAll = positionInfosAsync.get()
+                        if isinstance(pIResult, Exception):
+                            print("Order Failed with Trade-ID" + trade.id)
+
 
 
     def placeOrder(self,broker:str,assetClass:str,order: Order):
@@ -136,7 +172,9 @@ class TradeManager:
                 order.qty = str(self._calculateQtyMarket(assetClass, order))
             if order.orderType == OrderTypeEnum.LIMIT.value:
                 order.qty = str(self._calculateQtyLimit(assetClass, order))
-            order = self._BrokerFacade.placeOrder(broker, order)
+            res:PlaceOrderAll = self._BrokerFacade.placeOrder(broker, order)
+            order.orderId = res.orderId
+        return order
 
     def amendOrder(self,broker:str,order:Order):
         orderLock = self._LockRegistry.get_lock(order.orderLinkId)
@@ -148,8 +186,12 @@ class TradeManager:
         with orderLock:
             order = self._BrokerFacade.amendOrder(broker, order)
 
+
+    def getOpenAndClosedOrders(self,broker:str,order:Order,requestParameter:RequestParameters):
+        return self._BrokerFacade.getOpenAndClosedOrders(broker,order,requestParameter)
+
     def getPositionInfo(self,broker:str, order:Order,requestParameters:RequestParameters):
-        order = self._BrokerFacade.getPositionInfo(broker, order,requestParameters)
+        return self._BrokerFacade.getPositionInfo(broker, order,requestParameters)
 
     # endregion
 
@@ -157,6 +199,7 @@ class TradeManager:
 
     def _calculateQtyMarket(self, assetClass:str, order:Order)->float:
         moneyatrisk = self._RiskManager.calculate_money_at_risk()
+        order.moneyAtRisk = moneyatrisk
         qty = 0.00
         if order.orderType == OrderTypeEnum.MARKET.value:
             if assetClass == AssetClassEnum.CRYPTO.value:
@@ -164,9 +207,11 @@ class TradeManager:
                     qty = self._RiskManager.calculate_crypto_trade_size(moneyatrisk,(float(order.price)-float(order.stopLoss)))
                 if order.side == OrderDirection.SELL.value:
                     qty = self._RiskManager.calculate_crypto_trade_size(moneyatrisk,(float(order.stopLoss)-float(order.price)))
-        return abs(qty)
+        return self._RiskManager.round_down(abs(qty*order.riskPercentage))
+
     def _calculateQtyLimit(self, assetClass:str, order:Order)->float:
         moneyatrisk = self._RiskManager.calculate_money_at_risk()
+        order.moneyAtRisk = moneyatrisk
         qty = 0.00
         if order.orderType == OrderTypeEnum.LIMIT.value:
             if assetClass == AssetClassEnum.CRYPTO:
@@ -176,10 +221,7 @@ class TradeManager:
                 if order.side == OrderDirection.SELL.value:
                     qty = (self._RiskManager.calculate_crypto_trade_size
                            (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
-        return qty
-
-        # todo calculate conditional split orders one tp order one entry one stop loss
-
+        return self._RiskManager.round_down(abs(qty))
     # endregion
 
     # region Functions
@@ -192,17 +234,43 @@ class TradeManager:
 
 tm = TradeManager()
 order = Order()
-order.orderLinkId = "131"
+order.orderLinkId = str(uuid.uuid4())
 order.category = "linear"
 order.symbol = "BTCUSDT"
 order.price = str(98000)
 order.stopLoss = str(99000)
-
+order.riskPercentage = 0.40
 order.side = OrderDirection.BUY.value
 order.orderType = OrderTypeEnum.MARKET.value
 
 relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",1)
 
+order2 = Order()
+order2.orderLinkId = str(uuid.uuid4())
+order2.category = "linear"
+order2.symbol = "BTCUSDT"
+order2.price = str(98000)
+order2.stopLoss = str(99000)
+order2.takeProfit = str(111000)
+order2.riskPercentage = 0.25
+
+order2.side = OrderDirection.BUY.value
+order2.orderType = OrderTypeEnum.MARKET.value
+
+order3 = Order()
+order3.orderLinkId = str(uuid.uuid4())
+order3.category = "linear"
+order3.symbol = "XRPUSDT"
+order3.price = str(2.41)
+order3.stopLoss = str(2)
+order3.takeProfit = str(3)
+order3.riskPercentage = 0.25
+
+order3.side = OrderDirection.BUY.value
+order3.orderType = OrderTypeEnum.MARKET.value
+
 trade = Trade(relation,[order])
+trade.orders.append(order2)
+trade.orders.append(order3)
 tm.registerTrade(trade)
 tm.placeTrade(trade,"Crypto")

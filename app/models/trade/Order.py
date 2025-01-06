@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from app.models.frameworks.FrameWork import FrameWork
-from app.models.frameworks.PDArray import PDArray
 
 
 class Order:

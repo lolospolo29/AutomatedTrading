@@ -113,4 +113,17 @@ class StrategyManager:
                 return None
     # endregion
 
-    # todo exit strategy
+    def getExit(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
+                        timeFrame: int,trade:Trade) -> Optional[Trade]:
+        if relation.strategy in self.strategies:
+            self._PDArrayHandler.updatePDArrays(candles, timeFrame, relation)
+            pd: list = self._PDArrayHandler.returnPDArrays(relation)
+            level: list = self._LevelHandler.returnLevels(relation)
+            structure: list = self._StructureHandler.returnStructure(relation)
+
+            tradeFound,trade = self.strategies[relation.strategy].getExit(candles,timeFrame,pd,level,structure,trade)
+
+            if tradeFound:
+                return trade
+            if not tradeFound:
+                return None

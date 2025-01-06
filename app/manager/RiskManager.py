@@ -1,3 +1,4 @@
+import math
 import threading
 
 
@@ -13,7 +14,7 @@ class RiskManager:
                     cls._instance = super(RiskManager, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self, maxDrawdown:float = 1.0,maxRiskPercentage:float = 0.25):
+    def __init__(self, maxDrawdown:float = 1.0,maxRiskPercentage:float = 0.5):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.maxDrawdown: float = maxDrawdown  # Maximaler Verlust in %
             self.currentDrawdown: float = 0.0  # Aktueller Drawdown
@@ -73,6 +74,18 @@ class RiskManager:
         pip_value = 0.01 / exchange_rate  # Adjusted pip value for JPY pairs
         return money_at_risk / (stop_loss_pips * pip_value)
 
+    @staticmethod
+    def round_down(value: float) -> float:
+        """
+        Rundet einen Wert immer auf die nächste niedrigere Stelle ab.
+
+        :param value: Der Eingabewert (float).
+        :return: Abgerundeter Wert (float).
+        """
+        if value == 0:
+            return 0  # Spezieller Fall, wenn der Wert 0 ist
+        factor = 10 ** math.floor(math.log10(abs(value)))
+        return math.floor(value / factor) * factor
 # #
 # # # Input variables
 # rm = RiskManager()

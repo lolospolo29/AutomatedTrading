@@ -84,10 +84,6 @@ class BybitHandler:
         result = responseParams.fromDict(responseJson['result'], PositionInfoAll)
 
         return result
-    def returnInstrumentsInfo(self,category:str,symbol:str=None,status:str=None,
-                              baseCoin:str=None,limit:int=None,cursor:str=None):
-        # todo response modell and call
-        pass
 
     # endregion
 

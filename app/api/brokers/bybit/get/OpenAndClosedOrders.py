@@ -27,13 +27,7 @@ class OpenAndClosedOrders(GETParams):
     def validate(self) -> bool:
         """Validate required parameters."""
         if self.category:
-            return self.validateLinear()
+            return True
         return False
 
-    def validateLinear(self) -> bool:
-        if self.category == "linear":
-            if self.baseCoin is not None or self.settleCoin is not None or self.settleCoin is not None:
-                return True
-            return False
-        return True
 

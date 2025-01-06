@@ -21,18 +21,19 @@ class BrokerFacade:
 
     def cancelAllOrders(self,broker:str,requestParameter:RequestParameters):
         if broker == self._bybitHandler.name:
-            self._bybitHandler.cancelAllOrders(requestParameter.category, requestParameter.symbol,
+            return self._bybitHandler.cancelAllOrders(requestParameter.category, requestParameter.symbol,
                                                requestParameter.baseCoin, requestParameter.settleCoin,
                                                requestParameter.orderFilter, requestParameter.stopOrderType)
 
     def getOpenAndClosedOrders(self,broker:str,order:Order,requestParameter:RequestParameters):
         if broker == self._bybitHandler.name:
-            self._bybitHandler.returnOpenAndClosedOrder(order, requestParameter.baseCoin, requestParameter.settleCoin,
+            return self._bybitHandler.returnOpenAndClosedOrder(order, requestParameter.baseCoin, requestParameter.settleCoin,
                                                         requestParameter.openOnly, requestParameter.limit
                                                         , requestParameter.cursor)
 
     def getPositionInfo(self,broker:str,order: Order,requestParameter:RequestParameters):
         if broker == self._bybitHandler.name:
-            self._bybitHandler.returnPositionInfo(order, requestParameter.baseCoin,
+            return self._bybitHandler.returnPositionInfo(order, requestParameter.baseCoin,
                                                   requestParameter.settleCoin, requestParameter.limit,
                                                   requestParameter.cursor)
+    # todo mapper back to trade manager

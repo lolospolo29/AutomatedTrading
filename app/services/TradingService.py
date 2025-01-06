@@ -55,3 +55,5 @@ class TradingService:
             self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)
 
             self._StrategyManager.getEntry(candles, relation, timeFrame)
+
+            # todo order logic and exit logic
