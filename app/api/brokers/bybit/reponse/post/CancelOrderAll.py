@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from app.api.ResponseParams import ResponseParams
+from app.api.ResponseMapper import ResponseMapper
 
 
 @dataclass
-class CancelOrderAll(ResponseParams):
+class CancelOrderAll(ResponseMapper):
 
     orderId: Optional[str] = field(default=None)
     orderLinkId: Optional[str] = field(default=None)

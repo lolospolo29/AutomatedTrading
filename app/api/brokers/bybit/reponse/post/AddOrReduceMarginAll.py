@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from app.api.ResponseParams import ResponseParams
+from app.api.ResponseMapper import ResponseMapper
 
 
 @dataclass
-class AddOrReduceMarginAll(ResponseParams):
+class AddOrReduceMarginAll(ResponseMapper):
 
     symbol: Optional[str] = field(default=None)
     positionIdx: Optional[str] = field(default=None)

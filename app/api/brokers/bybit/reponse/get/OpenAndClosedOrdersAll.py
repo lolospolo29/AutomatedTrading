@@ -2,11 +2,11 @@ from dataclasses import dataclass, field
 from typing import Optional, List
 
 from app.api.brokers.bybit.models.get.Orders import Orders
-from app.api.ResponseParams import ResponseParams
+from app.api.ResponseMapper import ResponseMapper
 
 
 @dataclass
-class OpenAndClosedOrdersAll(ResponseParams):
+class OpenAndClosedOrdersAll(ResponseMapper):
 
     category: Optional[str] = field(default=None)
     nextPageCursor: Optional[str] = field(default=None)

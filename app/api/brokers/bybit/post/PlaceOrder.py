@@ -45,8 +45,6 @@ class PlaceOrder(POSTParams):
     def validate(self,batchOrder = False) -> bool:
         """Validate required parameters."""
         if self.symbol and self.side and self.orderType and self.qty:
-            if batchOrder:
-                return True
             if self.category:
                 return True
         return False

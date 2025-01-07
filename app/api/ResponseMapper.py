@@ -4,7 +4,7 @@ from abc import ABC
 from typing import Type
 
 
-class ResponseParams(ABC):
+class ResponseMapper(ABC):
     def fromDict(self, data: dict, cls: Type[dataclasses.dataclass]) -> dataclasses.dataclass:
         """Helper function to convert a dictionary into a dataclass object."""
         # print(f"Converting data into {cls.__name__}...")  # Debugging

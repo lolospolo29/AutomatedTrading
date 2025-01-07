@@ -70,6 +70,9 @@ class Order:
         if key != 'updatedAt':  # Avoid recursive updates
             super().__setattr__('updatedAt', datetime.now())
 
+    def __str__(self):
+        return str(self.toDict())
+
     def toDict(self):
         def transform_value(key, value):
             """Applies necessary transformations to specific fields."""

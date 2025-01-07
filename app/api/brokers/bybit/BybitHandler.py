@@ -1,11 +1,8 @@
 # region Imports
 
-from app.api.ResponseParams import ResponseParams
+from app.api.ResponseMapper import ResponseMapper
 from app.api.brokers.bybit.Bybit import Bybit
-from app.api.brokers.bybit.BybitMapper import BybitMapper
 from app.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
-from app.api.brokers.bybit.enums.OpenOnlyEnum import OpenOnlyEnum
-from app.api.brokers.bybit.enums.OrderFilterEnum import OrderFilterEnum
 from app.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
@@ -23,10 +20,8 @@ from app.api.brokers.bybit.reponse.post.CancelAllOrdersAll import CancelAllOrder
 from app.api.brokers.bybit.reponse.post.CancelOrderAll import CancelOrderAll
 from app.api.brokers.bybit.reponse.post.PlaceOrderAll import PlaceOrderAll
 from app.helper.registry.RateLimitRegistry import RateLimitRegistry
-from app.models.trade.CategoryEnum import CategoryEnum
-from app.models.trade.Order import Order
-from app.models.trade.OrderDirectionEnum import OrderDirection
-from app.models.trade.OrderTypeEnum import OrderTypeEnum
+from app.mappers.ClassMapper import ClassMapper
+from app.api.brokers.RequestParameters import RequestParameters
 
 # endregion
 
@@ -37,17 +32,17 @@ class BybitHandler:
     def __init__(self):
         self.name = "BYBIT"
         self.__broker: Bybit = Bybit("BYBIT")
-        self._bybitMapper = BybitMapper()
         self.isLockActive = False
+        self._bybitMapper = ClassMapper()
         self._rateLimitRegistry = RateLimitRegistry(RateLimitEnum)
 
     # region get Methods
     @rate_limit_registry.rate_limited
-    def returnOpenAndClosedOrder(self,order: Order,baseCoin:str=None,settleCoin:str=None,openOnly:str=None
-                                 ,limit:int=20,cursor:str=None) -> OpenAndClosedOrdersAll:
+    def returnOpenAndClosedOrder(self,requestParams: RequestParameters) -> OpenAndClosedOrdersAll:
 
-        openAndClosedOrders: OpenAndClosedOrders = (self._bybitMapper.mapOrderToOpenAndClosedOrders
-                                                    (order,baseCoin,settleCoin,openOnly,limit,cursor))
+        openAndClosedOrders: OpenAndClosedOrders = (self._bybitMapper.map_args_to_dataclass
+                                                    (OpenAndClosedOrdersAll,requestParams,RequestParameters))
+
 
         # Validierung der Eingabeparameter
         if not openAndClosedOrders.validate():
@@ -59,16 +54,16 @@ class BybitHandler:
         method = "get"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
+        responseParams = ResponseMapper()
         result = responseParams.fromDict(responseJson['result'], OpenAndClosedOrdersAll)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def returnPositionInfo(self,order: Order,baseCoin:str=None,settleCoin:str=None
-                                 ,limit:int=20,cursor:str=None) -> PositionInfoAll:
+    def returnPositionInfo(self,requestParams:RequestParameters) -> PositionInfoAll:
 
-        positionInfo: PositionInfo = self._bybitMapper.mapOrderToPositionInfo(order,baseCoin,settleCoin,limit,cursor)
+        positionInfo: PositionInfo = (self._bybitMapper.map_args_to_dataclass
+                                      (PositionInfo,requestParams,RequestParameters))
 
         # Validierung der Eingabeparameter
         if not positionInfo.validate():
@@ -80,7 +75,7 @@ class BybitHandler:
         method = "get"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
+        responseParams = ResponseMapper()
         result = responseParams.fromDict(responseJson['result'], PositionInfoAll)
 
         return result
@@ -89,8 +84,9 @@ class BybitHandler:
 
     # region post Methods
     @rate_limit_registry.rate_limited
-    def amendOrder(self,order:Order) -> AmendOrderAll:
-        amendOrder: AmendOrder = self._bybitMapper.mapOrderToAmendOrder(order)
+    def amendOrder(self,requestParams:RequestParameters) -> AmendOrderAll:
+        amendOrder: AmendOrder = (self._bybitMapper.map_args_to_dataclass
+                                  (AmendOrder,requestParams,RequestParameters))
 
         # Validierung der Eingabeparameter
         if not amendOrder.validate():
@@ -102,17 +98,16 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
+        responseParams = ResponseMapper()
         result = responseParams.fromDict(responseJson['result'], AmendOrderAll)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def cancelAllOrders(self,category:str,symbol:str=None,baseCoin:str=None,settleCoin:str=None,
-                        orderFilter:str=None,stopOrderType:bool=False) -> CancelAllOrdersAll:
+    def cancelAllOrders(self,requestParams:RequestParameters) -> CancelAllOrdersAll:
 
-        cancelOrders: CancelAllOrders = self._bybitMapper.mapInputToCancelAllOrders(category,symbol,baseCoin,settleCoin,
-                                                                                    orderFilter,stopOrderType)
+        cancelOrders: CancelAllOrders = (self._bybitMapper.map_args_to_dataclass
+                                         (CancelAllOrders,requestParams,RequestParameters))
 
         # Validierung der Eingabeparameter
         if not cancelOrders.validate():
@@ -124,14 +119,15 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
+        responseParams = ResponseMapper()
         result = responseParams.fromDict(responseJson['result'], CancelAllOrdersAll)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def cancelOrder(self,order:Order) -> CancelOrderAll:
-        cancelOrder: CancelOrder = self._bybitMapper.mapOrderToCancelOrder(order)
+    def cancelOrder(self,requestParams:RequestParameters) -> CancelOrderAll:
+        cancelOrder: CancelOrder = (self._bybitMapper.map_args_to_dataclass
+                                    (CancelOrder,requestParams,RequestParameters))
 
         # Validierung der Eingabeparameter
         if not cancelOrder.validate():
@@ -143,15 +139,16 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
+        responseParams = ResponseMapper()
         result = responseParams.fromDict(responseJson['result'], CancelOrderAll)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def placeOrder(self, order: Order) -> PlaceOrderAll:
+    def placeOrder(self,requestParams:RequestParameters) -> PlaceOrderAll:
 
-        placeOrder: PlaceOrder = self._bybitMapper.mapOrderToPlaceOrder(order)
+        placeOrder: PlaceOrder = (self._bybitMapper.map_args_to_dataclass
+                                  (PlaceOrder,requestParams,RequestParameters))
 
         # Validierung der Eingabeparameter
         if not placeOrder.validate():
@@ -163,14 +160,15 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
+        responseParams = ResponseMapper()
         result = responseParams.fromDict(responseJson['result'], PlaceOrderAll)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def setLeverage(self,category:str=None,symbol:str=None,buyLeverage:str=None,sellLeverage:str=None) -> bool:
-        setLeverage: SetLeverage = self._bybitMapper.mapInputToSetLeverage(category,symbol,buyLeverage,sellLeverage)
+    def setLeverage(self,requestParams:RequestParameters) -> bool:
+        setLeverage: SetLeverage = (self._bybitMapper.map_args_to_dataclass
+                                    (SetLeverage,requestParams,RequestParameters))
 
         # Validierung der Eingabeparameter
         if not setLeverage.validate():
@@ -189,9 +187,10 @@ class BybitHandler:
         return False
 
     @rate_limit_registry.rate_limited
-    def addOrReduceMargin(self,order:Order,margin:str=None) -> AddOrReduceMarginAll:
+    def addOrReduceMargin(self,requestParams:RequestParameters) -> AddOrReduceMarginAll:
 
-        addOrReduceMargin: AddOrReduceMargin = self._bybitMapper.mapOrderToModifyMargin(order,margin)
+        addOrReduceMargin: AddOrReduceMargin = (self._bybitMapper.map_args_to_dataclass
+                                                (AddOrReduceMargin,requestParams,RequestParameters))
 
         # Validierung der Eingabeparameter
         if not addOrReduceMargin.validate():
@@ -203,10 +202,11 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseParams()
+        responseParams = ResponseMapper() #remove for mapper
         result = responseParams.fromDict(responseJson['result'], AddOrReduceMarginAll)
 
         return result
     # endregion
 
     # Logic for Handling Failed Requests and Logging
+    # todo response class from response modells
