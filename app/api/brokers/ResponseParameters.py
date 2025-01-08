@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from app.api.ResponseMapper import ResponseMapper
-
 
 @dataclass
-class AddOrReduceMarginAll(ResponseMapper):
-
+class ResponseParameters:
+    category: Optional[str] = field(default=None)
+    nextPageCursor: Optional[str] = field(default=None)
+    success: Optional[str] = field(default=None)
     symbol: Optional[str] = field(default=None)
     positionIdx: Optional[str] = field(default=None)
     riskId: Optional[int] = field(default=None)
@@ -29,3 +29,6 @@ class AddOrReduceMarginAll(ResponseMapper):
     cumRealisedPnl: Optional[str] = field(default=None)
     createdTime: Optional[str] = field(default=None)
     updatedTime: Optional[str] = field(default=None)
+
+    orderId: Optional[str] = field(default=None)
+    orderLinkId: Optional[str] = field(default=None)

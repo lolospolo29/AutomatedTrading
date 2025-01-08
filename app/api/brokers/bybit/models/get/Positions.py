@@ -3,11 +3,8 @@ from typing import Optional
 
 from numpy import long
 
-from app.api.ResponseMapper import ResponseMapper
-
-
 @dataclass
-class Positions(ResponseMapper):
+class Positions:
 
     positionIdx: Optional[int] = field(default=None)
     riskId: Optional[str] = field(default=None)

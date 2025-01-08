@@ -1,6 +1,5 @@
 # region Imports
-
-from app.api.ResponseMapper import ResponseMapper
+from app.api.brokers.ResponseParameters import ResponseParameters
 from app.api.brokers.bybit.Bybit import Bybit
 from app.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
 from app.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
@@ -12,13 +11,9 @@ from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
 from app.api.brokers.bybit.post.CancelOrder import CancelOrder
 from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
 from app.api.brokers.bybit.post.SetLeverage import SetLeverage
-from app.api.brokers.bybit.reponse.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
-from app.api.brokers.bybit.reponse.get.PositionInfoAll import PositionInfoAll
-from app.api.brokers.bybit.reponse.post.AddOrReduceMarginAll import AddOrReduceMarginAll
-from app.api.brokers.bybit.reponse.post.AmendOrderAll import AmendOrderAll
-from app.api.brokers.bybit.reponse.post.CancelAllOrdersAll import CancelAllOrdersAll
-from app.api.brokers.bybit.reponse.post.CancelOrderAll import CancelOrderAll
-from app.api.brokers.bybit.reponse.post.PlaceOrderAll import PlaceOrderAll
+from app.api.brokers.bybit.models.get.OpenAndClosedOrdersAll import OpenAndClosedOrdersAll
+from app.api.brokers.bybit.models.get.PositionInfoAll import PositionInfoAll
+from app.api.brokers.bybit.models.post.CancelAllOrdersAll import CancelAllOrdersAll
 from app.helper.registry.RateLimitRegistry import RateLimitRegistry
 from app.mappers.ClassMapper import ClassMapper
 from app.api.brokers.RequestParameters import RequestParameters
@@ -41,7 +36,7 @@ class BybitHandler:
     def returnOpenAndClosedOrder(self,requestParams: RequestParameters) -> OpenAndClosedOrdersAll:
 
         openAndClosedOrders: OpenAndClosedOrders = (self._bybitMapper.map_args_to_dataclass
-                                                    (OpenAndClosedOrdersAll,requestParams,RequestParameters))
+                                                    (OpenAndClosedOrders,requestParams,RequestParameters))
 
 
         # Validierung der Eingabeparameter
@@ -54,8 +49,7 @@ class BybitHandler:
         method = "get"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseMapper()
-        result = responseParams.fromDict(responseJson['result'], OpenAndClosedOrdersAll)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], OpenAndClosedOrdersAll)
 
         return result
 
@@ -75,8 +69,7 @@ class BybitHandler:
         method = "get"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseMapper()
-        result = responseParams.fromDict(responseJson['result'], PositionInfoAll)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], PositionInfoAll)
 
         return result
 
@@ -84,7 +77,7 @@ class BybitHandler:
 
     # region post Methods
     @rate_limit_registry.rate_limited
-    def amendOrder(self,requestParams:RequestParameters) -> AmendOrderAll:
+    def amendOrder(self,requestParams:RequestParameters) -> ResponseParameters:
         amendOrder: AmendOrder = (self._bybitMapper.map_args_to_dataclass
                                   (AmendOrder,requestParams,RequestParameters))
 
@@ -98,8 +91,7 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseMapper()
-        result = responseParams.fromDict(responseJson['result'], AmendOrderAll)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], ResponseParameters)
 
         return result
 
@@ -119,13 +111,12 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseMapper()
-        result = responseParams.fromDict(responseJson['result'], CancelAllOrdersAll)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], CancelAllOrdersAll)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def cancelOrder(self,requestParams:RequestParameters) -> CancelOrderAll:
+    def cancelOrder(self,requestParams:RequestParameters) -> ResponseParameters:
         cancelOrder: CancelOrder = (self._bybitMapper.map_args_to_dataclass
                                     (CancelOrder,requestParams,RequestParameters))
 
@@ -139,13 +130,12 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseMapper()
-        result = responseParams.fromDict(responseJson['result'], CancelOrderAll)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], ResponseParameters)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def placeOrder(self,requestParams:RequestParameters) -> PlaceOrderAll:
+    def placeOrder(self,requestParams:RequestParameters) -> ResponseParameters:
 
         placeOrder: PlaceOrder = (self._bybitMapper.map_args_to_dataclass
                                   (PlaceOrder,requestParams,RequestParameters))
@@ -160,8 +150,7 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseMapper()
-        result = responseParams.fromDict(responseJson['result'], PlaceOrderAll)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], ResponseParameters)
 
         return result
 
@@ -187,7 +176,7 @@ class BybitHandler:
         return False
 
     @rate_limit_registry.rate_limited
-    def addOrReduceMargin(self,requestParams:RequestParameters) -> AddOrReduceMarginAll:
+    def addOrReduceMargin(self,requestParams:RequestParameters) -> ResponseParameters:
 
         addOrReduceMargin: AddOrReduceMargin = (self._bybitMapper.map_args_to_dataclass
                                                 (AddOrReduceMargin,requestParams,RequestParameters))
@@ -202,11 +191,20 @@ class BybitHandler:
         method = "post"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        responseParams = ResponseMapper() #remove for mapper
-        result = responseParams.fromDict(responseJson['result'], AddOrReduceMarginAll)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], ResponseParameters)
 
         return result
     # endregion
 
-    # Logic for Handling Failed Requests and Logging
-    # todo response class from response modells
+    # todo Logic for Handling Failed Requests and Logging
+    # todo order logic with conditional orders in strategy
+    # todo order logic after placed get history
+
+bh = BybitHandler()
+request = RequestParameters()
+request.category = "linear"
+request.symbol = "XRPUSDT"
+res = bh.returnOpenAndClosedOrder(request)
+request.takeProfit =  "4"
+# bh.amendOrder(request)
+# print(res)

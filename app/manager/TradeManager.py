@@ -1,7 +1,7 @@
 import threading
 import uuid
 
-from app.api.brokers.bybit.reponse.post.PlaceOrderAll import PlaceOrderAll
+from app.api.brokers.ResponseParameters import ResponseParameters
 from app.db.modules.mongoDBTrades import mongoDBTrades
 from app.helper.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
@@ -135,7 +135,7 @@ class TradeManager:
         pass
 
     # region Business Logic
-    def placeOrder(self,broker:str,assetClass:str,order: Order):
+    def placeOrder(self,broker:str,assetClass:str,order: Order)->Order:
         orderLock = self._LockRegistry.get_lock(order.orderLinkId)
         with orderLock:
             if order.orderType == OrderTypeEnum.MARKET.value:
@@ -144,31 +144,33 @@ class TradeManager:
                 order.qty = str(self._calculateQtyLimit(assetClass, order))
             requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                         (RequestParameters, order, Order, broker=broker))
-            res:PlaceOrderAll = self._BrokerFacade.placeOrder(requestParameters)
+            res = self._BrokerFacade.placeOrder(requestParameters)
             order.orderId = res.orderId
             # todo mapp response to order with class mapper
         return order
 
-    def amendOrder(self,broker:str,order:Order):
+    def amendOrder(self,broker:str,order:Order)->Order:
         orderLock = self._LockRegistry.get_lock(order.orderLinkId)
         requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                (RequestParameters,order,Order,broker=broker))
         with orderLock:
             order = self._BrokerFacade.amendOrder(requestParameters)
+            return order
 
-    def cancelOrder(self,broker:str,order:Order):
+    def cancelOrder(self,broker:str,order:Order)->Order:
         orderLock = self._LockRegistry.get_lock(order.orderLinkId)
         requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                (RequestParameters,order,Order,broker=broker))
         with orderLock:
             order = self._BrokerFacade.amendOrder(requestParameters)
+            return order
 
-    def getOpenAndClosedOrders(self,broker:str=None,order:Order=None):
+    def getOpenAndClosedOrders(self,broker:str=None,order:Order=None) -> ResponseParameters:
         requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                (RequestParameters,order,Order,broker=broker))
         return self._BrokerFacade.getOpenAndClosedOrders(requestParameters)
 
-    def getPositionInfo(self,broker:str, order:Order):
+    def getPositionInfo(self,broker:str, order:Order)->ResponseParameters:
         requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                (RequestParameters,order,Order,broker=broker))
         return self._BrokerFacade.getPositionInfo(requestParameters)
@@ -220,8 +222,8 @@ order = Order()
 order.orderLinkId = str(uuid.uuid4())
 order.category = "linear"
 order.symbol = "BTCUSDT"
-order.price = str(98000)
-order.stopLoss = str(96000)
+order.price = str(94000)
+order.stopLoss = str(91000)
 order.riskPercentage = 0.4
 order.side = OrderDirection.BUY.value
 order.orderType = OrderTypeEnum.MARKET.value
@@ -232,8 +234,8 @@ order2 = Order()
 order2.orderLinkId = str(uuid.uuid4())
 order2.category = "linear"
 order2.symbol = "BTCUSDT"
-order2.price = str(98000)
-order2.stopLoss = str(99000)
+order2.price = str(94000)
+order2.stopLoss = str(91000)
 order2.takeProfit = str(111000)
 order2.riskPercentage = 0.25
 

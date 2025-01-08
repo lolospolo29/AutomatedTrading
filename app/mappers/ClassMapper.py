@@ -94,3 +94,23 @@ class ClassMapper:
             setattr(target_instance, field.name, getattr(dataclass_instance, field.name))
 
         return target_instance
+    @staticmethod
+    def update_class_with_dataclass(data_class_instance, target_instance):
+        """
+        Updates the attributes of a regular class instance with values from a dataclass instance.
+
+        Args:
+            data_class_instance: An instance of a dataclass.
+            target_instance: An instance of a regular class.
+
+        Returns:
+            The updated target_instance.
+        """
+        if not is_dataclass(data_class_instance):
+            raise ValueError("The first argument must be a dataclass instance.")
+
+        # Iterate over the fields of the dataclass and set them on the target instance
+        for field in fields(data_class_instance):
+            setattr(target_instance, field.name, getattr(data_class_instance, field.name))
+
+        return target_instance
