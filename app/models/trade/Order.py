@@ -2,7 +2,6 @@ from datetime import datetime
 
 from app.models.frameworks.FrameWork import FrameWork
 
-# todo add response params to this class
 class Order:
     # Self Defined Parameters
     tradeId: str

@@ -4,8 +4,9 @@ from app.api.brokers.bybit.Bybit import Bybit
 from app.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
 from app.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
+from app.api.brokers.bybit.get.OrderHistory import OrderHistory
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
-from app.api.brokers.bybit.post.AddOrReduceMargin import AddOrReduceMargin
+from app.api.brokers.bybit.models.get.OrderHistoryAll import OrderHistoryAll
 from app.api.brokers.bybit.post.AmendOrder import AmendOrder
 from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
 from app.api.brokers.bybit.post.CancelOrder import CancelOrder
@@ -70,6 +71,27 @@ class BybitHandler:
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
         result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], PositionInfoAll)
+
+        return result
+
+    @rate_limit_registry.rate_limited
+    def returnOrderHistory(self,requestParams: RequestParameters) -> OrderHistoryAll:
+
+        orderHistory: OrderHistory = (self._bybitMapper.map_args_to_dataclass
+                                                    (OrderHistory,requestParams,RequestParameters))
+
+
+        # Validierung der Eingabeparameter
+        if not orderHistory.validate():
+            raise ValueError("The Fields that were required were not given")
+
+        params = orderHistory.toQueryString()
+
+        endPoint = EndPointEnum.HISTORY.value
+        method = "get"
+
+        responseJson = self.__broker.sendRequest(endPoint, method, params)
+        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], OrderHistoryAll)
 
         return result
 
@@ -175,30 +197,10 @@ class BybitHandler:
 
         return False
 
-    @rate_limit_registry.rate_limited
-    def addOrReduceMargin(self,requestParams:RequestParameters) -> ResponseParameters:
-
-        addOrReduceMargin: AddOrReduceMargin = (self._bybitMapper.map_args_to_dataclass
-                                                (AddOrReduceMargin,requestParams,RequestParameters))
-
-        # Validierung der Eingabeparameter
-        if not addOrReduceMargin.validate():
-            raise ValueError("The Fields that were required were not given")
-
-        params = addOrReduceMargin.toDict()
-
-        endPoint = EndPointEnum.MARGIN.value
-        method = "post"
-
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], ResponseParameters)
-
-        return result
     # endregion
 
     # todo Logic for Handling Failed Requests and Logging
-    # todo order logic with conditional orders in strategy
-    # todo order logic after placed get history
+    # todo adjust order to split tp and stop order testing
 
 bh = BybitHandler()
 request = RequestParameters()

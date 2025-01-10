@@ -4,7 +4,7 @@ from typing import Optional
 
 @dataclass
 class RequestParameters:
-
+    broker:str
     positionIdx: Optional[int] = field(default=None)
     baseCoin: Optional[str] = field(default=None)
     settleCoin: Optional[str] = field(default=None)
@@ -47,6 +47,8 @@ class RequestParameters:
     orderType: Optional[str] = field(default=None)
     side: Optional[str] = field(default=None)
     qty: Optional[str] = field(default=None)
+    startTime: Optional[int] = field(default=None)
+    endTime: Optional[int] = field(default=None)
 
     def __str__(self):
         # Filter out fields with None values

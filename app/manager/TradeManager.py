@@ -128,59 +128,37 @@ class TradeManager:
 
                     for placeOrderAsync in asyncPlaceOrderResults:
                         orderResult = placeOrderAsync.get()# get the return value from your function.
-                        if isinstance(orderResult, Exception):
+                        if isinstance(ResponseParameters, Exception):
                             print("Order Failed with Trade-ID"+trade.id)
 
     def updateTrade(self,broker:str,Trade) -> None:
         pass
 
     # region Business Logic
-    def placeOrder(self,broker:str,assetClass:str,order: Order)->Order:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
-        with orderLock:
-            if order.orderType == OrderTypeEnum.MARKET.value:
-                order.qty = str(self._calculateQtyMarket(assetClass, order))
-            if order.orderType == OrderTypeEnum.LIMIT.value:
-                order.qty = str(self._calculateQtyLimit(assetClass, order))
-            requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
-                                                        (RequestParameters, order, Order, broker=broker))
-            res = self._BrokerFacade.placeOrder(requestParameters)
-            order.orderId = res.orderId
-            # todo mapp response to order with class mapper
-        return order
+    def placeOrder(self,requestParameters:RequestParameters)->ResponseParameters:
+        return self._BrokerFacade.placeOrder(requestParameters)
 
-    def amendOrder(self,broker:str,order:Order)->Order:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
-        requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
-                                               (RequestParameters,order,Order,broker=broker))
-        with orderLock:
-            order = self._BrokerFacade.amendOrder(requestParameters)
-            return order
+    def amendOrder(self,requestParameters:RequestParameters)->Order:
+        return self._BrokerFacade.amendOrder(requestParameters)
 
-    def cancelOrder(self,broker:str,order:Order)->Order:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
-        requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
-                                               (RequestParameters,order,Order,broker=broker))
-        with orderLock:
-            order = self._BrokerFacade.amendOrder(requestParameters)
-            return order
+    def cancelOrder(self,requestParameters:RequestParameters)->Order:
+        return  self._BrokerFacade.amendOrder(requestParameters)
 
-    def getOpenAndClosedOrders(self,broker:str=None,order:Order=None) -> ResponseParameters:
-        requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
-                                               (RequestParameters,order,Order,broker=broker))
-        return self._BrokerFacade.getOpenAndClosedOrders(requestParameters)
+    def getOpenAndClosedOrders(self,requestParameters:RequestParameters) -> ResponseParameters:
+        return self._BrokerFacade.returnOpenAndClosedOrders(requestParameters)
 
-    def getPositionInfo(self,broker:str, order:Order)->ResponseParameters:
-        requestParameters:RequestParameters = (self._ClassMapper.map_args_to_dataclass
-                                               (RequestParameters,order,Order,broker=broker))
-        return self._BrokerFacade.getPositionInfo(requestParameters)
+    def getPositionInfo(self,requestParameters:RequestParameters)->ResponseParameters:
+        return self._BrokerFacade.returnPositionInfo(requestParameters)
+
+    def getOrderHistory(self,requestParameters:RequestParameters) -> ResponseParameters:
+        return self._BrokerFacade.returnOrderHistory(requestParameters)
     # endregion
 
     # endregion
 
     # region Risk Management
 
-    def _calculateQtyMarket(self, assetClass:str, order:Order)->float:
+    def _calculateQty(self, assetClass:str, order:Order)->float:
         moneyatrisk = self._RiskManager.calculate_money_at_risk()
         order.moneyAtRisk = moneyatrisk
         qty = 0.00
@@ -194,19 +172,6 @@ class TradeManager:
 
         return self._RiskManager.round_down(abs(qty * order.riskPercentage))
 
-    def _calculateQtyLimit(self, assetClass:str, order:Order)->float:
-        moneyatrisk = self._RiskManager.calculate_money_at_risk()
-        order.moneyAtRisk = moneyatrisk
-        qty = 0.00
-        if order.orderType == OrderTypeEnum.LIMIT.value:
-            if assetClass == AssetClassEnum.CRYPTO:
-                if order.side == OrderDirection.BUY.value:
-                    qty = (self._RiskManager.calculate_crypto_trade_size
-                           (moneyatrisk, abs(float(order.price) - float(order.slLimitPrice))))
-                if order.side == OrderDirection.SELL.value:
-                    qty = (self._RiskManager.calculate_crypto_trade_size
-                           (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
-        return self._RiskManager.round_down(abs(qty * order.riskPercentage))
     # endregion
 
     # region Functions

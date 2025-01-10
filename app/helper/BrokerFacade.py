@@ -22,13 +22,17 @@ class BrokerFacade:
         if requestParameter.broker == self._bybitHandler.name:
             return self._bybitHandler.cancelAllOrders(requestParameter)
 
-    def getOpenAndClosedOrders(self,requestParameter:RequestParameters):
+    def returnOpenAndClosedOrders(self, requestParameter:RequestParameters):
         if requestParameter.broker == self._bybitHandler.name:
             return self._bybitHandler.returnOpenAndClosedOrder(requestParameter)
 
-    def getPositionInfo(self,requestParameter:RequestParameters):
+    def returnPositionInfo(self, requestParameter:RequestParameters):
         if requestParameter.broker == self._bybitHandler.name:
             return self._bybitHandler.returnPositionInfo(requestParameter)
+
+    def returnOrderHistory(self, requestParameter:RequestParameters):
+        if requestParameter.broker == self._bybitHandler.name:
+            return self._bybitHandler.returnOrderHistory(requestParameter)
     # todo broker registry
     # environement test prod
     #
