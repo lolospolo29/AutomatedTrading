@@ -75,13 +75,6 @@ class Asset:
             allSeries.append(series)
         return allSeries
 
-    def returnBrokers(self,strategy: str) -> list[str]:
-        brokers = []
-        for relation in self.brokerStrategyAssignment:
-            if relation.strategy == strategy:
-                brokers.append(relation.broker)
-        return brokers
-
     def returnSMTPair(self, pairName: str)-> SMTPair:
         for smtPair in self.smtPairs:
             for pair in smtPair.smtPairs:

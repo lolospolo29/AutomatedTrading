@@ -1,9 +1,15 @@
 import threading
+from datetime import datetime
 
 from app.db.mongodb.MongoDB import MongoDB
 from app.db.mongodb.enum.MongoEndPointEnum import MongoEndPointEnum
 from app.manager.initializer.SecretsManager import SecretsManager
 from app.mappers.TradeMapper import TradeMapper
+from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Candle import Candle
+from app.models.calculators.frameworks.Level import Level
+from app.models.calculators.frameworks.PDArray import PDArray
+from app.models.calculators.frameworks.Structure import Structure
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 
@@ -90,12 +96,11 @@ class mongoDBTrades:
 #Testing
 # _mongo = mongoDBTrades()
 # pd = PDArray(name="FVG",direction="Bullish")
-# c1:Candle = Candle("BTC", "broker", 132.2, 132, 122, 12,datetime.datetime.now(),5)
+# c1:Candle = Candle("BTC", "broker", 132.2, 132, 122, 12,datetime.now(),5)
 # pd.candles.append(c1)
-# pd.Ids.add(c1.id)
 # level = Level("FVG",132)
-# level.ids.append(c1.id)
-# struct = Structure("BOS","Bullish",c1.id)
+# level.candles.append(c1)
+# struct = Structure("BOS","Bullish",candle=c1)
 #
 # order = Order()
 # order.entryFrameWork = pd

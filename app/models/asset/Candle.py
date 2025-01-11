@@ -36,6 +36,7 @@ class Candle:
                 "open": self.open,
                 "high": self.high,
                 "low": self.low,
+                "id":self.id,
                 "close": self.close,
                 "IsoTime": self.isoTime,  # In ISO 8601-String konvertieren
                 "timeFrame": self.timeFrame

@@ -42,7 +42,8 @@ class TradeMapper:
             low=candle_data["Candle"]["low"],
             close=candle_data["Candle"]["close"],
             IsoTime=self.parse_datetime(candle_data["Candle"]["IsoTime"]),
-            timeFrame=candle_data["Candle"]["timeFrame"]
+            timeFrame=candle_data["Candle"]["timeFrame"],
+            id=candle_data["Candle"]["id"]
         )
 
     def map_framework(self,data):
@@ -55,12 +56,17 @@ class TradeMapper:
             return framework
         elif "Level" in data:
             level = data["Level"]
+            candles = []
+            for candle in level.get("candles", []):
+                candles.append(self.map_candle(candle))
             framework = Level(level["name"], level["level"])
-            framework.setFibLevel(level.get("fibLevel", 0.0), level["direction"], level.get("ids", []))
+            framework.setFibLevel(level.get("fibLevel", 0.0), level["direction"],candles=candles)
             return framework
         elif "Structure" in data:
             structure = data["Structure"]
-            return Structure(structure["name"], structure["direction"], structure["ids"])
+            candles = []
+            candle = structure.get("candles").get("Candle")
+            return Structure(structure["name"], structure["direction"],candle=candle)
         return None
 
     def mapOrderFromDB(self,mongo_data: dict):

@@ -6,6 +6,7 @@ import pytz
 
 from app.db.mongodb.MongoDB import MongoDB
 from app.manager.initializer.SecretsManager import SecretsManager
+from app.models.asset.Candle import Candle
 
 ny_tz = pytz.timezone('America/New_York')
 
@@ -28,10 +29,8 @@ class mongoDBData:
             self._MongoDBData: MongoDB = MongoDB("TradingData", self._SecretManager.returnSecret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
 
-
-    def addDataToDB(self, collectionName: str, data: Any) -> bool:
-        self._MongoDBData.add(collectionName, data)
-        return True
+    def addCandleToDB(self, asset:str,candle: Candle):
+        self._MongoDBData.add(asset, candle)
 
     def archiveData(self, asset: str) -> Any:
         currentTimeNy = datetime.datetime.now(ny_tz)

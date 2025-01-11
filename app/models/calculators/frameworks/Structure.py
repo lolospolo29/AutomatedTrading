@@ -28,7 +28,7 @@ class Structure(FrameWork):
             "typ" : self.typ,
             "name": self.name,
             "direction": self.direction,
-            "candles": ["" if not hasattr(self,"candle") else self.candle.toDict()],
+            "candles": self.candle.toDict(),
         }
 
         # Filter out attributes with None values

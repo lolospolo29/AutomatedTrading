@@ -1,5 +1,6 @@
 import threading
 
+from app.db.mongodb.mongoDBData import mongoDBData
 from app.mappers.AssetMapper import AssetMapper
 from app.models.asset.Asset import Asset
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
@@ -24,8 +25,16 @@ class AssetManager:
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.assets: dict = {}
+            self._mongoDBData = mongoDBData()
             self._AssetMapper = AssetMapper()
             self._initialized = True  # Markiere als initialisiert
+
+    # endregion
+
+    # region CRUD
+
+    def addCandleToDB(self, candle: Candle):
+        self._mongoDBData.addCandleToDB(candle.asset,candle)
 
     # endregion
 
@@ -63,11 +72,6 @@ class AssetManager:
     def returnSMTPair(self, asset: str) ->SMTPair:
         if asset in self.assets:
             return self.assets[asset].returnSMTPair()
-        raise ValueError(f"Asset '{asset}' not found.")
-
-    def returnBroker(self,asset: str, strategy: str):
-        if asset in self.assets:
-            return self.assets[asset].returnBrokers(strategy)
         raise ValueError(f"Asset '{asset}' not found.")
 
     def returnCandles(self, asset: str, broker: str, timeFrame: int) -> list[Candle]:
