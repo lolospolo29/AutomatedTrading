@@ -2,9 +2,9 @@ from datetime import datetime
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.frameworks.Level import Level
-from app.models.frameworks.PDArray import PDArray
-from app.models.frameworks.Structure import Structure
+from app.models.calculators.frameworks.Level import Level
+from app.models.calculators.frameworks.PDArray import PDArray
+from app.models.calculators.frameworks.Structure import Structure
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 

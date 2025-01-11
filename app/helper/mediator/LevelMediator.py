@@ -1,14 +1,14 @@
 from app.models.asset.Candle import Candle
-from app.models.frameworks.level.CBDR import CBDR
-from app.models.frameworks.level.equalHL import equalHL
-from app.models.frameworks.level.fibonnaci.OTE import OTE
-from app.models.frameworks.level.fibonnaci.PD import PD
-from app.models.frameworks.level.fibonnaci.STDV import STDV
-from app.models.frameworks.level.opens.NDOG import NDOG
-from app.models.frameworks.level.opens.NWOG import NWOG
-from app.models.frameworks.level.previous.PreviousDaysLevels import PreviousDaysLevels
-from app.models.frameworks.level.previous.PreviousSessionLevels import PreviousSessionLevels
-from app.models.frameworks.level.previous.PreviousWeekLevels import PreviousWeekLevels
+from app.models.calculators.frameworks.level.CBDR import CBDR
+from app.models.calculators.frameworks.level.equalHL import equalHL
+from app.models.calculators.frameworks.level.fibonnaci.OTE import OTE
+from app.models.calculators.frameworks.level.fibonnaci.PD import PD
+from app.models.calculators.frameworks.level.fibonnaci.STDV import STDV
+from app.models.calculators.frameworks.level.opens.NDOG import NDOG
+from app.models.calculators.frameworks.level.opens.NWOG import NWOG
+from app.models.calculators.frameworks.level.previous.PreviousDaysLevels import PreviousDaysLevels
+from app.models.calculators.frameworks.level.previous.PreviousSessionLevels import PreviousSessionLevels
+from app.models.calculators.frameworks.level.previous.PreviousWeekLevels import PreviousWeekLevels
 
 
 class LevelMediator:
@@ -58,11 +58,11 @@ class LevelMediator:
         if levelType == "STDV":
             return self.stdv.returnLevels(candles,lookback)
 
-    def returnOpeningGap(self,levelType,preCandle,midnightCandle):
+    def returnOpeningGap(self,levelType:str,candles: list[Candle]) -> list:
         if levelType == "NWOG":
-            return self.nwog.returnLevels(preCandle,midnightCandle)
+            return self.nwog.returnLevels(candles)
         if levelType == "NDOG":
-            return self.ndog.returnLevels(preCandle,midnightCandle)
+            return self.ndog.returnLevels(candles)
     # endregion
 
 

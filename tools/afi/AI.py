@@ -2,8 +2,8 @@
 from sklearn.linear_model import SGDClassifier
 import numpy as np
 
-from app.models.riskCalculations.ProfitStopAnalyzer import ProfitStopAnalyzer
-from app.models.riskCalculations.ProfitStopEntry import ProfitStopEntry
+from app.models.calculators.ProfitStopAnalyzer import ProfitStopAnalyzer
+from app.models.calculators.ProfitStopEntry import ProfitStopEntry
 
 
 class StrategyAI:

@@ -1,9 +1,8 @@
 import threading
 import uuid
 
-from app.api.brokers.ResponseParameters import ResponseParameters
-from app.db.modules.mongoDBTrades import mongoDBTrades
-from app.helper.BrokerFacade import BrokerFacade
+from app.db.mongodb.mongoDBTrades import mongoDBTrades
+from app.api.brokers.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.RiskManager import RiskManager
@@ -11,8 +10,8 @@ from app.mappers.ClassMapper import ClassMapper
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.trade.Order import Order
-from app.models.trade.OrderDirectionEnum import OrderDirection
-from app.models.trade.OrderTypeEnum import OrderTypeEnum
+from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.api.brokers.RequestParameters import RequestParameters
 from app.models.trade.Trade import Trade
 
@@ -114,51 +113,67 @@ class TradeManager:
     # endregion
 
     # region API Requests
-    def placeTrade(self, trade: Trade,assetClass:str) -> None:
+    def placeTrade(self, trade: Trade,assetClass:str) -> Trade:
             tradeLock = self._LockRegistry.get_lock(trade.id)
             with tradeLock:
                 if trade.id in self.openTrades:
                     trade = self.openTrades[trade.id]
                     from multiprocessing.pool import ThreadPool
                     pool = ThreadPool(processes=len(trade.orders))
-                    asyncPlaceOrderResults = []
+                    threads = []
                     for order in trade.orders:
-                        placeOrderAsync = pool.apply_async(self.placeOrder, (trade.relation.broker,assetClass,order))
-                        asyncPlaceOrderResults.append(placeOrderAsync)
+                        t = threading.Thread(target=self.placeOrder, args=(order,), daemon=True)
+                        threads.append(t)
 
-                    for placeOrderAsync in asyncPlaceOrderResults:
-                        orderResult = placeOrderAsync.get()# get the return value from your function.
-                        if isinstance(ResponseParameters, Exception):
+                    for thread in threads:
+                        orderResult = thread.get()# get the return value from your function.
+                        if isinstance(orderResult, Exception):
                             print("Order Failed with Trade-ID"+trade.id)
 
     def updateTrade(self,broker:str,Trade) -> None:
         pass
 
     # region Business Logic
-    def placeOrder(self,requestParameters:RequestParameters)->ResponseParameters:
-        return self._BrokerFacade.placeOrder(requestParameters)
+    def placeOrder(self,broker:str,assetClass:str,order: Order)->Order:
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
+                                                    (RequestParameters, order, Order, broker=broker))
+            newOrder = self._BrokerFacade.placeOrder(requestParameters)
+            order = self._ClassMapper.update_class_with_dataclass(order,newOrder)
+        return order
 
-    def amendOrder(self,requestParameters:RequestParameters)->Order:
-        return self._BrokerFacade.amendOrder(requestParameters)
+    def amendOrder(self,broker:str,order:Order)->Order:
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
+                                                    (RequestParameters, order, Order, broker=broker))
+            newOrder = self._BrokerFacade.amendOrder(requestParameters)
+        return order
 
-    def cancelOrder(self,requestParameters:RequestParameters)->Order:
-        return  self._BrokerFacade.amendOrder(requestParameters)
+    def cancelOrder(self,broker:str,order:Order)->Order:
+        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        with orderLock:
+            requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
+                                                    (RequestParameters, order, Order, broker=broker))
+            newOrder = self._BrokerFacade.amendOrder(requestParameters)
+        return order
 
-    def getOpenAndClosedOrders(self,requestParameters:RequestParameters) -> ResponseParameters:
+    def returnOpenAndClosedOrders(self,requestParameters:RequestParameters) -> list[Order]:
         return self._BrokerFacade.returnOpenAndClosedOrders(requestParameters)
 
-    def getPositionInfo(self,requestParameters:RequestParameters)->ResponseParameters:
+    def returnPositionInfo(self,requestParameters:RequestParameters)->Trade:
         return self._BrokerFacade.returnPositionInfo(requestParameters)
 
-    def getOrderHistory(self,requestParameters:RequestParameters) -> ResponseParameters:
+    def returnOrderHistory(self,requestParameters:RequestParameters) -> list[Order]:
         return self._BrokerFacade.returnOrderHistory(requestParameters)
     # endregion
 
     # endregion
 
     # region Risk Management
-
-    def _calculateQty(self, assetClass:str, order:Order)->float:
+    # todo auslagern nach order builder
+    def _calculateQtyMarket(self, assetClass:str, order:Order)->float:
         moneyatrisk = self._RiskManager.calculate_money_at_risk()
         order.moneyAtRisk = moneyatrisk
         qty = 0.00
@@ -172,6 +187,19 @@ class TradeManager:
 
         return self._RiskManager.round_down(abs(qty * order.riskPercentage))
 
+    def _calculateQtyLimit(self, assetClass:str, order:Order)->float:
+        moneyatrisk = self._RiskManager.calculate_money_at_risk()
+        order.moneyAtRisk = moneyatrisk
+        qty = 0.00
+        if order.orderType == OrderTypeEnum.LIMIT.value:
+            if assetClass == AssetClassEnum.CRYPTO:
+                if order.side == OrderDirection.BUY.value:
+                    qty = (self._RiskManager.calculate_crypto_trade_size
+                           (moneyatrisk, abs(float(order.price) - float(order.slLimitPrice))))
+                if order.side == OrderDirection.SELL.value:
+                    qty = (self._RiskManager.calculate_crypto_trade_size
+                           (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
+        return self._RiskManager.round_down(abs(qty * order.riskPercentage))
     # endregion
 
     # region Functions

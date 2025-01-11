@@ -4,7 +4,7 @@ import time
 
 import requests as requests
 
-from app.manager.SecretsManager import SecretsManager
+from app.manager.initializer.SecretsManager import SecretsManager
 
 
 class Bybit:

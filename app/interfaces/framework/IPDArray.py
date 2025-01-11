@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
-from app.models.frameworks.PDArray import PDArray
-from app.models.riskCalculations.RiskModeEnum import RiskMode
-from app.models.trade.OrderDirectionEnum import OrderDirection
+from app.models.calculators.frameworks.PDArray import PDArray
+from app.models.calculators.RiskModeEnum import RiskMode
+from app.models.trade.enums.OrderDirectionEnum import OrderDirection
 
 
 class IPDArray(ABC):  # Drill Fill CE

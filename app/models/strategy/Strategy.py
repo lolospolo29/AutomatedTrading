@@ -1,23 +1,23 @@
-from typing import Tuple, Optional
+from abc import abstractmethod
 
+from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
 
 
 class Strategy:
-    def __init__(self,name: str,hasSMT: bool):
+    def __init__(self,name: str,timeFrames:list[ExpectedTimeFrame]):
         self.name: str = name
-        self.hasSMT: bool = hasSMT
+        self.timeFrames: list[ExpectedTimeFrame] = timeFrames
 
-    def returnExpectedTimeFrame(self):
+    def returnExpectedTimeFrame(self)->list[ExpectedTimeFrame]:
+        return self.timeFrames
+    @abstractmethod
+    def getExit(self, candles: list, timeFrame: int,trade:Trade)->StrategyResult:
         pass
-    def getExit(self):
+    @abstractmethod
+    def getEntry(self, candles: list, timeFrame: int)-> StrategyResult:
         pass
-    def getEntry(self, candles: list, timeFrame: int, pd: list, level:list,
-                 structure: list)-> Tuple[bool, Optional[Trade]]:
-        pass
+    @abstractmethod
     def isInTime(self,time):
-        pass
-    def analyzeSMT(self):
-        pass
-    def analyzeData(self, candles: list, timeFrame: int) -> list:
         pass

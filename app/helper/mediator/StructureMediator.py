@@ -1,10 +1,10 @@
 from typing import Any
 
 from app.models.asset.Candle import Candle
-from app.models.frameworks.structure.BOS import BOS
-from app.models.frameworks.structure.CISD import CISD
-from app.models.frameworks.structure.Choch import Choch
-from app.models.frameworks.structure.SMT import SMT
+from app.models.calculators.frameworks.structure.BOS import BOS
+from app.models.calculators.frameworks.structure.CISD import CISD
+from app.models.calculators.frameworks.structure.Choch import Choch
+from app.models.calculators.frameworks.structure.SMT import SMT
 
 
 class StructureMediator:

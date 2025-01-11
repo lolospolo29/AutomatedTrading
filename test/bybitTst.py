@@ -6,7 +6,7 @@ import time
 import requests as requests
 
 from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
-from app.manager.SecretsManager import SecretsManager
+from app.manager.initializer.SecretsManager import SecretsManager
 
 sm: SecretsManager = SecretsManager()
 

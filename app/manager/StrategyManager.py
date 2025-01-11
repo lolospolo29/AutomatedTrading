@@ -4,9 +4,7 @@ from typing import Optional, Tuple
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
 from app.models.strategy.Strategy import Strategy
-from app.helper.handler.LevelHandler import LevelHandler
-from app.helper.handler.PDArrayHandler import PDArrayHandler
-from app.helper.handler.StructureHandler import StructureHandler
+from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
 
 
@@ -26,104 +24,31 @@ class StrategyManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.strategies: dict = {}
-            self._PDArrayHandler: PDArrayHandler = PDArrayHandler()
-            self._LevelHandler: LevelHandler = LevelHandler()
-            self._StructureHandler: StructureHandler = StructureHandler()
+            self.strategies: dict[AssetBrokerStrategyRelation,Strategy] = {}
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
 
-    # region Register & Return
-
-    def registerStrategy(self, strategy: Strategy) -> None:
-        if strategy not in self.strategies:
-            self.strategies[strategy.name] = strategy
+    def registerStrategy(self, relation:AssetBrokerStrategyRelation,strategy:Strategy) -> bool:
+        if relation not in self.strategies:
+            self.strategies[relation] = strategy
             print(f"Strategy '{strategy.name}' created and added to the Strategy Manager.")
+            return True
         else:
             print(f"Strategy '{strategy.name}' already exists in the Strategy Manager.")
+            return False
 
     def returnExpectedTimeFrame(self, strategy: str) -> list:
         if strategy in self.strategies:
             return self.strategies[strategy].returnExpectedTimeFrame()
         return []
 
-    def setLockWithTimeout(self,timeout:int=15):
-        self._lock.acquire(timeout=timeout)
-
-    # endregion
-
-    # region FrameWork Functions
-
-    def _updateFrameWorkHandler(self, _ids: list, relation:AssetBrokerStrategyRelation, timeFrame: int) -> bool:
-        if len(_ids) <= 0:
-            print("No IDs provided.")
-            return True
-        self._PDArrayHandler.removePDArray(_ids,relation,timeFrame)
-        self._LevelHandler.removeLevel(_ids,relation,timeFrame)
-        self._StructureHandler.removeStructure(_ids,relation,timeFrame)
-        return True
-
-    def _addNewFrameWorksToHandler(self, frameworks: list, relation: AssetBrokerStrategyRelation, candles: list[Candle], timeFrame: int) -> bool:
-        if len(frameworks) <= 0:
-            print("No frameworks provided")
-            return True
-        for framework in frameworks:
-            framework.addRelation(relation)
-            framework.setTimeFrame(timeFrame)
-            if framework.typ == "PDArray":
-                self._PDArrayHandler.addPDArray(framework)
-                self._PDArrayHandler.addCandleByIds(candles, timeFrame, relation)
-            if framework.typ == "Level":
-                self._LevelHandler.addCandleByIds(candles, timeFrame, relation)
-                self._LevelHandler.addLevel(framework)
-            if framework.typ == "Structure":
-                self._StructureHandler.addCandleByIds(candles, timeFrame, relation)
-                self._StructureHandler.addStructure(framework)
-        _ids = [candle.id for candle in candles]
-        self._updateFrameWorkHandler(_ids, relation, timeFrame)
-        return True
-
-    # endregion
-
-    # region strategy Functions
-    def analyzeStrategy(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                        timeFrame: int) -> None:
-            if len(candles) <= 0:
-                return None
-            if relation.strategy in self.strategies:
-                frameworks:list = self.strategies[relation.strategy].analyzeData(candles,timeFrame)
-                self._addNewFrameWorksToHandler(frameworks, relation, candles, timeFrame)
-
     def getEntry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                        timeFrame: int) -> Optional[Trade]:
-        if len (candles) <= 0:
-            return None
+                        timeFrame: int) -> StrategyResult:
         if relation.strategy in self.strategies:
-            self._PDArrayHandler.updatePDArrays(candles, timeFrame, relation)
-            pd: list = self._PDArrayHandler.returnPDArrays(relation)
-            level: list = self._LevelHandler.returnLevels(relation)
-            structure: list = self._StructureHandler.returnStructure(relation)
-
-            tradeFound,trade = self.strategies[relation.strategy].getEntry(candles,timeFrame,pd,level,structure)
-
-            if tradeFound:
-                return trade
-            if not tradeFound:
-                return None
-    # endregion
+            return self.strategies[relation].getEntry(candles,timeFrame)
 
     def getExit(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                        timeFrame: int,trade:Trade) -> Optional[Trade]:
+                        timeFrame: int,trade:Trade) -> StrategyResult:
         if relation.strategy in self.strategies:
-            self._PDArrayHandler.updatePDArrays(candles, timeFrame, relation)
-            pd: list = self._PDArrayHandler.returnPDArrays(relation)
-            level: list = self._LevelHandler.returnLevels(relation)
-            structure: list = self._StructureHandler.returnStructure(relation)
-
-            tradeFound,trade = self.strategies[relation.strategy].getExit(candles,timeFrame,pd,level,structure,trade)
-
-            if tradeFound:
-                return trade
-            if not tradeFound:
-                return None
+            return self.strategies[relation].getExit(candles,timeFrame,trade)

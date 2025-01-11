@@ -2,6 +2,9 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from app.api.POSTParams import POSTParams
+from app.models.trade.enums.CategoryEnum import CategoryEnum
+from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
+from app.models.trade.enums.TPSLModeEnum import TPSLModeEnum
 
 
 # post /v5/order/amend
@@ -31,13 +34,24 @@ class AmendOrder(POSTParams):
 
     def validate(self) -> bool:
         """Validate required parameters."""
-        if  self.category and self.symbol and (self.orderId or self.orderLinkId) and self.validateOrderlv():
+        if  (self.category and self.symbol and (self.orderId or self.orderLinkId) and self._validateOrderlv() and
+                self._validateTPSL()):
             return True
         return False
 
-    def validateOrderlv(self) -> bool:
+    def _validateOrderlv(self) -> bool:
         if self.orderlv:
             if self.category == "option":
+                return True
+            return False
+        return True
+    def _validateTPSL(self) -> bool:
+        if self.takeProfit:
+            if self.tpTriggerBy:
+                return True
+            return False
+        if self.stopLoss:
+            if self.slTriggerBy:
                 return True
             return False
         return True

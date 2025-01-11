@@ -6,7 +6,7 @@ from watchdog.observers import Observer
 
 from app.controller.SignalController import SignalController
 from tools.FileHandler import FileHandler
-from app.manager.ConfigManager import ConfigManager
+from app.manager.initializer.ConfigManager import ConfigManager
 
 configManager = ConfigManager()
 

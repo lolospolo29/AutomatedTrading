@@ -1,0 +1,47 @@
+from app.models.calculators.frameworks.FrameWork import FrameWork
+
+
+class PDArray(FrameWork):
+    def __init__(self, name: str, direction: str):
+        super().__init__("PDArray")
+        self.name: str = name
+        self.direction: str = direction
+        self.candles = []
+        self.status = ""
+
+    def addCandles(self, candles) -> None:
+        # Efficiently add multiple candles
+        self.candles.extend(candles)
+
+    def addStatus(self, status) -> None:
+        self.status = status
+
+    def isIdPresent(self, ids_: list) -> bool:
+        """
+        Überprüft, ob alle IDs in `self` in der Liste `ids_` enthalten sind.
+
+        :param ids_: Liste von IDs, in der gesucht werden soll
+        :return: True, wenn alle IDs von `self` in `ids_` enthalten sind, sonst False
+        """
+        candlesIds = [candle.id for candle in self.candles]
+        return all(id_ in ids_ for id_ in candlesIds)
+
+    def toDict(self) -> dict:
+        """
+        Converts the object to a dictionary representation.
+
+        :return: A dictionary where the class name is the key and attributes that are not None are the value.
+        """
+        attributes = {
+            "typ" : self.typ,
+            "timeFrame" : self.timeFrame,
+            "name": self.name,
+            "direction": self.direction,
+            "candles": [candle.toDict() for candle in self.candles],
+            "status": self.status if self.status else None,
+        }
+
+        # Filter out attributes with None values
+        filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
+
+        return {self.__class__.__name__: filtered_attributes}

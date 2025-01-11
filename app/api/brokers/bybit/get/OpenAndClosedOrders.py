@@ -61,8 +61,6 @@ class OpenAndClosedOrders(GETParams):
             print(f"Validation Error: Unknown category '{self.category}'.")
             return False
 
-        # Additional validation rules can be added here as needed
-
         # If all checks pass
         return True
 
