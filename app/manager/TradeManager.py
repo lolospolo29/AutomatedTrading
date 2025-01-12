@@ -1,6 +1,6 @@
 import threading
-import uuid
 
+from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.db.mongodb.mongoDBTrades import mongoDBTrades
 from app.api.brokers.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
@@ -122,13 +122,11 @@ class TradeManager:
                     pool = ThreadPool(processes=len(trade.orders))
                     threads = []
                     for order in trade.orders:
-                        t = threading.Thread(target=self.placeOrder, args=(order,), daemon=True)
+                        t = threading.Thread(target=self.placeOrder, args=(trade.relation.broker,order,assetClass), daemon=True)
                         threads.append(t)
 
                     for thread in threads:
-                        orderResult = thread.get()# get the return value from your function.
-                        if isinstance(orderResult, Exception):
-                            print("Order Failed with Trade-ID"+trade.id)
+                        thread.start()
 
     def updateTrade(self,broker:str,Trade) -> None:
         pass
@@ -139,7 +137,7 @@ class TradeManager:
         with orderLock:
             requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
-            newOrder = self._BrokerFacade.placeOrder(requestParameters)
+            newOrder:BrokerOrder = self._BrokerFacade.placeOrder(requestParameters)
             order = self._ClassMapper.update_class_with_dataclass(order,newOrder)
         return order
 
@@ -148,7 +146,7 @@ class TradeManager:
         with orderLock:
             requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
-            newOrder = self._BrokerFacade.amendOrder(requestParameters)
+            newOrder:BrokerOrder = self._BrokerFacade.amendOrder(requestParameters)
         return order
 
     def cancelOrder(self,broker:str,order:Order)->Order:
@@ -156,7 +154,7 @@ class TradeManager:
         with orderLock:
             requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
-            newOrder = self._BrokerFacade.amendOrder(requestParameters)
+            newOrder:BrokerOrder = self._BrokerFacade.amendOrder(requestParameters)
         return order
 
     def returnOpenAndClosedOrders(self,requestParameters:RequestParameters) -> list[Order]:
@@ -172,7 +170,6 @@ class TradeManager:
     # endregion
 
     # region Risk Management
-    # todo auslagern nach order builder
     def _calculateQtyMarket(self, assetClass:str, order:Order)->float:
         moneyatrisk = self._RiskManager.calculate_money_at_risk()
         order.moneyAtRisk = moneyatrisk
@@ -210,50 +207,52 @@ class TradeManager:
         return [x for x in self.openTrades.values() if x.relation.compare(assetBrokerStrategyRelation)]
     # endregion
 
-tm = TradeManager()
-order = Order()
-order.orderLinkId = str(uuid.uuid4())
-order.category = "linear"
-order.symbol = "BTCUSDT"
-order.price = str(94000)
-order.stopLoss = str(91000)
-order.riskPercentage = 0.4
-order.side = OrderDirection.BUY.value
-order.orderType = OrderTypeEnum.MARKET.value
+# todo order builder for every broker
 
-relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",1)
-
-order2 = Order()
-order2.orderLinkId = str(uuid.uuid4())
-order2.category = "linear"
-order2.symbol = "BTCUSDT"
-order2.price = str(94000)
-order2.stopLoss = str(91000)
-order2.takeProfit = str(111000)
-order2.riskPercentage = 0.25
-
-order2.side = OrderDirection.BUY.value
-order2.orderType = OrderTypeEnum.MARKET.value
-
-order3 = Order()
-order3.orderLinkId = str(uuid.uuid4())
-order3.category = "linear"
-order3.symbol = "XRPUSDT"
-order3.price = str(2.41)
-order3.stopLoss = str(2)
-order3.takeProfit = str(3)
-order3.riskPercentage = 0.25
-
-order3.side = OrderDirection.BUY.value
-order3.orderType = OrderTypeEnum.MARKET.value
-
-trade = Trade(relation,[order])
-trade.orders.append(order2)
-trade.orders.append(order3)
-tm.registerTrade(trade)
-tm.placeTrade(trade,"Crypto")
-
-trade = tm.returnAllTrades()
-for trade in trade:
-    for order in trade.orders:
-        print(order)
+# tm = TradeManager()
+# order = Order()
+# order.orderLinkId = str(uuid.uuid4())
+# order.category = "linear"
+# order.symbol = "BTCUSDT"
+# order.price = str(94000)
+# order.stopLoss = str(91000)
+# order.riskPercentage = 0.4
+# order.side = OrderDirection.BUY.value
+# order.orderType = OrderTypeEnum.MARKET.value
+#
+# relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",1)
+#
+# order2 = Order()
+# order2.orderLinkId = str(uuid.uuid4())
+# order2.category = "linear"
+# order2.symbol = "BTCUSDT"
+# order2.price = str(94000)
+# order2.stopLoss = str(91000)
+# order2.takeProfit = str(111000)
+# order2.riskPercentage = 0.25
+#
+# order2.side = OrderDirection.BUY.value
+# order2.orderType = OrderTypeEnum.MARKET.value
+#
+# order3 = Order()
+# order3.orderLinkId = str(uuid.uuid4())
+# order3.category = "linear"
+# order3.symbol = "XRPUSDT"
+# order3.price = str(2.41)
+# order3.stopLoss = str(2)
+# order3.takeProfit = str(3)
+# order3.riskPercentage = 0.25
+#
+# order3.side = OrderDirection.BUY.value
+# order3.orderType = OrderTypeEnum.MARKET.value
+#
+# trade = Trade(relation,[order])
+# trade.orders.append(order2)
+# trade.orders.append(order3)
+# tm.registerTrade(trade)
+# tm.placeTrade(trade,"Crypto")
+#
+# trade = tm.returnAllTrades()
+# for trade in trade:
+#     for order in trade.orders:
+#         print(order)

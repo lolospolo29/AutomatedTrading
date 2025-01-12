@@ -1,4 +1,6 @@
 # region Imports
+import time
+
 from app.api.brokers.bybit.Bybit import Bybit
 from app.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
 from app.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
@@ -15,6 +17,7 @@ from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.helper.registry.RateLimitRegistry import RateLimitRegistry
 from app.mappers.ClassMapper import ClassMapper
 from app.api.brokers.RequestParameters import RequestParameters
+from app.monitoring.retryRequest import retry_request
 
 # endregion
 
@@ -28,6 +31,7 @@ class BybitHandler:
         self.isLockActive = False
         self._bybitMapper = ClassMapper()
         self._rateLimitRegistry = RateLimitRegistry(RateLimitEnum)
+
 
     # region get Methods
     @rate_limit_registry.rate_limited
@@ -47,9 +51,12 @@ class BybitHandler:
         method = "get"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        objList = responseJson.get("result").get("list")
+        brokerOrderList:list[BrokerOrder] = []
+        for obj in objList:
+           brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
 
-        return result
+        return brokerOrderList
 
     @rate_limit_registry.rate_limited
     def returnPositionInfo(self,requestParams:RequestParameters) -> list[BrokerPosition]:
@@ -67,9 +74,12 @@ class BybitHandler:
         method = "get"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], BrokerPosition)
+        objList = responseJson.get("result").get("list")
+        brokerPositionList:list[BrokerPosition] = []
+        for obj in objList:
+           brokerPositionList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerPosition))
 
-        return result
+        return brokerPositionList
 
     @rate_limit_registry.rate_limited
     def returnOrderHistory(self,requestParams: RequestParameters) -> list[BrokerOrder]:
@@ -88,9 +98,12 @@ class BybitHandler:
         method = "get"
 
         responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        objList = responseJson.get("result").get("list")
+        brokerOrderList: list[BrokerOrder] = []
+        for obj in objList:
+            brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
 
-        return result
+        return brokerOrderList
 
     # endregion
 
@@ -176,6 +189,7 @@ class BybitHandler:
 
     @rate_limit_registry.rate_limited
     def setLeverage(self,requestParams:RequestParameters) -> bool:
+        time.sleep(5)
         setLeverage: SetLeverage = (self._bybitMapper.map_args_to_dataclass
                                     (SetLeverage,requestParams,RequestParameters))
 
@@ -188,23 +202,22 @@ class BybitHandler:
         endPoint = EndPointEnum.SETLEVERAGE.value
         method = "post"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-
-        if responseJson.get("retMsg") == "OK":
-            return True
-
-        return False
+        def request_function():
+            """Encapsulated API request logic for retry utility."""
+            responseJson = self.__broker.sendRequest(endPoint, method, params)
+            if not responseJson.get("retMsg") == "OK":
+                raise ValueError(responseJson.get("retMsg"))
+        # Use retry utility to handle retries
+        return retry_request(request_function)
 
     # endregion
 
-    # todo Logic for Handling Failed Requests and Logging
     # todo adjust order to split tp and stop order testing
+    # todo cursor next
 
 bh = BybitHandler()
 request = RequestParameters()
 request.category = "linear"
 request.symbol = "XRPUSDT"
-res = bh.returnOpenAndClosedOrder(request)
-request.takeProfit =  "4"
-# bh.amendOrder(request)
-# print(res)
+bh.returnOrderHistory(request)
+

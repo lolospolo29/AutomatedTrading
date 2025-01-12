@@ -6,5 +6,5 @@ from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 @dataclass
 class NewsDay:
-    dayIso: datetime
+    dayIso: str
     newsEvents : list[NewsEvent]

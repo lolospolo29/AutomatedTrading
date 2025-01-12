@@ -1,6 +1,7 @@
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
+import pytz
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -11,6 +12,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
+local_tz = pytz.timezone('America/New_York')
 
 class EconomicScrapper:
     def __init__(self):
@@ -92,7 +94,6 @@ class EconomicScrapper:
             # Find the button with the specific ID and click it
             button = self.__driver.find_element(By.ID, "ctl00_ContentPlaceHolder1_ctl02_Button1")  # Replace 'your-button-id' with the actual button ID
             button.click()
-            print("Button clicked successfully!")
 
             WebDriverWait(self.__driver, 10)
 
@@ -100,10 +101,19 @@ class EconomicScrapper:
                                                  "/html/body/form/div[3]/div/div/table/tbody/tr/td[1]/div/div[2]/ul/li[2]/a/input")
             if not checkbox_input.is_selected():  # If it's not selected, click to select it
                 checkbox_input.click()
-                print("Checkbox selected!")
 
+            button = self.__driver.find_element(By.ID, "DropDownListTimezone")  # Replace 'your-button-id' with the actual button ID
+            button.click()
+            WebDriverWait(self.__driver, 3)
+
+            checkbox_input = self.__driver.find_element(By.XPATH,
+                                                 "/html/body/form/div[3]/div/div/table/tbody/tr/td[1]/div/div[4]/div/select/option[8]")
+            if not checkbox_input.is_selected():  # If it's not selected, click to select it
+                checkbox_input.click()
+            WebDriverWait(self.__driver, 3)
 
             event_elements = self.__driver.find_elements(By.CSS_SELECTOR, "tr")
+
 
             currentNewsDay:NewsDay = None
             # Process each event and check for timestamp
@@ -129,14 +139,33 @@ class EconomicScrapper:
                     currentNewsDay.newsEvents.append(news_event)
             try:
                 for newsDay in newsDays:
-                    print()
-                    print(f"Appended NewsEvent {newsDay.dayIso}")
-                    for newsEvent in newsDay.newsEvents:
-                        print(f"Appended NewsEvent {newsEvent.title}")
-                    print()
-            except:
-                print(newsDays)
 
+                    # Convert newsDay.dayIso to a datetime object (without time)
+                    day_date = datetime.fromisoformat(newsDay.dayIso).date()
+
+                    for newsEvent in newsDay.newsEvents:
+                        # Ensure newsEvent.time is a string and convert to a time object
+                        if isinstance(newsEvent.time, str):
+                            time_obj = datetime.strptime(newsEvent.time, "%H:%M:%S").time()
+                        elif isinstance(newsEvent.time, datetime):
+                            time_obj = newsEvent.time.time()
+
+                        # Adjust for AM/PM
+                        if newsEvent.daytime == "PM":
+                            # If PM, add 12 hours to the time (except for 12 PM which is already correct)
+                            if time_obj.hour != 12:
+                                time_obj = time_obj.replace(hour=time_obj.hour + 12)
+
+                        # Combine the date from newsDay and time from newsEvent
+                        combined_datetime = datetime.combine(day_date, time_obj)
+
+                        combined_datetime_with_tz = local_tz.localize(combined_datetime)
+
+                        # Now, combined_datetime_with_tz is in UTC+1
+                        newsEvent.time = combined_datetime_with_tz
+
+            except Exception as e:
+                print(e)
         finally:
             # Close the WebDriver
             self.__driver.quit()

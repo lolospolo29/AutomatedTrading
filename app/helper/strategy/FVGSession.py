@@ -12,7 +12,8 @@ from app.models.calculators.frameworks.time.NYOpen import NYOpen
 
 
 class FVGSession(Strategy):
-    def __init__(self, name: str):
+    def __init__(self):
+        name:str = "FVG"
         super().__init__(name,False)
 
         self._PDMediator = PDMediator()

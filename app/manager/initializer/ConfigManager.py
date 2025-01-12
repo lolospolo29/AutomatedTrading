@@ -77,7 +77,9 @@ class ConfigManager:
 
     def _InitializeManagers(self):
         for strategy in self._strategies:
-            self._StrategyManager.registerStrategy(strategy)
+            for relation in self._relations:
+                if relation.strategy == strategy:
+                    self._StrategyManager.registerStrategy(relation,strategy)
         for asset in self._assets:
             for relation in self._relations:
                 if relation.asset == asset.name:
@@ -120,9 +122,7 @@ class ConfigManager:
 
             strategyDict = doc.get(typ)
             name = strategyDict.get("name")
-            entry = strategyDict.get("entry")
-            exit = strategyDict.get("exit")
-            strategy: Strategy = self._StrategyFactory.returnClass(name,entry,exit)
+            strategy: Strategy = self._StrategyFactory.returnClass(name)
             self._strategies.append(strategy)
 
     def _isTypRelationAddRelation(self, typ: str, doc: dict) -> None:

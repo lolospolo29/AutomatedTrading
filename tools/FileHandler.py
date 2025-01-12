@@ -44,10 +44,9 @@ class FileHandler(FileSystemEventHandler):
 
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
                 print(f"New file detected: {event.src_path}")
-                self._StrategyManager.setLockWithTimeout()
                 candlesCSV = self._parseCandleData(event.src_path)
-                for candle in candlesCSV:
-                    candle: Candle = self._AssetManager.addCandle(candle)
+                for candleDict in candlesCSV:
+                    candle: Candle = self._AssetManager.addCandle(candleDict)
                     self._testingStrategy(candle.asset, candle.broker, candle.timeFrame)
 
                 self._moveToArchive(event.src_path)

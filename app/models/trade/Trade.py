@@ -7,7 +7,14 @@ class Trade:
     def __init__(self, relation: AssetBrokerStrategyRelation, orders: list[Order]):
         self.orders : list[Order] = orders
         self.relation: AssetBrokerStrategyRelation = relation
+        self.side = ""
+        self.tpslMode = ""
+        self.unrealisedPnl = 0
+        self.leverage = 0
+        self.size = 0
+        self.tradeMode = 0
         self.id = uuid.uuid4()
+    # todo mapper ad attributes
 
 
     def toDict(self):

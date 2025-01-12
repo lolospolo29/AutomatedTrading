@@ -15,7 +15,8 @@ from app.helper.calculator.RiskCalculator import RiskCalculator
 # Unicorn Entry with 4H PD Range Bias
 
 class Unicorn(Strategy):
-    def __init__(self, name: str):
+    def __init__(self):
+        name:str = "Unicorn"
         super().__init__(name,False)
 
         self._PDMediator = PDMediator()

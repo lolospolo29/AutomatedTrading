@@ -7,6 +7,7 @@ from app.monitoring.TimeWrapper import logTime
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
+from app.services.NewsService import NewsService
 
 
 class TradingService:
@@ -32,6 +33,7 @@ class TradingService:
             self._AssetManager: AssetManager = AssetManager()
             self._TradeManager: TradeManager = TradeManager()
             self._StrategyManager: StrategyManager = StrategyManager()
+        #    self._NewsService :NewsService = NewsService()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion

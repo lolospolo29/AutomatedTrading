@@ -144,6 +144,3 @@ class RiskCalculator:
     def returnFibonnaciTrailing(self,currentPrice: float, stop: float, entry: float) -> float:
         return self._trailingStop.returnFibonnaciTrailing(currentPrice, stop, entry)
     # endregion
-
-    # todo Implement Profit Stop Analyzer
-

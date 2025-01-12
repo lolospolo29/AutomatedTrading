@@ -34,8 +34,11 @@ class AssetManager:
     # region CRUD
 
     def addCandleToDB(self, candle: Candle):
-        self._mongoDBData.addCandleToDB(candle.asset,candle)
+        if candle.timeFrame >= 5:
+            self._mongoDBData.addCandleToDB(candle.asset,candle)
 
+    def receivedCandles(self, asset: str) -> Candle:
+        pass
     # endregion
 
     # region Register And Return Assets

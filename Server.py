@@ -7,6 +7,7 @@ from threading import Thread
 from flask import Flask, request, Response, render_template
 
 from app.ClassInstances import signalController
+from app.monitoring.logging.CSVFileHandler import CSVFileHandler
 
 app = Flask(__name__)
 
@@ -28,6 +29,7 @@ class StreamToLogger(TextIOWrapper):
         self.logger = logger
         self.level = level
 
+
     def write(self, message):
         if message.strip():  # Avoid blank lines
             self.logger.log(self.level, message)
@@ -44,9 +46,18 @@ queue_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(me
 logger.addHandler(queue_handler)
 
 # Redirect stdout and stderr to log via the StreamToLogger wrapper
+# Add CSVFileHandler to write logs to a CSV file
+csv_handler = CSVFileHandler('logs.csv')
+csv_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logger.addHandler(csv_handler)
+
+# Redirect stdout and stderr to log via the StreamToLogger wrapper
 sys.stdout = StreamToLogger(logger, logging.INFO)
 sys.stderr = StreamToLogger(logger, logging.ERROR)
 
+# Example usage
+logger.info("This is an info message")
+logger.error("This is an error message")
 
 @app.route('/tradingview', methods=['post'])
 def receive_signal():
