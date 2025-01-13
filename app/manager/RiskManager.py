@@ -20,6 +20,8 @@ class RiskManager:
             self.currentDrawdown: float = 0.0  # Aktueller Drawdown
             self.maxRiskPercentage: float = maxRiskPercentage
             self.accountBalance = 1000
+            # todo get wallet balance from broker
+            # todo get tickersize
             self._initialized = True  # Markiere als initialisiert
 
 

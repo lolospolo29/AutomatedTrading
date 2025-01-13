@@ -34,7 +34,7 @@ class FVGSession(Strategy):
         self.expectedTimeFrames.append(timeFrame2)
         self.expectedTimeFrames.append(timeFrame3)
         self.expectedTimeFrames.append(timeFrame4)
-
+    # todo add handlers
 
     def isInTime(self,time) -> bool:
         if self._TimeWindow.IsInEntryWindow(time) or self._TimeWindow2.IsInEntryWindow(time):

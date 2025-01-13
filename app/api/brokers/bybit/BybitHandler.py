@@ -17,6 +17,7 @@ from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.helper.registry.RateLimitRegistry import RateLimitRegistry
 from app.mappers.ClassMapper import ClassMapper
 from app.api.brokers.RequestParameters import RequestParameters
+from app.models.trade.enums.TriggerByEnum import TriggerByEnum
 from app.monitoring.retryRequest import retry_request
 
 # endregion
@@ -45,16 +46,29 @@ class BybitHandler:
         if not openAndClosedOrders.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = openAndClosedOrders.toQueryString()
 
         endPoint = EndPointEnum.OPENANDCLOSED.value
         method = "get"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        objList = responseJson.get("result").get("list")
-        brokerOrderList:list[BrokerOrder] = []
-        for obj in objList:
-           brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+        brokerOrderList: list[BrokerOrder] = []
+        previousCursor:str = ""
+
+        while True:
+
+            params = openAndClosedOrders.toQueryString()
+            responseJson = self.__broker.sendRequest(endPoint, method, params)
+
+            objList = responseJson.get("result").get("list")
+            nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
+
+            for obj in objList:
+               brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+
+            if nextPageCursor == previousCursor or nextPageCursor == "":
+                break
+
+            previousCursor = nextPageCursor
+            openAndClosedOrders.cursor = nextPageCursor
 
         return brokerOrderList
 
@@ -68,16 +82,30 @@ class BybitHandler:
         if not positionInfo.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = positionInfo.toQueryString()
 
         endPoint = EndPointEnum.POSITIONINFO.value
         method = "get"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        objList = responseJson.get("result").get("list")
-        brokerPositionList:list[BrokerPosition] = []
-        for obj in objList:
-           brokerPositionList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerPosition))
+        brokerPositionList: list[BrokerPosition] = []
+        previousCursor:str = ""
+
+        while True:
+
+            params = positionInfo.toQueryString()
+            responseJson = self.__broker.sendRequest(endPoint, method, params)
+
+            objList = responseJson.get("result").get("list")
+            nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
+
+            for obj in objList:
+               brokerPositionList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerPosition))
+
+            if nextPageCursor == previousCursor or nextPageCursor == "":
+                break
+
+            previousCursor = nextPageCursor
+            positionInfo.cursor = nextPageCursor
+
 
         return brokerPositionList
 
@@ -92,16 +120,28 @@ class BybitHandler:
         if not orderHistory.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = orderHistory.toQueryString()
-
         endPoint = EndPointEnum.HISTORY.value
         method = "get"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        objList = responseJson.get("result").get("list")
         brokerOrderList: list[BrokerOrder] = []
-        for obj in objList:
-            brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+        previousCursor:str = ""
+
+        while True:
+
+            params = orderHistory.toQueryString()
+            responseJson = self.__broker.sendRequest(endPoint, method, params)
+
+            objList = responseJson.get("result").get("list")
+            nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
+
+            for obj in objList:
+                brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+
+            if nextPageCursor == previousCursor or nextPageCursor == "":
+                break
+
+            previousCursor = nextPageCursor
+            orderHistory.cursor = nextPageCursor
 
         return brokerOrderList
 
@@ -211,13 +251,20 @@ class BybitHandler:
         return retry_request(request_function)
 
     # endregion
-
+    # todo request builder
     # todo adjust order to split tp and stop order testing
-    # todo cursor next
 
 bh = BybitHandler()
 request = RequestParameters()
 request.category = "linear"
-request.symbol = "XRPUSDT"
-bh.returnOrderHistory(request)
+request.symbol = "BTCUSDT"
+request.orderLinkId = "43131313"
+request.side = "Sell"
+request.qty = str(0.002)
+request.orderType = "Limit"
+request.triggerPrice = "96000"
+request.price = "96000"
+request.tpTriggerBy = TriggerByEnum.LASTPRICE.value
+request.triggerDirection = 1
+bh.placeOrder(request)
 

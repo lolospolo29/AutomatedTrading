@@ -1,7 +1,7 @@
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
 
-
+# todo implement assetticksize
 class equalHL:  ### Implement threshold for every asset every Timeframe
     def __init__(self, threshold_index=2, threshold_stocks=2, mintick=0.0001):
         """Initialize with a tolerance to consider lows/highs as equal and thresholds."""

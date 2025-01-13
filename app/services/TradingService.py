@@ -34,6 +34,7 @@ class TradingService:
             self._TradeManager: TradeManager = TradeManager()
             self._StrategyManager: StrategyManager = StrategyManager()
         #    self._NewsService :NewsService = NewsService()
+            # todo economic integration
             self._initialized = True  # Markiere als initialisiert
 
     # endregion

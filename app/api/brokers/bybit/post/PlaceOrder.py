@@ -48,47 +48,7 @@ class PlaceOrder(POSTParams):
         if not (self.symbol and self.side and self.orderType and self.qty):
             print("Validation Error: 'symbol', 'side', 'orderType', and 'qty' are required.")
             return False
-
-        # Validate `category` if batchOrder is False
-        if not self.category:
-            print("Validation Error: 'category' is required")
+        if not (self.triggerDirection and self.triggerPrice and self.price):
             return False
-
-        # Validate `orderType`
-        valid_order_types = {"Limit", "Market", "Stop", "StopLimit", "LimitIfTouched", "MarketIfTouched"}
-        if self.orderType not in valid_order_types:
-            print(f"Validation Error: Invalid 'orderType'. Must be one of {valid_order_types}.")
-            return False
-
-        # Validate `timeInForce` for Limit orders
-        if self.orderType == "Limit" and not self.timeInForce:
-            print("Validation Error: 'timeInForce' is required for 'Limit' orders.")
-            return False
-
-        # Validate trigger-related fields for conditional orders
-        if self.orderType in {"Stop", "StopLimit", "LimitIfTouched", "MarketIfTouched"}:
-            if not self.triggerPrice:
-                print("Validation Error: 'triggerPrice' is required for conditional orders.")
-                return False
-            if self.triggerDirection not in {1, 2}:
-                print("Validation Error: 'triggerDirection' must be 1 (up) or 2 (down) for conditional orders.")
-                return False
-
-        # Validate `takeProfit` and `stopLoss`
-        if self.takeProfit and not self.tpTriggerBy:
-            print("Validation Error: 'tpTriggerBy' is required if 'takeProfit' is provided.")
-            return False
-        if self.stopLoss and not self.slTriggerBy:
-            print("Validation Error: 'slTriggerBy' is required if 'stopLoss' is provided.")
-            return False
-
-        # Validate `reduceOnly` and `closeOnTrigger`
-        if self.reduceOnly and self.closeOnTrigger:
-            print("Validation Error: 'reduceOnly' and 'closeOnTrigger' cannot both be True.")
-            return False
-
-        # Additional validation can be added here as needed
-
-        # If all checks pass
         return True
 

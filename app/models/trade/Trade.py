@@ -15,6 +15,7 @@ class Trade:
         self.tradeMode = 0
         self.id = uuid.uuid4()
     # todo mapper ad attributes
+    # todo file trade logging
 
 
     def toDict(self):
