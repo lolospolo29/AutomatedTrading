@@ -15,16 +15,16 @@ from app.api.brokers.bybit.post.SetLeverage import SetLeverage
 from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.helper.registry.RateLimitRegistry import RateLimitRegistry
+from app.interfaces.IBrokerHandler import IBrokerHandler
 from app.mappers.ClassMapper import ClassMapper
-from app.api.brokers.RequestParameters import RequestParameters
-from app.models.trade.enums.TriggerByEnum import TriggerByEnum
+from app.api.brokers.models.RequestParameters import RequestParameters
 from app.monitoring.retryRequest import retry_request
 
 # endregion
 
 rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
-class BybitHandler:
+class BybitHandler(IBrokerHandler):
 
     def __init__(self):
         self.name = "BYBIT"
@@ -177,16 +177,21 @@ class BybitHandler:
         if not cancelOrders.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = cancelOrders.toDict()
-
         endPoint = EndPointEnum.CANCELALL.value
         method = "post"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result:BrokerOrder = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        params = cancelOrders.toDict()
 
-        return result.list
-    # todo
+        brokerOrderList: list[BrokerOrder] = []
+
+        responseJson = self.__broker.sendRequest(endPoint, method, params)
+
+        objList = responseJson.get("result").get("list")
+
+        for obj in objList:
+            brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+
+        return brokerOrderList
 
     @rate_limit_registry.rate_limited
     def cancelOrder(self,requestParams:RequestParameters) -> BrokerOrder:
@@ -251,20 +256,16 @@ class BybitHandler:
         return retry_request(request_function)
 
     # endregion
-    # todo request builder
-    # todo adjust order to split tp and stop order testing
 
-bh = BybitHandler()
-request = RequestParameters()
-request.category = "linear"
-request.symbol = "BTCUSDT"
-request.orderLinkId = "43131313"
-request.side = "Sell"
-request.qty = str(0.002)
-request.orderType = "Limit"
-request.triggerPrice = "96000"
-request.price = "96000"
-request.tpTriggerBy = TriggerByEnum.LASTPRICE.value
-request.triggerDirection = 1
-bh.placeOrder(request)
+# bh = BybitHandler()
+# request = RequestParameters()
+# request.category = "linear"
+# request.symbol = "XRPUSDT"
+# request.orderLinkId = "6"
+# request.side = "Buy"
+# request.qty = str(6)
+# request.orderType = "Limit"
+# request.triggerPrice = "1.9"
+# request.price = "1.9"
+# bh.cancelAllOrders(request)
 

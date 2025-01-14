@@ -12,7 +12,7 @@ from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.trade.Order import Order
 from app.models.trade.enums.OrderDirectionEnum import OrderDirection
 from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
-from app.api.brokers.RequestParameters import RequestParameters
+from app.api.brokers.models.RequestParameters import RequestParameters
 from app.models.trade.Trade import Trade
 
 

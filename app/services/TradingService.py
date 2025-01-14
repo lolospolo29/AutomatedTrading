@@ -33,8 +33,7 @@ class TradingService:
             self._AssetManager: AssetManager = AssetManager()
             self._TradeManager: TradeManager = TradeManager()
             self._StrategyManager: StrategyManager = StrategyManager()
-        #    self._NewsService :NewsService = NewsService()
-            # todo economic integration
+            self._NewsService :NewsService = NewsService()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
@@ -45,7 +44,8 @@ class TradingService:
         candle: Candle = self._AssetManager.addCandle(jsonData)
         candles : list[Candle] = self._AssetManager.returnCandles(candle.asset,candle.broker,candle.timeFrame)
         relations: list[AssetBrokerStrategyRelation] = self._AssetManager.returnRelations(candle.asset, candle.broker)
-        self.analyzeStrategy(candle.asset,candle.broker,candle.timeFrame, candles,relations)
+        if not self._NewsService.isNewsAhead():
+            self.analyzeStrategy(candle.asset,candle.broker,candle.timeFrame, candles,relations)
 
 
     @logTime

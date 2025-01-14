@@ -48,7 +48,4 @@ class PlaceOrder(POSTParams):
         if not (self.symbol and self.side and self.orderType and self.qty):
             print("Validation Error: 'symbol', 'side', 'orderType', and 'qty' are required.")
             return False
-        if not (self.triggerDirection and self.triggerPrice and self.price):
-            return False
         return True
-

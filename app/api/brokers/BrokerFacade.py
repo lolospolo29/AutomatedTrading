@@ -1,10 +1,15 @@
 from app.api.brokers.bybit.BybitHandler import BybitHandler
-from app.api.brokers.RequestParameters import RequestParameters
+from app.api.brokers.models.RequestParameters import RequestParameters
+from app.interfaces.IBrokerHandler import IBrokerHandler
 
 
 class BrokerFacade:
     def __init__(self):
+        self._registry:dict[str,IBrokerHandler]= {}
         self._bybitHandler = BybitHandler()
+
+    def registerHandler(self, broker:str,handler):
+        self._registry[broker] = handler
 
     def placeOrder(self, requestParameter:RequestParameters):
         if requestParameter.broker == self._bybitHandler.name:
