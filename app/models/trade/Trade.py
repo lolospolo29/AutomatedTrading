@@ -14,7 +14,6 @@ class Trade:
         self.size = 0
         self.tradeMode = 0
         self.id = uuid.uuid4()
-    # todo mapper ad attributes
     # todo file trade logging
 
 
@@ -26,6 +25,10 @@ class Trade:
                 "orders": [order.orderLinkId for order in self.orders],
                 "asset": self.relation.asset ,
                 "broker": self.relation.broker ,
-                "strategy": self.relation.strategy,
+                "side": self.side,
+                "unrealisedPnl": self.unrealisedPnl,
+                "leverage": self.leverage,
+                "size": self.size,
+                "tradeMode": self.tradeMode,
             }
         }

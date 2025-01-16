@@ -14,14 +14,24 @@ class TradeMapper:
     @staticmethod
     def mapTradeFromDB(trade:dict) -> Trade:
         trade = trade.get('Trade')
-        id = trade.get("id")
+        orders = trade.get("orders")
         asset = trade.get("asset")
         broker = trade.get("broker")
         strategy = trade.get("strategy")
-        orders = trade.get("orders")
+        side = trade.get("side")
+        unrealisedPnl = trade.get("unrealisedPnl")
+        leverage = trade.get("leverage")
+        size = trade.get("size")
+        tradeMode = trade.get("tradeMode")
+        id = trade.get("id")
         relation = AssetBrokerStrategyRelation(asset=asset,broker=broker,strategy=strategy,maxTrades=1)
 
         mappedTrade = Trade(relation=relation,orders=orders)
+        mappedTrade.side = side
+        mappedTrade.size = size
+        mappedTrade.tradeMode = tradeMode
+        mappedTrade.unrealisedPnl = unrealisedPnl
+        mappedTrade.leverage = leverage
         mappedTrade.id = id
         return mappedTrade
 

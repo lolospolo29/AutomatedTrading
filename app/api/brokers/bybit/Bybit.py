@@ -12,9 +12,9 @@ class Bybit:
     def __init__(self,name: str):
         self.name = name
         self._SecretManager: SecretsManager = SecretsManager()
-        self.apiKey: str = self._SecretManager.returnSecret("demoBybitAPiKey")
-        self.apiSecret: str = self._SecretManager.returnSecret("demoBybitAPiSecret")
-        self.baseUrl = self._SecretManager.returnSecret("demoBybitUrl")
+        self.apiKey: str = self._SecretManager.returnSecret("BybitKey")
+        self.apiSecret: str = self._SecretManager.returnSecret("BybitSecret")
+        self.baseUrl = self._SecretManager.returnSecret("BybitUrl")
         self.recvWindow = str(5000)
         self.session = requests.Session()
 
@@ -43,3 +43,4 @@ class Bybit:
         signature = hash.hexdigest()
 
         return signature
+bh = Bybit("BTC")

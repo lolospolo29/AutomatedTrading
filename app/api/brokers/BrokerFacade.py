@@ -6,38 +6,36 @@ from app.interfaces.IBrokerHandler import IBrokerHandler
 class BrokerFacade:
     def __init__(self):
         self._registry:dict[str,IBrokerHandler]= {}
-        self._bybitHandler = BybitHandler()
+        bh = BybitHandler()
+        self.registerHandler(bh.name,bh)
 
     def registerHandler(self, broker:str,handler):
         self._registry[broker] = handler
 
     def placeOrder(self, requestParameter:RequestParameters):
-        if requestParameter.broker == self._bybitHandler.name:
-            return self._bybitHandler.placeOrder(requestParameter)
+        if requestParameter.broker.upper() in self._registry:
+            return self._registry[requestParameter.broker].placeOrder(requestParameter)
 
     def amendOrder(self,requestParameter:RequestParameters):
-        if requestParameter.broker == self._bybitHandler.name:
-            return self._bybitHandler.amendOrder(requestParameter)
+        if requestParameter.broker.upper() in self._registry:
+            return self._registry[requestParameter.broker].amendOrder(requestParameter)
 
     def cancelOrder(self,requestParameter:RequestParameters):
-        if requestParameter.broker == self._bybitHandler.name:
-            return self._bybitHandler.cancelOrder(requestParameter)
+        if requestParameter.broker.upper() in self._registry:
+            return self._registry[requestParameter.broker].cancelOrder(requestParameter)
 
     def cancelAllOrders(self,requestParameter:RequestParameters):
-        if requestParameter.broker == self._bybitHandler.name:
-            return self._bybitHandler.cancelAllOrders(requestParameter)
+        if requestParameter.broker.upper() in self._registry:
+            return self._registry[requestParameter.broker].cancelAllOrders(requestParameter)
 
     def returnOpenAndClosedOrders(self, requestParameter:RequestParameters):
-        if requestParameter.broker == self._bybitHandler.name:
-            return self._bybitHandler.returnOpenAndClosedOrder(requestParameter)
+        if requestParameter.broker.upper() in self._registry:
+            return self._registry[requestParameter.broker].returnOpenAndClosedOrder(requestParameter)
 
     def returnPositionInfo(self, requestParameter:RequestParameters):
-        if requestParameter.broker == self._bybitHandler.name:
-            return self._bybitHandler.returnPositionInfo(requestParameter)
+        if requestParameter.broker.upper() in self._registry:
+            return self._registry[requestParameter.broker].returnPositionInfo(requestParameter)
 
     def returnOrderHistory(self, requestParameter:RequestParameters):
-        if requestParameter.broker == self._bybitHandler.name:
-            return self._bybitHandler.returnOrderHistory(requestParameter)
-    # todo broker registry
-    # environement test prod
-    #
+        if requestParameter.broker.upper() in self._registry:
+            return self._registry[requestParameter.broker].returnOrderHistory(requestParameter)

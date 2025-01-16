@@ -1,20 +1,25 @@
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
 
-# todo implement assetticksize
-class equalHL:  ### Implement threshold for every asset every Timeframe
-    def __init__(self, threshold_index=2, threshold_stocks=2, mintick=0.0001):
-        """Initialize with a tolerance to consider lows/highs as equal and thresholds."""
-        self.threshold_index: float = threshold_index
-        self.threshold_stocks: float = threshold_stocks
-        self.mintick: float = mintick
 
-        # Determine the threshold for equalness
-        # if self.mintick >= 0.1:
-        #     self.threshold: float = self.threshold_index * self.mintick
-        # else:
-        #     self.threshold: float = self.threshold_stocks * self.mintick
-        self.threshold = 150
+class equalHL:  ### Implement threshold for every asset every Timeframe
+    def _findMedian(self,values:list[float]):
+        sums = sum(values)
+        return sums/len(values)
+
+
+    def _calculateThreshold(self, prices:list[float]):
+        prevPrice = 0
+        differences = []
+        for price in prices:
+            if prevPrice == 0:
+                prevPrice = price
+            if prevPrice != price:
+                differences.append(abs(price - prevPrice))
+                prevPrice = price
+        if differences:
+            return self._findMedian(differences)
+
 
     def returnLevels(self, candles: list[Candle], detect: str) -> list[Level]:
         equalLevels = []
@@ -58,11 +63,10 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
         equalLows = []
         lows = []
         ids = []
-
         # Collecting high and low values from each data point
         for candle in candles:
             lows.append(candle.low)
-
+        threshold = self._calculateThreshold(lows)
         # Check for equal lows
         for i in range(len(lows)):
             currentLow = lows[i]
@@ -71,7 +75,7 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
 
             # Compare with the remaining lows
             for j in range(i + 1, len(lows)):
-                if abs(lows[j] - currentLow) < self.threshold:
+                if abs(lows[j] - currentLow) < threshold:
                     # Check if any price has gone lower after this potential equal low
                     if not any(low < currentLow for low in lows[j:]) and lows[j] != currentLow:
                         similarLows.append((lows[j]))  # Add the similar low
@@ -107,7 +111,7 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
         # Collecting high and low values from each data point
         for candle in candles:
             highs.append(candle.high)
-
+        treshold = self._calculateThreshold(highs)
         # Check for equal highs
         for i in range(len(highs)):
             currentHigh = highs[i]
@@ -116,7 +120,7 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
 
             # Compare with the remaining highs
             for j in range(i + 1, len(highs)):
-                if abs(highs[j] - currentHigh) < self.threshold:
+                if abs(highs[j] - currentHigh) < treshold:
                     # Check if any price has gone higher after this potential equal high
                     if not any(high > currentHigh for high in highs[j:]) and highs[j] != currentHigh:
                         similarHighs.append((highs[j]))  # Add the similar high
@@ -154,12 +158,15 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
 
         filteredLevels = []
         levels.sort(key=lambda x: x.level)  # Sort by price level
+        levelsValue = [level.level in levels for level in levels]
+
+        threshold = self._calculateThreshold(levelsValue)
 
         currentGroup = [levels[0]]  # Start with the first level
 
         for i in range(1, len(levels)):
             # If the current level is within the threshold range of the previous, group them together
-            if abs(levels[i].level - currentGroup[-1].level) < self.threshold:
+            if abs(levels[i].level - currentGroup[-1].level) < threshold:
                 currentGroup.append(levels[i])
             else:
                 # If a new group starts, filter the current group and add to the result

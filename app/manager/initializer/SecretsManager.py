@@ -1,6 +1,6 @@
 import threading
 from typing import Any
-
+from app.GlobalVariables import ENV
 class SecretsManager:
 
     _instance = None
@@ -30,9 +30,11 @@ class SecretsManager:
         """Lade den Pfad zur Secrets-Datei aus der Konfigurationsdatei."""
         import os
         from configparser import ConfigParser
+        environment_path = "secrets_path"
+        environment_path = environment_path.replace("secrets",ENV).upper()
         config = ConfigParser()
         config.read(self._configFile)
-        secretsPath = config.get('paths', 'secrets_path', fallback='config/secrets.json')
+        secretsPath = config.get('paths', environment_path, fallback='config/secrets.json')
         # print(f"Gelegter secrets_path: {secrets_path}")  # Debug-Ausgabe
         return os.path.join(os.path.dirname(self._configFile), secretsPath)
 
