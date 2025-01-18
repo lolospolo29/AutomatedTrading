@@ -3,5 +3,5 @@ from abc import ABC, abstractmethod
 
 class IConfirmation(ABC):
     @abstractmethod
-    def returnConfirmation(self, data_points):
+    def return_confirmation(self, data_points):
         pass

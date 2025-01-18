@@ -19,7 +19,7 @@ class IDBService(ABC):
         pass
 
     @abstractmethod
-    def deleteByQuery(self):
+    def delete_by_query(self):
         pass
 
     @abstractmethod

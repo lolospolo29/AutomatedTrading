@@ -8,19 +8,19 @@ class Level(FrameWork):
         self.name: str = name
         self.direction: str = ""
         self.level: float = level
-        self.fibLevel: float = 0.0
+        self.fib_level: float = 0.0
         self.candles: list[Candle]= []
 
-    def setFibLevel(self, fibLevel: float, direction: str, candles: list[Candle]):
-        self.fibLevel = fibLevel
+    def set_fib_level(self, fibLevel: float, direction: str, candles: list[Candle]):
+        self.fib_level = fibLevel
         self.direction = direction
-        self.addCandles(candles)
+        self.add_candles(candles)
 
-    def addCandles(self, candles:list[Candle]) -> None:
+    def add_candles(self, candles:list[Candle]) -> None:
         # Efficiently add multiple candles
         self.candles.extend(candles)
 
-    def isIdPresent(self, _ids: list) -> bool:
+    def is_id_present(self, _ids: list) -> bool:
         """
         Überprüft, ob alle IDs in `self. Ids` in der Liste `ids_` enthalten sind.
 
@@ -30,7 +30,7 @@ class Level(FrameWork):
         candlesIds = [candle.id for candle in self.candles]
         return all(id_ in _ids for id_ in candlesIds)
 
-    def toDict(self) -> dict:
+    def to_dict(self) -> dict:
         """
         Converts the object to a dictionary representation.
 
@@ -41,8 +41,8 @@ class Level(FrameWork):
             "name": self.name,
             "direction": self.direction,
             "level": self.level if self.level else None,
-            "candles": [candle.toDict() for candle in self.candles],
-            "fibLevel": self.fibLevel if self.fibLevel else None,
+            "candles": [candle.to_dict() for candle in self.candles],
+            "fib_level": self.fib_level if self.fib_level else None,
         }
 
         # Filter out attributes with None values

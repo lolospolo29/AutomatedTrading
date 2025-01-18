@@ -2,7 +2,7 @@ from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class FVG(IPDArray):
@@ -10,51 +10,51 @@ class FVG(IPDArray):
     def __init__(self):
         self.name = "FVG"
 
-    def returnEntry(self,pdArray: PDArray,orderDirection: OrderDirection,riskMode: RiskMode) -> float:
-        low,high =self.returnCandleRange(pdArray)
-        if orderDirection.BUY:
-            if riskMode.SAFE:
+    def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
+        low,high =self.return_candle_range(pd_array)
+        if order_direction.BUY:
+            if risk_mode.SAFE:
                 return low
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return high
 
-        if orderDirection.SELL:
-            if riskMode.SAFE:
+        if order_direction.SELL:
+            if risk_mode.SAFE:
                 return high
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return low
 
-        if riskMode.MODERAT:
+        if risk_mode.MODERAT:
             low = low
             high = high
             return (low + high) / 2
 
 
-    def returnStop(self,pdArray: PDArray,orderDirection: OrderDirection,riskMode: RiskMode) -> float:
-        highs = [candle.high for candle in pdArray.candles]
-        lows = [candle.low for candle in pdArray.candles]
-        close =  [candle.close for candle in pdArray.candles]
-        open = [candle.open for candle in pdArray.candles]
+    def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
+        highs = [candle.high for candle in pd_array.candles]
+        lows = [candle.low for candle in pd_array.candles]
+        close =  [candle.close for candle in pd_array.candles]
+        open = [candle.open for candle in pd_array.candles]
 
-        if orderDirection.BUY:
-            if riskMode.SAFE:
+        if order_direction.BUY:
+            if risk_mode.SAFE:
                 return min(lows)
-            if riskMode.MODERAT:
+            if risk_mode.MODERAT:
                 return min(open)
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return min(close)
-        if orderDirection.SELL:
-            if riskMode.SAFE:
+        if order_direction.SELL:
+            if risk_mode.SAFE:
                 return max(highs)
-            if riskMode.MODERAT:
+            if risk_mode.MODERAT:
                 return max(open)
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return max(close)
 
-    def checkForInverse(self, pdArray: PDArray, candles: list[Candle]) ->str:
+    def checkForInverse(self, pd_array: PDArray, candles: list[Candle]) ->str:
 
         # Extract the two IDs from the PDArray
-        _ids = [candle.id for candle in pdArray.candles]
+        _ids = [candle.id for candle in pd_array.candles]
 
         # Find the indices of these two IDs in the list of candles
         index1 = next((i for i, c in enumerate(candles) if c.id == _ids[0]), None)
@@ -74,26 +74,26 @@ class FVG(IPDArray):
 
         if len(neighbors) > 0:
             for candle in neighbors:
-                low,high = self.returnCandleRange(pdArray)
-                if pdArray.direction == "Bullish":
+                low,high = self.return_candle_range(pd_array)
+                if pd_array.direction == "Bullish":
                     if candle.close < low:
                         return "Bearish"
-                if pdArray.direction == "Bearish":
+                if pd_array.direction == "Bearish":
                     if candle.close > high:
                         return "Bullish"
-        return pdArray.direction
+        return pd_array.direction
 
-    def returnCandleRange(self, pdArray: PDArray) -> tuple[float,float]:
+    def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
         Returns the gap in the FVG.
 
-        :param pdArray: A PDArray object that contains the IDs of the six candles forming the FVG.
+        :param pd_array: A PDArray object that contains the IDs of the six candles forming the FVG.
         :return: A dictionary containing the gap range {'low': ..., 'high': ...}.
         """
 
         # Extract prices from the candles
-        highs = [candle.high for candle in pdArray.candles]
-        lows = [candle.low for candle in pdArray.candles]
+        highs = [candle.high for candle in pd_array.candles]
+        lows = [candle.low for candle in pd_array.candles]
 
         low = min(highs)
         high = max(lows)
@@ -101,14 +101,14 @@ class FVG(IPDArray):
         # Return the gap range
         return low, high
 
-    def returnArrayList(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
+    def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         # Step 1: Apply lookback to limit the range of candles
         if lookback is not None and len(candles) > lookback:
             candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
         if lookback is not None and len(candles) < lookback:
             return []
 
-        pdArrays = []
+        pd_arrays = []
         opens = [candle.open for candle in candles]
         highs = [candle.high for candle in candles]
         lows = [candle.low for candle in candles]
@@ -128,7 +128,7 @@ class FVG(IPDArray):
                     pdArray.candles.append(candles[i])
                     pdArray.candles.append(candles[i - 1])
                     pdArray.candles.append(candles[i - 2])
-                    pdArrays.append(pdArray)
+                    pd_arrays.append(pdArray)
 
                 # Überprüfung auf Bullish FVG
                 elif high1 < low3 and close2 > high1:
@@ -136,6 +136,6 @@ class FVG(IPDArray):
                     pdArray.candles.append(candles[i])
                     pdArray.candles.append(candles[i - 1])
                     pdArray.candles.append(candles[i - 2])
-                    pdArrays.append(pdArray)
+                    pd_arrays.append(pdArray)
 
-        return pdArrays
+        return pd_arrays

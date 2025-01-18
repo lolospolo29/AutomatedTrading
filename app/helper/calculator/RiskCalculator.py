@@ -14,7 +14,7 @@ from app.models.calculators.exit.invalidation.InvalidationClose import Invalidat
 from app.models.calculators.exit.invalidation.InvalidationSteady import InvalidationSteady
 from app.models.calculators.exit.technicalStop.BreakEven import BreakEven
 from app.models.calculators.exit.technicalStop.TrailingStop import TrailingStop
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class RiskCalculator:
@@ -29,118 +29,103 @@ class RiskCalculator:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prevent re-initialization
-            self._orderWeightage = OrderWeightage()
-            self._baseRatio = BaseRatio()
-            self._fixedRatio = FixedRatio()
-            self._rangeRatio = RangeRatio()
-            self._invalidationClose = InvalidationClose()
-            self._invalidationSteady = InvalidationSteady()
+            self._order_weightage = OrderWeightage()
+            self._base_ratio = BaseRatio()
+            self._fixed_ratio = FixedRatio()
+            self._range_ratio = RangeRatio()
+            self._invalidation_close = InvalidationClose()
+            self._invalidation_steady = InvalidationSteady()
             self._be = BreakEven()
-            self._trailingStop = TrailingStop()
-            self._pdRiskCalculator = PDRiskCalculator()
-            self.profitStopAnalyzer = ProfitStopAnalyzer()
+            self._trailing_stop = TrailingStop()
+            self.pd_risk_calculator = PDRiskCalculator()
+            self.profit_stop_analyzer = ProfitStopAnalyzer()
             self._initialized: bool = True  # Mark as initialized
     # endregion
 
     # region Order Weightage
 
-    def setOrderWeightagePercent(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
-        return self._orderWeightage.setPercentagesBasedOnMode(entries, mode)
+    def set_order_weightage_percent(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
+        return self._order_weightage.set_percentages_based_on_mode(entries, mode)
 
-    # endregion
-
-    # region Calculate Stops PD's
-    def calculatePDStops(self, pdArrays: list[PDArray], orderDirection: OrderDirection) -> list[float]:
-        return self._pdRiskCalculator.calculateAllStops(pdArrays, orderDirection)
-
-    def calculatePDStopsSpecific(self,pdArrays: list[PDArray], orderDirection: OrderDirection,riskMode: RiskMode) -> list[float]:
-        return self._pdRiskCalculator.calculateStopsSpecific(pdArrays, orderDirection, riskMode)
-    # endregion
-
-    # region Calculate Entries PD's
-    def calculatePDEntries(self, pdArrays: list[PDArray], orderDirection: OrderDirection) -> list[float]:
-        return self._pdRiskCalculator.calculateAllEntries(pdArrays, orderDirection)
-    def calculatePDEntriesSpecific(self,pdArrays: list[PDArray], orderDirection: OrderDirection,riskMode: RiskMode) -> list[float]:
-        return self._pdRiskCalculator.calculateEntriesSpecific(pdArrays, orderDirection, riskMode)
     # endregion
 
     # region Single Base Ratio Input
-    def calculateBaseProfit(self,entry:float, stop: float, ratio: float) -> float:
-        return self._baseRatio.calculateProfit(entry, stop, ratio)
+    def calculate_base_profit(self, entry:float, stop: float, ratio: float) -> float:
+        return self._base_ratio.calculate_profit(entry, stop, ratio)
 
-    def calculateBaseStop(self,entry:float, profit: float, ratio: float) -> float:
-        return self._baseRatio.calculateStop(entry, profit, ratio)
+    def calculate_base_stop(self, entry:float, profit: float, ratio: float) -> float:
+        return self._base_ratio.calculate_stop(entry, profit, ratio)
 
-    def calculateBaseEntry(self,stop:float, profit:float, ratio:float) -> float:
-        return self._baseRatio.calculateEntry(stop, profit, ratio)
+    def calculate_base_entry(self, stop:float, profit:float, ratio:float) -> float:
+        return self._base_ratio.calculate_entry(stop, profit, ratio)
     # endregion
 
     # region  Single Fixed Ratio Input
 
-    def calculateFixedProfit(self,entry: float,stop: float,ratio: float,direction: OrderDirection)->Tuple[Any,bool]:
-        return self._fixedRatio.calculateFixedProfit(entry, stop, ratio, direction)
+    def calculate_fixed_profit(self, entry: float, stop: float, ratio: float, direction: OrderDirectionEnum)->Tuple[Any,bool]:
+        return self._fixed_ratio.calculate_fixed_profit(entry, stop, ratio, direction)
 
-    def calculateFixedRatioStop(self,entry: float,profit: float,ratio: float,direction: OrderDirection)->Tuple[Any,bool]:
-        return self._fixedRatio.calculateFixedRatioStop(entry, profit, ratio, direction)
+    def calculate_fixed_ratio_stop(self, entry: float, profit: float, ratio: float, direction: OrderDirectionEnum)->Tuple[Any,bool]:
+        return self._fixed_ratio.calculate_fixed_ratio_stop(entry, profit, ratio, direction)
 
-    def calculateFixedEntry(self, stop: float, profit: float, ratio: float, direction: OrderDirection)->Tuple[Any,bool]:
-        return self._fixedRatio.calculateFixedEntry(stop, profit, ratio, direction)
+    def calculate_fixed_entry(self, stop: float, profit: float, ratio: float, direction: OrderDirectionEnum)->Tuple[Any,bool]:
+        return self._fixed_ratio.calculate_fixed_entry(stop, profit, ratio, direction)
     # endregion
 
     # region List Fixed Ratio Input
-    def calculateProfitsFixed(self, entries: list[float], stops: list[float], ratio: float,
-                         direction: OrderDirection)-> list[ProfitStopEntry]:
-        return self._fixedRatio.calculateProfits(entries, stops, ratio, direction)
+    def calculate_profits_fixed(self, entries: list[float], stops: list[float], ratio: float,
+                                direction: OrderDirectionEnum)-> list[ProfitStopEntry]:
+        return self._fixed_ratio.calculate_profits(entries, stops, ratio, direction)
 
-    def calculateStopsFixed(self, entries: list[float], profits: list[float], ratio: float,
-                       direction: OrderDirection)-> list[ProfitStopEntry]:
-        return self._fixedRatio.calculateStops(entries, profits, ratio, direction)
+    def calculate_stops_fixed(self, entries: list[float], profits: list[float], ratio: float,
+                              direction: OrderDirectionEnum)-> list[ProfitStopEntry]:
+        return self._fixed_ratio.calculate_stops(entries, profits, ratio, direction)
 
-    def calculateEntriesFixed(self, stops: list[float], profits: list[float], ratio: float,
-                         direction: OrderDirection)-> list[ProfitStopEntry]:
-        return self._fixedRatio.calculateEntries(stops, profits, ratio, direction)
-    # endregion
-
-    # region Single Range Ratio Input
-    def calculateRangeProfits(self, entry: float, stop: float, rangeRatio: list[float],
-                              direction: OrderDirection) -> list[ProfitStopEntry]:
-        return self._rangeRatio.calculateRangeProfits(entry, stop, rangeRatio, direction)
-
-    def calculateRangeStops(self, entry: float, profit: float, rangeRatio: list[float]
-                            , direction: OrderDirection) -> list[ProfitStopEntry]:
-        return self._rangeRatio.calculateRangeStops(entry, profit, rangeRatio, direction)
-
-    def calculateRangeEntries(self, stop: float, profit: float, rangeRatio: list[float]
-                              , direction: OrderDirection) -> list[ProfitStopEntry]:
-        return self._rangeRatio.calculateRangeEntries(stop, profit, rangeRatio, direction)
-    # endregion
-
-    # region List Range Ratio Input
-    def calculateProfitsRange(self, entries: list[float], stops: list[float], rangeRatio:
-    list[int], direction: OrderDirection) -> list[ProfitStopEntry]:
-        return self._rangeRatio.calculateProfits(entries, stops, rangeRatio, direction)
-
-    def calculateStopsRange(self, entries: list[float], profits: list[float], rangeRatio:
-    list[int], direction: OrderDirection) -> list[ProfitStopEntry]:
-        return self._rangeRatio.calculateStops(entries, profits, rangeRatio, direction)
-
-    def calculateEntriesRange(self, stops: list[float], profits: list[float], rangeRatio:
-    list[int], direction: OrderDirection) -> list[ProfitStopEntry]:
-        return self._rangeRatio.calculateEntries(stops, profits, rangeRatio, direction)
+    def calculate_entries_fixed(self, stops: list[float], profits: list[float], ratio: float,
+                                direction: OrderDirectionEnum)-> list[ProfitStopEntry]:
+        return self._fixed_ratio.calculate_entries(stops, profits, ratio, direction)
     # endregion
 
     # region Invalidation Exit
-    def checkInvalidationClose(self,stop: float, candle: Candle, direction: OrderDirection) -> bool:
-        return self._invalidationClose.checkInvalidation(stop, candle, direction)
+    def check_invalidation_close(self, stop: float, candle: Candle, direction: OrderDirectionEnum) -> bool:
+        return self._invalidation_close.check_invalidation(stop, candle, direction)
 
-    def checkInvalidation(self,stop: float, candle: Candle, direction: OrderDirection) ->bool:
-        return self._invalidationSteady.checkInvalidation(stop, candle, direction)
+    def check_invalidation(self, stop: float, candle: Candle, direction: OrderDirectionEnum) ->bool:
+        return self._invalidation_steady.check_invalidation(stop, candle, direction)
     # endregion
 
     # region Move Stop Exit
-    def IsPriceInBreakEvenRange(self, currentPrice:float, entry: float, takeProfit: float) -> bool:
+    def is_price_in_break_even_range(self, currentPrice:float, entry: float, takeProfit: float) -> bool:
         return self._be.IsPriceInBreakEvenRange(currentPrice, entry, takeProfit)
 
-    def returnFibonnaciTrailing(self,currentPrice: float, stop: float, entry: float) -> float:
-        return self._trailingStop.returnFibonnaciTrailing(currentPrice, stop, entry)
+    def return_fibonnaci_trailing(self, currentPrice: float, stop: float, entry: float) -> float:
+        return self._trailing_stop.returnFibonnaciTrailing(currentPrice, stop, entry)
+    # endregion
+
+    # region Single Range Ratio Input
+    def calculate_range_profits(self, entry: float, stop: float, rangeRatio: list[float],
+                                direction: OrderDirectionEnum) -> list[ProfitStopEntry]:
+        return self._range_ratio.calculate_range_profits(entry, stop, rangeRatio, direction)
+
+    def calculate_range_stops(self, entry: float, profit: float, rangeRatio: list[float]
+                              , direction: OrderDirectionEnum) -> list[ProfitStopEntry]:
+        return self._range_ratio.calculate_range_stops(entry, profit, rangeRatio, direction)
+
+    def calculate_range_entries(self, stop: float, profit: float, rangeRatio: list[float]
+                                , direction: OrderDirectionEnum) -> list[ProfitStopEntry]:
+        return self._range_ratio.calculate_range_entries(stop, profit, rangeRatio, direction)
+    # endregion
+
+    # region List Range Ratio Input
+    def calculate_profits_range(self, entries: list[float], stops: list[float], rangeRatio:
+    list[int], direction: OrderDirectionEnum) -> list[ProfitStopEntry]:
+        return self._range_ratio.calculate_profits(entries, stops, rangeRatio, direction)
+
+    def calculate_stops_range(self, entries: list[float], profits: list[float], rangeRatio:
+    list[int], direction: OrderDirectionEnum) -> list[ProfitStopEntry]:
+        return self._range_ratio.calculate_stops(entries, profits, rangeRatio, direction)
+
+    def calculate_entries_range(self, stops: list[float], profits: list[float], rangeRatio:
+    list[int], direction: OrderDirectionEnum) -> list[ProfitStopEntry]:
+        return self._range_ratio.calculate_entries(stops, profits, rangeRatio, direction)
     # endregion

@@ -7,10 +7,10 @@ from app.interfaces.framework.ILevel import ILevel
 
 class PD(ILevel):
     def __init__(self):
-        self.pdLevels: list[float] = [1.0, 0.5, 0]
+        self.pd_levels: list[float] = [1.0, 0.5, 0]
         self.name = "PD"
 
-    def returnLevels(self, candles: list[Candle], lookback: int = None) -> list[Level]:
+    def return_levels(self, candles: list[Candle], lookback: int = None) -> list[Level]:
         # Step 1: Apply lookback to limit the range of candles
         if lookback is not None and len(candles) > lookback:
             candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
@@ -18,22 +18,22 @@ class PD(ILevel):
             return []
 
         # Step 1: Extract high and low values from the data points
-        allLevel = []
+        all_level = []
 
         # Step 1: Extract high and low values from the data points
         high = -1
-        highCandle = None
+        high_candle = None
         low = sys.maxsize
-        lowCandle = None
+        low_candle = None
 
         for candle in candles:
             if high  < candle.high:
                 high = candle.high
-                highCandle = candle
+                high_candle = candle
             if low > candle.low:
                 low = candle.low
-                lowCandle = candle
-        candles:list[Candle] = [highCandle, lowCandle]
+                low_candle = candle
+        candles:list[Candle] = [high_candle, low_candle]
 
         # Step 3: Calculate the PD levels
         level0 = low  # 0.0 corresponds to the low value
@@ -41,16 +41,16 @@ class PD(ILevel):
         level05 = (high + low) / 2  # 0.5 is the midpoint between high and low
 
         # Step 4: Create Level objects with names "0.0", "0.5", and "1.0"
-        level0Obj = Level(name=self.name, level=level0)
-        level0Obj.setFibLevel(0.0,"Low",candles=candles)
-        level05Obj = Level(name=self.name, level=level05)
-        level05Obj.setFibLevel(0.5,"Equilibrium",candles=candles)
-        level1Obj = Level(name=self.name, level=level1)
-        level1Obj.setFibLevel(1.0,"High",candles=candles)
+        level0_obj = Level(name=self.name, level=level0)
+        level0_obj.set_fib_level(0.0, "Low", candles=candles)
+        level05_obj = Level(name=self.name, level=level05)
+        level05_obj.set_fib_level(0.5, "Equilibrium", candles=candles)
+        level1_obj = Level(name=self.name, level=level1)
+        level1_obj.set_fib_level(1.0, "High", candles=candles)
 
-        allLevel.append(level0Obj)
-        allLevel.append(level05Obj)
-        allLevel.append(level1Obj)
+        all_level.append(level0_obj)
+        all_level.append(level05_obj)
+        all_level.append(level1_obj)
 
         # Step 5: Return all three Level objects
-        return allLevel
+        return all_level

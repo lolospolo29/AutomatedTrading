@@ -6,41 +6,41 @@ from app.api.brokers.models.BrokerPosition import BrokerPosition
 
 class IBrokerHandler(ABC):
     @abstractmethod
-    def returnOpenAndClosedOrder(self, requestParams: RequestParameters) -> list[BrokerOrder]:
+    def return_open_and_closed_order(self, request_params: RequestParameters) -> list[BrokerOrder]:
         """Retrieve open and closed orders."""
         pass
 
     @abstractmethod
-    def returnPositionInfo(self, requestParams: RequestParameters) -> list[BrokerPosition]:
+    def return_position_info(self, request_params: RequestParameters) -> list[BrokerPosition]:
         """Retrieve position information."""
         pass
 
     @abstractmethod
-    def returnOrderHistory(self, requestParams: RequestParameters) -> list[BrokerOrder]:
+    def return_order_history(self, request_params: RequestParameters) -> list[BrokerOrder]:
         """Retrieve order history."""
         pass
 
     @abstractmethod
-    def amendOrder(self, requestParams: RequestParameters) -> BrokerOrder:
+    def amend_order(self, request_params: RequestParameters) -> BrokerOrder:
         """Amend an existing order."""
         pass
 
     @abstractmethod
-    def cancelAllOrders(self, requestParams: RequestParameters) -> list[BrokerOrder]:
+    def cancel_all_orders(self, request_params: RequestParameters) -> list[BrokerOrder]:
         """Cancel all orders."""
         pass
 
     @abstractmethod
-    def cancelOrder(self, requestParams: RequestParameters) -> BrokerOrder:
+    def cancel_order(self, request_params: RequestParameters) -> BrokerOrder:
         """Cancel a specific order."""
         pass
 
     @abstractmethod
-    def placeOrder(self, requestParams: RequestParameters) -> BrokerOrder:
+    def place_order(self, request_params: RequestParameters) -> BrokerOrder:
         """Place a new order."""
         pass
 
     @abstractmethod
-    def setLeverage(self, requestParams: RequestParameters) -> bool:
+    def set_leverage(self, requestParams: RequestParameters) -> bool:
         """Set leverage for a position."""
         pass

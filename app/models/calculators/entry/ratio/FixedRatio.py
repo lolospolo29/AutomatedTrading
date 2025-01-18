@@ -2,37 +2,37 @@ from typing import Tuple, Any
 
 from app.models.calculators.ProfitStopEntry import ProfitStopEntry
 from app.models.calculators.entry.ratio.BaseRatio import BaseRatio
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class FixedRatio(BaseRatio):
 
     # region Single Fixed Ratio Input
-    def calculateFixedRatioStop(self,entry: float,profit: float,ratio: float,direction: OrderDirection)-> Tuple[Any,bool]:
-        stop = self.calculateStop(entry, profit, ratio)
-        if  self.isConditionFullFilled(profit, stop, entry, direction):
+    def calculate_fixed_ratio_stop(self, entry: float, profit: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
+        stop = self.calculate_stop(entry, profit, ratio)
+        if  self.is_condition_full_filled(profit, stop, entry, direction):
             return ProfitStopEntry(profit, stop,entry),True
         else:
             return None,False
 
-    def calculateFixedProfit(self, entry: float, stop: float, ratio: float, direction: OrderDirection)-> Tuple[Any,bool]:
-        profit = self.calculateProfit(entry, stop, ratio)
-        if self.isConditionFullFilled(profit,stop,entry, direction):
+    def calculate_fixed_profit(self, entry: float, stop: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
+        profit = self.calculate_profit(entry, stop, ratio)
+        if self.is_condition_full_filled(profit, stop, entry, direction):
             return ProfitStopEntry(profit, stop,entry),True
         else:
             return None,False
 
-    def calculateFixedEntry(self, stop: float, profit: float, ratio: float, direction: OrderDirection)-> Tuple[Any,bool]:
-        entry = self.calculateEntry(stop, profit, ratio)
-        if self.isConditionFullFilled(profit, stop, entry, direction):
+    def calculate_fixed_entry(self, stop: float, profit: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
+        entry = self.calculate_entry(stop, profit, ratio)
+        if self.is_condition_full_filled(profit, stop, entry, direction):
             return ProfitStopEntry(profit, stop, entry),True
         else:
             return None,False
     # endregion
 
     # region List Fixed Ratio Input
-    def calculateProfits(self, entries: list[float], stops: list[float], ratio: float,
-                         direction: OrderDirection)-> list[ProfitStopEntry]:
+    def calculate_profits(self, entries: list[float], stops: list[float], ratio: float,
+                          direction: OrderDirectionEnum)-> list[ProfitStopEntry]:
         profitStopEntryList = []
 
         for i in range(len(entries)):
@@ -40,17 +40,17 @@ class FixedRatio(BaseRatio):
                 entry = entries[i]
                 stop = stops[j]
 
-                profit = self.calculateProfit(entry, stop, ratio)
+                profit = self.calculate_profit(entry, stop, ratio)
 
-                if not self.isConditionFullFilled(profit, stop, entry, direction):
+                if not self.is_condition_full_filled(profit, stop, entry, direction):
                     continue
 
                 profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
 
         return profitStopEntryList
 
-    def calculateStops(self, entries: list[float], profits: list[float], ratio: float,
-                       direction: OrderDirection)-> list[ProfitStopEntry]:
+    def calculate_stops(self, entries: list[float], profits: list[float], ratio: float,
+                        direction: OrderDirectionEnum)-> list[ProfitStopEntry]:
 
         profitStopEntryList = []
 
@@ -59,9 +59,9 @@ class FixedRatio(BaseRatio):
                 entry = entries[i]
                 profit = profits[j]
 
-                stop = self.calculateStop(entry, profit, ratio)
+                stop = self.calculate_stop(entry, profit, ratio)
 
-                if not self.isConditionFullFilled(profit, stop, entry, direction):
+                if not self.is_condition_full_filled(profit, stop, entry, direction):
                     continue
 
                 profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
@@ -69,8 +69,8 @@ class FixedRatio(BaseRatio):
         return profitStopEntryList
 
 
-    def calculateEntries(self, stops: list[float], profits: list[float], ratio: float,
-                         direction: OrderDirection)-> list[ProfitStopEntry]:
+    def calculate_entries(self, stops: list[float], profits: list[float], ratio: float,
+                          direction: OrderDirectionEnum)-> list[ProfitStopEntry]:
 
         profitStopEntryList = []
 
@@ -79,9 +79,9 @@ class FixedRatio(BaseRatio):
                 stop = stops[i]
                 profit = profits[j]
 
-                entry = self.calculateEntry(stop, profit, ratio)
+                entry = self.calculate_entry(stop, profit, ratio)
 
-                if not self.isConditionFullFilled(profit, stop, entry, direction):
+                if not self.is_condition_full_filled(profit, stop, entry, direction):
                     continue
 
                 profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))

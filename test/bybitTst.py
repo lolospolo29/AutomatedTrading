@@ -10,11 +10,11 @@ from app.manager.initializer.SecretsManager import SecretsManager
 
 sm: SecretsManager = SecretsManager()
 
-api_key= sm.returnSecret("demoBybitAPiKey")
-secret_key= sm.returnSecret("demoBybitAPiSecret")
+api_key= sm.return_secret("demoBybitAPiKey")
+secret_key= sm.return_secret("demoBybitAPiSecret")
 httpClient=requests.Session()
 recv_window=str(5000)
-url= sm.returnSecret("demoBybitUrl") # Testnet endpoint
+url= sm.return_secret("demoBybitUrl") # Testnet endpoint
 
 def HTTP_Request(endPoint,method,payload,Info):
     global time_stamp
@@ -47,7 +47,7 @@ def genSignature(payload):
 endpoint="/v5/order/create"
 method="POST"
 create = PlaceOrder(category="linear", symbol="ETHUSDT", side="Buy", orderType="Limit", qty="0.3",price="3000")
-params = create.toDict()
+params = create.to_dict()
 createRes = HTTP_Request(endpoint, method, params, "Create")
 orderId = createRes["result"]["orderId"]
 time.sleep(2)
@@ -56,7 +56,7 @@ time.sleep(2)
 # endpoint="/v5/order/amend"
 # method="POST"
 # amend = AmendOrder(category="linear", symbol="ETHUSDT",orderId=orderId,tpTriggerBy="MarkPrice",takeProfit="4000")
-# params = amend.toDict()
+# params = amend.to_dict()
 # amendRes = HTTP_Request(endpoint, method, params, "Create")
 # time.sleep(2)
 
@@ -78,7 +78,7 @@ time.sleep(2)
 # endpoint="/v5/order/cancel-all"
 # method="POST"
 # order = CancelAllOrders(category="linear",symbol="ETHUSDT")
-# params = order.toDict()
+# params = order.to_dict()
 # HTTP_Request(endpoint,method,params,"Cancel")
 # time.sleep(2)
 
@@ -93,14 +93,14 @@ time.sleep(2)
 # endpoint="/v5/market/tickers"
 # method="GET"
 # tickers = Tickers(category="linear",symbol="BTCUSDT")
-# tickersParam = tickers.toQueryString()
+# tickersParam = tickers.to_query_string()
 # a = HTTP_Request(endpoint,method,tickersParam,"Balance")
 
 # Add Margin
 # endpoint="/v5/market/add-margin"
 # method="POST"
 # tickers = AddOrReduceMargin(category="linear",symbol="ETHUSDT",margin="0.33")
-# tickersParam = tickers.toDict()
+# tickersParam = tickers.to_dict()
 # a = HTTP_Request(endpoint,method,tickersParam,"Balance")
 
 # Batch Place Order

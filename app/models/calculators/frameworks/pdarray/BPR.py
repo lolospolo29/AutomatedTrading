@@ -2,7 +2,7 @@ from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class BPR(IPDArray):
@@ -11,37 +11,37 @@ class BPR(IPDArray):
     def __init__(self):
         self.name = "BPR"
 
-    def returnEntry(self,pdArray: PDArray,orderDirection: OrderDirection,riskMode: RiskMode) -> float:
-        low,high =self.returnCandleRange(pdArray)
-        if orderDirection.BUY:
-            if riskMode.SAFE:
+    def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
+        low,high =self.return_candle_range(pd_array)
+        if order_direction.BUY:
+            if risk_mode.SAFE:
                 return low
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return high
 
-        if orderDirection.SELL:
-            if riskMode.SAFE:
+        if order_direction.SELL:
+            if risk_mode.SAFE:
                 return low
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return high
 
-        if riskMode.MODERAT:
+        if risk_mode.MODERAT:
             return (low + high) / 2
 
-    def returnStop(self,pdArray: PDArray,orderDirection: OrderDirection,riskMode: RiskMode) -> float:
-        highs = [candle.high for candle in pdArray.candles]
-        lows = [candle.low for candle in pdArray.candles]
-        close =  [candle.close for candle in pdArray.candles]
-        open = [candle.open for candle in pdArray.candles]
+    def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, riskMode: RiskMode) -> float:
+        highs = [candle.high for candle in pd_array.candles]
+        lows = [candle.low for candle in pd_array.candles]
+        close =  [candle.close for candle in pd_array.candles]
+        open = [candle.open for candle in pd_array.candles]
 
-        if orderDirection.BUY:
+        if order_direction.BUY:
             if riskMode.SAFE:
                 return min(lows)
             if riskMode.MODERAT:
                 return min(open)
             if riskMode.AGGRESSIVE:
                 return min(close)
-        if orderDirection.SELL:
+        if order_direction.SELL:
             if riskMode.SAFE:
                 return max(highs)
             if riskMode.MODERAT:
@@ -49,19 +49,19 @@ class BPR(IPDArray):
             if riskMode.AGGRESSIVE:
                 return max(close)
 
-    def returnCandleRange(self,pdArray: PDArray) -> tuple[float,float]:
+    def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
         Returns the gap between two Fair Value Gaps (FVGs) within the Balanced Price Range (BPR).
 
         :param : List of Candle objects.
-        :param pdArray: A PDArray object that contains the IDs of the six candles forming the BPR.
+        :param pd_array: A PDArray object that contains the IDs of the six candles forming the BPR.
         :return: A dictionary containing the gap range {'low': ..., 'high': ...}.
         """
         # Retrieve the candles corresponding to the IDs in pdArray
 
         # Extract prices from the candles
-        highs = [candle.high for candle in pdArray.candles]
-        lows = [candle.low for candle in pdArray.candles]
+        highs = [candle.high for candle in pd_array.candles]
+        lows = [candle.low for candle in pd_array.candles]
 
         # Identify the FVGs from the first 3 and the last 3 candles
         bearish_fvg_high = max(lows[:3])  # Bearish FVG range (first three candles)
@@ -77,15 +77,15 @@ class BPR(IPDArray):
         # Return the gap range
         return gap_low, gap_high
 
-    def returnArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def return_array_list(self, candles: list[Candle]) -> list[PDArray]:
         if len(candles) < 6 :
             return []
 
-        pdArrays = []
+        pd_arrays = []
 
         # Lists to store identified FVGs
-        bearishFvgList = []
-        bullishFvgList = []
+        bearish_fvg_list = []
+        bullish_fvg_list = []
 
         opens = [candle.open for candle in candles]
         highs = [candle.high for candle in candles]
@@ -102,7 +102,7 @@ class BPR(IPDArray):
 
             # Check for Bearish FVG (Sell-side FVG)
             if low1 > high3 and close2 < low1:
-                bearishFvgList.append({
+                bearish_fvg_list.append({
                     'high': low1,  # Top of FVG range
                     'low': high3,  # Bottom of FVG range
                     'candles': [candles[i],candles[i - 1],candles[i - 2]],
@@ -111,7 +111,7 @@ class BPR(IPDArray):
 
             # Check for Bullish FVG (Buy-side FVG)
             if high1 < low3 and close2 > high1:
-                bullishFvgList.append({
+                bullish_fvg_list.append({
                     'high': low3,  # Top of FVG range
                     'low': high1,  # Bottom of FVG range
                     'candles': [candles[i],candles[i - 1],candles[i - 2]],
@@ -119,11 +119,11 @@ class BPR(IPDArray):
                 })
 
         # Second step: Check for overlaps between Bearish and Bullish FVGs
-        for sellFvg in bearishFvgList:
-            for buyFvg in bullishFvgList:
+        for sell_fvg in bearish_fvg_list:
+            for buy_fvg in bullish_fvg_list:
                 # Check for overlap between the two FVGs
-                overlapLow = max(sellFvg['low'], buyFvg['low'])
-                overlapHigh = min(sellFvg['high'], buyFvg['high'])
+                overlapLow = max(sell_fvg['low'], buy_fvg['low'])
+                overlapHigh = min(sell_fvg['high'], buy_fvg['high'])
 
                 if overlapLow < overlapHigh:
                     # There is an overlap, create a Balanced Price Range (BPR)
@@ -132,20 +132,20 @@ class BPR(IPDArray):
                     direction = "Bullish"  # Default direction is bullish
 
                     # If the first FVG (sell_fvg) is Bearish and the second (buy_fvg) is Bullish
-                    if max(sellFvg['index']) < max(buyFvg['index']):
+                    if max(sell_fvg['index']) < max(buy_fvg['index']):
                         direction = "Bullish"
                     # If the first FVG (buy_fvg) is Bullish and the second (sell_fvg) is Bearish
-                    if max(sellFvg['index']) > max(buyFvg['index']):
+                    if max(sell_fvg['index']) > max(buy_fvg['index']):
                         direction = "Bearish"
 
                     pdArray = PDArray(name=self.name, direction=direction)
 
                     # Add IDs from both the sell-side and buy-side FVGs
-                    for candle in sellFvg['candles']:
+                    for candle in sell_fvg['candles']:
                         pdArray.candles.append(candle)
-                    for candle in buyFvg['candles']:
+                    for candle in buy_fvg['candles']:
                         pdArray.candles.append(candle)
 
-                    pdArrays.append(pdArray)
+                    pd_arrays.append(pdArray)
 
-        return pdArrays
+        return pd_arrays

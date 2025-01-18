@@ -2,7 +2,7 @@ from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class Swings(IPDArray):
@@ -11,51 +11,51 @@ class Swings(IPDArray):
     def __init__(self):
         self.name = "Swing"
 
-    def returnEntry(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
+    def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
         pass
 
-    def returnStop(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode) -> float:
-        high = [candle.high for candle in pdArray.candles]
-        low = [candle.low for candle in pdArray.candles]
-        if orderDirection == OrderDirection.BUY:
-            if riskMode == RiskMode.SAFE:
+    def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
+        high = [candle.high for candle in pd_array.candles]
+        low = [candle.low for candle in pd_array.candles]
+        if order_direction == OrderDirectionEnum.BUY:
+            if risk_mode == RiskMode.SAFE:
                 return min (low)
-            if riskMode == RiskMode.AGGRESSIVE:
+            if risk_mode == RiskMode.AGGRESSIVE:
                 return max (high)
-        if orderDirection == OrderDirection.SELL:
-            if riskMode == RiskMode.SAFE:
+        if order_direction == OrderDirectionEnum.SELL:
+            if risk_mode == RiskMode.SAFE:
                 return max (high)
-            if riskMode == RiskMode.AGGRESSIVE:
+            if risk_mode == RiskMode.AGGRESSIVE:
                 return min (low)
 
-    def returnCandleRange(self, pdArray: PDArray) -> tuple[float,float]:
+    def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
         Returns the high and low of the Swing
 
-        :param pdArray: A PDArray object that contains the candles.
+        :param pd_array: A PDArray object that contains the candles.
         :return: A dictionary containing the range {'low': ..., 'high': ...}.
         """
 
         # Extract price from the candles
-        high = [candle.high for candle in pdArray.candles]
-        low = [candle.low for candle in pdArray.candles]
+        high = [candle.high for candle in pd_array.candles]
+        low = [candle.low for candle in pd_array.candles]
 
         high = max(high)
         low = min(low)
 
         return low,high
 
-    def returnArrayList(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
+    def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         # Step 1: Apply lookback to limit the range of candles
         if lookback is not None and len(candles) > lookback:
             candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
 
         if lookback is not None and len(candles) < lookback:
             return []
-        swingList = []  # List to store PDArray objects
+        swing_list = []  # List to store PDArray objects
 
         if len(candles) < 3:
-            return swingList
+            return swing_list
 
         opens = [candle.open for candle in candles]
         highs = [candle.high for candle in candles]
@@ -71,15 +71,15 @@ class Swings(IPDArray):
                 open3, high3, low3, close3 = opens[i], highs[i], lows[i], close[i]
 
                 if high3 < high2 and high1 < high2:
-                    pdArray =PDArray(name="High", direction="Bullish")
-                    pdArray.candles.append(candles[i])
-                    pdArray.candles.append(candles[i-1])
-                    pdArray.candles.append(candles[i-2])
-                    swingList.append(pdArray)
+                    pd_array =PDArray(name="High", direction="Bullish")
+                    pd_array.candles.append(candles[i])
+                    pd_array.candles.append(candles[i-1])
+                    pd_array.candles.append(candles[i-2])
+                    swing_list.append(pd_array)
                 if low3 > low2 and low1 > low2:
-                    pdArray = PDArray(name="Low", direction="Bearish")
-                    pdArray.candles.append(candles[i])
-                    pdArray.candles.append(candles[i-1])
-                    pdArray.candles.append(candles[i-2])
-                    swingList.append(pdArray)
-        return swingList
+                    pd_array = PDArray(name="Low", direction="Bearish")
+                    pd_array.candles.append(candles[i])
+                    pd_array.candles.append(candles[i-1])
+                    pd_array.candles.append(candles[i-2])
+                    swing_list.append(pd_array)
+        return swing_list

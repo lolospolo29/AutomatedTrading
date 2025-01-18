@@ -6,7 +6,7 @@ from app.models.asset.Candle import Candle
 class AssetMapper:
 
     @staticmethod
-    def mapCandleFromTradingView(json: dict) -> Candle:
+    def map_candle_from_trading_view(json: dict) -> Candle:
         candle = json.get("Candle")
         asset = candle.get("asset")
         broker = candle.get("broker")
@@ -14,11 +14,7 @@ class AssetMapper:
         close = candle.get("close")
         high = candle.get("high")
         low = candle.get("low")
-        IsoTime = candle.get("IsoTime")
+        iso_time = candle.get("IsoTime")
         timeFrame = candle.get("timeFrame")
 
-        return Candle(asset, broker, open, high, low, close, IsoTime, timeFrame)
-
-        # if "_id" in data and len(data) > 1:
-        #     # Case 1: Filter out MongoDB-specific fields like "_id"
-        #     mainData = {k: v for k, v in data.items() if k != "_id"}
+        return Candle(asset, broker, open, high, low, close, iso_time, timeFrame)

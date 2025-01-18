@@ -16,28 +16,28 @@ class MongoDB:
     # endregion
 
     # region CRUD Standard
-    def add(self, collectionName: str, data: Any) -> str:
+    def add(self, collection_name: str, data: Any) -> str:
         # """
         # Add a new document to a collection.
         # param collection_name: The name of the collection.
         # param data: A dictionary representing the document to insert.
         # :return: The inserted document's ID.
         # """
-        collection = self.db[collectionName]
+        collection = self.db[collection_name]
         result = collection.insert_one(data)
         return str(result.inserted_id)
 
-    def get(self, collectionName: str, documentId: Any) -> Any:
+    def get(self, collection_name: str, document_id: Any) -> Any:
         """
         Retrieve a document by its ID.
         param collection_name: The name of the collection.
         param document_id: The document's unique ID (as a string).
         return: The document, or None if not found.
         """
-        collection = self.db[collectionName]
-        return collection.find_one({"_id": ObjectId(documentId)})
+        collection = self.db[collection_name]
+        return collection.find_one({"_id": ObjectId(document_id)})
 
-    def update(self, collectionName: str, documentId: Any, updates: Any) -> bool:
+    def update(self, collection_name: str, document_id: Any, updates: Any) -> bool:
         # """
         # Update an existing document in a collection.
         # param collection_name: The name of the collection.
@@ -45,40 +45,40 @@ class MongoDB:
         # param updates: A dictionary with the fields to update.
         # return: True if the update was successful, False otherwise.
         # """
-        collection = self.db[collectionName]
-        result = collection.update_one({"_id": ObjectId(documentId)}, {"$set": updates})
+        collection = self.db[collection_name]
+        result = collection.update_one({"_id": ObjectId(document_id)}, {"$set": updates})
         return result.modified_count > 0
 
-    def delete(self, collectionName: str, documentId: Any) -> bool:
+    def delete(self, collection_name: str, document_id: Any) -> bool:
         """
         Delete a document by its ID.
         param collection_name: The name of the collection.
         param document_id: The document's unique ID (as a string).
         return: True if the deletion was successful, False otherwise.
         """
-        collection = self.db[collectionName]
-        result = collection.delete_one({"_id": ObjectId(documentId)})
+        collection = self.db[collection_name]
+        result = collection.delete_one({"_id": ObjectId(document_id)})
         return result.deleted_count > 0
     # endregion
 
     # region Delete By Query, Find, Time Wise Functions
-    def deleteByQuery(self, collectionName: str, query: Any) -> None:
-        documents = self.find(collectionName, query)
+    def deleteByQuery(self, collection_name: str, query: Any) -> None:
+        documents = self.find(collection_name, query)
         deletedIds = []
 
         for document in documents:
             documentId = str(document['_id'])
-            if self.delete(collectionName, documentId):
+            if self.delete(collection_name, documentId):
                 deletedIds.append(documentId)
 
-    def delete_all(self, collectionName: str) -> int:
+    def delete_all(self, collection_name: str) -> int:
         """
         Delete all documents in the specified collection.
 
         param collection_name: The name of the collection.
         return: The number of documents deleted.
         """
-        collection = self.db[collectionName]
+        collection = self.db[collection_name]
         result = collection.delete_many({})
 
         # Return the count of deleted documents
@@ -97,42 +97,42 @@ class MongoDB:
         return list(collection.find(query))
 
     @staticmethod
-    def buildQuery(className: str, attribute: str, value: Any) -> Any:
-        return {f"{className}.{attribute}": value}
+    def buildQuery(class_name: str, attribute: str, value: Any) -> Any:
+        return {f"{class_name}.{attribute}": value}
 
-    def deleteOldDocuments(self, collectionName: str, dateField: Any, isoDate: Any) -> Any:
+    def deleteOldDocuments(self, collection_name: str, date_field: Any, iso_date: Any) -> Any:
         """
         Delete documents older than a specified ISO date from the specified collection.
 
-        :param collectionName: The name of the collection.
-        :param dateField: The field name that contains the date.
-        :param isoDate: The ISO date to compare against.
+        :param collection_name: The name of the collection.
+        :param date_field: The field name that contains the date.
+        :param iso_date: The ISO date to compare against.
         :return: Number of deleted documents.
         """
         # Delete documents older than the specified ISO date
-        collection = self.db[collectionName]
+        collection = self.db[collection_name]
         result = collection.delete_many({
-            dateField: {  # Use the provided date field
-                '$lt': isoDate  # Less than the specified date
+            date_field: {  # Use the provided date field
+                '$lt': iso_date  # Less than the specified date
             }
         })
 
         return result.deleted_count  # Return the number of deleted documents
 
-    def getDataWithinDateRange(self, collectionName: str, dateField: Any, startDate: Any, endDate: Any) -> list:
+    def getDataWithinDateRange(self, collection_name: str, date_field: Any, start_date: Any, end_date: Any) -> list:
         """
         Retrieve data within a specified date range from the specified collection.
 
-        :param collectionName: The name of the collection.
-        :param dateField: The field name that contains the date.
-        :param startDate: The start date for the range (in ISO format).
-        :param endDate: The end date for the range (in ISO format).
+        :param collection_name: The name of the collection.
+        :param date_field: The field name that contains the date.
+        :param start_date: The start date for the range (in ISO format).
+        :param end_date: The end date for the range (in ISO format).
         :return: A list of documents within the specified date range.
         """
         # Query to get documents within the specified date range
-        query = {dateField: {'$gte': startDate,
-                             '$lte': endDate}}  # Greater than or equal to start_date and less than or equal to
+        query = {date_field: {'$gte': start_date,
+                             '$lte': end_date}}  # Greater than or equal to start_date and less than or equal to
         # end_date
-        collection = self.db[collectionName]
+        collection = self.db[collection_name]
         return list(collection.find(query))
     # endregion

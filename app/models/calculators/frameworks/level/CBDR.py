@@ -9,50 +9,49 @@ class CBDR(ILevel):
     def __init__(self):
         self.name = 'CBDR'
 
-    def returnLevels(self, candles: list[Candle]) -> list:
-        allLevel = []
+    def return_levels(self, candles: list[Candle]) -> list:
+        all_level = []
 
         high = -1
-        highCandle = None
+        high_candle = None
         low = sys.maxsize
-        lowCandle = None
+        low_candle = None
 
         # Collecting high and low values from each data point
 
         for candle in candles:
             if high  < candle.high:
                 high = candle.high
-                highCandle = candle
+                high_candle = candle
             if low > candle.low:
                 low = candle.low
-                lowCandle = candle
+                low_candle = candle
 
-        allLevels = []
 
-        candles:list[Candle] = [highCandle, lowCandle]
+        candles:list[Candle] = [high_candle, low_candle]
 
-        cbdrRange = high - low
+        cbdr_range = high - low
 
-        cbdRange1BullishObj = Level(name=self.name, level=low - cbdrRange)
-        cbdRange1BullishObj.setFibLevel(1,"Bullish",candles=candles)
-        cbdRange2BullishObj = Level(name=self.name, level=low - cbdrRange - cbdrRange)
-        cbdRange2BullishObj.setFibLevel(2,"Bullish",candles=candles)
-        cbdRange3BullishObj = Level(name=self.name, level=low - cbdrRange - cbdrRange - cbdrRange)
-        cbdRange3BullishObj.setFibLevel(3,"Bullish",candles=candles)
+        cbd_range1_bullish_obj = Level(name=self.name, level=low - cbdr_range)
+        cbd_range1_bullish_obj.set_fib_level(1, "Bullish", candles=candles)
+        cbd_range2_bullish_obj = Level(name=self.name, level=low - cbdr_range - cbdr_range)
+        cbd_range2_bullish_obj.set_fib_level(2, "Bullish", candles=candles)
+        cbd_range3_bullish_obj = Level(name=self.name, level=low - cbdr_range - cbdr_range - cbdr_range)
+        cbd_range3_bullish_obj.set_fib_level(3, "Bullish", candles=candles)
 
-        cbdRange1BearishObj = Level(self.name, level=low - cbdrRange)
-        cbdRange1BearishObj.setFibLevel(1,"Bearish",candles=candles)
-        cbdRange2BearishObj = Level(self.name, level=low - cbdrRange - cbdrRange)
-        cbdRange2BearishObj.setFibLevel(2,"Bearish",candles=candles)
-        cbdRange3BearishObj = Level(self.name, level=low - cbdrRange - cbdrRange - cbdrRange)
-        cbdRange3BearishObj.setFibLevel(3,"Bearish",candles=candles)
+        cbd_range1_bearish_obj = Level(self.name, level=low - cbdr_range)
+        cbd_range1_bearish_obj.set_fib_level(1, "Bearish", candles=candles)
+        cbd_range2_bearish_obj = Level(self.name, level=low - cbdr_range - cbdr_range)
+        cbd_range2_bearish_obj.set_fib_level(2, "Bearish", candles=candles)
+        cbd_range3_bearish_obj = Level(self.name, level=low - cbdr_range - cbdr_range - cbdr_range)
+        cbd_range3_bearish_obj.set_fib_level(3, "Bearish", candles=candles)
 
-        allLevel.append(cbdRange1BullishObj)
-        allLevel.append(cbdRange2BullishObj)
-        allLevel.append(cbdRange3BullishObj)
+        all_level.append(cbd_range1_bullish_obj)
+        all_level.append(cbd_range2_bullish_obj)
+        all_level.append(cbd_range3_bullish_obj)
 
-        allLevel.append(cbdRange1BearishObj)
-        allLevel.append(cbdRange2BearishObj)
-        allLevel.append(cbdRange3BearishObj)
+        all_level.append(cbd_range1_bearish_obj)
+        all_level.append(cbd_range2_bearish_obj)
+        all_level.append(cbd_range3_bearish_obj)
 
-        return allLevel
+        return all_level

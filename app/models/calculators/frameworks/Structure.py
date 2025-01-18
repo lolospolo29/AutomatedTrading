@@ -12,13 +12,13 @@ class Structure(FrameWork):
         self.direction: str = direction
         self.candle = candle
 
-    def isIdPresent(self, ids_: list) -> bool:
+    def is_id_present(self, ids_: list) -> bool:
         """
         :param ids_: Liste von IDs, in der gesucht werden soll
         :return: True, wenn `self.id` in `ids_` enthalten ist, sonst False
         """
         return self.candle.id in ids_
-    def toDict(self) -> dict:
+    def to_dict(self) -> dict:
         """
         Converts the object to a dictionary representation.
 

@@ -1,4 +1,4 @@
 class ExpectedTimeFrame:
-    def __init__(self, timeFrame, maxLen):
-        self.timeFrame = timeFrame
-        self.maxLen = maxLen
+    def __init__(self, timeframe, maxLen):
+        self.timeframe = timeframe
+        self.max_Len = maxLen

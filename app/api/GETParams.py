@@ -7,7 +7,7 @@ class GETParams(ABC):
     def validate(self):
         pass
 
-    def toQueryString(self) -> str:
+    def to_query_string(self) -> str:
         """Convert the dataclass fields to a URL-encoded query string."""
         # Convert the dataclass to a dictionary and filter out None values
         params_dict = {k: v for k, v in self.__dict__.items() if v is not None}

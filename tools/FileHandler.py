@@ -30,8 +30,8 @@ class FileHandler(FileSystemEventHandler):
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
 
-            self._AssetManager: AssetManager = AssetManager()
-            self._StrategyManager: StrategyManager = StrategyManager()
+            self._asset_manager: AssetManager = AssetManager()
+            self._strategy_manager: StrategyManager = StrategyManager()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
@@ -43,26 +43,25 @@ class FileHandler(FileSystemEventHandler):
             filename = os.path.basename(event.src_path)
 
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
-                print(f"New file detected: {event.src_path}")
-                candlesCSV = self._parseCandleData(event.src_path)
-                for candleDict in candlesCSV:
-                    candle: Candle = self._AssetManager.addCandle(candleDict)
-                    self._testingStrategy(candle.asset, candle.broker, candle.timeFrame)
+                candles_dict_list = self._parse_candle_data(event.src_path)
+                for candle_dict in candles_dict_list:
+                    candle: Candle = self._asset_manager.add_candle(candle_dict)
+                    self._testing_strategy(candle.asset, candle.broker, candle.timeframe)
 
-                self._moveToArchive(event.src_path)
+                self._move_to_archive(event.src_path)
                 self._archive()
 
-    def _testingStrategy(self, asset, broker, timeFrame):
-        candles: list[Candle] = self._AssetManager.returnCandles(asset, broker, timeFrame)
-        relations: list = self._AssetManager.returnRelations(asset, broker)
+    def _testing_strategy(self, asset, broker, timeFrame):
+        candles: list[Candle] = self._asset_manager.return_candles(asset, broker, timeFrame)
+        relations: list = self._asset_manager.return_relations(asset, broker)
         for relation in relations:
-            self._StrategyManager.analyzeStrategy(candles, relation, timeFrame)
+            self._strategy_manager.get_entry(candles, relation, timeFrame)
 
     # endregion
 
     # region CSV Parsing
     @staticmethod
-    def _parseCandleData(csv_filename) -> list:
+    def _parse_candle_data(csv_filename) -> list[dict]:
         candles = []
         with open(csv_filename, mode='r', newline='') as file:
             reader = list(csv.DictReader(file))
@@ -73,6 +72,7 @@ class FileHandler(FileSystemEventHandler):
                 candle_data = description_json.get("Candle", {})
 
                 # Structure candle data to match the desired output format
+                # todo fix fields
                 formatted_candle = {
                     'Candle': {
                         'IsoTime': candle_data.get('IsoTime', ''),
@@ -142,7 +142,7 @@ class FileHandler(FileSystemEventHandler):
             print(f"Verarbeitung von {filename} abgeschlossen.")
 
     @staticmethod
-    def _deleteFile(file_path):
+    def _delete_file(file_path):
         try:
             # Delete the file after processing
             os.remove(file_path)
@@ -152,7 +152,7 @@ class FileHandler(FileSystemEventHandler):
             print(f"Error deleting file {file_path}: {e}")
 
     @staticmethod
-    def _moveToArchive(src_path):
+    def _move_to_archive(src_path):
         try:
             # Get the directory where the source file is located
             src_dir = os.path.dirname(src_path)

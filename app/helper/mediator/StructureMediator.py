@@ -18,22 +18,22 @@ class StructureMediator:
     # region Initializing
     def __init__(self):
         if not hasattr(self, "initialized"):  # Prevent re-initialization
-            self.bos = BOS(10)
-            self.choch = Choch(20)
-            self.smt = SMT()
-            self.cisd = CISD(5)
+            self._bos = BOS(10)
+            self._choch = Choch(20)
+            self._smt = SMT()
+            self._cisd = CISD(5)
             self.initialized: bool = True  # Mark as initialized
     # endregion
 
     # region Analyzing
-    def calculateConfirmation(self, confirmationType: str, candles: list[Candle], *args, **kwargs) -> Any:
-        if confirmationType == "BOS":
-            return self.bos.returnConfirmation(candles)
-        if confirmationType == "CHOCH":
-            return self.choch.returnConfirmation(candles)
-        if confirmationType == "CISD":
-            return self.cisd.returnConfirmation(candles)
+    def calculate_confirmation(self, confirmation_type: str, candles: list[Candle], *args, **kwargs) -> Any:
+        if confirmation_type == "BOS":
+            return self._bos.return_confirmation(candles)
+        if confirmation_type == "CHOCH":
+            return self._choch.return_confirmation(candles)
+        if confirmation_type == "CISD":
+            return self._cisd.return_confirmation(candles)
 
-    def calculateSMT(self,candlesAsset1: list[Candle],candlesAsset2: list[Candle]):
-        return self.smt.returnConfirmation(candlesAsset1, candlesAsset2)
+    def calculate_smt(self, candles_asset1: list[Candle], candles_asset2: list[Candle]):
+        return self._smt.returnConfirmation(candles_asset1, candles_asset2)
     # endregion

@@ -7,7 +7,7 @@ from app.models.calculators.frameworks.Level import Level
 class PreviousSessionLevels(ILevel):
 
     @staticmethod
-    def sessionHighLow(candles: list[Candle], time_windows: list[ITimeWindow]) -> list[Level]:
+    def return_levels(candles: list[Candle], time_windows: list[ITimeWindow]) -> list[Level]:
         """
         Calculate the high and low of candles within each session defined by time windows.
 
@@ -26,7 +26,7 @@ class PreviousSessionLevels(ILevel):
             low_level = Level(name=f"{session_name} Low", level=float('inf'))
 
             for candle in candles:
-                if window.IsInEntryWindow(candle.isoTime):
+                if window.is_in_entry_window(candle.iso_time):
                     # Update high and low levels
                     if candle.high > high_level.level:
                         high_level.level = candle.high

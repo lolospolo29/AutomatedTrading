@@ -3,7 +3,9 @@ from typing import Any, Dict
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.monitoring.TimeWrapper import logTime
+from app.models.strategy.StrategyResult import StrategyResult
+from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+from app.monitoring.log_time import log_time
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
@@ -30,31 +32,34 @@ class TradingService:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._AssetManager: AssetManager = AssetManager()
-            self._TradeManager: TradeManager = TradeManager()
-            self._StrategyManager: StrategyManager = StrategyManager()
-            self._NewsService :NewsService = NewsService()
+            self._asset_manager: AssetManager = AssetManager()
+            self._trade_manager: TradeManager = TradeManager()
+            self._strategy_manager: StrategyManager = StrategyManager()
+            self._news_service :NewsService = NewsService()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
 
-    @logTime
-    def handlePriceActionSignal(self, jsonData: Dict[str, Any]) -> None:
+    @log_time
+    def handle_price_action_signal(self, jsonData: Dict[str, Any]) -> None:
 
-        candle: Candle = self._AssetManager.addCandle(jsonData)
-        candles : list[Candle] = self._AssetManager.returnCandles(candle.asset,candle.broker,candle.timeFrame)
-        relations: list[AssetBrokerStrategyRelation] = self._AssetManager.returnRelations(candle.asset, candle.broker)
-        if not self._NewsService.isNewsAhead():
-            self.analyzeStrategy(candle.asset,candle.broker,candle.timeFrame, candles,relations)
+        candle: Candle = self._asset_manager.add_candle(jsonData)
+        candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
+        relations: list[AssetBrokerStrategyRelation] = self._asset_manager.return_relations(candle.asset, candle.broker)
+        if not self._news_service.is_news_ahead():
+            self._analyze_strategy_for_entry(candle.asset, candle.broker, candle.timeframe, candles, relations)
+
+            for relation in relations:
+                self._analyze_strategy_for_entry(timeframe=candle.timeframe, candles=candles, relations=relation)
 
 
-    @logTime
-    def analyzeStrategy(self, timeFrame:int,candles:list[Candle],
-                        relations:list[AssetBrokerStrategyRelation]) -> None:
+    @log_time
+    def _analyze_strategy_for_entry(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation) -> None:
 
-        # Analyze Foreach strategy that correlates with Broker
+        result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe)
 
-        for relation in relations:
-            self._StrategyManager.getEntry(candles, relation, timeFrame)
+        if result.status == StrategyResultStatusEnum.NEWORDER.value:
 
+            self._trade_manager.register_trade(result.trade)
+            trade = self._trade_manager.return_trades_for_relation(relation)
             # todo order logic and exit logic

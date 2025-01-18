@@ -2,7 +2,7 @@ from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class RejectionBlock(IPDArray):
@@ -11,61 +11,61 @@ class RejectionBlock(IPDArray):
         self.lookback = lookback
         self.name = "RB"
 
-    def returnEntry(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode) -> float:
-        low,high = self.returnCandleRange(pdArray)
-        if orderDirection.BUY:
-            if riskMode.AGGRESSIVE:
+    def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
+        low,high = self.return_candle_range(pd_array)
+        if order_direction.BUY:
+            if risk_mode.AGGRESSIVE:
                 return high
 
-        if orderDirection.SELL:
-            if riskMode.AGGRESSIVE:
+        if order_direction.SELL:
+            if risk_mode.AGGRESSIVE:
                 return low
 
-        if riskMode.MODERAT or riskMode.SAFE:
+        if risk_mode.MODERAT or risk_mode.SAFE:
             return (low + high) / 2
 
-    def returnStop(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
-        low,high = self.returnCandleRange(pdArray)
-        if orderDirection.BUY:
-            if riskMode.SAFE:
+    def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
+        low,high = self.return_candle_range(pd_array)
+        if order_direction.BUY:
+            if risk_mode.SAFE:
                 return low
 
-        if orderDirection.SELL:
-            if riskMode.SAFE:
+        if order_direction.SELL:
+            if risk_mode.SAFE:
                 return high
 
-        if riskMode.MODERAT or riskMode.AGGRESSIVE:
+        if risk_mode.MODERAT or risk_mode.AGGRESSIVE:
             return (low + high) / 2
 
-    def returnCandleRange(self, pdArray: PDArray) -> tuple[float, float]:
+    def return_candle_range(self, pd_array: PDArray) -> tuple[float, float]:
         """
         Returns the high and low of the RB Whick.
 
-        :param pdArray: A PDArray object that contains candles.
+        :param pd_array: A PDArray object that contains candles.
         :return: A dictionary containing the range {'low': ..., 'high': ...}.
         """
 
         # Extract prices from the candles
-        highs = [candle.high for candle in pdArray.candles]
-        lows = [candle.low for candle in pdArray.candles]
-        opens = [candle.open for candle in pdArray.candles]
-        closes = [candle.close for candle in pdArray.candles]
+        highs = [candle.high for candle in pd_array.candles]
+        lows = [candle.low for candle in pd_array.candles]
+        opens = [candle.open for candle in pd_array.candles]
+        closes = [candle.close for candle in pd_array.candles]
 
-        if pdArray.direction == "Bullish":
+        if pd_array.direction == "Bullish":
             low = min(lows)
             high = min(opens,closes)
             return low,high
-        if pdArray.direction == "Bearish":
+        if pd_array.direction == "Bearish":
             low = max(opens,closes)
             high = max(highs)
             return low,high
 
-    def returnArrayList(self, candles: list[Candle]) -> list:
+    def return_array_list(self, candles: list[Candle]) -> list:
 
         if len(candles) < self.lookback:
             return []
 
-        rejectionBlocks = []
+        rejection_blocks = []
 
         # We assume 'data_points_asset' contains the asset data (high, low, open, close, ids)
         opens = [candle.open for candle in candles]
@@ -74,29 +74,29 @@ class RejectionBlock(IPDArray):
         close = [candle.close for candle in candles]
 
         if len(opens) < self.lookback:
-            return rejectionBlocks  # Not enough data for rejection block detection
+            return rejection_blocks  # Not enough data for rejection block detection
 
         for i in range(9, len(opens)):  # Start from the 10th candle onwards
             # Calculate average range of the previous 10 candles
-            avgRange = sum([highs[j] - lows[j] for j in range(i - 9, i + 1)]) / 10
+            avg_range = sum([highs[j] - lows[j] for j in range(i - 9, i + 1)]) / 10
 
             # Current candle details
-            openPrice = opens[i]
-            highPrice = highs[i]
-            lowPrice = lows[i]
-            closePrice = close[i]
+            open_price = opens[i]
+            high_price = highs[i]
+            low_price = lows[i]
+            close_price = close[i]
 
             # Calculate the wicks
-            upperWick = highPrice - max(openPrice, closePrice)
-            lowerWick = min(openPrice, closePrice) - lowPrice
+            upper_wick = high_price - max(open_price, close_price)
+            lower_wick = min(open_price, close_price) - low_price
 
             # Bullish rejection: Large lower wick compared to average range
-            if  lowerWick > avgRange:
-                rejectionBlocks = PDArray(self.name, "Bullish")
-                rejectionBlocks.candles.append(candles[i])
+            if  lower_wick > avg_range:
+                rejection_blocks = PDArray(self.name, "Bullish")
+                rejection_blocks.candles.append(candles[i])
             # Bearish rejection: Large upper wick compared to average range
-            elif upperWick > avgRange:
-                rejectionBlocks = PDArray(self.name, "Bearish")
-                rejectionBlocks.candles.append(candles[i])
+            elif upper_wick > avg_range:
+                rejection_blocks = PDArray(self.name, "Bearish")
+                rejection_blocks.candles.append(candles[i])
 
-        return rejectionBlocks
+        return rejection_blocks

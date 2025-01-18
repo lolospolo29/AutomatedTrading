@@ -9,14 +9,14 @@ class PDArray(FrameWork):
         self.candles = []
         self.status = ""
 
-    def addCandles(self, candles) -> None:
+    def add_candles(self, candles) -> None:
         # Efficiently add multiple candles
         self.candles.extend(candles)
 
-    def addStatus(self, status) -> None:
+    def add_status(self, status) -> None:
         self.status = status
 
-    def isIdPresent(self, ids_: list) -> bool:
+    def is_id_present(self, ids_: list) -> bool:
         """
         Überprüft, ob alle IDs in `self` in der Liste `ids_` enthalten sind.
 
@@ -26,7 +26,7 @@ class PDArray(FrameWork):
         candlesIds = [candle.id for candle in self.candles]
         return all(id_ in ids_ for id_ in candlesIds)
 
-    def toDict(self) -> dict:
+    def to_dict(self) -> dict:
         """
         Converts the object to a dictionary representation.
 
@@ -37,7 +37,7 @@ class PDArray(FrameWork):
             "timeFrame" : self.timeFrame,
             "name": self.name,
             "direction": self.direction,
-            "candles": [candle.toDict() for candle in self.candles],
+            "candles": [candle.to_dict() for candle in self.candles],
             "status": self.status if self.status else None,
         }
 

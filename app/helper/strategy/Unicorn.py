@@ -27,7 +27,6 @@ class Unicorn(Strategy):
         self._TimeWindow = LondonOpen()
         self._TimeWindow2 = NYOpen()
 
-        # todo add handlers
 
         self.expectedTimeFrames = []
 
@@ -45,28 +44,28 @@ class Unicorn(Strategy):
         return self.expectedTimeFrames
 
     def isInTime(self,time) -> bool:
-        if self._TimeWindow.IsInEntryWindow(time) or self._TimeWindow2.IsInEntryWindow(time):
+        if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):
             return True
         return False
 
     def analyzeData(self, candles: list, timeFrame: int) -> list:
             frameWorks = []
             if timeFrame == 240:
-                ote = self._LevelMediator.calculateFibonacci("PD",candles,lookback=1)
+                ote = self._LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
                 frameWorks.extend(ote)
 
             if timeFrame == 5:
 
                 last_candle = candles[-1]
-                time = last_candle.isoTime
+                time = last_candle.iso_time
 
                 if self.isInTime(time):
-                    breaker = self._PDMediator.calculatePDArray("BRK",candles)
+                    breaker = self._PDMediator.calculate_pd_array("BRK", candles)
                     if len(breaker) > 0:
                         frameWorks.extend(breaker)
 
                 if self.isInTime(time):
-                    fvg = self._PDMediator.calculatePDArrayWithLookback("FVG", candles, lookback=3)
+                    fvg = self._PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
                     frameWorks.extend(fvg)
 
             return frameWorks
@@ -76,7 +75,7 @@ class Unicorn(Strategy):
         if candles and pds:
 
             last_candle: Candle = candles[-1]
-            time = last_candle.isoTime
+            time = last_candle.iso_time
 
             if not self.isInTime(time):
                 return []
@@ -86,9 +85,9 @@ class Unicorn(Strategy):
                 fvgs:list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
 
                 for breaker in breakers:
-                    breakerRange = self._PDMediator.returnCandleRange("BRK",breaker)
+                    breakerRange = self._PDMediator.return_candle_range("BRK", breaker)
                     for fvg in fvgs:
-                        fvgRange = self._PDMediator.returnCandleRange("FVG",fvg)
+                        fvgRange = self._PDMediator.return_candle_range("FVG", fvg)
                         fvgLow = fvgRange.get('low')
                         fvgHigh = fvgRange.get('high')
                         breakerLow = breakerRange.get('low')

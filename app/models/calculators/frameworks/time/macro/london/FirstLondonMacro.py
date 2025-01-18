@@ -2,10 +2,10 @@ from app.interfaces.framework.ITimeWindow import ITimeWindow
 
 
 class FirstLondonMacro(ITimeWindow):
-    def IsInExitWindow(self,time):
-        return self.IsInEntryWindow(time)
+    def is_in_exit_window(self, time):
+        return self.is_in_entry_window(time)
 
-    def IsInEntryWindow(self,time):
+    def is_in_entry_window(self, time):
         current_hour = time.hour
         current_minute = time.minute
 

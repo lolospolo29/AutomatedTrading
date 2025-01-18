@@ -5,37 +5,37 @@ from app.interfaces.IBrokerHandler import IBrokerHandler
 
 class BrokerFacade:
     def __init__(self):
-        self._registry:dict[str,IBrokerHandler]= {}
-        bh = BybitHandler()
-        self.registerHandler(bh.name,bh)
+        self.__registry:dict[str,IBrokerHandler]= {}
+        __bh = BybitHandler()
+        self.__register_handler(__bh.name, __bh)
 
-    def registerHandler(self, broker:str,handler):
-        self._registry[broker] = handler
+    def __register_handler(self, broker:str, handler):
+        self.__registry[broker] = handler
 
-    def placeOrder(self, requestParameter:RequestParameters):
-        if requestParameter.broker.upper() in self._registry:
-            return self._registry[requestParameter.broker].placeOrder(requestParameter)
+    def place_order(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].place_order(request_params)
 
-    def amendOrder(self,requestParameter:RequestParameters):
-        if requestParameter.broker.upper() in self._registry:
-            return self._registry[requestParameter.broker].amendOrder(requestParameter)
+    def amend_order(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].amend_order(request_params)
 
-    def cancelOrder(self,requestParameter:RequestParameters):
-        if requestParameter.broker.upper() in self._registry:
-            return self._registry[requestParameter.broker].cancelOrder(requestParameter)
+    def cancel_order(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].cancel_order(request_params)
 
-    def cancelAllOrders(self,requestParameter:RequestParameters):
-        if requestParameter.broker.upper() in self._registry:
-            return self._registry[requestParameter.broker].cancelAllOrders(requestParameter)
+    def cancel_all_orders(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].cancel_all_orders(request_params)
 
-    def returnOpenAndClosedOrders(self, requestParameter:RequestParameters):
-        if requestParameter.broker.upper() in self._registry:
-            return self._registry[requestParameter.broker].returnOpenAndClosedOrder(requestParameter)
+    def return_open_and_closed_orders(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].return_open_and_closed_order(request_params)
 
-    def returnPositionInfo(self, requestParameter:RequestParameters):
-        if requestParameter.broker.upper() in self._registry:
-            return self._registry[requestParameter.broker].returnPositionInfo(requestParameter)
+    def return_position_info(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].return_position_info(request_params)
 
-    def returnOrderHistory(self, requestParameter:RequestParameters):
-        if requestParameter.broker.upper() in self._registry:
-            return self._registry[requestParameter.broker].returnOrderHistory(requestParameter)
+    def return_order_history(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].return_order_history(request_params)

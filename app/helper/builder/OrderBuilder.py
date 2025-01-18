@@ -5,12 +5,11 @@ from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRela
 from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.trade.enums.CategoryEnum import CategoryEnum
 from app.models.trade.Order import Order
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.models.trade.enums.OrderStatusEnum import OrderStatusEnum
 from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.models.trade.enums.TPSLModeEnum import TPSLModeEnum
 from app.models.trade.enums.TimeInForceEnum import TimeInForceEnum
-from app.models.trade.Trade import Trade
 from app.models.trade.enums.TriggerByEnum import TriggerByEnum
 from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
@@ -23,91 +22,87 @@ class OrderBuilder:
             cls._instance = super(OrderBuilder, cls).__new__(cls)
         return cls._instance
 
-    @staticmethod
-    def createTrade(assetBrokerStrategyRelation:AssetBrokerStrategyRelation, orders:list[Order]) -> Trade:
-        return Trade(assetBrokerStrategyRelation,orders)
 
-    def createOrder(self,assetBrokerStrategyRelation:AssetBrokerStrategyRelation,entryFrameWork:
-    FrameWork, symbol:str,confirmations:list[FrameWork], category:CategoryEnum, side:OrderDirection,
-                    riskPercentage:float,orderNumber:int,tradeId:str)->Order:
+    def create_order(self, relation:AssetBrokerStrategyRelation, entry_frame_work:
+    FrameWork, symbol:str, confirmations:list[FrameWork], category:CategoryEnum, side:OrderDirectionEnum,
+                     risk_percentage:float, order_number:int, trade_id:str)->Order:
         o = Order()
-        o.tradeId = tradeId
-        o.status = OrderStatusEnum.CREATED.value
-        orderlinkId = self._generate_order_link_id(assetBrokerStrategyRelation.asset,assetBrokerStrategyRelation.broker,
-                                     assetBrokerStrategyRelation.strategy,orderNumber)
+        o.trade_id = trade_id
+        orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
+                                                   relation.strategy, order_number)
         o.orderlinkId = orderlinkId
         o.confirmations = confirmations
-        o.entryFrameWork = entryFrameWork
+        o.entry_frame_work = entry_frame_work
         o.symbol = symbol
         o.category = category.value
         o.side = side.value
-        o.moneyAtRisk = 0.0
+        o.money_at_risk = 0.0
         o.unrealizedProfit = 0.0
-        o.riskPercentage = riskPercentage
+        o.risk_percentage = risk_percentage
         o.orderType = OrderTypeEnum.MARKET.value # set Default
         return o
 
     @staticmethod
-    def setDefaults(order: Order,price:str=None,timeInForce:TimeInForceEnum=None,takeProfit:str=None,
-                    stopLoss:str=None,reduceOnly:bool=None,closeOnTrigger:bool=None)->Order:
+    def set_defaults(order: Order, price:str=None, time_in_force:TimeInForceEnum=None, take_profit:str=None,
+                     stop_loss:str=None, reduce_only:bool=None, close_on_trigger:bool=None)->Order:
         if price is not None:
             order.price = price
-        if timeInForce is not None:
-            order.timeInForce = timeInForce.value
-        if takeProfit is not None:
-            order.takeProfit = takeProfit
-        if stopLoss is not None:
-            order.stopLoss = stopLoss
-        if reduceOnly is not None:
-            order.reduceOnly = reduceOnly
-        if closeOnTrigger is not None:
-            order.closeOnTrigger = closeOnTrigger
+        if time_in_force is not None:
+            order.timeInForce = time_in_force.value
+        if take_profit is not None:
+            order.takeProfit = take_profit
+        if stop_loss is not None:
+            order.stopLoss = stop_loss
+        if reduce_only is not None:
+            order.reduceOnly = reduce_only
+        if close_on_trigger is not None:
+            order.closeOnTrigger = close_on_trigger
         return order
 
     @staticmethod
-    def setSpot(order: Order,isLeverage:bool=None,marketUnit:str=None,orderFilter:str=None,orderlv:str=None)->Order:
-        if isLeverage is not None:
-            order.isLeverage = isLeverage
-        if marketUnit is not None:
-            order.marketUnit = marketUnit
-        if orderFilter is not None:
-            order.orderFilter = orderFilter
+    def set_spot(order: Order, is_leverage:bool=None, market_unit:str=None, order_filter:str=None, orderlv:str=None)->Order:
+        if is_leverage is not None:
+            order.isLeverage = is_leverage
+        if market_unit is not None:
+            order.marketUnit = market_unit
+        if order_filter is not None:
+            order.orderFilter = order_filter
         if orderlv is not None:
             order.orderlv = orderlv
         return order
 
     @staticmethod
-    def setConditional(order: Order,triggerPrice:str=None,triggerBy:TriggerByEnum=None,
-                            tpTriggerBy:TriggerByEnum=None,slTriggerBy:TriggerByEnum=None,
-                            triggerDirection:TriggerDirection=None)->Order:
-        if triggerPrice is not None:
-            order.triggerPrice = triggerPrice
-        if triggerBy is not None:
-            order.triggerBy = triggerBy.value
-        if tpTriggerBy is not None:
-            order.tpTriggerBy = tpTriggerBy.value
-        if slTriggerBy is not None:
-            order.slTriggerBy = slTriggerBy.value
-        if triggerDirection is not None:
-            order.triggerDirection = triggerDirection.value
+    def set_conditional(order: Order, trigger_price:str=None, trigger_by:TriggerByEnum=None,
+                        tp_trigger_by:TriggerByEnum=None, sl_trigger_by:TriggerByEnum=None,
+                        trigger_direction:TriggerDirection=None)->Order:
+        if trigger_price is not None:
+            order.triggerPrice = trigger_price
+        if trigger_by is not None:
+            order.triggerBy = trigger_by.value
+        if tp_trigger_by is not None:
+            order.tpTriggerBy = tp_trigger_by.value
+        if sl_trigger_by is not None:
+            order.slTriggerBy = sl_trigger_by.value
+        if trigger_direction is not None:
+            order.triggerDirection = trigger_direction.value
         order.orderType = OrderTypeEnum.LIMIT.value
         return order
 
     @staticmethod
-    def setLimit(order:Order,tpslMode:TPSLModeEnum=None,tpLimitPrice:str=None,slLimitPrice:str=None,
-                 tpOrderType:OrderTypeEnum=None,slOrderType:OrderTypeEnum=None)->Order:
-        if tpslMode is not None:
-            order.tpslMode = tpslMode.value
-        if tpLimitPrice is not None:
-            order.tpLimitPrice = tpLimitPrice
-        if slLimitPrice is not None:
-            order.slLimitPrice = slLimitPrice
-        if tpOrderType is not None:
-            order.tpOrderType = tpOrderType.value
-        if slOrderType is not None:
-            order.slOrderType = slOrderType.value
-        if tpOrderType is not None:
-            order.tpOrderType = tpOrderType.value
+    def set_limit(order:Order, tpsl_mode:TPSLModeEnum=None, tp_limit_price:str=None, sl_limit_price:str=None,
+                  tp_order_type:OrderTypeEnum=None, sl_order_type:OrderTypeEnum=None)->Order:
+        if tpsl_mode is not None:
+            order.tpslMode = tpsl_mode.value
+        if tp_limit_price is not None:
+            order.tpLimitPrice = tp_limit_price
+        if sl_limit_price is not None:
+            order.slLimitPrice = sl_limit_price
+        if tp_order_type is not None:
+            order.tpOrderType = tp_order_type.value
+        if sl_order_type is not None:
+            order.slOrderType = sl_order_type.value
+        if tp_order_type is not None:
+            order.tpOrderType = tp_order_type.value
         order.orderType = OrderTypeEnum.LIMIT.value
         return order
 

@@ -1,12 +1,12 @@
 from abc import ABC
 
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class BaseRatio(ABC):
     # region Profit Stop Entry Calculation
     @staticmethod
-    def calculateProfit(entry:float, stop: float, ratio: float) -> float:
+    def calculate_profit(entry:float, stop: float, ratio: float) -> float:
         if stop < entry:
             profit =  (entry - stop) * ratio
             return profit + entry
@@ -17,7 +17,7 @@ class BaseRatio(ABC):
             return entry
 
     @staticmethod
-    def calculateStop(entry:float, profit: float, ratio: float):
+    def calculate_stop(entry:float, profit: float, ratio: float):
         if profit > entry:
             stop = (profit - entry) / ratio
             return entry - stop if entry - stop > 0 else entry
@@ -28,7 +28,7 @@ class BaseRatio(ABC):
             return entry
 
     @staticmethod
-    def calculateEntry(stop:float, profit:float, ratio:float) -> float:
+    def calculate_entry(stop:float, profit:float, ratio:float) -> float:
         if stop < profit:
             difference = profit - stop
             entry = difference / (ratio + 1)
@@ -42,11 +42,11 @@ class BaseRatio(ABC):
     # endregion
 
     @staticmethod
-    def isConditionFullFilled(profit: float, stop: float, entry: float,orderDirection: OrderDirection) -> bool:
-        if orderDirection == OrderDirection.BUY:
+    def is_condition_full_filled(profit: float, stop: float, entry: float, orderDirection: OrderDirectionEnum) -> bool:
+        if orderDirection == OrderDirectionEnum.BUY:
             if stop < entry < profit:
                 return True
-        if orderDirection == OrderDirection.SELL:
+        if orderDirection == OrderDirectionEnum.SELL:
             if stop > entry > profit:
                 return True
         return False

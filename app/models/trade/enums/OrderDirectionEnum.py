@@ -1,5 +1,5 @@
 from enum import Enum
 
-class OrderDirection(Enum):
+class OrderDirectionEnum(Enum):
     BUY = "Buy"
     SELL = "Sell"

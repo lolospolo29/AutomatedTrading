@@ -20,11 +20,11 @@ class SMT:
         last_candle_asset2 = candlesAsset2[-1]
 
         # Compare isoTime values
-        if last_candle_asset1.isoTime != last_candle_asset2.isoTime:
-            return []
+        if last_candle_asset1.iso_time != last_candle_asset2.iso_time:
+            raise ValueError
 
         if len(candlesAsset1) != len(candlesAsset2):
-            return []
+            raise ValueError
         highs1 = []
         highs2 = []
         lows1 = []

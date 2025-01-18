@@ -5,7 +5,7 @@ from app.models.strategy.Strategy import Strategy
 
 class StrategyFactory:
     @staticmethod
-    def returnClass(typ: str) -> Strategy:
+    def return_class(typ: str) -> Strategy:
 
         if typ == "FVG":
             return FVGSession()

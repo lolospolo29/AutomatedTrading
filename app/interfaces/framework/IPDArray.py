@@ -2,22 +2,22 @@ from abc import ABC, abstractmethod
 
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class IPDArray(ABC):  # Drill Fill CE
     @abstractmethod
-    def returnCandleRange(self, data_points):
+    def return_candle_range(self, data_points):
         pass
 
     @abstractmethod
-    def returnArrayList(self, data_points):  # return list of possible entries
+    def return_array_list(self, data_points):  # return list of possible entries
         pass
 
     @abstractmethod
-    def returnStop(self,pdArray: PDArray,orderDirection: OrderDirection,riskMode: RiskMode):
+    def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
         pass
 
     @abstractmethod
-    def returnEntry(self,pdArray: PDArray,orderDirection: OrderDirection,riskMode: RiskMode):
+    def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
         pass

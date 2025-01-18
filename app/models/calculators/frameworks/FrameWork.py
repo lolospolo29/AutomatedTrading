@@ -6,15 +6,15 @@ from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRela
 class FrameWork:
     def __init__(self, typ):
         self.typ = typ
-        self.assetBrokerStrategyRelation = None
+        self.relation = None
         self.timeFrame = None
 
-    def addRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> None:
-        self.assetBrokerStrategyRelation = assetBrokerStrategyRelation
+    def add_relation(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> None:
+        self.relation = assetBrokerStrategyRelation
 
-    def setTimeFrame(self, timeFrame: int) -> None:
+    def set_time_frame(self, timeFrame: int) -> None:
         self.timeFrame = timeFrame
 
     @abstractmethod
-    def toDict(self):
+    def to_dict(self):
         pass

@@ -18,7 +18,7 @@ from app.helper.registry.RateLimitRegistry import RateLimitRegistry
 from app.interfaces.IBrokerHandler import IBrokerHandler
 from app.mappers.ClassMapper import ClassMapper
 from app.api.brokers.models.RequestParameters import RequestParameters
-from app.monitoring.retryRequest import retry_request
+from app.monitoring.retry_request import retry_request
 
 # endregion
 
@@ -29,17 +29,17 @@ class BybitHandler(IBrokerHandler):
     def __init__(self):
         self.name = "BYBIT"
         self.__broker: Bybit = Bybit("BYBIT")
-        self.isLockActive = False
-        self._bybitMapper = ClassMapper()
-        self._rateLimitRegistry = RateLimitRegistry(RateLimitEnum)
+        self.__is_lock_active = False
+        self._class_mapper = ClassMapper()
+        self._rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
 
     # region get Methods
     @rate_limit_registry.rate_limited
-    def returnOpenAndClosedOrder(self,requestParams: RequestParameters) -> list[BrokerOrder]:
+    def return_open_and_closed_order(self, request_params: RequestParameters) -> list[BrokerOrder]:
 
-        openAndClosedOrders: OpenAndClosedOrders = (self._bybitMapper.map_args_to_dataclass
-                                                    (OpenAndClosedOrders,requestParams,RequestParameters))
+        openAndClosedOrders: OpenAndClosedOrders = (self._class_mapper.map_args_to_dataclass
+                                                   (OpenAndClosedOrders, request_params, RequestParameters))
 
 
         # Validierung der Eingabeparameter
@@ -55,14 +55,14 @@ class BybitHandler(IBrokerHandler):
 
         while True:
 
-            params = openAndClosedOrders.toQueryString()
-            responseJson = self.__broker.sendRequest(endPoint, method, params)
+            params = openAndClosedOrders.to_query_string()
+            responseJson = self.__broker.send_request(endPoint, method, params)
 
             objList = responseJson.get("result").get("list")
             nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
 
             for obj in objList:
-               brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+               brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
 
             if nextPageCursor == previousCursor or nextPageCursor == "":
                 break
@@ -73,10 +73,10 @@ class BybitHandler(IBrokerHandler):
         return brokerOrderList
 
     @rate_limit_registry.rate_limited
-    def returnPositionInfo(self,requestParams:RequestParameters) -> list[BrokerPosition]:
+    def return_position_info(self, request_params:RequestParameters) -> list[BrokerPosition]:
 
-        positionInfo: PositionInfo = (self._bybitMapper.map_args_to_dataclass
-                                      (PositionInfo,requestParams,RequestParameters))
+        positionInfo: PositionInfo = (self._class_mapper.map_args_to_dataclass
+                                      (PositionInfo, request_params, RequestParameters))
 
         # Validierung der Eingabeparameter
         if not positionInfo.validate():
@@ -91,14 +91,14 @@ class BybitHandler(IBrokerHandler):
 
         while True:
 
-            params = positionInfo.toQueryString()
-            responseJson = self.__broker.sendRequest(endPoint, method, params)
+            params = positionInfo.to_query_string()
+            responseJson = self.__broker.send_request(endPoint, method, params)
 
             objList = responseJson.get("result").get("list")
             nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
 
             for obj in objList:
-               brokerPositionList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerPosition))
+               brokerPositionList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerPosition))
 
             if nextPageCursor == previousCursor or nextPageCursor == "":
                 break
@@ -110,10 +110,10 @@ class BybitHandler(IBrokerHandler):
         return brokerPositionList
 
     @rate_limit_registry.rate_limited
-    def returnOrderHistory(self,requestParams: RequestParameters) -> list[BrokerOrder]:
+    def return_order_history(self, request_params: RequestParameters) -> list[BrokerOrder]:
 
-        orderHistory: OrderHistory = (self._bybitMapper.map_args_to_dataclass
-                                                    (OrderHistory,requestParams,RequestParameters))
+        orderHistory: OrderHistory = (self._class_mapper.map_args_to_dataclass
+                                                    (OrderHistory, request_params, RequestParameters))
 
 
         # Validierung der Eingabeparameter
@@ -128,14 +128,14 @@ class BybitHandler(IBrokerHandler):
 
         while True:
 
-            params = orderHistory.toQueryString()
-            responseJson = self.__broker.sendRequest(endPoint, method, params)
+            params = orderHistory.to_query_string()
+            responseJson = self.__broker.send_request(endPoint, method, params)
 
             objList = responseJson.get("result").get("list")
             nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
 
             for obj in objList:
-                brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+                brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
 
             if nextPageCursor == previousCursor or nextPageCursor == "":
                 break
@@ -149,29 +149,29 @@ class BybitHandler(IBrokerHandler):
 
     # region post Methods
     @rate_limit_registry.rate_limited
-    def amendOrder(self,requestParams:RequestParameters) -> BrokerOrder:
-        amendOrder: AmendOrder = (self._bybitMapper.map_args_to_dataclass
-                                  (AmendOrder,requestParams,RequestParameters))
+    def amend_order(self, request_params:RequestParameters) -> BrokerOrder:
+        amendOrder: AmendOrder = (self._class_mapper.map_args_to_dataclass
+                                  (AmendOrder, request_params, RequestParameters))
 
         # Validierung der Eingabeparameter
         if not amendOrder.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = amendOrder.toDict()
+        params = amendOrder.to_dict()
 
         endPoint = EndPointEnum.AMEND.value
         method = "post"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        responseJson = self.__broker.send_request(endPoint, method, params)
+        result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def cancelAllOrders(self,requestParams:RequestParameters) -> list[BrokerOrder]:
+    def cancel_all_orders(self, request_params:RequestParameters) -> list[BrokerOrder]:
 
-        cancelOrders: CancelAllOrders = (self._bybitMapper.map_args_to_dataclass
-                                         (CancelAllOrders,requestParams,RequestParameters))
+        cancelOrders: CancelAllOrders = (self._class_mapper.map_args_to_dataclass
+                                         (CancelAllOrders, request_params, RequestParameters))
 
         # Validierung der Eingabeparameter
         if not cancelOrders.validate():
@@ -180,76 +180,76 @@ class BybitHandler(IBrokerHandler):
         endPoint = EndPointEnum.CANCELALL.value
         method = "post"
 
-        params = cancelOrders.toDict()
+        params = cancelOrders.to_dict()
 
         brokerOrderList: list[BrokerOrder] = []
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
+        responseJson = self.__broker.send_request(endPoint, method, params)
 
         objList = responseJson.get("result").get("list")
 
         for obj in objList:
-            brokerOrderList.append(self._bybitMapper.map_dict_to_dataclass(obj, BrokerOrder))
+            brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
 
         return brokerOrderList
 
     @rate_limit_registry.rate_limited
-    def cancelOrder(self,requestParams:RequestParameters) -> BrokerOrder:
-        cancelOrder: CancelOrder = (self._bybitMapper.map_args_to_dataclass
-                                    (CancelOrder,requestParams,RequestParameters))
+    def cancel_order(self, request_params:RequestParameters) -> BrokerOrder:
+        cancelOrder: CancelOrder = (self._class_mapper.map_args_to_dataclass
+                                    (CancelOrder, request_params, RequestParameters))
 
         # Validierung der Eingabeparameter
         if not cancelOrder.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = cancelOrder.toDict()
+        params = cancelOrder.to_dict()
 
         endPoint = EndPointEnum.CANCEL.value
         method = "post"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        responseJson = self.__broker.send_request(endPoint, method, params)
+        result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def placeOrder(self,requestParams:RequestParameters) -> BrokerOrder:
+    def place_order(self, request_params:RequestParameters) -> BrokerOrder:
 
-        placeOrder: PlaceOrder = (self._bybitMapper.map_args_to_dataclass
-                                  (PlaceOrder,requestParams,RequestParameters))
+        placeOrder: PlaceOrder = (self._class_mapper.map_args_to_dataclass
+                                  (PlaceOrder, request_params, RequestParameters))
 
         # Validierung der Eingabeparameter
         if not placeOrder.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = placeOrder.toDict()
+        params = placeOrder.to_dict()
 
         endPoint = EndPointEnum.PLACEORDER.value
         method = "post"
 
-        responseJson = self.__broker.sendRequest(endPoint, method, params)
-        result = self._bybitMapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        responseJson = self.__broker.send_request(endPoint, method, params)
+        result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
 
         return result
 
     @rate_limit_registry.rate_limited
-    def setLeverage(self,requestParams:RequestParameters) -> bool:
+    def set_leverage(self, request_params:RequestParameters) -> bool:
         time.sleep(5)
-        setLeverage: SetLeverage = (self._bybitMapper.map_args_to_dataclass
-                                    (SetLeverage,requestParams,RequestParameters))
+        setLeverage: SetLeverage = (self._class_mapper.map_args_to_dataclass
+                                    (SetLeverage, request_params, RequestParameters))
 
         # Validierung der Eingabeparameter
         if not setLeverage.validate():
             raise ValueError("The Fields that were required were not given")
 
-        params = setLeverage.toDict()
+        params = setLeverage.to_dict()
 
         endPoint = EndPointEnum.SETLEVERAGE.value
         method = "post"
 
         def request_function():
             """Encapsulated API request logic for retry utility."""
-            responseJson = self.__broker.sendRequest(endPoint, method, params)
+            responseJson = self.__broker.send_request(endPoint, method, params)
             if not responseJson.get("retMsg") == "OK":
                 raise ValueError(responseJson.get("retMsg"))
         # Use retry utility to handle retries
@@ -267,5 +267,5 @@ class BybitHandler(IBrokerHandler):
 # request.orderType = "Limit"
 # request.triggerPrice = "1.9"
 # request.price = "1.9"
-# bh.cancelAllOrders(request)
+# bh.cancel_all_orders(request)
 

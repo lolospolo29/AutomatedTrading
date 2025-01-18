@@ -8,7 +8,7 @@ class POSTParams(ABC):
     def validate(self):
         pass
 
-    def toDict(self) -> str:
+    def to_dict(self) -> str:
         """Return the dictionary representation of the dataclass as a JSON string."""
         # Create a dictionary from the dataclass, excluding None values
         params_dict = {k: v for k, v in asdict(self).items() if v is not None}

@@ -4,23 +4,23 @@ from app.models.calculators.ProfitStopEntry import ProfitStopEntry
 
 class OrderWeightage:
 
-    def setPercentagesBasedOnMode(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
+    def set_percentages_based_on_mode(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
         total_entries = len(entries)
         if total_entries == 0:
             return entries
 
         if mode == RiskMode.AGGRESSIVE:
             # Aggressive mode: heavier weight to early entries
-            return self._setAggressiveWeightage(entries)
+            return self._set_aggressive_weightage(entries)
         elif mode == RiskMode.MODERAT:
             # Moderate mode: equal distribution of percentage across entries
-            return self._setModerateWeightage(entries)
+            return self._set_moderate_weightage(entries)
         elif mode == RiskMode.SAFE:
             # Safe mode: heavier weight to later entries
-            return self._setSafeWeightage(entries)
+            return self._set_safe_weightage(entries)
 
     @staticmethod
-    def _setAggressiveWeightage(entries:list[ProfitStopEntry]):
+    def _set_aggressive_weightage(entries:list[ProfitStopEntry]):
         total_entries = len(entries)
         for i, entry in enumerate(entries):
             # Aggressive: More weight on early entries, less on later ones
@@ -29,7 +29,7 @@ class OrderWeightage:
         return entries
 
     @staticmethod
-    def _setModerateWeightage(entries:list[ProfitStopEntry]):
+    def _set_moderate_weightage(entries:list[ProfitStopEntry]):
         # Moderate: Distribute percentages equally
         total_entries = len(entries)
         for entry in entries:
@@ -37,7 +37,7 @@ class OrderWeightage:
         return entries
 
     @staticmethod
-    def _setSafeWeightage(entries:list[ProfitStopEntry]):
+    def _set_safe_weightage(entries:list[ProfitStopEntry]):
         total_entries = len(entries)
         for i, entry in enumerate(entries):
             # Safe: More weight on later entries, less on earlier ones

@@ -28,69 +28,69 @@ class mongoDBTrades:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._SecretManager: SecretsManager = SecretsManager()
-            self._TradeMapper = TradeMapper()
-            self._MongoDBTrades: MongoDB = MongoDB("Trades", self._SecretManager.returnSecret("mongodb"))
+            self._secret_manager: SecretsManager = SecretsManager()
+            self._trade_mapper = TradeMapper()
+            self._mongo_db_trades: MongoDB = MongoDB("Trades", self._secret_manager.return_secret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
     # endregion
 
-    def findTradeOrTradesById(self,id:str=None)->list[Trade]:
+    def find_trade_or_trades_by_id(self, id:str=None)->list[Trade]:
         trades = []
         res = []
         if id is None:
-            res = self._MongoDBTrades.find(MongoEndPointEnum.OPENTRADES.value,None)
+            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, None)
         else:
-            query = self._MongoDBTrades.buildQuery("Trade", "id", str(id))
-            res = self._MongoDBTrades.find(MongoEndPointEnum.OPENTRADES.value, query)
+            query = self._mongo_db_trades.buildQuery("Trade", "id", str(id))
+            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
         for tradeInRes in res:
-            trade = self._TradeMapper.mapTradeFromDB(tradeInRes)
+            trade = self._trade_mapper.map_trade_from_db(tradeInRes)
             orders = []
             for order in trade.orders:
-                order = self.findOrderOrOrdersById(order)
+                order = self.find_order_or_orders_by_id(order)
                 orders.append(order)
             trade.orders = []
             trade.orders.extend(orders)
             trades.append(trade)
         return trades
 
-    def findOrderOrOrdersById(self, id: str=None) -> list[Order]:
+    def find_order_or_orders_by_id(self, id: str=None) -> list[Order]:
         orders = []
         res = []
         if id is None:
-            res = self._MongoDBTrades.find(MongoEndPointEnum.OPENORDERS.value, None)
+            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, None)
         else:
-            query = self._MongoDBTrades.buildQuery("Order", "orderLinkId", str(id))
-            res = self._MongoDBTrades.find(MongoEndPointEnum.OPENORDERS.value, query)
+            query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(id))
+            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
         for orderInRes in res:
-            orders.append(self._TradeMapper.mapOrderFromDB(orderInRes))
+            orders.append(self._trade_mapper.map_order_from_db(orderInRes))
         return orders
 
     # region Add / Update / Archive
-    def addTradeToDB(self, trade: Trade):
-        self._MongoDBTrades.add(MongoEndPointEnum.OPENTRADES.value, trade.toDict())
+    def add_trade_to_db(self, trade: Trade):
+        self._mongo_db_trades.add(MongoEndPointEnum.OPENTRADES.value, trade.to_dict())
 
-    def updateTrade(self, trade: Trade):
-        query = self._MongoDBTrades.buildQuery("Trade","id", str(trade.id))
-        res = self._MongoDBTrades.find(MongoEndPointEnum.OPENTRADES.value, query)
-        self._MongoDBTrades.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade.toDict())
+    def update_trade(self, trade: Trade):
+        query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
+        res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
+        self._mongo_db_trades.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade.to_dict())
 
-    def archiveTrade(self, trade: Trade):
-        self._MongoDBTrades.add(MongoEndPointEnum.CLOSEDTRADES.value, trade.toDict())
-        query = self._MongoDBTrades.buildQuery("Trade", "id", str(trade.id))
-        self._MongoDBTrades.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
+    def archive_trade(self, trade: Trade):
+        self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDTRADES.value, trade.to_dict())
+        query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
+        self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
 
-    def addOrderToDB(self, order: Order):
-        self._MongoDBTrades.add(MongoEndPointEnum.OPENORDERS.value, order.toDict())
+    def add_order_to_db(self, order: Order):
+        self._mongo_db_trades.add(MongoEndPointEnum.OPENORDERS.value, order.to_dict())
 
-    def updateOrder(self, order: Order):
-        query = self._MongoDBTrades.buildQuery("Order","orderLinkId", str(order.orderLinkId))
-        res = self._MongoDBTrades.find(MongoEndPointEnum.OPENORDERS.value, query)
-        self._MongoDBTrades.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.toDict())
+    def update_order(self, order: Order):
+        query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
+        res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
+        self._mongo_db_trades.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.to_dict())
 
-    def archiveOrder(self, order: Order):
-        self._MongoDBTrades.add(MongoEndPointEnum.CLOSEDORDERS.value, order.toDict())
-        query = self._MongoDBTrades.buildQuery("Order","orderLinkId", str(order.orderLinkId))
-        self._MongoDBTrades.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
+    def archive_order(self, order: Order):
+        self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDORDERS.value, order.to_dict())
+        query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
+        self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
     # endregion
 
 #Testing
@@ -109,8 +109,8 @@ class mongoDBTrades:
 # order.confirmations.append(level)
 # order.confirmations.append(struct)
 # order.orderLinkId = "132"
-# _mongo.addOrderToDB(order)
+# _mongo.add_order_to_db(order)
 #
 # trade = Trade(AssetBrokerStrategyRelation("A","ABC","AC"),[order])
-# _mongo.addTradeToDB(trade)
-# _mongo.findTradeOrTradesById()
+# _mongo.add_trade_to_db(trade)
+# _mongo.find_trade_or_trades_by_id()

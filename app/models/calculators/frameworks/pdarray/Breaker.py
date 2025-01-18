@@ -2,7 +2,7 @@ from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class Breaker(IPDArray):  # id need to be fixed
@@ -12,39 +12,39 @@ class Breaker(IPDArray):  # id need to be fixed
         self.lookback: int = lookback
         self.name = "Breaker"
 
-    def returnEntry(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
-        low,high =self.returnCandleRange(pdArray)
-        if orderDirection.BUY:
-            if riskMode.SAFE:
+    def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
+        low,high =self.return_candle_range(pd_array)
+        if order_direction.BUY:
+            if risk_mode.SAFE:
                 return low
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return high
 
-        if orderDirection.SELL:
-            if riskMode.SAFE:
+        if order_direction.SELL:
+            if risk_mode.SAFE:
                 return high
-            if riskMode.AGGRESSIVE:
+            if risk_mode.AGGRESSIVE:
                 return low
 
-        if riskMode.MODERAT:
+        if risk_mode.MODERAT:
             low = low
             high = high
             return (low + high) / 2
 
-    def returnStop(self, pdArray: PDArray, orderDirection: OrderDirection, riskMode: RiskMode):
-        return self.returnEntry(pdArray, orderDirection, riskMode)
+    def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
+        return self.return_entry(pd_array, order_direction, risk_mode)
 
-    def returnCandleRange(self, pdArray: PDArray) -> tuple[float,float]:
+    def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
         Returns the Breaker Candle high to low.
 
-        :param pdArray: A PDArray object that contains the candles.
+        :param pd_array: A PDArray object that contains the candles.
         :return: A dictionary containing the range {'low': ..., 'high': ...}.
         """
 
         # Extract price from the candles
-        high = [candle.high for candle in pdArray.candles]
-        low = [candle.low for candle in pdArray.candles]
+        high = [candle.high for candle in pd_array.candles]
+        low = [candle.low for candle in pd_array.candles]
 
         high = max(high)
         low = min(low)
@@ -63,7 +63,7 @@ class Breaker(IPDArray):  # id need to be fixed
                 swings['lows'].append((i, low[i]))  # Store index and value of swing low
         return swings
 
-    def returnArrayList(self, candles: list[Candle]) -> list[PDArray]:
+    def return_array_list(self, candles: list[Candle]) -> list[PDArray]:
         """Get confirmation for breaker blocks"""
 
         if len(candles) < self.lookback:
@@ -75,7 +75,7 @@ class Breaker(IPDArray):  # id need to be fixed
         close = [candle.close for candle in candles]
 
         # List to store PDArray objects
-        pdArrayList = []
+        pd_array_list = []
 
         # Find swing highs and lows
         swings = self._findSwingPoints(highs, lows)
@@ -87,7 +87,7 @@ class Breaker(IPDArray):  # id need to be fixed
                 if close[i] > swingHigh:  # Bullish breaker condition
                     pdArray = PDArray(name=self.name, direction="Bullish")
                     pdArray.candles.append(candles[swingIdx])  # Add ID of last candle in the swing (not the one breaking it)
-                    pdArrayList.append(pdArray)
+                    pd_array_list.append(pdArray)
                     # Store breaker details if needed
                     break  # Stop after the first breaker is found
 
@@ -97,8 +97,8 @@ class Breaker(IPDArray):  # id need to be fixed
                 if close[i] < swingLow:  # Bearish breaker condition
                     pdArray = PDArray(name=self.name, direction="Bearish")
                     pdArray.candles.append(candles[swingIdx])  # Add ID of last candle in the swing (not the one breaking it)
-                    pdArrayList.append(pdArray)
+                    pd_array_list.append(pdArray)
                     # Store breaker details if needed
                     break  # Stop after the first breaker is found
 
-        return pdArrayList  # Return the list of PDArray objects
+        return pd_array_list  # Return the list of PDArray objects

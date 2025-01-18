@@ -1,19 +1,17 @@
 import threading
 
-from app.api.brokers.models.BrokerOrder import BrokerOrder
-from app.db.mongodb.mongoDBTrades import mongoDBTrades
 from app.api.brokers.BrokerFacade import BrokerFacade
+from app.api.brokers.models.BrokerOrder import BrokerOrder
+from app.api.brokers.models.RequestParameters import RequestParameters
+from app.db.mongodb.mongoDBTrades import mongoDBTrades
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.ClassMapper import ClassMapper
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.trade.Order import Order
-from app.models.trade.enums.OrderDirectionEnum import OrderDirection
-from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
-from app.api.brokers.models.RequestParameters import RequestParameters
 from app.models.trade.Trade import Trade
+from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 
 
 class TradeManager:
@@ -31,228 +29,202 @@ class TradeManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._TradeRegistry = TradeSemaphoreRegistry()
-            self._LockRegistry = LockRegistry()
-            self.openTrades:dict[str,Trade] = {}
-            self._mongoDBTrades: mongoDBTrades = mongoDBTrades()
-            self._BrokerFacade = BrokerFacade()
-            self._RiskManager: RiskManager = RiskManager()
-            self._ClassMapper = ClassMapper()
+            self._trade_registry = TradeSemaphoreRegistry()
+            self._lock_registry = LockRegistry()
+            self.open_trades:dict[str,Trade] = {}
+            self._mongo_db_trades: mongoDBTrades = mongoDBTrades()
+            self._broker_facade = BrokerFacade()
+            self._risk_manager = RiskManager()
+            self._class_mapper = ClassMapper()
             self._initialized = True  # Markiere als initialisiert
     # endregion
 
     # region Register Remove Dict
-    def registerTrade(self, trade: Trade) -> None:
+    def register_trade(self, trade: Trade) -> None:
         with self._lock:
-            tradeLock = self._LockRegistry.get_lock(trade.id)
+            tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                self._TradeRegistry.register_relation(trade.relation)
-                self._TradeRegistry.acquire_trade(trade.relation)
-                if trade.id not in self.openTrades:
-                    self.openTrades[trade.id] = trade
+                self._trade_registry.register_relation(trade.relation)
+                self._trade_registry.acquire_trade(trade.relation)
+                if trade.id not in self.open_trades:
+                    self.open_trades[trade.id] = trade
                     print(f"Trade for '{trade.relation.broker}' "
                           f"with ID: {trade.id} created and added to the Trade Manager.")
 
-    def removeTrade(self, trade: Trade) -> None:
+    def remove_trade(self, trade: Trade) -> None:
         with self._lock:
-            tradeLock = self._LockRegistry.get_lock(trade.id)
+            tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                if trade.id in self.openTrades:
-                    self.openTrades.pop(trade.id)
+                if trade.id in self.open_trades:
+                    self.open_trades.pop(trade.id)
     # endregion
 
     # region CRUD DB
-    def findTradeOrTradesInDB(self,trade:Trade=None) -> list[Trade]:
+    def find_trade_or_trades_in_db(self, trade:Trade=None) -> list[Trade]:
         with self._lock:
             if trade is None:
-                return self._mongoDBTrades.findTradeOrTradesById()
+                return self._mongo_db_trades.find_trade_or_trades_by_id()
             else:
-                return self._mongoDBTrades.findTradeOrTradesById(trade.id)
+                return self._mongo_db_trades.find_trade_or_trades_by_id(trade.id)
 
-    def findOrderOrOrdersInDB(self,order:Order=None) -> list[Order]:
+
+
+    def write_trade_to_db(self, trade: Trade):
+        with self._lock:
+            tradeLock = self._lock_registry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.open_trades:
+                    self._mongo_db_trades.add_trade_to_db(trade)
+
+    def update_trad_in_db(self, trade: Trade) -> None:
+        with self._lock:
+            tradeLock = self._lock_registry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.open_trades:
+                    self._mongo_db_trades.update_trade(trade)
+
+    def archive_trade_in_db(self, trade: Trade) -> None:
+        with self._lock:
+            tradeLock = self._lock_registry.get_lock(trade.id)
+            with tradeLock:
+                if trade.id in self.open_trades:
+                    self._mongo_db_trades.archive_trade(trade)
+
+    def find_order_or_orders_in_db(self, order:Order=None) -> list[Order]:
         if order is None:
-            return self._mongoDBTrades.findOrderOrOrdersById()
+            return self._mongo_db_trades.find_order_or_orders_by_id()
         else:
-            return self._mongoDBTrades.findOrderOrOrdersById(order.orderLinkId)
+            return self._mongo_db_trades.find_order_or_orders_by_id(order.orderLinkId)
 
-    def writeTradeToDB(self, trade: Trade):
-        with self._lock:
-            tradeLock = self._LockRegistry.get_lock(trade.id)
-            with tradeLock:
-                if trade.id in self.openTrades:
-                    self._mongoDBTrades.addTradeToDB(trade)
-
-    def updateTradInDB(self, trade: Trade) -> None:
-        with self._lock:
-            tradeLock = self._LockRegistry.get_lock(trade.id)
-            with tradeLock:
-                if trade.id in self.openTrades:
-                    self._mongoDBTrades.updateTrade(trade)
-
-    def archiveTradeInDB(self, trade: Trade) -> None:
-        with self._lock:
-            tradeLock = self._LockRegistry.get_lock(trade.id)
-            with tradeLock:
-                if trade.id in self.openTrades:
-                    self._mongoDBTrades.archiveTrade(trade)
-
-    def writeOrderToDB(self, order: Order) -> None:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+    def write_order_to_db(self, order: Order) -> None:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-                self._mongoDBTrades.addOrderToDB(order)
+                self._mongo_db_trades.add_order_to_db(order)
 
-    def updateOrderInDB(self, order: Order) -> None:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+    def update_order_in_db(self, order: Order) -> None:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-            self._mongoDBTrades.updateOrder(order)
+            self._mongo_db_trades.update_order(order)
 
     def archiveOrderInDB(self, order: Order) -> None:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-            self._mongoDBTrades.archiveOrder(order)
+            self._mongo_db_trades.archive_order(order)
     # endregion
 
     # region API Requests
-    def placeTrade(self, trade: Trade,assetClass:str) -> Trade:
-            tradeLock = self._LockRegistry.get_lock(trade.id)
+    def place_trade(self, trade: Trade):
+            tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                if trade.id in self.openTrades:
-                    trade = self.openTrades[trade.id]
-                    from multiprocessing.pool import ThreadPool
-                    pool = ThreadPool(processes=len(trade.orders))
-                    threads = []
+                if trade.id in self.open_trades:
+                    trade = self.open_trades[trade.id]
+
+                    threads :list[threading.Thread]= []
+
                     for order in trade.orders:
-                        t = threading.Thread(target=self.placeOrder, args=(trade.relation.broker,order,assetClass), daemon=True)
+                        t = threading.Thread(target=self.place_order, args=(trade.relation.broker, order), daemon=True)
                         threads.append(t)
 
                     for thread in threads:
                         thread.start()
 
-    def updateTrade(self,broker:str,Trade) -> None:
-        pass
+                    while True:
+                        done = True
+                        for thread in threads:
+                            if thread.is_alive():
+                                done = False
+                        if done:
+                            break
 
-    # region Business Logic
-    def placeOrder(self,broker:str,assetClass:str,order: Order)->Order:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+    def place_order(self, broker:str, order: Order)->Order:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-            requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
+            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
-            newOrder:BrokerOrder = self._BrokerFacade.placeOrder(requestParameters)
-            order = self._ClassMapper.update_class_with_dataclass(order,newOrder)
+            newOrder:BrokerOrder = self._broker_facade.place_order(requestParameters)
+            order = self._class_mapper.update_class_with_dataclass(newOrder, order)
         return order
 
-    def amendOrder(self,broker:str,order:Order)->Order:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+    def amend_order(self, broker:str, order:Order)->Order:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-            requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
+            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
-            newOrder:BrokerOrder = self._BrokerFacade.amendOrder(requestParameters)
+            newOrder:BrokerOrder = self._broker_facade.amend_order(requestParameters)
+            order = self._class_mapper.update_class_with_dataclass(newOrder, order)
         return order
 
-    def cancelOrder(self,broker:str,order:Order)->Order:
-        orderLock = self._LockRegistry.get_lock(order.orderLinkId)
+    def cancel_order(self, broker:str, order:Order)->Order:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-            requestParameters: RequestParameters = (self._ClassMapper.map_args_to_dataclass
+            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
-            newOrder:BrokerOrder = self._BrokerFacade.amendOrder(requestParameters)
+            newOrder:BrokerOrder = self._broker_facade.amend_order(requestParameters)
+            self._class_mapper.update_class_with_dataclass(newOrder, order)
         return order
 
-    def returnOpenAndClosedOrders(self,requestParameters:RequestParameters) -> list[Order]:
-        return self._BrokerFacade.returnOpenAndClosedOrders(requestParameters)
+    def return_open_and_closed_orders(self, requestParameters:RequestParameters) -> list[Order]:
+        return self._broker_facade.return_open_and_closed_orders(requestParameters)
 
-    def returnPositionInfo(self,requestParameters:RequestParameters)->Trade:
-        return self._BrokerFacade.returnPositionInfo(requestParameters)
+    def return_position_info(self, requestParameters:RequestParameters)->Trade:
+        return self._broker_facade.return_position_info(requestParameters)
 
-    def returnOrderHistory(self,requestParameters:RequestParameters) -> list[Order]:
-        return self._BrokerFacade.returnOrderHistory(requestParameters)
-    # endregion
+    def return_order_history(self, requestParameters:RequestParameters) -> list[Order]:
+        return self._broker_facade.return_order_history(requestParameters)
 
-    # endregion
-
-    # region Risk Management
-    def _calculateQtyMarket(self, assetClass:str, order:Order)->float:
-        moneyatrisk = self._RiskManager.calculate_money_at_risk()
-        order.moneyAtRisk = moneyatrisk
-        qty = 0.00
-        if assetClass == AssetClassEnum.CRYPTO.value:
-            if order.side == OrderDirection.BUY.value:
-                qty = self._RiskManager.calculate_crypto_trade_size(moneyatrisk,
-                                                                    (float(order.price) - float(order.stopLoss)))
-            if order.side == OrderDirection.SELL.value:
-                qty = self._RiskManager.calculate_crypto_trade_size(moneyatrisk,
-                                                                    (float(order.stopLoss) - float(order.price)))
-
-        return self._RiskManager.round_down(abs(qty * order.riskPercentage))
-
-    def _calculateQtyLimit(self, assetClass:str, order:Order)->float:
-        moneyatrisk = self._RiskManager.calculate_money_at_risk()
-        order.moneyAtRisk = moneyatrisk
-        qty = 0.00
-        if order.orderType == OrderTypeEnum.LIMIT.value:
-            if assetClass == AssetClassEnum.CRYPTO:
-                if order.side == OrderDirection.BUY.value:
-                    qty = (self._RiskManager.calculate_crypto_trade_size
-                           (moneyatrisk, abs(float(order.price) - float(order.slLimitPrice))))
-                if order.side == OrderDirection.SELL.value:
-                    qty = (self._RiskManager.calculate_crypto_trade_size
-                           (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
-        return self._RiskManager.round_down(abs(qty * order.riskPercentage))
     # endregion
 
     # region Functions
-    def returnAllTrades(self)->list[Trade]:
-        return [trade for trade in self.openTrades.values()]
 
-    def returnTradesForRelation(self,assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
-        return [x for x in self.openTrades.values() if x.relation.compare(assetBrokerStrategyRelation)]
+    def calculate_qty_for_trade_orders(self, trade:Trade, assetClass:str):
+        tradeLock = self._lock_registry.get_lock(trade.id)
+        with tradeLock:
+            if trade.id in self.open_trades:
+                trade = self.open_trades[trade.id]
+                for order in trade.orders:
+                    if order.orderType == OrderTypeEnum.MARKET.value:
+                        order.qty = str(self._risk_manager.calculate_qty_market(assetClass, order))
+                    if order.orderType == OrderTypeEnum.LIMIT.value:
+                        order.qty = str(self._risk_manager.calculate_qty_limit(assetClass, order))
+
+
+    def return_all_trades(self)->list[Trade]:
+        return [trade for trade in self.open_trades.values()]
+
+    def return_trades_for_relation(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
+        return [x for x in self.open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
     # endregion
 
 # todo order builder for every broker
 
 # tm = TradeManager()
+#
+# relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",2)
+# relation2 = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",2)
+#
 # order = Order()
-# order.orderLinkId = str(uuid.uuid4())
-# order.category = "linear"
-# order.symbol = "BTCUSDT"
-# order.price = str(94000)
-# order.stopLoss = str(91000)
-# order.riskPercentage = 0.4
-# order.side = OrderDirection.BUY.value
+#
 # order.orderType = OrderTypeEnum.MARKET.value
+# order.category = "linear"
+# order.symbol = "XRPUSDT"
+# order.riskPercentage = 0.33
+# order.price =str(3.1)
+# order.stopLoss = str(2.7)
+# order.orderLinkId = "13133"
+# order.side = "Buy"
 #
-# relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",1)
+# trade = TradeBuilder().add_relation(relation).add_order(order).build()
 #
-# order2 = Order()
-# order2.orderLinkId = str(uuid.uuid4())
-# order2.category = "linear"
-# order2.symbol = "BTCUSDT"
-# order2.price = str(94000)
-# order2.stopLoss = str(91000)
-# order2.takeProfit = str(111000)
-# order2.riskPercentage = 0.25
+# tm.register_trade(trade)
 #
-# order2.side = OrderDirection.BUY.value
-# order2.orderType = OrderTypeEnum.MARKET.value
+# print(tm.return_trades_for_relation(relation2))
 #
-# order3 = Order()
-# order3.orderLinkId = str(uuid.uuid4())
-# order3.category = "linear"
-# order3.symbol = "XRPUSDT"
-# order3.price = str(2.41)
-# order3.stopLoss = str(2)
-# order3.takeProfit = str(3)
-# order3.riskPercentage = 0.25
+# tm.calculate_qty_for_trade_orders(trade,AssetClassEnum.CRYPTO.value)
 #
-# order3.side = OrderDirection.BUY.value
-# order3.orderType = OrderTypeEnum.MARKET.value
+# trades = tm.return_all_trades()
 #
-# trade = Trade(relation,[order])
-# trade.orders.append(order2)
-# trade.orders.append(order3)
-# tm.registerTrade(trade)
-# tm.placeTrade(trade,"Crypto")
+# tm.place_trade(trade)
 #
-# trade = tm.returnAllTrades()
-# for trade in trade:
-#     for order in trade.orders:
-#         print(order)
+# trades = tm.return_all_trades()
+#
+# print(trades)

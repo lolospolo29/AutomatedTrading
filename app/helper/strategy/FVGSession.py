@@ -34,26 +34,25 @@ class FVGSession(Strategy):
         self.expectedTimeFrames.append(timeFrame2)
         self.expectedTimeFrames.append(timeFrame3)
         self.expectedTimeFrames.append(timeFrame4)
-    # todo add handlers
 
     def isInTime(self,time) -> bool:
-        if self._TimeWindow.IsInEntryWindow(time) or self._TimeWindow2.IsInEntryWindow(time):
+        if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):
             return True
         return False
 
     def _analyzeData(self, candles: list, timeFrame: int) -> list:
             frameWorks = []
             last_candle = candles[-1]
-            time = last_candle.isoTime
+            time = last_candle.iso_time
             if timeFrame == 240:
-                range = self._LevelMediator.calculateLevels("PD",candles,lookback=1)
+                range = self._LevelMediator.calculate_levels("PD", candles, lookback=1)
 
                 if len(range) > 0:
                     frameWorks.extend(range)
 
             if timeFrame == 1:
                 if self.isInTime(time):
-                    fvg = self._PDMediator.calculatePDArray("FVG", candles, lookback=3)
+                    fvg = self._PDMediator.calculate_pd_array("FVG", candles, lookback=3)
                     frameWorks.extend(fvg)
 
             return frameWorks
@@ -63,7 +62,7 @@ class FVGSession(Strategy):
 
                 last_candle: Candle = candles[-1]
                 prelast_candle: Candle = candles[-2]
-                time = last_candle.isoTime
+                time = last_candle.iso_time
 
                 if not self.isInTime(time):
                     return
@@ -82,13 +81,13 @@ class FVGSession(Strategy):
                         directionSweep = "Bearish"
 
 
-                oneMFvgs = [fvg for fvg in pds if fvg.name == "FVG" and fvg.status == "Inversed" and fvg.timeFrame == 1]
+                oneMFvgs = [fvg for fvg in pds if fvg.name == "FVG" and fvg.status == "Inversed" and fvg.timeframe == 1]
 
                 currentInversed = []
 
                 if len(oneMFvgs) > 0:
                     for fvg in oneMFvgs:
-                        fvgRange = self._PDMediator.returnCandleRange(fvg.name,fvg)
+                        fvgRange = self._PDMediator.return_candle_range(fvg.name, fvg)
                         if fvg.direction == "Bullish":
                             if prelast_candle.close > fvgRange.get('low') > last_candle.close:
                                 currentInversed.append(fvg)

@@ -83,8 +83,8 @@ class EconomicScrapper:
 
         return None  # Return None if no date found
 
-    def returnCalendar(self)->list[NewsDay]:
-        newsDays = []
+    def return_calendar(self)->list[NewsDay]:
+        news_days = []
         try:
             # Open the website
             url = "https://tradingeconomics.com/calendar"  # Replace with the target website URL
@@ -115,7 +115,7 @@ class EconomicScrapper:
             event_elements = self.__driver.find_elements(By.CSS_SELECTOR, "tr")
 
 
-            currentNewsDay:NewsDay = None
+            current_news_day:NewsDay = None
             # Process each event and check for timestamp
             for index, event in enumerate(event_elements):
 
@@ -124,9 +124,9 @@ class EconomicScrapper:
                 date = self._extract_date_from_event(event_text)
 
                 if not date is None:
-                    newsDay = NewsDay(date,[])
-                    newsDays.append(newsDay)
-                    currentNewsDay = newsDay
+                    news_day = NewsDay(date,[])
+                    news_days.append(news_day)
+                    current_news_day = news_day
 
                 # Extract time and daytime (AM/PM)
                 time_obj, daytime = self._extract_time_and_daytime(event_text)
@@ -136,22 +136,22 @@ class EconomicScrapper:
 
                     # Create NewsEvent dataclass and append to list
                     news_event = NewsEvent(time=time_obj, title=title, currency=currency, daytime=daytime)
-                    currentNewsDay.newsEvents.append(news_event)
+                    current_news_day.news_events.append(news_event)
             try:
-                for newsDay in newsDays:
+                for news_day in news_days:
 
                     # Convert newsDay.dayIso to a datetime object (without time)
-                    day_date = datetime.fromisoformat(newsDay.dayIso).date()
+                    day_date = datetime.fromisoformat(news_day.day_iso).date()
 
-                    for newsEvent in newsDay.newsEvents:
+                    for news_event in news_day.news_events:
                         # Ensure newsEvent.time is a string and convert to a time object
-                        if isinstance(newsEvent.time, str):
-                            time_obj = datetime.strptime(newsEvent.time, "%H:%M:%S").time()
-                        elif isinstance(newsEvent.time, datetime):
-                            time_obj = newsEvent.time.time()
+                        if isinstance(news_event.time, str):
+                            time_obj = datetime.strptime(news_event.time, "%H:%M:%S").time()
+                        elif isinstance(news_event.time, datetime):
+                            time_obj = news_event.time.time()
 
                         # Adjust for AM/PM
-                        if newsEvent.daytime == "PM":
+                        if news_event.daytime == "PM":
                             # If PM, add 12 hours to the time (except for 12 PM which is already correct)
                             if time_obj.hour != 12:
                                 time_obj = time_obj.replace(hour=time_obj.hour + 12)
@@ -162,11 +162,11 @@ class EconomicScrapper:
                         combined_datetime_with_tz = local_tz.localize(combined_datetime)
 
                         # Now, combined_datetime_with_tz is in UTC+1
-                        newsEvent.time = combined_datetime_with_tz
+                        news_event.time = combined_datetime_with_tz
 
             except Exception as e:
                 print(e)
         finally:
             # Close the WebDriver
             self.__driver.quit()
-            return newsDays
+            return news_days

@@ -19,7 +19,7 @@ class ProfitStopAnalyzer:
             self._initialized: bool = True  # Mark as initialized
 
     @staticmethod
-    def analyzeByAttribute(entries: list[ProfitStopEntry], x: int, attribute: str) -> list:
+    def analyze_by_attribute(entries: list[ProfitStopEntry], x: int, attribute: str) -> list:
         """
         Analyzes entries based on the specified attribute ('profit', 'stop', or 'entry')
         and sorts them by aggregating their ranks across relevant methods.
@@ -34,21 +34,21 @@ class ProfitStopAnalyzer:
         """
         attribute_methods = {
             "profit": [
-                ProfitStopAnalyzer.maxProfit,
-                ProfitStopAnalyzer.profitAndDistanceTradeoff,
-                ProfitStopAnalyzer.optimalProfitEntrySum,
-                ProfitStopAnalyzer.optimalProfitStopSum,
+                ProfitStopAnalyzer.max_profit,
+                ProfitStopAnalyzer.profit_and_distance_tradeoff,
+                ProfitStopAnalyzer.optimal_profit_entry_sum,
+                ProfitStopAnalyzer.optimal_profit_stop_sum,
             ],
             "stop": [
-                ProfitStopAnalyzer.highestStop,
-                ProfitStopAnalyzer.lowestStop,
-                ProfitStopAnalyzer.maximalDistance,
-                ProfitStopAnalyzer.midRangeStop,
+                ProfitStopAnalyzer.highest_stop,
+                ProfitStopAnalyzer.lowest_stop,
+                ProfitStopAnalyzer.maximal_distance,
+                ProfitStopAnalyzer.mid_range_stop,
             ],
             "entry": [
-                ProfitStopAnalyzer.lowestEntry,
-                ProfitStopAnalyzer.midRangeEntry,
-                ProfitStopAnalyzer.optimalProfitEntrySum,
+                ProfitStopAnalyzer.lowest_entry,
+                ProfitStopAnalyzer.mid_range_entry,
+                ProfitStopAnalyzer.optimal_profit_entry_sum,
             ],
         }
 
@@ -72,7 +72,7 @@ class ProfitStopAnalyzer:
         return sorted_entries[:x]
 
     @staticmethod
-    def analyzeRiskMode(entries: list[ProfitStopEntry], x: int, risk_mode: RiskMode) -> list:
+    def analyze_risk_mode(entries: list[ProfitStopEntry], x: int, risk_mode: RiskMode) -> list:
         """
         Analyzes entries based on the specified risk mode ('aggressiv', 'moderat', 'safe') and sorts
         them by aggregating their ranks across the relevant methods for that risk mode.
@@ -87,21 +87,21 @@ class ProfitStopAnalyzer:
         """
         risk_mode_methods = {
             RiskMode.AGGRESSIVE: [
-                ProfitStopAnalyzer.maxProfit,
-                ProfitStopAnalyzer.profitAndDistanceTradeoff,
-                ProfitStopAnalyzer.minimalDistance,
+                ProfitStopAnalyzer.max_profit,
+                ProfitStopAnalyzer.profit_and_distance_tradeoff,
+                ProfitStopAnalyzer.minimal_distance,
             ],
             RiskMode.MODERAT: [
-                ProfitStopAnalyzer.midRangeStop,
-                ProfitStopAnalyzer.midRangeEntry,
-                ProfitStopAnalyzer.optimalProfitEntrySum,
-                ProfitStopAnalyzer.optimalProfitStopSum,
+                ProfitStopAnalyzer.mid_range_stop,
+                ProfitStopAnalyzer.mid_range_entry,
+                ProfitStopAnalyzer.optimal_profit_entry_sum,
+                ProfitStopAnalyzer.optimal_profit_stop_sum,
             ],
             RiskMode.SAFE: [
-                ProfitStopAnalyzer.maximalDistance,
-                ProfitStopAnalyzer.highestStop,
-                ProfitStopAnalyzer.lowestStop,
-                ProfitStopAnalyzer.lowestEntry,
+                ProfitStopAnalyzer.maximal_distance,
+                ProfitStopAnalyzer.highest_stop,
+                ProfitStopAnalyzer.lowest_stop,
+                ProfitStopAnalyzer.lowest_entry,
             ],
         }
 
@@ -126,12 +126,12 @@ class ProfitStopAnalyzer:
 
     # Aggressiv
     @staticmethod
-    def maxProfit(entries: list[ProfitStopEntry], x: int) -> list:
+    def max_profit(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit maximalem Profit."""
         return sorted(entries, key=lambda e: e.profit, reverse=True)[:x]
 
     @staticmethod
-    def profitAndDistanceTradeoff(entries: list[ProfitStopEntry], x: int) -> list:
+    def profit_and_distance_tradeoff(entries: list[ProfitStopEntry], x: int) -> list:
         """Optimierung von Profit mit Bestrafung für große Stop-Entry-Abstände."""
         return sorted(
             entries,
@@ -140,51 +140,51 @@ class ProfitStopAnalyzer:
         )[:x]
 
     @staticmethod
-    def minimalDistance(entries: list[ProfitStopEntry], x: int) -> list:
+    def minimal_distance(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit dem geringsten Abstand zwischen Stop und Entry."""
         return sorted(entries, key=lambda e: abs(e.stop - e.entry))[:x]
 
     # Moderat
     @staticmethod
-    def midRangeStop(entries: list[ProfitStopEntry], x: int) -> list:
+    def mid_range_stop(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit mittleren Stop-Werten."""
         return sorted(entries,
                       key=lambda e: abs(e.stop - sum(entry.stop for entry in entries) / len(entries)))[:x]
 
     @staticmethod
-    def midRangeEntry(entries: list[ProfitStopEntry], x: int) -> list:
+    def mid_range_entry(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit mittleren Entry-Werten."""
         return sorted(entries,
                       key=lambda e: abs(e.entry - sum(entry.entry for entry in entries) / len(entries)))[:x]
 
     @staticmethod
-    def optimalProfitEntrySum(entries: list[ProfitStopEntry], x: int) -> list:
+    def optimal_profit_entry_sum(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit der höchsten Summe aus Profit und Entry."""
         return sorted(entries, key=lambda e: e.profit + e.entry, reverse=True)[:x]
 
     @staticmethod
-    def optimalProfitStopSum(entries: list[ProfitStopEntry], x: int) -> list:
+    def optimal_profit_stop_sum(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit der höchsten Summe aus Profit und Stop."""
         return sorted(entries, key=lambda e: e.profit + e.stop, reverse=True)[:x]
 
     # Safe
     @staticmethod
-    def maximalDistance(entries: list[ProfitStopEntry], x: int) -> list:
+    def maximal_distance(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit dem größten Abstand zwischen Stop und Entry."""
         return sorted(entries, key=lambda e: abs(e.stop - e.entry), reverse=True)[:x]
 
     @staticmethod
-    def highestStop(entries: list[ProfitStopEntry], x: int) -> list:
+    def highest_stop(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit dem höchsten Stop-Wert."""
         return sorted(entries, key=lambda e: e.stop, reverse=True)[:x]
 
     @staticmethod
-    def lowestStop(entries: list[ProfitStopEntry], x: int) -> list:
+    def lowest_stop(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit dem niedrigsten Stop-Wert."""
         return sorted(entries, key=lambda e: e.stop)[:x]
 
     @staticmethod
-    def lowestEntry(entries: list[ProfitStopEntry], x: int) -> list:
+    def lowest_entry(entries: list[ProfitStopEntry], x: int) -> list:
         """Finde die x Einträge mit dem niedrigsten Entry-Wert."""
         return sorted(entries, key=lambda e: e.entry)[:x]
 
@@ -199,36 +199,36 @@ class ProfitStopAnalyzer:
 # ]
 #
 # # Analyze by the 'profit' attribute and get the top 2 entries
-# profitentries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=4, attribute='profit')
+# profitentries = ProfitStopAnalyzer.analyze_by_attribute(entries, x=4, attribute='profit')
 # for entry in profitentries:
 #     print(entry)
 # print()
 #
 # # Analyze by the 'entry' attribute and get the top 2 entries
-# entryentries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=4, attribute='entry')
+# entryentries = ProfitStopAnalyzer.analyze_by_attribute(entries, x=4, attribute='entry')
 # for entry in entryentries:
 #     print(entry)
 #
 # print()
 #
-# stopentries = ProfitStopAnalyzer.analyzeByAttribute(entries, x=4, attribute='stop')
+# stopentries = ProfitStopAnalyzer.analyze_by_attribute(entries, x=4, attribute='stop')
 # for entry in stopentries:
 #     print(entry)
 #
 # print()
 #
-# riskmodesafe = ProfitStopAnalyzer.analyzeRiskMode(entries, x=2, risk_mode=RiskMode.SAFE)
+# riskmodesafe = ProfitStopAnalyzer.analyze_risk_mode(entries, x=2, risk_mode=RiskMode.SAFE)
 # for entry in riskmodesafe:
 #     print(entry)
 #
 # print()
-# riskmodemoderat = ProfitStopAnalyzer.analyzeRiskMode(entries, x=2, risk_mode=RiskMode.MODERAT)
+# riskmodemoderat = ProfitStopAnalyzer.analyze_risk_mode(entries, x=2, risk_mode=RiskMode.MODERAT)
 # for entry in riskmodemoderat:
 #     print(entry)
 #
 # print()
 #
-# riskmodeaggressive = ProfitStopAnalyzer.analyzeRiskMode(entries, x=2, risk_mode=RiskMode.AGGRESSIVE)
+# riskmodeaggressive = ProfitStopAnalyzer.analyze_risk_mode(entries, x=2, risk_mode=RiskMode.AGGRESSIVE)
 # for entry in riskmodeaggressive:
 #     print(entry)
 
@@ -244,34 +244,34 @@ class ProfitStopAnalyzer:
 #     print(entry)
 #
 # print("\nMax Profit:")
-# print(ProfitStopAnalyzer.maxProfit(test_entries, x))
+# print(ProfitStopAnalyzer.max_profit(test_entries, x))
 #
 # print("\nProfit and Distance Tradeoff:")
-# print(ProfitStopAnalyzer.profitAndDistanceTradeoff(test_entries, x))
+# print(ProfitStopAnalyzer.profit_and_distance_tradeoff(test_entries, x))
 #
 # print("\nMinimal Distance:")
-# print(ProfitStopAnalyzer.minimalDistance(test_entries, x))
+# print(ProfitStopAnalyzer.minimal_distance(test_entries, x))
 #
 # print("\nMid-Range Stop:")
-# print(ProfitStopAnalyzer.midRangeStop(test_entries, x))
+# print(ProfitStopAnalyzer.mid_range_stop(test_entries, x))
 #
 # print("\nMid-Range Entry:")
-# print(ProfitStopAnalyzer.midRangeEntry(test_entries, x))
+# print(ProfitStopAnalyzer.mid_range_entry(test_entries, x))
 #
 # print("\nOptimal Profit Entry Sum:")
-# print(ProfitStopAnalyzer.optimalProfitEntrySum(test_entries, x))
+# print(ProfitStopAnalyzer.optimal_profit_entry_sum(test_entries, x))
 #
 # print("\nOptimal Profit Stop Sum:")
-# print(ProfitStopAnalyzer.optimalProfitStopSum(test_entries, x))
+# print(ProfitStopAnalyzer.optimal_profit_stop_sum(test_entries, x))
 #
 # print("\nMaximal Distance:")
-# print(ProfitStopAnalyzer.maximalDistance(test_entries, x))
+# print(ProfitStopAnalyzer.maximal_distance(test_entries, x))
 #
 # print("\nHighest Stop:")
-# print(ProfitStopAnalyzer.highestStop(test_entries, x))
+# print(ProfitStopAnalyzer.highest_stop(test_entries, x))
 #
 # print("\nLowest Stop:")
-# print(ProfitStopAnalyzer.lowestStop(test_entries, x))
+# print(ProfitStopAnalyzer.lowest_stop(test_entries, x))
 #
 # print("\nLowest Entry:")
-# print(ProfitStopAnalyzer.lowestEntry(test_entries, x))
+# print(ProfitStopAnalyzer.lowest_entry(test_entries, x))

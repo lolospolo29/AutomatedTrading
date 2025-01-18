@@ -12,7 +12,7 @@ from app.models.trade.Trade import Trade
 class TradeMapper:
 
     @staticmethod
-    def mapTradeFromDB(trade:dict) -> Trade:
+    def map_trade_from_db(trade:dict) -> Trade:
         trade = trade.get('Trade')
         orders = trade.get("orders")
         asset = trade.get("asset")
@@ -24,16 +24,16 @@ class TradeMapper:
         size = trade.get("size")
         tradeMode = trade.get("tradeMode")
         id = trade.get("id")
-        relation = AssetBrokerStrategyRelation(asset=asset,broker=broker,strategy=strategy,maxTrades=1)
+        relation = AssetBrokerStrategyRelation(asset=asset, broker=broker, strategy=strategy, max_trades=1)
 
-        mappedTrade = Trade(relation=relation,orders=orders)
-        mappedTrade.side = side
-        mappedTrade.size = size
-        mappedTrade.tradeMode = tradeMode
-        mappedTrade.unrealisedPnl = unrealisedPnl
-        mappedTrade.leverage = leverage
-        mappedTrade.id = id
-        return mappedTrade
+        mapped_trade = Trade(relation=relation,orders=orders,id=id)
+        mapped_trade.side = side
+        mapped_trade.size = size
+        mapped_trade.tradeMode = tradeMode
+        mapped_trade.unrealisedPnl = unrealisedPnl
+        mapped_trade.leverage = leverage
+        mapped_trade.id = id
+        return mapped_trade
 
     @staticmethod
     def parse_datetime(field):
@@ -51,8 +51,8 @@ class TradeMapper:
             high=candle_data["Candle"]["high"],
             low=candle_data["Candle"]["low"],
             close=candle_data["Candle"]["close"],
-            IsoTime=self.parse_datetime(candle_data["Candle"]["IsoTime"]),
-            timeFrame=candle_data["Candle"]["timeFrame"],
+            iso_time=self.parse_datetime(candle_data["Candle"]["iso_time"]),
+            timeframe=candle_data["Candle"]["timeframe"],
             id=candle_data["Candle"]["id"]
         )
 
@@ -62,7 +62,8 @@ class TradeMapper:
             pd_array = data["PDArray"]
             framework = PDArray(pd_array["name"], pd_array["direction"])
             for candle in pd_array.get("candles", []):
-                framework.addCandles([self.map_candle(candle)])
+                framework.add_candles([self.map_candle(candle)])
+            framework.timeFrame = pd_array["timeFrame"]
             return framework
         elif "Level" in data:
             level = data["Level"]
@@ -70,7 +71,7 @@ class TradeMapper:
             for candle in level.get("candles", []):
                 candles.append(self.map_candle(candle))
             framework = Level(level["name"], level["level"])
-            framework.setFibLevel(level.get("fibLevel", 0.0), level["direction"],candles=candles)
+            framework.set_fib_level(level.get("fib_level", 0.0), level["direction"], candles=candles)
             return framework
         elif "Structure" in data:
             structure = data["Structure"]
@@ -79,21 +80,20 @@ class TradeMapper:
             return Structure(structure["name"], structure["direction"],candle=candle)
         return None
 
-    def mapOrderFromDB(self,mongo_data: dict):
+    def map_order_from_db(self, mongo_data: dict):
         """Map Order data from MongoDB document."""
         order_dict = mongo_data["Order"]
         order = Order()
 
-        order.tradeId = order_dict.get("tradeId")
-        order.status = order_dict.get("status")
-        order.entryFrameWork = self.map_framework(order_dict["entryFrameWork"])
+        order.trade_id = order_dict.get("trade_id")
+        order.orderStatus = order_dict.get("orderStatus")
+        order.entry_frame_work = self.map_framework(order_dict["entry_frame_work"])
         order.confirmations = [self.map_framework(cf) for cf in order_dict["confirmations"]]
-        order.createdAt = self.parse_datetime(order_dict["createdAt"])
-        order.openedAt = self.parse_datetime(order_dict.get("openedAt"))
-        order.closedAt = self.parse_datetime(order_dict.get("closedAt"))
-        order.updatedAt = self.parse_datetime(order_dict["updatedAt"])
-        order.riskPercentage = order_dict.get("riskPercentage")
-        order.moneyAtRisk = order_dict.get("moneyAtRisk")
+        order.created_at = self.parse_datetime(order_dict["created_at"])
+        order.opened_at = self.parse_datetime(order_dict.get("opened_at"))
+        order.closed_at = self.parse_datetime(order_dict.get("closed_at"))
+        order.risk_percentage = order_dict.get("risk_percentage")
+        order.money_at_risk = order_dict.get("money_at_risk")
         order.unrealisedPnL = order_dict.get("unrealisedPnL")
         order.orderLinkId = order_dict.get("orderLinkId")
         order.orderType = order_dict.get("orderType")
@@ -122,5 +122,9 @@ class TradeMapper:
         order.tpOrderType = order_dict.get("tpOrderType")
         order.slOrderType = order_dict.get("slOrderType")
         order.slLimitPrice = order_dict.get("slLimitPrice")
+        order.updatedTime = self.parse_datetime(order_dict["created_at"])
+        order.createdTime = self.parse_datetime(order_dict["created_at"])
+        order.lastPriceOnCreated = order_dict.get("lastPriceOnCreated")
+
 
         return order

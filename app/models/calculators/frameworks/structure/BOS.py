@@ -9,7 +9,7 @@ class BOS(IConfirmation):
         self.lookback: int = lookback
         self.name = "BOS"
 
-    def returnConfirmation(self, candles: list[Candle]) -> list[Structure]:
+    def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
         """
         Identify Break of Structure (BOS) from provided data.
         param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
@@ -27,22 +27,22 @@ class BOS(IConfirmation):
             lows.append(candle.low)
             closes.append(candle.close)
 
-        lastBullishHighCandle = None
-        lastBearishLowCandle = None
+        last_bullish_high_candle = None
+        last_bearish_low_candle = None
 
         for i in range(len(candles)):
             # Track the last significant bullish high
             if i >= self.lookback:
                 if closes[i] > max(highs[i - self.lookback:i]):
-                    lastBullishHighCandle = candles[i]
-                structure = Structure(self.name, direction="Bullish", candle=lastBullishHighCandle)
+                    last_bullish_high_candle = candles[i]
+                structure = Structure(self.name, direction="Bullish", candle=last_bullish_high_candle)
                 structures.append(structure)
 
             # Track the last significant bearish low
             if i >= self.lookback:
                 if closes[i] < min(lows[i - self.lookback:i]):
-                    lastBearishLowCandle = candles[i]
-                    structure = Structure(self.name, direction="Bearish",candle=lastBearishLowCandle)
+                    last_bearish_low_candle = candles[i]
+                    structure = Structure(self.name, direction="Bearish",candle=last_bearish_low_candle)
                     structures.append(structure)
 
         return structures

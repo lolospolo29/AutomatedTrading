@@ -25,38 +25,38 @@ class mongoDBData:
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
 
-            self._SecretManager: SecretsManager = SecretsManager()
-            self._MongoDBData: MongoDB = MongoDB("TradingData", self._SecretManager.returnSecret("mongodb"))
+            self._secret_manager: SecretsManager = SecretsManager()
+            self._mongo_db_data: MongoDB = MongoDB("TradingData", self._secret_manager.return_secret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
 
-    def addCandleToDB(self, asset:str,candle: Candle):
-        self._MongoDBData.add(asset, candle)
+    def add_candle_to_db(self, asset:str, candle: Candle):
+        self._mongo_db_data.add(asset, candle)
 
-    def archiveData(self, asset: str) -> Any:
-        currentTimeNy = datetime.datetime.now(ny_tz)
+    def archive_data(self, asset: str) -> Any:
+        current_time_ny = datetime.datetime.now(ny_tz)
 
         # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
-        date60DaysAgoNy = currentTimeNy - datetime.timedelta(days=60)
+        date60_days_ago_ny = current_time_ny - datetime.timedelta(days=60)
 
         # Umwandlung beider Zeiten in UTC
-        currentTimeUtc = currentTimeNy.astimezone(pytz.utc)
-        date60DaysAgoUtc = date60DaysAgoNy.astimezone(pytz.utc)
+        currentTimeUtc = current_time_ny.astimezone(pytz.utc)
+        date60_days_ago_utc = date60_days_ago_ny.astimezone(pytz.utc)
 
         query = 'AssetData.timeStamp'
 
-        self._MongoDBData.deleteOldDocuments(asset, query, date60DaysAgoUtc)
+        self._mongo_db_data.deleteOldDocuments(asset, query, date60_days_ago_utc)
 
-    def receiveData(self,asset:str, broker:str, timeFrame:int, lookback: int):
-        currentTimeNy = datetime.datetime.now(ny_tz)
+    def receive_data(self, asset:str, broker:str, timeframe:int, lookback: int):
+        current_time_ny = datetime.datetime.now(ny_tz)
 
         # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
-        three_days_ago = currentTimeNy - datetime.timedelta(days=lookback)
+        three_days_ago = current_time_ny - datetime.timedelta(days=lookback)
 
         three_days_ago_utc = three_days_ago.astimezone(pytz.utc)
 
         query = {
             "Candle.broker": broker,
-            "Candle.timeFrame": timeFrame,
+            "Candle.timeFrame": timeframe,
             "Candle.IsoTime": {"$gte": three_days_ago_utc}
         }
-        return self._MongoDBData.find(asset, query)
+        return self._mongo_db_data.find(asset, query)

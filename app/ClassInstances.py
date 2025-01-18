@@ -8,21 +8,21 @@ from app.controller.SignalController import SignalController
 from tools.FileHandler import FileHandler
 from app.manager.initializer.ConfigManager import ConfigManager
 
-configManager = ConfigManager()
+config_manager = ConfigManager()
 
 # FileHandler
-newFileHandler = FileHandler()
+new_file_handler = FileHandler()
 
 # controller
 
-signalController = SignalController()
+signal_controller = SignalController()
 
 # Logic
 
-configManager.runStartingSetup()
+config_manager.run_starting_setup()
 
 
-def monitorFolder(handler, folderPath):
+def MonitorFolder(handler, folderPath):
     observer = Observer()
     observer.schedule(handler, path=folderPath, recursive=False)
     observer.start()
@@ -34,5 +34,5 @@ def monitorFolder(handler, folderPath):
         observer.stop()
     observer.join()
 
-thread = Thread(target=partial(monitorFolder, newFileHandler, "/Users/lauris/PycharmProjects/AutomatedTrading/incomingFiles"))
+thread = Thread(target=partial(MonitorFolder, new_file_handler, "/Users/lauris/PycharmProjects/AutomatedTrading/incomingFiles"))
 thread.start()

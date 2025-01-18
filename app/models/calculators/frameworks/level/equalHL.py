@@ -9,41 +9,42 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
 
 
     def _calculateThreshold(self, prices:list[float]):
-        prevPrice = 0
+        prev_price = 0
         differences = []
         for price in prices:
-            if prevPrice == 0:
-                prevPrice = price
-            if prevPrice != price:
-                differences.append(abs(price - prevPrice))
-                prevPrice = price
+            if prev_price == 0:
+                prev_price = price
+            if prev_price != price:
+                differences.append(abs(price - prev_price))
+                prev_price = price
         if differences:
             return self._findMedian(differences)
 
 
     def returnLevels(self, candles: list[Candle], detect: str) -> list[Level]:
-        equalLevels = []
-        equalLows = []
-        equalHighs = []
+        equal_levels = []
+        equal_lows = []
+        equal_highs = []
 
-        lastcandle = candles[-1]
-        timeframe = lastcandle.timeFrame
+        last_candle = candles[-1]
+
+        timeframe = last_candle.timeframe
 
         # Detect equal lows
         if detect == "low" or detect == "both":
             filteredCandles = self.filterCandles(candles,"low")
-            equalLows += self._detect_equal_lows(filteredCandles,timeframe)
+            equal_lows += self._detect_equal_lows(filteredCandles,timeframe)
 
         # Detect equal highs
         if detect == "high" or detect == "both":
             filteredCandles = self.filterCandles(candles,"high")
-            equalHighs += self._detect_equal_highs(filteredCandles,timeframe)
+            equal_highs += self._detect_equal_highs(filteredCandles,timeframe)
 
         # Filter equal levels to only keep the lowest or highest in the same threshold range
-        equalLevels += self._filter_levels(equalLows)
-        equalLevels += self._filter_levels(equalHighs)
+        equal_levels += self._filter_levels(equal_lows)
+        equal_levels += self._filter_levels(equal_highs)
 
-        return equalLevels
+        return equal_levels
 
     @staticmethod
     def filterCandles(candles: list[Candle], detect: str) -> list[Candle]:
@@ -93,13 +94,13 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
                         if not isInLows:
                             level = Level(name="EqualLow", level=similarLows[k])
                             level.timeFrame = timeframe
-                            level.setFibLevel(0.0, "EQL", candles=[similarCandles[k]])
+                            level.set_fib_level(0.0, "EQL", candles=[similarCandles[k]])
                             equalLows.append(level)
                 if len(equalLows) <= 0:
                     for k in range(len(similarLows)):
                         level = Level(name="EqualLow", level=similarLows[k])
                         level.timeFrame = timeframe
-                        level.setFibLevel(0.0, "EQL", candles=[similarCandles[k]])
+                        level.set_fib_level(0.0, "EQL", candles=[similarCandles[k]])
                         equalLows.append(level)
 
         return equalLows
@@ -137,13 +138,13 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
                             if not isInEqualHighs:
                                 level = Level(name="EqualHigh", level=similarHighs[k])
                                 level.timeFrame = timeFrame
-                                level.setFibLevel(0.0, "EQH", candles=[similarCandles[k]])
+                                level.set_fib_level(0.0, "EQH", candles=[similarCandles[k]])
                                 equalHighs.append(level)
                 if len(equalHighs) <= 0:
                     for k in range(len(similarHighs)):
                         level = Level(name="EqualHigh", level=similarHighs[k])
                         level.timeFrame = timeFrame
-                        level.setFibLevel(0.0, "EQH", candles=[similarCandles[k]])
+                        level.set_fib_level(0.0, "EQH", candles=[similarCandles[k]])
                         equalHighs.append(level)
 
         return equalHighs

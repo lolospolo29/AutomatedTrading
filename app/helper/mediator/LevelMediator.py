@@ -22,47 +22,47 @@ class LevelMediator:
     # region Initializing
     def __init__(self):
         if not hasattr(self, "initialized"):  # Prevent re-initialization
-            self.ote: OTE = OTE()
-            self.pd = PD()
-            self.stdv = STDV()
-            self.cbdr = CBDR()
-            self.equal = equalHL()
-            self.ndog = NDOG()
-            self.nwog = NWOG()
-            self.previousDaysLevel = PreviousDaysLevels()
-            self.previousSessionLevel = PreviousSessionLevels()
-            self.previousWeekLevels = PreviousWeekLevels()
+            self._ote: OTE = OTE()
+            self._pd = PD()
+            self._stdv = STDV()
+            self._cbdr = CBDR()
+            self._equal = equalHL()
+            self._ndog = NDOG()
+            self._nwog = NWOG()
+            self._previous_days_level = PreviousDaysLevels()
+            self._previous_session_level = PreviousSessionLevels()
+            self._previous_week_levels = PreviousWeekLevels()
 
             self.initialized: bool = True  # Mark as initialized
     # endregion
 
     # region Calculators / Analyzing
-    def calculateLevels(self, levelType: str, candles: list[Candle], *args, **kwargs) -> list:
-        if levelType == "CBDR":
-            return self.cbdr.returnLevels(candles)
-        if levelType == "previousDaysLevels":
-            return self.previousDaysLevel.returnLevels(candles)
-        if levelType == "PreviousSessionLevels":
-            return self.previousSessionLevel.returnLevels(candles)
-        if levelType == "PreviousWeekLevels":
-            return self.previousWeekLevels.returnLevels(candles)
+    def calculate_levels(self, level_type: str, candles: list[Candle], *args, **kwargs) -> list:
+        if level_type == "CBDR":
+            return self._cbdr.return_levels(candles)
+        if level_type == "previousDaysLevels":
+            return self._previous_days_level.return_levels(candles)
+        if level_type == "PreviousSessionLevels":
+            return self._previous_session_level.return_levels(candles)
+        if level_type == "PreviousWeekLevels":
+            return self._previous_week_levels.return_levels(candles)
 
-    def calculateEqualLevels(self, candles: list[Candle],direction: str) -> list:
-        return self.equal.returnLevels(candles, direction)
+    def calculate_equal_levels(self, candles: list[Candle], direction: str) -> list:
+        return self._equal.returnLevels(candles, direction)
 
-    def calculateFibonacci(self,levelType ,candles: list[Candle],lookback) -> list:
-        if levelType == "OTE":
-            return self.ote.returnLevels(candles,lookback)
-        if levelType == "PD":
-            return self.pd.returnLevels(candles,lookback)
-        if levelType == "STDV":
-            return self.stdv.returnLevels(candles,lookback)
+    def calculate_fibonacci(self, level_type, candles: list[Candle], lookback) -> list:
+        if level_type == "OTE":
+            return self._ote.return_levels(candles, lookback)
+        if level_type == "PD":
+            return self._pd.return_levels(candles, lookback)
+        if level_type == "STDV":
+            return self._stdv.return_levels(candles, lookback)
 
-    def returnOpeningGap(self,levelType:str,candles: list[Candle]) -> list:
-        if levelType == "NWOG":
-            return self.nwog.returnLevels(candles)
-        if levelType == "NDOG":
-            return self.ndog.returnLevels(candles)
+    def return_opening_gap(self, level_type:str, candles: list[Candle]) -> list:
+        if level_type == "NWOG":
+            return self._nwog.return_levels(candles)
+        if level_type == "NDOG":
+            return self._ndog.return_levels(candles)
     # endregion
 
 

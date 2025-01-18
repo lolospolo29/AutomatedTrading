@@ -15,7 +15,7 @@ class CandleSeries:
         candleList = list(self.candleSeries)
 
         # Find the correct position to insert using bisect (binary search)
-        index = bisect.bisect_right([c.isoTime for c in candleList], candle.isoTime)
+        index = bisect.bisect_right([c.iso_time for c in candleList], candle.iso_time)
 
         # Insert the new candle at the correct position
         candleList.insert(index, candle)

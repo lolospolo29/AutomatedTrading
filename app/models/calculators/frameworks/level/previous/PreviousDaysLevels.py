@@ -7,12 +7,12 @@ from app.models.calculators.frameworks.Level import Level
 
 class PreviousDaysLevels(ILevel):
 
-    def returnLevels(self, candles: list[Candle]) -> list[Level]:
+    def return_levels(self, candles: list[Candle]) -> list[Level]:
         daily_levels = {}
 
         for candle in candles:
             # Extract the date from isoTime (ignore time part)
-            day = candle.isoTime.date()
+            day = candle.iso_time.date()
 
             # Initialize or update the high and low for this day
             if day not in daily_levels:

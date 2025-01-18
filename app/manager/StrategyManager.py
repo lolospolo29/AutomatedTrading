@@ -1,5 +1,4 @@
 import threading
-from typing import Optional, Tuple
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
@@ -29,7 +28,7 @@ class StrategyManager:
 
     # endregion
 
-    def registerStrategy(self, relation:AssetBrokerStrategyRelation,strategy:Strategy) -> bool:
+    def register_strategy(self, relation:AssetBrokerStrategyRelation, strategy:Strategy) -> bool:
         if relation not in self.strategies:
             self.strategies[relation] = strategy
             print(f"Strategy '{strategy.name}' created and added to the Strategy Manager.")
@@ -38,17 +37,17 @@ class StrategyManager:
             print(f"Strategy '{strategy.name}' already exists in the Strategy Manager.")
             return False
 
-    def returnExpectedTimeFrame(self, strategy: str) -> list:
+    def return_expected_time_frame(self, strategy: str) -> list:
         if strategy in self.strategies:
-            return self.strategies[strategy].returnExpectedTimeFrame()
+            return self.strategies[strategy].return_expected_time_frame()
         return []
 
-    def getEntry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                        timeFrame: int) -> StrategyResult:
+    def get_entry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
+                  timeFrame: int) -> StrategyResult:
         if relation.strategy in self.strategies:
-            return self.strategies[relation].getEntry(candles,timeFrame)
+            return self.strategies[relation].get_entry(candles, timeFrame)
 
-    def getExit(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                        timeFrame: int,trade:Trade) -> StrategyResult:
+    def get_exit(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
+                 timeFrame: int, trade:Trade) -> StrategyResult:
         if relation.strategy in self.strategies:
-            return self.strategies[relation].getExit(candles,timeFrame,trade)
+            return self.strategies[relation].get_exit(candles, timeFrame, trade)

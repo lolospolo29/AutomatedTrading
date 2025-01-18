@@ -4,12 +4,12 @@ from app.models.calculators.frameworks.Level import Level
 
 
 class PreviousWeekLevels(ILevel):
-    def returnLevels(self, candles: list[Candle]) -> list[Level]:
+    def return_levels(self, candles: list[Candle]) -> list[Level]:
         weekly_levels = {}
 
         for candle in candles:
             # Extract the ISO year and week number
-            year, week = candle.isoTime.isocalendar()[:2]
+            year, week = candle.iso_time.isocalendar()[:2]
             week_key = (year, week)
 
             # Initialize or update the high and low for this week

@@ -11,6 +11,6 @@ class SignalController:
     # endregion
 
     # region TradingView Handling
-    def tradingViewSignal(self, jsonData: Dict[str, Any]) -> None:
-        self._TradingService.handlePriceActionSignal(jsonData)
+    def trading_view_signal(self, json_data: Dict[str, Any]) -> None:
+        self._TradingService.handle_price_action_signal(json_data)
     # endregion

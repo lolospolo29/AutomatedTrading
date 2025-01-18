@@ -11,26 +11,26 @@ class LevelHandler:
         _lock = threading.Lock()
 
 
-    def addLevel(self, newLevel: Level) -> bool:
+    def add_level(self, new_level: Level) -> bool:
         for level in self.levels:
-            if self._compareLevels(newLevel, level):
+            if self._compare_levels(new_level, level):
                 return False
-        self.levels.append(newLevel)
+        self.levels.append(new_level)
         return True
 
-    def returnLevels(self) -> list[Level]:
+    def return_levels(self) -> list[Level]:
         return self.levels
 
-    def removeLevel(self, candles:list[Candle],timeFrame: int) -> None:
+    def remove_level(self, candles:list[Candle], timeframe: int) -> None:
         _ids = [candle.id for candle in candles]
         levels = self.levels.copy()
         for level in levels:
-            if level.timeFrame == timeFrame:
-                if not level.isIdPresent(_ids):
+            if level.timeframe == timeframe:
+                if not level.is_id_present(_ids):
                     self.levels.remove(level)
 
     @staticmethod
-    def _compareLevels(level1: Level, level2: Level) -> bool:
+    def _compare_levels(level1: Level, level2: Level) -> bool:
         _1ids = [candle.id for candle in level1.candles]
         _2ids = [candle.id for candle in level2.candles]
         if (level1.name == level2.name and level1.level == level2.level and sorted(_1ids) == sorted(_2ids) and

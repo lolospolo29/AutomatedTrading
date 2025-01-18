@@ -4,7 +4,7 @@ import uuid
 
 class Trade:
 
-    def __init__(self, relation: AssetBrokerStrategyRelation, orders: list[Order]):
+    def __init__(self, relation: AssetBrokerStrategyRelation=None, orders: list[Order]=None,id:str=None):
         self.orders : list[Order] = orders
         self.relation: AssetBrokerStrategyRelation = relation
         self.side = ""
@@ -13,11 +13,14 @@ class Trade:
         self.leverage = 0
         self.size = 0
         self.tradeMode = 0
-        self.id = uuid.uuid4()
+        if id is None:
+            self.id = uuid.uuid4()
+        else:
+            self.id = id
     # todo file trade logging
 
 
-    def toDict(self):
+    def to_dict(self):
         """Gibt alle Datenpunkte als Dictionary zurück"""
         return {
             "Trade": {
@@ -25,6 +28,7 @@ class Trade:
                 "orders": [order.orderLinkId for order in self.orders],
                 "asset": self.relation.asset ,
                 "broker": self.relation.broker ,
+                "strategy": self.relation.strategy ,
                 "side": self.side,
                 "unrealisedPnl": self.unrealisedPnl,
                 "leverage": self.leverage,

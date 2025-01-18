@@ -11,25 +11,25 @@ class StructureHandler:
         self.structures: list[Structure] = []
         _lock = threading.Lock()
 
-    def addStructure(self, newStructure: Structure) -> None:
+    def add_structure(self, newStructure: Structure) -> None:
         for structure in self.structures:
-            if self._compareStructure(newStructure, structure):
+            if self._compare_structure(newStructure, structure):
                 return
         self.structures.append(newStructure)
 
-    def returnStructure(self) -> list[Structure]:
+    def return_structure(self) -> list[Structure]:
         return self.structures
 
-    def removeStructure(self, candles: list[Candle],timeFrame: int) -> None:
+    def remove_structure(self, candles: list[Candle], timeFrame: int) -> None:
         _ids = [candle.id for candle in candles]
         structures = self.structures.copy()
         for structure in structures:
-            if structure.timeFrame == timeFrame:
-                if not structure.isIdPresent(_ids):
+            if structure.timeframe == timeFrame:
+                if not structure.is_id_present(_ids):
                     self.structures.remove(structure)
 
     @staticmethod
-    def _compareStructure(structure1: Structure, structure2: Structure) -> bool:
+    def _compare_structure(structure1: Structure, structure2: Structure) -> bool:
         if (structure1.name == structure2.name and structure1.candle.id == structure2.candle.id
                 and structure1.direction == structure2.direction):
             return True

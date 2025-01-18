@@ -7,118 +7,118 @@ from app.models.asset.SMTPair import SMTPair
 class Asset:
 
     # region Initializing
-    def __init__(self, name: str,assetClass:str):
+    def __init__(self, name: str, asset_class:str):
         self.name: str = name
-        self.assetClass = assetClass
+        self.asset_class = asset_class
         self.brokers: list[str] = []
         self.strategies: list[str] = []
-        self.smtPairs: list[SMTPair] = []
-        self.CandlesSeries: list[CandleSeries] = []
-        self.brokerStrategyAssignment: list[AssetBrokerStrategyRelation] = []
+        self.smt_pairs: list[SMTPair] = []
+        self.candles_series: list[CandleSeries] = []
+        self.relations: list[AssetBrokerStrategyRelation] = []
     # endregion
 
     # region Add Functions
-    def addBroker(self, broker: str) -> bool:
-        if not self._isBrokerInBrokers(broker):
+    def add_broker(self, broker: str) -> bool:
+        if not self._is_broker_in_brokers(broker):
             self.brokers.append(broker)
             return True
         return False
 
-    def addStrategy(self, strategy: str) -> bool:
-        if not self._isStrategyInStrategies(strategy):
+    def add_strategy(self, strategy: str) -> bool:
+        if not self._is_strategy_in_strategies(strategy):
             self.strategies.append(strategy)
             return True
         return False
 
-    def addSMTPair(self, pair: SMTPair) -> bool:
-        if not self._isPairInSMTPairs(pair):
-            self.smtPairs.append(pair)
+    def add_smt_pair(self, pair: SMTPair) -> bool:
+        if not self._is_pair_in_smt_pairs(pair):
+            self.smt_pairs.append(pair)
             return True
         return False
 
-    def addCandleSeries(self, timeFrame: int, maxlen: int, broker: str) -> bool:
-        for candleSeries in self.CandlesSeries:
-            if not self._isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, candleSeries):
-                self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
+    def add_candle_series(self, time_frame: int, maxlen: int, broker: str) -> bool:
+        for candle_series in self.candles_series:
+            if not self._is_broker_and_time_frame_in_candle_series(broker, time_frame, candle_series):
+                self.candles_series.append(CandleSeries(time_frame, maxlen, broker))
                 return True
-        if len(self.CandlesSeries) == 0:
-            if self._isBrokerInBrokers(broker):
-                self.CandlesSeries.append(CandleSeries(timeFrame, maxlen, broker))
+        if len(self.candles_series) == 0:
+            if self._is_broker_in_brokers(broker):
+                self.candles_series.append(CandleSeries(time_frame, maxlen, broker))
                 return True
             return False
 
-    def addRelation(self, relation:AssetBrokerStrategyRelation) -> bool:
-            if not self._isBrokerAndStrategyInAssignment(relation.broker, relation.strategy):
-                if self._isBrokerInBrokers(relation.broker) and self._isStrategyInStrategies(relation.strategy):
-                    self.brokerStrategyAssignment.append(relation)
+    def add_relation(self, relation:AssetBrokerStrategyRelation) -> bool:
+            if not self._is_relation_in_relations(relation.broker, relation.strategy):
+                if self._is_broker_in_brokers(relation.broker) and self._is_strategy_in_strategies(relation.strategy):
+                    self.relations.append(relation)
                     return True
             return False
 
-    def addCandle(self, candle: Candle) -> bool:
-        for candleSeries in self.CandlesSeries:
-            if self._isBrokerAndTimeFrameInCandleSeries(candle.broker, candle.timeFrame, candleSeries):
-                candleSeries.addCandle(candle)
+    def add_candle(self, candle: Candle) -> bool:
+        for candleSeries in self.candles_series:
+            if self._is_broker_and_time_frame_in_candle_series(candle.broker, candle.timeframe, candleSeries):
+                candleSeries.add_candle(candle)
                 return True
         raise ValueError("Candle is not in CandleSeries")
     # endregion
 
     # region Return Functions
-    def returnCandles(self, timeFrame: int,broker: str) -> list[Candle]:
-        for series in self.CandlesSeries:
-            if self._isBrokerAndTimeFrameInCandleSeries(broker, timeFrame, series):
+    def return_candles(self, time_frame: int, broker: str) -> list[Candle]:
+        for series in self.candles_series:
+            if self._is_broker_and_time_frame_in_candle_series(broker, time_frame, series):
                 return series.toList()
         return []
 
-    def returnAllCandleSeries(self) -> list[CandleSeries]:
+    def return_candle_series(self) -> list[CandleSeries]:
         allSeries = []
-        for series in self.CandlesSeries:
+        for series in self.candles_series:
             allSeries.append(series)
         return allSeries
 
-    def returnSMTPair(self, pairName: str)-> SMTPair:
-        for smtPair in self.smtPairs:
-            for pair in smtPair.smtPairs:
+    def return_smt_pair(self, pairName: str)-> SMTPair:
+        for smtPair in self.smt_pairs:
+            for pair in smtPair.smt_pairs:
                 if pair == pairName:
                     return smtPair
 
-    def returnRelationsForBroker(self, broker: str) -> list[AssetBrokerStrategyRelation]:
+    def return_relations_for_broker(self, broker: str) -> list[AssetBrokerStrategyRelation]:
         relations: list[AssetBrokerStrategyRelation] = []
-        for assignment in self.brokerStrategyAssignment:
+        for assignment in self.relations:
             if broker == assignment.broker:
                 relations.append(assignment)
         return relations
     # endregion
 
-    # region Checkings
-    def _isBrokerInBrokers(self, broker: str) -> bool:
+    # region Checking
+    def _is_broker_in_brokers(self, broker: str) -> bool:
         if broker in self.brokers:
             return True
         return False
 
-    def _isStrategyInStrategies(self, strategy: str) -> bool:
+    def _is_strategy_in_strategies(self, strategy: str) -> bool:
         if strategy in self.strategies:
             return True
         return False
 
-    def _isPairInSMTPairs(self, pair: SMTPair) -> bool:
-        for existingPair in self.smtPairs:
+    def _is_pair_in_smt_pairs(self, pair: SMTPair) -> bool:
+        for existingPair in self.smt_pairs:
             if (existingPair.strategy == pair.strategy and
                     existingPair.correlation == pair.correlation and
-                    sorted(existingPair.smtPairs) == sorted(
-                        pair.smtPairs)):  # Ensure elements match, regardless of order
+                    sorted(existingPair.smt_pairs) == sorted(
+                        pair.smt_pairs)):  # Ensure elements match, regardless of order
                 print("Duplicate SMTPair found. Not adding to smtPairs.")
                 return True
         return False
 
     @staticmethod
-    def _isBrokerAndTimeFrameInCandleSeries(broker: str, timeFrame: int, candleSeries: CandleSeries)-> bool:
-        if candleSeries.broker == broker and candleSeries.timeFrame == timeFrame:
+    def _is_broker_and_time_frame_in_candle_series(broker: str, timeFrame: int, candle_series: CandleSeries)-> bool:
+        if candle_series.broker == broker and candle_series.timeFrame == timeFrame:
             return True
         return False
 
-    def _isBrokerAndStrategyInAssignment(self, broker: str, strategy: str) -> bool:
-        for assignement in self.brokerStrategyAssignment:
-            if assignement.strategy == strategy and assignement.broker == broker:
+    def _is_relation_in_relations(self, broker: str, strategy: str) -> bool:
+        for relation in self.relations:
+            if relation.strategy == strategy and relation.broker == broker:
                 return True
         return False
     # endregion

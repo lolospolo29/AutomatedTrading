@@ -20,16 +20,16 @@ class mongoDBConfig:
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
 
-            self._SecretManager: SecretsManager = SecretsManager()
-            self._MongoDBConfig: MongoDB = MongoDB("TradingConfig", self._SecretManager.returnSecret("mongodb"))
+            self._secret_manager: SecretsManager = SecretsManager()
+            self._mongo_db_config: MongoDB = MongoDB("TradingConfig", self._secret_manager.return_secret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
 
 
-    def loadData(self, collectionName: str, query: Any):
-        return self._MongoDBConfig.find(collectionName,query)
+    def load_data(self, collectionName: str, query: Any):
+        return self._mongo_db_config.find(collectionName, query)
 
-    def findById(self,typ: str, attribute: str, id: int, getAttribute: str) -> str:
-            query = self._MongoDBConfig.buildQuery(typ, attribute, id)
-            assetDict = self.loadData(typ,query)
-            for doc in assetDict:
+    def find_by_id(self, typ: str, attribute: str, id: int, getAttribute: str) -> str:
+            query = self._mongo_db_config.buildQuery(typ, attribute, id)
+            asset_dict = self.load_data(typ, query)
+            for doc in asset_dict:
                 return (doc.get(typ)).get(getAttribute)

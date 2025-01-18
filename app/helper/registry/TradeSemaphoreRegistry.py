@@ -24,7 +24,7 @@ class TradeSemaphoreRegistry:
         with self._lock:
             if relation not in self.registry:
                 # Erstelle Semaphore mit der maximal erlaubten Anzahl von Trades
-                self.registry[relation] = threading.Semaphore(relation.maxTrades)
+                self.registry[relation] = threading.Semaphore(relation.max_trades)
 
     def acquire_trade(self, relation:AssetBrokerStrategyRelation):
         """Einen Trade für die gegebene Relation starten."""
