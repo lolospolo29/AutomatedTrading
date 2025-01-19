@@ -9,6 +9,7 @@ from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.frameworks.Structure import Structure
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
+from app.monitoring.logging.logging_startup import logger
 
 
 class TradeMapper:
@@ -100,7 +101,7 @@ class TradeMapper:
                 setattr(order, attr, order_dict.get(attr))
 
             # Parse datetime fields
-
+            logger.info(f"Mapping Order,OrderLinkId:{order_dict.get('orderLinkId')},Symbol:{order.symbol},TradeId:{order.trade_id}")
             # Map frameworks
             order.entry_frame_work = self.map_framework(order_dict.get("entry_frame_work", {}))
             order.confirmations = [
@@ -131,7 +132,7 @@ class TradeMapper:
                 orders=trade_dict.get("orders", []),
                 id=trade_dict.get("id")
             )
-
+            logger.info(f"Mapping Trade,TradingId:{trade.id}")
             # Set additional attributes
             trade.side = trade_dict.get("side", "")
             trade.size = trade_dict.get("size", 0.0)

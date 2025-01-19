@@ -1,6 +1,7 @@
 from app.models.calculators.RiskModeEnum import RiskMode
 from app.models.calculators.ProfitStopEntry import ProfitStopEntry
 from app.models.calculators.exceptions.CalculationExceptionError import CalculationExceptionError
+from app.monitoring.logging.logging_startup import logger
 
 
 class OrderWeightage:
@@ -13,6 +14,7 @@ class OrderWeightage:
             ProfitStopEntry (list[ProfitStopEntry]) with Percentages based on the mode.
         """
         try:
+            logger.info(f"Set Percentages Based on Mode,{mode}")
             total_entries = len(entries)
             if total_entries == 0:
                 return entries

@@ -42,6 +42,7 @@ class StrategyManager:
     def return_expected_time_frame(self, strategy: str) -> list:
         try:
             if strategy in self.strategies:
+                logger.info(f"Strategy {strategy} get Expected TimeFrame")
                 return self.strategies[strategy].return_expected_time_frame()
             return []
         except Exception as e:
@@ -51,6 +52,7 @@ class StrategyManager:
                   timeFrame: int) -> StrategyResult:
         try:
             if relation.strategy in self.strategies:
+                logger.info(f"Strategy {relation.asset} get Exit TimeFrame")
                 return self.strategies[relation].get_entry(candles, timeFrame)
         except Exception as e:
             logger.exception(f"Get Entry Failed for {relation.strategy}/{relation.asset}: {e}")
@@ -59,6 +61,7 @@ class StrategyManager:
                  timeFrame: int, trade:Trade) -> StrategyResult:
         try:
             if relation.strategy in self.strategies:
+                logger.info(f"Strategy {relation.asset} get Exit TimeFrame,TradeId: {trade.id}")
                 return self.strategies[relation].get_exit(candles, timeFrame, trade)
         except Exception as e:
             logger.exception(f"Get Exit Failed for {relation.strategy}/{relation}: {e}")

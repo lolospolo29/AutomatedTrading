@@ -35,6 +35,7 @@ class AssetManager:
     # region CRUD
 
     def add_candle_to_db(self, candle: Candle):
+        logger.info(f"Adding candle to db:{candle.asset}")
         try:
             if candle.timeframe >= 5:
                 self._mongo_db_data.add_candle_to_db(candle.asset, candle)
@@ -47,6 +48,8 @@ class AssetManager:
 
     # region Register And Return Assets
     def register_asset(self, asset: Asset) -> bool:
+        logger.info(f"Register Asset to db:{asset}")
+
         if not asset in self.assets:
             self.assets[asset.name] = asset
             logger.info("Registered asset {}".format(asset.name))
@@ -65,6 +68,8 @@ class AssetManager:
     def add_candle(self, json: dict) -> Candle:
         try:
             candle: Candle = self._asset_mapper.map_candle_from_trading_view(json)
+            logger.info(f"Add Candle to:{candle.asset}")
+
             if candle.asset in self.assets:
                 self.assets[candle.asset].add_candle(candle)
                 return candle
@@ -76,6 +81,7 @@ class AssetManager:
     def return_relations(self, asset: str, broker: str) -> list[AssetBrokerStrategyRelation]:
         try:
             if asset in self.assets:
+                logger.info(f"Return Relations for:{asset}")
                 return self.assets[asset].return_relations_for_broker(broker)
         except Exception as e:
             logger.exception("Failed to return relations for asset {}".format(asset))
@@ -83,6 +89,7 @@ class AssetManager:
     def return_smt_pair(self, asset: str) ->SMTPair:
         try:
             if asset in self.assets:
+                logger.info(f"Return SMT Pair for:{asset}")
                 return self.assets[asset].return_smt_pair()
         except Exception as e:
             logger.exception("Failed to return SMTPair for asset {}".format(asset))
@@ -90,6 +97,7 @@ class AssetManager:
     def return_candles(self, asset: str, broker: str, timeFrame: int) -> list[Candle]:
         try:
             if asset in self.assets:
+                logger.info(f"Return Candles for:{asset}")
                 return self.assets[asset].return_candles(timeFrame, broker)
         except Exception as e:
             logger.exception("Failed to return candles for asset {}".format(asset))
@@ -97,6 +105,7 @@ class AssetManager:
     def return_all_relations(self, asset: str):
         try:
             if asset in self.assets:
+                logger.info(f"Return All Relations for:{asset}")
                 return self.assets[asset].relations
         except Exception as e:
             logger.exception("Failed to return relations for asset {}".format(asset))

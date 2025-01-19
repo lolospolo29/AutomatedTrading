@@ -17,12 +17,17 @@ class RangeRatio(BaseRatio):
         estimatedProfits = []
         try:
             for ratio in rangeRatio:
-                profit = self.calculate_profit(entry, stop, ratio)
-                if self.is_condition_full_filled(profit, stop, entry, direction):
-                    estimatedProfits.append(ProfitStopEntry(profit,stop,entry))
+                try:
+                    profit = self.calculate_profit(entry, stop, ratio)
+                    if self.is_condition_full_filled(profit, stop, entry, direction):
+                        estimatedProfits.append(ProfitStopEntry(profit,stop,entry))
+                except Exception as e:
+                    logger.warning("Profit Range Exception thrown")
+                finally:
+                    continue
 
         except Exception as e:
-            logger.info("Profits Exception thrown")
+            logger.exception("Profits Exception thrown")
         finally:
             return estimatedProfits
 
@@ -31,12 +36,15 @@ class RangeRatio(BaseRatio):
         estimatedStops = []
         try:
             for ratio in rangeRatio:
-                stop = self.calculate_stop(entry, profit, ratio)
-                if self.is_condition_full_filled(profit, stop, entry, direction):
-                    estimatedStops.append(ProfitStopEntry(profit,stop,entry))
+                try:
+                    stop = self.calculate_stop(entry, profit, ratio)
+                    if self.is_condition_full_filled(profit, stop, entry, direction):
+                        estimatedStops.append(ProfitStopEntry(profit,stop,entry))
+                except Exception as e:
+                    logger.warning("Stop Range Exception thrown")
 
         except Exception as e:
-            logger.info("Stops Exception thrown")
+            logger.exception("Stops Range Exception thrown")
         finally:
             return estimatedStops
 
@@ -45,9 +53,12 @@ class RangeRatio(BaseRatio):
         estimatedEntries = []
         try:
             for ratio in rangeRatio:
-                entry = self.calculate_entry(stop, profit, ratio)
-                if self.is_condition_full_filled(profit, stop, entry, direction):
-                    estimatedEntries.append(ProfitStopEntry(profit,stop,entry))
+                try:
+                    entry = self.calculate_entry(stop, profit, ratio)
+                    if self.is_condition_full_filled(profit, stop, entry, direction):
+                        estimatedEntries.append(ProfitStopEntry(profit,stop,entry))
+                except Exception as e:
+                    logger.warning("Entry Range Exception thrown")
         except Exception as e:
             logger.info("Entries Exception thrown")
 
@@ -61,13 +72,23 @@ class RangeRatio(BaseRatio):
 
         try:
             for i  in range(len(entries)):
-                entry = entries[i]
-                for j in range(len(stops)):
-                    stop = stops[j]
-                    profitStopEntryList.extend(self.calculate_range_profits
-                                               (entry, stop, rangeRatio, direction))
+                try:
+                    entry = entries[i]
+                    for j in range(len(stops)):
+                        try:
+                            stop = stops[j]
+                            profitStopEntryList.extend(self.calculate_range_profits
+                                                       (entry, stop, rangeRatio, direction))
+                        except Exception as e:
+                            logger.warning("Entry Range Exception thrown")
+                        finally:
+                            continue
+                except Exception as e:
+                    logger.warning("Entry Range Exception thrown")
+                finally:
+                    continue
         except Exception as e:
-            logger.info("Profits Exception thrown")
+            logger.exception("Profits Exception thrown")
         finally:
             return profitStopEntryList
 
@@ -76,13 +97,23 @@ class RangeRatio(BaseRatio):
         profitStopEntryList:list[ProfitStopEntry] = []
         try:
             for i  in range(len(entries)):
-                entry = entries[i]
-                for j in range(len(profits)):
-                    profit = profits[j]
-                    profitStopEntryList.extend(self.calculate_range_stops
-                                               (entry, profit, rangeRatio, direction))
+                try:
+                    entry = entries[i]
+                    for j in range(len(profits)):
+                        try:
+                            profit = profits[j]
+                            profitStopEntryList.extend(self.calculate_range_stops
+                                                       (entry, profit, rangeRatio, direction))
+                        except Exception as e:
+                            logger.warning("Stops Exception thrown")
+                        finally:
+                            continue
+                except Exception as e:
+                    logger.warning("Stops Exception thrown")
+                finally:
+                    continue
         except Exception as e:
-            logger.info("Stops Exception thrown")
+            logger.exception("Stops Exception thrown")
         finally:
             return profitStopEntryList
 
@@ -91,13 +122,19 @@ class RangeRatio(BaseRatio):
         profitStopEntryList:list[ProfitStopEntry] = []
         try:
             for i  in range(len(stops)):
-                stop = stops[i]
-                for j in range(len(profits)):
-                    profit = profits[j]
-                    profitStopEntryList.extend(self.calculate_range_entries
-                                               (stop, profit, rangeRatio, direction))
+                try:
+                    stop = stops[i]
+                    for j in range(len(profits)):
+                        try:
+                            profit = profits[j]
+                            profitStopEntryList.extend(self.calculate_range_entries
+                                                       (stop, profit, rangeRatio, direction))
+                        except Exception as e:
+                            logger.warning("Entries Range Exception thrown")
+                except Exception as e:
+                    logger.warning("Entries Range Exception thrown")
         except Exception as e:
-            logger.info("Entries Exception thrown")
+            logger.exception("Entries Exception thrown")
         finally:
             return profitStopEntryList
     # endregion

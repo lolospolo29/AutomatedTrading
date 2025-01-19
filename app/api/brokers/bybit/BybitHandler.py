@@ -42,7 +42,7 @@ class BybitHandler(IBrokerHandler):
         openAndClosedOrders: OpenAndClosedOrders = (self._class_mapper.map_args_to_dataclass
                                                    (OpenAndClosedOrders, request_params, RequestParameters))
 
-        logger.info(f"Sending API-Call to Bybit,Symbol:{request_params.symbol}")
+        logger.info(f"Sending API-Call to Return Position Info Bybit,Symbol:{request_params.symbol}")
         brokerOrderList: list[BrokerOrder] = []
         try:
             # Validierung der Eingabeparameter
@@ -58,7 +58,7 @@ class BybitHandler(IBrokerHandler):
 
             while True:
                 try:
-                    logger.info(f"Request Bybit,Symbol:{request_params.symbol}")
+                    logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
                     params = openAndClosedOrders.to_query_string()
                     responseJson = self.__broker.send_request(endPoint, method, params)
 
@@ -153,9 +153,9 @@ class BybitHandler(IBrokerHandler):
             if not orderHistory.validate():
                 raise ValueError("The Fields that were required were not given")
 
-            logger.info(f"Request Bybit Endpoint,Symbol:{request_params.symbol}")
-
             endPoint = EndPointEnum.HISTORY.value
+
+            logger.info(f"Request Bybit Return Order History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
             method = "get"
 
             previousCursor:str = ""
@@ -163,7 +163,7 @@ class BybitHandler(IBrokerHandler):
             while True:
                 try:
                     params = orderHistory.to_query_string()
-                    logger.info(f"Request Bybit,Symbol:{request_params.symbol}")
+                    logger.info(f"Request Return Order History Bybit,Symbol:{request_params.symbol}")
                     responseJson = self.__broker.send_request(endPoint, method, params)
 
                     objList = responseJson.get("result").get("list")
@@ -184,7 +184,7 @@ class BybitHandler(IBrokerHandler):
                     previousCursor = nextPageCursor
                     orderHistory.cursor = nextPageCursor
                 except Exception as e:
-                    logger.error(f"Request Error Bybit Symbol: {request_params.symbol}")
+                    logger.error(f"Request Error Return Order History Bybit Symbol: {request_params.symbol}")
                 finally:
                     continue
         except Exception as e:

@@ -35,5 +35,3 @@ class TradeBuilder:
     def build(self):
         return self._Trade
 
-tb = TradeBuilder().add_side("ada")
-print(tb.build())

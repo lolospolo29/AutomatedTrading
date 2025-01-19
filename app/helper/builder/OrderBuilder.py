@@ -37,7 +37,7 @@ class OrderBuilder:
         o.unrealizedProfit = 0.0
         o.risk_percentage = risk_percentage
         o.orderType = OrderTypeEnum.MARKET.value # set Default
-        logger.info(f"Building Order, OrderLinkId:{o.orderLinkId}, Asset:{o.symbol},TradeId:{o.trade_id}")
+        logger.info(f"Building Order, OrderLinkId:{o.orderLinkId}, Symbol:{o.symbol},TradeId:{o.trade_id}")
         return self
 
     def set_defaults(self,price:str=None, time_in_force:TimeInForceEnum=None, take_profit:str=None,
@@ -105,7 +105,7 @@ class OrderBuilder:
         return self
 
     def build(self):
-        logger.info(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},Symbol: {self.order.symbol},TradeId: {self.order.trade_id}")
         return self.order
 
     @staticmethod

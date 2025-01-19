@@ -56,6 +56,7 @@ class FileHandler(FileSystemEventHandler):
             """
             try:
                 filename = os.path.basename(event.src_path)
+                logger.info("Processing file {}".format(filename))
 
                 if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
                     candles_dict_list = self._parse_candle_data(event.src_path)
@@ -64,7 +65,7 @@ class FileHandler(FileSystemEventHandler):
                             candle: Candle = self._asset_manager.add_candle(candle_dict)
                             self._testing_strategy(candle.asset, candle.broker, candle.timeframe)
                         except Exception as e:
-                            logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
+                            logger.exception("Failed to add Candle to AssetManager from File: {}".format(e))
                         finally:
                             continue
 

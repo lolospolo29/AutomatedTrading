@@ -16,7 +16,7 @@ class FixedRatio(BaseRatio):
             if  self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop,entry),True
         except Exception as e:
-            logger.info("Fixed Ratio Exception thrown")
+            logger.error("Fixed Ratio Exception thrown")
         finally:
             return None,False
 
@@ -26,7 +26,7 @@ class FixedRatio(BaseRatio):
             if self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop,entry),True
         except Exception as e:
-            logger.info("Fixed Profit Exception thrown")
+            logger.error("Fixed Profit Exception thrown")
         finally:
             return None,False
 
@@ -36,7 +36,7 @@ class FixedRatio(BaseRatio):
             if self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop, entry),True
         except Exception as e:
-            logger.info("Fixed Entry Exception thrown")
+            logger.error("Fixed Entry Exception thrown")
         finally:
             return None,False
     # endregion
@@ -47,19 +47,30 @@ class FixedRatio(BaseRatio):
         profitStopEntryList = []
         try:
             for i in range(len(entries)):
-                for j in range(len(stops)):
-                    entry = entries[i]
-                    stop = stops[j]
+                try:
+                    for j in range(len(stops)):
+                        try:
+                            entry = entries[i]
+                            stop = stops[j]
 
-                    profit = self.calculate_profit(entry, stop, ratio)
+                            profit = self.calculate_profit(entry, stop, ratio)
 
-                    if not self.is_condition_full_filled(profit, stop, entry, direction):
-                        continue
+                            if not self.is_condition_full_filled(profit, stop, entry, direction):
+                                continue
 
-                    profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
+                            profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
+                        except Exception as e:
+                            logger.warning("Profit Exception thrown")
+                        finally:
+                            continue
+
+                except Exception as e:
+                    logger.warning("Profit Exception thrown")
+                finally:
+                    continue
 
         except Exception as e:
-            logger.info("Profits Exception thrown")
+            logger.exception("Profits Exception thrown")
         finally:
             return profitStopEntryList
 
@@ -69,20 +80,30 @@ class FixedRatio(BaseRatio):
         profitStopEntryList = []
         try:
             for i in range(len(entries)):
-                for j in range(len(profits)):
-                    entry = entries[i]
-                    profit = profits[j]
+                try:
+                    for j in range(len(profits)):
+                        try:
+                            entry = entries[i]
+                            profit = profits[j]
 
-                    stop = self.calculate_stop(entry, profit, ratio)
+                            stop = self.calculate_stop(entry, profit, ratio)
 
-                    if not self.is_condition_full_filled(profit, stop, entry, direction):
-                        continue
+                            if not self.is_condition_full_filled(profit, stop, entry, direction):
+                                continue
 
-                    profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
+                            profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
+                        except Exception as e:
+                            logger.warning("Profit Exception thrown")
+                        finally:
+                            continue
+                except Exception as e:
+                    logger.warning("Stop Exception thrown")
+                finally:
+                    continue
 
             return profitStopEntryList
         except Exception as e:
-            logger.info("Stops Exception thrown")
+            logger.exception("Stops Exception thrown")
         finally:
             return profitStopEntryList
 
@@ -94,20 +115,29 @@ class FixedRatio(BaseRatio):
 
         try:
             for i in range(len(stops)):
-                for j in range(len(profits)):
-                    stop = stops[i]
-                    profit = profits[j]
+                try:
+                    for j in range(len(profits)):
+                        try:
+                            stop = stops[i]
+                            profit = profits[j]
 
-                    entry = self.calculate_entry(stop, profit, ratio)
+                            entry = self.calculate_entry(stop, profit, ratio)
 
-                    if not self.is_condition_full_filled(profit, stop, entry, direction):
-                        continue
+                            if not self.is_condition_full_filled(profit, stop, entry, direction):
+                                continue
 
-                    profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
-
+                            profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
+                        except Exception as e:
+                            logger.warning("Profit Exception thrown")
+                        finally:
+                            continue
+                except Exception as e:
+                    logger.warning("Entries Exception thrown")
+                finally:
+                    continue
             return profitStopEntryList
         except Exception as e:
-            logger.info("Entries Exception thrown")
+            logger.exception("Entries Exception thrown")
         finally:
             return profitStopEntryList
     # endregion
