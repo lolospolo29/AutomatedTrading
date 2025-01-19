@@ -21,6 +21,8 @@ class StrategyManager:
 
     # region Initializing
 
+    # todo strategy logic
+
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.strategies: dict[AssetBrokerStrategyRelation,Strategy] = {}

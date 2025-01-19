@@ -1,8 +1,10 @@
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
+from app.monitoring.logging.logging_startup import logger
 
 
-class equalHL:  ### Implement threshold for every asset every Timeframe
+class equalHL:
+    """Calculate the Equal High and Low for given Candles and the side you wanna Detect BUY/SELL"""
     def _findMedian(self,values:list[float]):
         sums = sum(values)
         return sums/len(values)
@@ -22,29 +24,33 @@ class equalHL:  ### Implement threshold for every asset every Timeframe
 
 
     def returnLevels(self, candles: list[Candle], detect: str) -> list[Level]:
+        """:return Equal Highs and Lows with Treshold Range"""
         equal_levels = []
         equal_lows = []
         equal_highs = []
+        try:
 
-        last_candle = candles[-1]
+            last_candle = candles[-1]
 
-        timeframe = last_candle.timeframe
+            timeframe = last_candle.timeframe
 
-        # Detect equal lows
-        if detect == "low" or detect == "both":
-            filteredCandles = self.filterCandles(candles,"low")
-            equal_lows += self._detect_equal_lows(filteredCandles,timeframe)
+            # Detect equal lows
+            if detect == "low" or detect == "both":
+                filteredCandles = self.filterCandles(candles,"low")
+                equal_lows += self._detect_equal_lows(filteredCandles,timeframe)
 
-        # Detect equal highs
-        if detect == "high" or detect == "both":
-            filteredCandles = self.filterCandles(candles,"high")
-            equal_highs += self._detect_equal_highs(filteredCandles,timeframe)
+            # Detect equal highs
+            if detect == "high" or detect == "both":
+                filteredCandles = self.filterCandles(candles,"high")
+                equal_highs += self._detect_equal_highs(filteredCandles,timeframe)
 
-        # Filter equal levels to only keep the lowest or highest in the same threshold range
-        equal_levels += self._filter_levels(equal_lows)
-        equal_levels += self._filter_levels(equal_highs)
-
-        return equal_levels
+            # Filter equal levels to only keep the lowest or highest in the same threshold range
+            equal_levels += self._filter_levels(equal_lows)
+            equal_levels += self._filter_levels(equal_highs)
+        except Exception as e:
+            logger.critical("Exception occurred in CBDR: {}".format(e))
+        finally:
+            return equal_levels
 
     @staticmethod
     def filterCandles(candles: list[Candle], detect: str) -> list[Candle]:

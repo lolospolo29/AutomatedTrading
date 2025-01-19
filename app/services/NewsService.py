@@ -4,31 +4,46 @@ import pytz
 
 from tools.EconomicScrapper.EconomicScrapper import EconomicScrapper
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
+from app.monitoring.logging.logging_startup import logger
 
 
 class NewsService:
     def __init__(self):
         self.economic_scrapper = EconomicScrapper()
         self.news_days:list[NewsDay] = []
-        self.receive_news()
+        self.logger = logger
 
     def receive_news(self):
+        """
+        Receiving the News from Scrapper.
+
+        Returns:
+            Safe News on the Day to the List.
+        """
         self.news_days = self.economic_scrapper.return_calendar()
+        self.logger.info(f"News Days received")
 
     def is_news_ahead(self, hour:int=1)->bool:
-        if len(self.news_days) == 0:
-            raise ValueError
+        """
+        Checks if the news day is ahead.
 
-        utc_now = datetime.now(pytz.utc)
+        Returns:
+            True if the news day is ahead, False otherwise.
+        """
+        try:
+            utc_now = datetime.now(pytz.utc)
 
-        # Convert to UTC-5
-        utc_minus_5 = utc_now.astimezone(pytz.timezone('US/Eastern'))  # Eastern Time is UTC-5 during standard time
+            # Convert to UTC-5
+            utc_minus_5 = utc_now.astimezone(pytz.timezone('US/Eastern'))  # Eastern Time is UTC-5 during standard time
 
-        for newsDay in self.news_days:
-            day = datetime.fromisoformat(newsDay.day_iso).date().day
-            if day == utc_minus_5.day:
-                for news in newsDay.news_events:
-                    if (news.time.hour-hour == utc_minus_5.hour or news.time.hour+hour == utc_minus_5.hour or
-                            news.time.hour == utc_minus_5.hour) :
-                        return True
-        return False
+            for newsDay in self.news_days:
+                day = datetime.fromisoformat(newsDay.day_iso).date().day
+                if day == utc_minus_5.day:
+                    for news in newsDay.news_events:
+                        if (news.time.hour-hour == utc_minus_5.hour or news.time.hour+hour == utc_minus_5.hour or
+                                news.time.hour == utc_minus_5.hour) :
+                            self.logger.info(f"News Day {newsDay.day_iso} ahead")
+                            return True
+            return False
+        except Exception as e:
+            self.logger.critical(e)

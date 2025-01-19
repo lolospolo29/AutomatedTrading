@@ -4,7 +4,8 @@ from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
 
 
-class PreviousSessionLevels(ILevel):
+class PreviousSessionLevels:
+    """Calculator for Previous Session Levels"""
 
     @staticmethod
     def return_levels(candles: list[Candle], time_windows: list[ITimeWindow]) -> list[Level]:

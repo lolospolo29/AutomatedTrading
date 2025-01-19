@@ -1,5 +1,7 @@
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
+from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExceptionError
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
@@ -10,121 +12,132 @@ from app.models.trade.Trade import Trade
 
 
 class TradeMapper:
+    @staticmethod
+    def parse_datetime(field: Any) -> Optional[datetime]:
+        """
+        Parse MongoDB datetime fields.
+        Returns None if the field is not a valid datetime or is missing.
+        """
+        try:
+            if isinstance(field, dict) and "$date" in field:
+                    return datetime.fromisoformat(field["$date"].replace("Z", ""))
+            return field
+        except Exception:
+            raise MappingFailedExceptionError("Datetime")
+
+    def map_candle(self,candle_data: Dict[str, Any]) -> Optional[Candle]:
+        """
+        Map Candle data, returning None if required fields are missing.
+        """
+        try:
+            candle = candle_data.get("Candle", {})
+            return Candle(
+                asset=candle.get("asset"),
+                broker=candle.get("broker"),
+                open=candle.get("open", 0.0),
+                high=candle.get("high", 0.0),
+                low=candle.get("low", 0.0),
+                close=candle.get("close", 0.0),
+                iso_time=self.parse_datetime(candle.get("iso_time")),
+                timeframe=candle.get("timeframe", ""),
+                id=candle.get("id")
+            )
+        except Exception:
+            raise MappingFailedExceptionError("Candle")
+
+    def map_framework(self,data: Dict[str, Any]) -> Optional[Any]:
+        """
+        Map framework data dynamically based on type.
+        Returns None if the type is unrecognized or fields are missing.
+        """
+        try:
+            if "PDArray" in data:
+                pd_array = data.get("PDArray", {})
+                framework = PDArray(pd_array.get("name", ""), pd_array.get("direction", ""))
+                candles = [self.map_candle(c) for c in pd_array.get("candles", []) if c]
+                framework.add_candles(candles)
+                framework.timeFrame = pd_array.get("timeFrame", "")
+                return framework
+
+            if "Level" in data:
+                level = data.get("Level", {})
+                candles = [self.map_candle(c) for c in level.get("candles", []) if c]
+                framework = Level(level.get("name", ""), level.get("level", 0.0))
+                framework.set_fib_level(level.get("fib_level", 0.0), level.get("direction", ""), candles)
+                return framework
+
+            if "Structure" in data:
+                structure = data.get("Structure", {})
+                candle = structure.get("candles", {}).get("Candle")
+                framework = Structure(structure.get("name", ""), structure.get("direction", ""), candle=candle)
+                return framework
+            return None
+        except Exception:
+            raise MappingFailedExceptionError("Framework")
+
+    def map_order_from_db(self,order_data: Dict[str, Any]) -> Optional[Order]:
+        """
+        Map Order data from MongoDB document.
+        Returns None if required fields are missing.
+        """
+        try:
+            order_dict = order_data.get("Order", {})
+            order = Order()
+
+            # List of attributes to set dynamically
+            attributes = [
+                "trade_id", "orderStatus", "risk_percentage", "money_at_risk", "unrealisedPnL",
+                "orderLinkId", "orderType", "symbol", "category", "side", "qty", "orderId",
+                "isLeverage", "marketUnit", "orderFilter", "orderlv", "stopLoss", "takeProfit",
+                "price", "timeInForce", "closeOnTrigger", "reduceOnly", "triggerPrice",
+                "triggerBy", "tpTriggerBy", "slTriggerBy", "triggerDirection", "tpslMode",
+                "tpLimitPrice", "tpOrderType", "slOrderType", "slLimitPrice", "lastPriceOnCreated"
+            ]
+
+            # Dynamically assign attributes
+            for attr in attributes:
+                setattr(order, attr, order_dict.get(attr))
+
+            # Parse datetime fields
+
+            # Map frameworks
+            order.entry_frame_work = self.map_framework(order_dict.get("entry_frame_work", {}))
+            order.confirmations = [
+                self.map_framework(cf) for cf in order_dict.get("confirmations", []) if cf
+            ]
+
+            return order
+        except Exception:
+            raise MappingFailedExceptionError("Order")
 
     @staticmethod
-    def map_trade_from_db(trade:dict) -> Trade:
-        trade = trade.get('Trade')
-        orders = trade.get("orders")
-        asset = trade.get("asset")
-        broker = trade.get("broker")
-        strategy = trade.get("strategy")
-        side = trade.get("side")
-        unrealisedPnl = trade.get("unrealisedPnl")
-        leverage = trade.get("leverage")
-        size = trade.get("size")
-        tradeMode = trade.get("tradeMode")
-        id = trade.get("id")
-        relation = AssetBrokerStrategyRelation(asset=asset, broker=broker, strategy=strategy, max_trades=1)
+    def map_trade_from_db(trade_data: Dict[str, Any]) -> Optional[Trade]:
+        """
+        Map Trade data from MongoDB document.
+        Returns None if required fields are missing.
+        """
+        try:
+            trade_dict = trade_data.get("Trade", {})
+            relation = AssetBrokerStrategyRelation(
+                asset=trade_dict.get("asset", ""),
+                broker=trade_dict.get("broker", ""),
+                strategy=trade_dict.get("strategy", ""),
+                max_trades=1
+            )
 
-        mapped_trade = Trade(relation=relation,orders=orders,id=id)
-        mapped_trade.side = side
-        mapped_trade.size = size
-        mapped_trade.tradeMode = tradeMode
-        mapped_trade.unrealisedPnl = unrealisedPnl
-        mapped_trade.leverage = leverage
-        mapped_trade.id = id
-        return mapped_trade
+            trade = Trade(
+                relation=relation,
+                orders=trade_dict.get("orders", []),
+                id=trade_dict.get("id")
+            )
 
-    @staticmethod
-    def parse_datetime(field):
-        """Parse MongoDB datetime fields."""
-        if isinstance(field, dict) and "$date" in field:
-            return datetime.fromisoformat(field["$date"].replace("Z", ""))
-        return field
+            # Set additional attributes
+            trade.side = trade_dict.get("side", "")
+            trade.size = trade_dict.get("size", 0.0)
+            trade.tradeMode = trade_dict.get("tradeMode", "")
+            trade.unrealisedPnl = trade_dict.get("unrealisedPnl", 0.0)
+            trade.leverage = trade_dict.get("leverage", 0.0)
 
-    def map_candle(self,candle_data):
-        """Map Candle data."""
-        return Candle(
-            asset=candle_data["Candle"]["asset"],
-            broker=candle_data["Candle"]["broker"],
-            open=candle_data["Candle"]["open"],
-            high=candle_data["Candle"]["high"],
-            low=candle_data["Candle"]["low"],
-            close=candle_data["Candle"]["close"],
-            iso_time=self.parse_datetime(candle_data["Candle"]["iso_time"]),
-            timeframe=candle_data["Candle"]["timeframe"],
-            id=candle_data["Candle"]["id"]
-        )
-
-    def map_framework(self,data):
-        """Map framework data dynamically based on type."""
-        if "PDArray" in data:
-            pd_array = data["PDArray"]
-            framework = PDArray(pd_array["name"], pd_array["direction"])
-            for candle in pd_array.get("candles", []):
-                framework.add_candles([self.map_candle(candle)])
-            framework.timeFrame = pd_array["timeFrame"]
-            return framework
-        elif "Level" in data:
-            level = data["Level"]
-            candles = []
-            for candle in level.get("candles", []):
-                candles.append(self.map_candle(candle))
-            framework = Level(level["name"], level["level"])
-            framework.set_fib_level(level.get("fib_level", 0.0), level["direction"], candles=candles)
-            return framework
-        elif "Structure" in data:
-            structure = data["Structure"]
-            candles = []
-            candle = structure.get("candles").get("Candle")
-            return Structure(structure["name"], structure["direction"],candle=candle)
-        return None
-
-    def map_order_from_db(self, mongo_data: dict):
-        """Map Order data from MongoDB document."""
-        order_dict = mongo_data["Order"]
-        order = Order()
-
-        order.trade_id = order_dict.get("trade_id")
-        order.orderStatus = order_dict.get("orderStatus")
-        order.entry_frame_work = self.map_framework(order_dict["entry_frame_work"])
-        order.confirmations = [self.map_framework(cf) for cf in order_dict["confirmations"]]
-        order.created_at = self.parse_datetime(order_dict["created_at"])
-        order.opened_at = self.parse_datetime(order_dict.get("opened_at"))
-        order.closed_at = self.parse_datetime(order_dict.get("closed_at"))
-        order.risk_percentage = order_dict.get("risk_percentage")
-        order.money_at_risk = order_dict.get("money_at_risk")
-        order.unrealisedPnL = order_dict.get("unrealisedPnL")
-        order.orderLinkId = order_dict.get("orderLinkId")
-        order.orderType = order_dict.get("orderType")
-        order.symbol = order_dict.get("symbol")
-        order.category = order_dict.get("category")
-        order.side = order_dict.get("side")
-        order.qty = order_dict.get("qty")
-        order.orderId = order_dict.get("orderId")
-        order.isLeverage = order_dict.get("isLeverage")
-        order.marketUnit = order_dict.get("marketUnit")
-        order.orderFilter = order_dict.get("orderFilter")
-        order.orderlv = order_dict.get("orderlv")
-        order.stopLoss = order_dict.get("stopLoss")
-        order.takeProfit = order_dict.get("takeProfit")
-        order.price = order_dict.get("price")
-        order.timeInForce = order_dict.get("timeInForce")
-        order.closeOnTrigger = order_dict.get("closeOnTrigger")
-        order.reduceOnly = order_dict.get("reduceOnly")
-        order.triggerPrice = order_dict.get("triggerPrice")
-        order.triggerBy = order_dict.get("triggerBy")
-        order.tpTriggerBy = order_dict.get("tpTriggerBy")
-        order.slTriggerBy = order_dict.get("slTriggerBy")
-        order.triggerDirection = order_dict.get("triggerDirection")
-        order.tpslMode = order_dict.get("tpslMode")
-        order.tpLimitPrice = order_dict.get("tpLimitPrice")
-        order.tpOrderType = order_dict.get("tpOrderType")
-        order.slOrderType = order_dict.get("slOrderType")
-        order.slLimitPrice = order_dict.get("slLimitPrice")
-        order.updatedTime = self.parse_datetime(order_dict["created_at"])
-        order.createdTime = self.parse_datetime(order_dict["created_at"])
-        order.lastPriceOnCreated = order_dict.get("lastPriceOnCreated")
-
-
-        return order
+            return trade
+        except Exception:
+            raise MappingFailedExceptionError("Trade")

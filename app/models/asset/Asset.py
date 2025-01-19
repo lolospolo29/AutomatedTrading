@@ -59,7 +59,6 @@ class Asset:
             if self._is_broker_and_time_frame_in_candle_series(candle.broker, candle.timeframe, candleSeries):
                 candleSeries.add_candle(candle)
                 return True
-        raise ValueError("Candle is not in CandleSeries")
     # endregion
 
     # region Return Functions
@@ -106,7 +105,6 @@ class Asset:
                     existingPair.correlation == pair.correlation and
                     sorted(existingPair.smt_pairs) == sorted(
                         pair.smt_pairs)):  # Ensure elements match, regardless of order
-                print("Duplicate SMTPair found. Not adding to smtPairs.")
                 return True
         return False
 

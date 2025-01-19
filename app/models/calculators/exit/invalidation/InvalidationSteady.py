@@ -3,6 +3,7 @@ from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
 class InvalidationSteady:
+    """Stop Loss Check"""
     @staticmethod
     def check_invalidation(stop: float, candle: Candle, direction: OrderDirectionEnum) ->bool:
         if direction == OrderDirectionEnum.BUY:

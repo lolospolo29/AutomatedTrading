@@ -8,8 +8,6 @@ from app.monitoring.logging.logging_startup import logger, log_queue
 
 app = Flask(__name__)
 
-# Set up a thread-safe queue for log messages
-
 @app.route('/tradingview', methods=['post'])
 def receive_signal():
     json_data = request.get_json()

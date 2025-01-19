@@ -1,4 +1,3 @@
-import logging
 import queue
 import sys
 from io import TextIOWrapper

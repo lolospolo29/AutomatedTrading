@@ -1,23 +1,34 @@
 from app.models.calculators.RiskModeEnum import RiskMode
 from app.models.calculators.ProfitStopEntry import ProfitStopEntry
+from app.models.calculators.exceptions.CalculationExceptionError import CalculationExceptionError
 
 
 class OrderWeightage:
 
     def set_percentages_based_on_mode(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
-        total_entries = len(entries)
-        if total_entries == 0:
-            return entries
+        """
+        Set the Risk Percentages on the Entries with Weightage .
 
-        if mode == RiskMode.AGGRESSIVE:
-            # Aggressive mode: heavier weight to early entries
-            return self._set_aggressive_weightage(entries)
-        elif mode == RiskMode.MODERAT:
-            # Moderate mode: equal distribution of percentage across entries
-            return self._set_moderate_weightage(entries)
-        elif mode == RiskMode.SAFE:
-            # Safe mode: heavier weight to later entries
-            return self._set_safe_weightage(entries)
+        Returns:
+            ProfitStopEntry (list[ProfitStopEntry]) with Percentages based on the mode.
+        """
+        try:
+            total_entries = len(entries)
+            if total_entries == 0:
+                return entries
+
+            if mode == RiskMode.AGGRESSIVE:
+                # Aggressive mode: heavier weight to early entries
+                return self._set_aggressive_weightage(entries)
+            elif mode == RiskMode.MODERAT:
+                # Moderate mode: equal distribution of percentage across entries
+                return self._set_moderate_weightage(entries)
+            elif mode == RiskMode.SAFE:
+                # Safe mode: heavier weight to later entries
+                return self._set_safe_weightage(entries)
+        except Exception as e:
+            raise CalculationExceptionError(entries, "Order Weightage")
+
 
     @staticmethod
     def _set_aggressive_weightage(entries:list[ProfitStopEntry]):

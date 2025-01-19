@@ -9,9 +9,11 @@ from app.models.calculators.frameworks.pdarray.Void import Void
 from app.models.calculators.frameworks.pdarray.VolumeImbalance import VolumeImbalance
 from app.models.calculators.RiskModeEnum import RiskMode
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
+from app.monitoring.logging.logging_startup import logger
 
 
 class PDRiskCalculator:
+    """PD Risk Calculator for Profit Stop Entries of the PD Arrays"""
 
     # region Initializing
     _instance = None  # Class-level attribute to hold the singleton instance
@@ -37,102 +39,130 @@ class PDRiskCalculator:
 
     # region Stop Calculation
     def calculate_stop(self, pdArray:PDArray, orderDirection:OrderDirectionEnum, riskMode:RiskMode) -> float:
-        if pdArray.name == "BPR":
-            return self._bpr.return_stop(pdArray, orderDirection, riskMode)
-        if pdArray.name == "FVG":
-            return self._fvg.return_stop(pdArray, orderDirection, riskMode)
-        if pdArray.name == "Breaker":
-            return self._breaker.return_stop(pdArray, orderDirection, riskMode)
-        if pdArray.name == "OB":
-            return self._orderBlock.return_stop(pdArray, orderDirection, riskMode)
-        if pdArray.name == "RB":
-            return self._rejection_block.return_stop(pdArray, orderDirection, riskMode)
-        if pdArray.name == "Swings":
-            return self._swings.return_stop(pdArray, orderDirection, riskMode)
-        if pdArray.name == "Void":
-            return self._void.return_stop(pdArray, orderDirection, riskMode)
-        if pdArray.name == "VI":
-            return self._volume_Imbalance.return_stop(pdArray, orderDirection, riskMode)
+        try:
+            if pdArray.name == "BPR":
+                return self._bpr.return_stop(pdArray, orderDirection, riskMode)
+            if pdArray.name == "FVG":
+                return self._fvg.return_stop(pdArray, orderDirection, riskMode)
+            if pdArray.name == "Breaker":
+                return self._breaker.return_stop(pdArray, orderDirection, riskMode)
+            if pdArray.name == "OB":
+                return self._orderBlock.return_stop(pdArray, orderDirection, riskMode)
+            if pdArray.name == "RB":
+                return self._rejection_block.return_stop(pdArray, orderDirection, riskMode)
+            if pdArray.name == "Swings":
+                return self._swings.return_stop(pdArray, orderDirection, riskMode)
+            if pdArray.name == "Void":
+                return self._void.return_stop(pdArray, orderDirection, riskMode)
+            if pdArray.name == "VI":
+                return self._volume_Imbalance.return_stop(pdArray, orderDirection, riskMode)
+        except Exception as e:
+            logger.info(f"Calculation failed with exception: {e}")
+        finally:
+            return -1
 
     def calculate_stops_specific(self, pdArrays:list[PDArray], orderDirection:OrderDirectionEnum, riskMode:RiskMode) -> list[float]:
         stops = []
-        for pdArray in pdArrays:
-            stops.append(self.calculate_stop(pdArray, orderDirection, riskMode))
-        return stops
+        try:
+            for pdArray in pdArrays:
+                stops.append(self.calculate_stop(pdArray, orderDirection, riskMode))
+            return stops
+        except Exception as e:
+            logger.info("Calculation Exception raised")
+        finally:
+            return stops
 
     def calculate_all_stops(self, pdArrays:list[PDArray], orderDirection:OrderDirectionEnum) -> list[float]:
 
         stops = []
+        try:
 
-        riskMode = RiskMode.SAFE
+            riskMode = RiskMode.SAFE
 
-        safeStops = self.calculate_stops_specific(pdArrays, orderDirection, riskMode)
+            safeStops = self.calculate_stops_specific(pdArrays, orderDirection, riskMode)
 
-        stops.extend(safeStops)
+            stops.extend(safeStops)
 
-        riskMode = RiskMode.MODERAT
+            riskMode = RiskMode.MODERAT
 
-        moderatStops = self.calculate_stops_specific(pdArrays, orderDirection, riskMode)
+            moderatStops = self.calculate_stops_specific(pdArrays, orderDirection, riskMode)
 
-        stops.extend(moderatStops)
+            stops.extend(moderatStops)
 
-        riskMode = RiskMode.AGGRESSIVE
+            riskMode = RiskMode.AGGRESSIVE
 
-        aggressiveStops = self.calculate_stops_specific(pdArrays, orderDirection, riskMode)
+            aggressiveStops = self.calculate_stops_specific(pdArrays, orderDirection, riskMode)
 
-        stops.extend(aggressiveStops)
-
-        return stops
+            stops.extend(aggressiveStops)
+        except Exception as e:
+            logger.info("Exception raised while calculating stops")
+        finally:
+            return stops
     # endregion
 
     # region Entry Calculation
 
     def calculate_entry(self, pdArray: PDArray, orderDirection: OrderDirectionEnum, riskMode: RiskMode) -> float:
-        if pdArray.name == "BPR":
-            return self._bpr.return_entry(pdArray, orderDirection, riskMode)
-        if pdArray.name == "FVG":
-            return self._fvg.return_entry(pdArray, orderDirection, riskMode)
-        if pdArray.name == "Breaker":
-            return self._breaker.return_entry(pdArray, orderDirection, riskMode)
-        if pdArray.name == "OB":
-            return self._orderBlock.return_entry(pdArray, orderDirection, riskMode)
-        if pdArray.name == "RB":
-            return self._rejection_block.return_entry(pdArray, orderDirection, riskMode)
-        if pdArray.name == "Swings":
-            pass
-        if pdArray.name == "Void":
-            return self._void.return_entry(pdArray, orderDirection, riskMode)
-        if pdArray.name == "VI":
-            return self._volume_Imbalance.return_entry(pdArray, orderDirection, riskMode)
+        try:
+            if pdArray.name == "BPR":
+                return self._bpr.return_entry(pdArray, orderDirection, riskMode)
+            if pdArray.name == "FVG":
+                return self._fvg.return_entry(pdArray, orderDirection, riskMode)
+            if pdArray.name == "Breaker":
+                return self._breaker.return_entry(pdArray, orderDirection, riskMode)
+            if pdArray.name == "OB":
+                return self._orderBlock.return_entry(pdArray, orderDirection, riskMode)
+            if pdArray.name == "RB":
+                return self._rejection_block.return_entry(pdArray, orderDirection, riskMode)
+            if pdArray.name == "Swings":
+                pass
+            if pdArray.name == "Void":
+                return self._void.return_entry(pdArray, orderDirection, riskMode)
+            if pdArray.name == "VI":
+                return self._volume_Imbalance.return_entry(pdArray, orderDirection, riskMode)
 
-    def calculate_entries_specific(self, pdArrays: list[PDArray], orderDirection: OrderDirectionEnum, riskMode: RiskMode) -> \
-    list[float]:
+        except Exception as e:
+            logger.info("Exception occurred: {}".format(e))
+        finally:
+            return -1
+
+    def calculate_entries_specific(self, pdArrays: list[PDArray], orderDirection:
+                                   OrderDirectionEnum, riskMode: RiskMode) -> \
+                                   list[float]:
         stops = []
-        for pdArray in pdArrays:
-            stops.append(self.calculate_entry(pdArray, orderDirection, riskMode))
-        return stops
+        try:
+            for pdArray in pdArrays:
+                stops.append(self.calculate_entry(pdArray, orderDirection, riskMode))
+        except Exception as e:
+            logger.info("PD Risk Calculator failed to calculate stops")
+        finally:
+            return stops
 
     def calculate_all_entries(self, pdArrays: list[PDArray], orderDirection: OrderDirectionEnum) -> list[float]:
 
         stops = []
 
-        riskMode = RiskMode.SAFE
+        try:
 
-        safeStops = self.calculate_entries_specific(pdArrays, orderDirection, riskMode)
+            riskMode = RiskMode.SAFE
 
-        stops.extend(safeStops)
+            safeStops = self.calculate_entries_specific(pdArrays, orderDirection, riskMode)
 
-        riskMode = RiskMode.MODERAT
+            stops.extend(safeStops)
 
-        moderatStops = self.calculate_entries_specific(pdArrays, orderDirection, riskMode)
+            riskMode = RiskMode.MODERAT
 
-        stops.extend(moderatStops)
+            moderatStops = self.calculate_entries_specific(pdArrays, orderDirection, riskMode)
 
-        riskMode = RiskMode.AGGRESSIVE
+            stops.extend(moderatStops)
 
-        aggressiveStops = self.calculate_entries_specific(pdArrays, orderDirection, riskMode)
+            riskMode = RiskMode.AGGRESSIVE
 
-        stops.extend(aggressiveStops)
+            aggressiveStops = self.calculate_entries_specific(pdArrays, orderDirection, riskMode)
 
-        return stops
+            stops.extend(aggressiveStops)
+        except Exception as e:
+            logger.info("PD Risk Calculator failed to calculate entries due to error")
+        finally:
+            return stops
     # endregion

@@ -31,7 +31,7 @@ class TradeManager:
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._trade_registry = TradeSemaphoreRegistry()
             self._lock_registry = LockRegistry()
-            self.open_trades:dict[str,Trade] = {}
+            self._open_trades:dict[str,Trade] = {}
             self._mongo_db_trades: mongoDBTrades = mongoDBTrades()
             self._broker_facade = BrokerFacade()
             self._risk_manager = RiskManager()
@@ -46,8 +46,8 @@ class TradeManager:
             with tradeLock:
                 self._trade_registry.register_relation(trade.relation)
                 self._trade_registry.acquire_trade(trade.relation)
-                if trade.id not in self.open_trades:
-                    self.open_trades[trade.id] = trade
+                if trade.id not in self._open_trades:
+                    self._open_trades[trade.id] = trade
                     print(f"Trade for '{trade.relation.broker}' "
                           f"with ID: {trade.id} created and added to the Trade Manager.")
 
@@ -55,8 +55,8 @@ class TradeManager:
         with self._lock:
             tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                if trade.id in self.open_trades:
-                    self.open_trades.pop(trade.id)
+                if trade.id in self._open_trades:
+                    self._open_trades.pop(trade.id)
     # endregion
 
     # region CRUD DB
@@ -73,21 +73,21 @@ class TradeManager:
         with self._lock:
             tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                if trade.id in self.open_trades:
+                if trade.id in self._open_trades:
                     self._mongo_db_trades.add_trade_to_db(trade)
 
     def update_trad_in_db(self, trade: Trade) -> None:
         with self._lock:
             tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                if trade.id in self.open_trades:
+                if trade.id in self._open_trades:
                     self._mongo_db_trades.update_trade(trade)
 
     def archive_trade_in_db(self, trade: Trade) -> None:
         with self._lock:
             tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                if trade.id in self.open_trades:
+                if trade.id in self._open_trades:
                     self._mongo_db_trades.archive_trade(trade)
 
     def find_order_or_orders_in_db(self, order:Order=None) -> list[Order]:
@@ -116,8 +116,8 @@ class TradeManager:
     def place_trade(self, trade: Trade):
             tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
-                if trade.id in self.open_trades:
-                    trade = self.open_trades[trade.id]
+                if trade.id in self._open_trades:
+                    trade = self._open_trades[trade.id]
 
                     threads :list[threading.Thread]= []
 
@@ -179,8 +179,8 @@ class TradeManager:
     def calculate_qty_for_trade_orders(self, trade:Trade, assetClass:str):
         tradeLock = self._lock_registry.get_lock(trade.id)
         with tradeLock:
-            if trade.id in self.open_trades:
-                trade = self.open_trades[trade.id]
+            if trade.id in self._open_trades:
+                trade = self._open_trades[trade.id]
                 for order in trade.orders:
                     if order.orderType == OrderTypeEnum.MARKET.value:
                         order.qty = str(self._risk_manager.calculate_qty_market(assetClass, order))
@@ -189,10 +189,10 @@ class TradeManager:
 
 
     def return_all_trades(self)->list[Trade]:
-        return [trade for trade in self.open_trades.values()]
+        return [trade for trade in self._open_trades.values()]
 
     def return_trades_for_relation(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation)->list[Trade]:
-        return [x for x in self.open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
+        return [x for x in self._open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
     # endregion
 
 # todo order builder for every broker

@@ -72,17 +72,16 @@ class FileHandler(FileSystemEventHandler):
                 candle_data = description_json.get("Candle", {})
 
                 # Structure candle data to match the desired output format
-                # todo fix fields
                 formatted_candle = {
                     'Candle': {
-                        'IsoTime': candle_data.get('IsoTime', ''),
+                        'iso_time': candle_data.get('IsoTime', ''),
                         'asset': candle_data.get('asset', ''),
                         'broker': candle_data.get('broker', ''),
                         'close': float(candle_data.get('close', 0.0)),
                         'high': float(candle_data.get('high', 0.0)),
                         'low': float(candle_data.get('low', 0.0)),
                         'open': float(candle_data.get('open', 0.0)),
-                        'timeFrame': int(candle_data.get('timeFrame', 0))
+                        'timeframe': int(candle_data.get('timeFrame', 0))
                     }
                 }
                 candles.append(formatted_candle)

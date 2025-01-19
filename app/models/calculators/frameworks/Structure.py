@@ -28,7 +28,7 @@ class Structure(FrameWork):
             "typ" : self.typ,
             "name": self.name,
             "direction": self.direction,
-            "candles": self.candle.toDict(),
+            "candles": self.candle.to_dict(),
         }
 
         # Filter out attributes with None values

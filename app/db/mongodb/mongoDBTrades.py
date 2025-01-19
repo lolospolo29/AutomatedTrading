@@ -1,4 +1,5 @@
 import threading
+import uuid
 from datetime import datetime
 
 from app.db.mongodb.MongoDB import MongoDB
@@ -30,6 +31,7 @@ class mongoDBTrades:
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._secret_manager: SecretsManager = SecretsManager()
             self._trade_mapper = TradeMapper()
+
             self._mongo_db_trades: MongoDB = MongoDB("Trades", self._secret_manager.return_secret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
     # endregion
@@ -47,7 +49,7 @@ class mongoDBTrades:
             orders = []
             for order in trade.orders:
                 order = self.find_order_or_orders_by_id(order)
-                orders.append(order)
+                orders.extend(order)
             trade.orders = []
             trade.orders.extend(orders)
             trades.append(trade)
@@ -96,21 +98,26 @@ class mongoDBTrades:
 #Testing
 # _mongo = mongoDBTrades()
 # pd = PDArray(name="FVG",direction="Bullish")
-# c1:Candle = Candle("BTC", "broker", 132.2, 132, 122, 12,datetime.now(),5)
+# c1:Candle = Candle("BTC", "broker", 132.2, 132, 122, 12,iso_time=datetime.now(),timeframe=5)
 # pd.candles.append(c1)
 # level = Level("FVG",132)
 # level.candles.append(c1)
 # struct = Structure("BOS","Bullish",candle=c1)
 #
 # order = Order()
-# order.entryFrameWork = pd
+# order.entry_frame_work = pd
 # order.confirmations = []
 # order.confirmations.append(pd)
 # order.confirmations.append(level)
 # order.confirmations.append(struct)
 # order.orderLinkId = "132"
+#
 # _mongo.add_order_to_db(order)
 #
 # trade = Trade(AssetBrokerStrategyRelation("A","ABC","AC"),[order])
+#
 # _mongo.add_trade_to_db(trade)
-# _mongo.find_trade_or_trades_by_id()
+#
+# trades = _mongo.find_trade_or_trades_by_id()
+# for trade in trades:
+#     print(trade.to_dict())

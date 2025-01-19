@@ -11,9 +11,9 @@ class Order:
     entry_frame_work: FrameWork
     confirmations: list[FrameWork]
 
-    created_at: datetime
-    opened_at: datetime
-    closed_at: datetime
+    created_at: str
+    opened_at: str
+    closed_at: str
 
     risk_percentage: float
     money_at_risk: float
@@ -60,8 +60,8 @@ class Order:
     slLimitPrice: str
 
     # Response
-    createdTime: datetime
-    updatedTime: datetime
+    createdTime: str
+    updatedTime: str
     lastPriceOnCreated: str
     leavesQty: str
     stopOrderType:str
@@ -69,7 +69,7 @@ class Order:
     unrealisedPnL: float
 
     def __init__(self):
-        self.created_at = datetime.now()
+        self.created_at = str(datetime.now())
 
     def __setattr__(self, key, value):
         # Update updatedAt whenever an attribute is changed
@@ -85,8 +85,6 @@ class Order:
             """Applies necessary transformations to specific fields."""
             if isinstance(value, list):
                 return [item.to_dict() for item in value if hasattr(item, "to_dict")]
-            elif isinstance(value, datetime):
-                return value.isoformat()
             elif hasattr(value, "to_dict"):
                 return value.to_dict()
             return value
