@@ -1,5 +1,6 @@
 import string
 import random
+from datetime import datetime
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.calculators.frameworks.FrameWork import FrameWork
@@ -12,15 +13,15 @@ from app.models.trade.enums.TPSLModeEnum import TPSLModeEnum
 from app.models.trade.enums.TimeInForceEnum import TimeInForceEnum
 from app.models.trade.enums.TriggerByEnum import TriggerByEnum
 from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
+from app.monitoring.logging.logging_startup import logger
 
 
 class OrderBuilder:
     def __init__(self):
         self.order = Order()
 
-
     def create_order(self,relation:AssetBrokerStrategyRelation, entry_frame_work:
-    FrameWork, symbol:str, confirmations:list[FrameWork], category:CategoryEnum, side:OrderDirectionEnum,
+                     FrameWork, symbol:str, confirmations:list[FrameWork], category:CategoryEnum, side:OrderDirectionEnum,
                      risk_percentage:float, order_number:int, trade_id:str):
         o = self.order
         o.trade_id = trade_id
@@ -36,6 +37,7 @@ class OrderBuilder:
         o.unrealizedProfit = 0.0
         o.risk_percentage = risk_percentage
         o.orderType = OrderTypeEnum.MARKET.value # set Default
+        logger.info(f"Building Order, OrderLinkId:{o.orderLinkId}, Asset:{o.symbol},TradeId:{o.trade_id}")
         return self
 
     def set_defaults(self,price:str=None, time_in_force:TimeInForceEnum=None, take_profit:str=None,
@@ -55,7 +57,8 @@ class OrderBuilder:
             order.closeOnTrigger = close_on_trigger
         return self
 
-    def set_spot(self,order: Order, is_leverage:bool=None, market_unit:str=None, order_filter:str=None, orderlv:str=None):
+    def set_spot(self, is_leverage:bool=None, market_unit:str=None, order_filter:str=None, orderlv:str=None):
+        order = self.order
         if is_leverage is not None:
             order.isLeverage = is_leverage
         if market_unit is not None:
@@ -83,7 +86,7 @@ class OrderBuilder:
         order.orderType = OrderTypeEnum.LIMIT.value
         return self
 
-    def set_limit(self,order:Order, tpsl_mode:TPSLModeEnum=None, tp_limit_price:str=None, sl_limit_price:str=None,
+    def set_limit(self, tpsl_mode:TPSLModeEnum=None, tp_limit_price:str=None, sl_limit_price:str=None,
                   tp_order_type:OrderTypeEnum=None, sl_order_type:OrderTypeEnum=None):
         order = self.order
         if tpsl_mode is not None:
@@ -102,6 +105,7 @@ class OrderBuilder:
         return self
 
     def build(self):
+        logger.info(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         return self.order
 
     @staticmethod

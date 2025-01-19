@@ -35,6 +35,7 @@ class mongoDBData:
 
     def archive_data(self, asset: str) -> Any:
         try:
+            logger.info(f"Arching data for {asset}")
             current_time_ny = datetime.datetime.now(ny_tz)
 
             # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
@@ -52,6 +53,7 @@ class mongoDBData:
 
     def receive_data(self, asset:str, broker:str, timeframe:int, lookback: int):
         try:
+            logger.info("Receiving Data from MongoDB")
             current_time_ny = datetime.datetime.now(ny_tz)
 
             # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone

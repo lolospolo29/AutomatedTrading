@@ -1,16 +1,9 @@
 import threading
-import uuid
-from datetime import datetime
 
 from app.db.mongodb.MongoDB import MongoDB
 from app.db.mongodb.enum.MongoEndPointEnum import MongoEndPointEnum
 from app.manager.initializer.SecretsManager import SecretsManager
 from app.mappers.TradeMapper import TradeMapper
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.Level import Level
-from app.models.calculators.frameworks.PDArray import PDArray
-from app.models.calculators.frameworks.Structure import Structure
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 from app.monitoring.logging.logging_startup import logger
@@ -41,63 +34,102 @@ class mongoDBTrades:
         trades = []
         res = []
         try:
+            logger.info("Finding Trades in DB")
             if id is None:
                 res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, None)
             else:
                 query = self._mongo_db_trades.buildQuery("Trade", "id", str(id))
                 res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
             for tradeInRes in res:
-                trade = self._trade_mapper.map_trade_from_db(tradeInRes)
-                orders = []
-                for order in trade.orders:
-                    order = self.find_order_or_orders_by_id(order)
-                    orders.extend(order)
-                trade.orders = []
-                trade.orders.extend(orders)
-                trades.append(trade)
+                try:
+                    trade = self._trade_mapper.map_trade_from_db(tradeInRes)
+                    orders = []
+                    for order in trade.orders:
+                        order = self.find_order_or_orders_by_id(order)
+                        orders.extend(order)
+                    trade.orders = []
+                    trade.orders.extend(orders)
+                    trades.append(trade)
+                except Exception as e:
+                    logger.error(e)
+                finally:
+                    continue
         except Exception as e:
-            logger.error("MongoDBTrades.find_trade_or_trades_by_id: Exception: {}".format(e))
+            logger.error("Errors By Finding Trades in DB: Exception: {}".format(e))
         finally:
             return trades
 
     def find_order_or_orders_by_id(self, id: str=None) -> list[Order]:
         orders = []
         res = []
-        if id is None:
-            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, None)
-        else:
-            query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(id))
-            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
-        for orderInRes in res:
-            orders.append(self._trade_mapper.map_order_from_db(orderInRes))
-        return orders
+        try:
+            logger.info("Finding Orders in DB")
+            if id is None:
+                res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, None)
+            else:
+                query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(id))
+                res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
+            for orderInRes in res:
+                    try:
+                        orders.append(self._trade_mapper.map_order_from_db(orderInRes))
+                    except Exception as e:
+                        logger.error(f"Errors By Finding Orders in DB Exception, {orderInRes}")
+                    finally:
+                        continue
+        except Exception as e:
+            logger.error("Finding Orders in DB Exception,".format(e))
+        finally:
+            return orders
 
     # region Add / Update / Archive
     def add_trade_to_db(self, trade: Trade):
-        self._mongo_db_trades.add(MongoEndPointEnum.OPENTRADES.value, trade.to_dict())
+        try:
+            logger.info(f"Adding Trade to DB: {trade.id}")
+            self._mongo_db_trades.add(MongoEndPointEnum.OPENTRADES.value, trade.to_dict())
+        except Exception as e:
+            logger.error(f"Adding trade to DB Exception,OrderLinkId:{trade.id}")
 
     def update_trade(self, trade: Trade):
-        query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
-        res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
-        self._mongo_db_trades.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade.to_dict())
+        try:
+            logger.info(f"Updating Trade,OrderLinkId:{trade.id}")
+            query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
+            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
+            self._mongo_db_trades.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade.to_dict())
+        except Exception as e:
+            logger.error(f"Update Trade in DB,OrderLinkId:{trade.id}")
 
     def archive_trade(self, trade: Trade):
-        self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDTRADES.value, trade.to_dict())
-        query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
-        self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
+        try:
+            logger.info(f"Arching Trade,OrderLinkId:{trade.id}")
+            self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDTRADES.value, trade.to_dict())
+            query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
+            self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
+        except Exception as e:
+            logger.error(f"Archive Trade in DB Exception,OrderLinkId:{trade.id}")
 
     def add_order_to_db(self, order: Order):
-        self._mongo_db_trades.add(MongoEndPointEnum.OPENORDERS.value, order.to_dict())
+        try:
+            logger.info(f"Adding Order To DB,OrderLinkId: {order.orderLinkId}")
+            self._mongo_db_trades.add(MongoEndPointEnum.OPENORDERS.value, order.to_dict())
+        except Exception as e:
+            logger.error(f"Add Order to DB, OrderLinkId:{order.orderLinkId}")
 
     def update_order(self, order: Order):
-        query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
-        res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
-        self._mongo_db_trades.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.to_dict())
+        try:
+            query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
+            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
+            self._mongo_db_trades.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.to_dict())
+        except Exception as e:
+            logger.error(f"Update Order in DB,OrderLinkId:{order.orderLinkId}")
 
     def archive_order(self, order: Order):
-        self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDORDERS.value, order.to_dict())
-        query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
-        self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
+        try:
+            logger.info(f"Arching Order To DB,OrderLinkId: {order.orderLinkId}")
+            self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDORDERS.value, order.to_dict())
+            query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
+            self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
+        except Exception as e:
+            logger.error(f"Archive Order in DB Exception ,OrderLinkId:{order.orderLinkId}")
     # endregion
 
 #Testing
