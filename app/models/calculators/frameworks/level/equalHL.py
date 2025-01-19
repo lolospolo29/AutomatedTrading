@@ -4,7 +4,10 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class equalHL:
-    """Calculate the Equal High and Low for given Candles and the side you wanna Detect BUY/SELL"""
+    """
+    technical analysis tool that marks identical price levels on a trading chart using the current time-frame,
+    assisting traders in identifying potential support and resistance zones or liquidity draws
+    """
     def _findMedian(self,values:list[float]):
         sums = sum(values)
         return sums/len(values)

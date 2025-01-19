@@ -3,6 +3,7 @@ from typing import Any
 
 from app.db.mongodb.MongoDB import MongoDB
 from app.manager.initializer.SecretsManager import SecretsManager
+from app.monitoring.logging.logging_startup import logger
 
 
 class mongoDBConfig:
@@ -29,7 +30,10 @@ class mongoDBConfig:
         return self._mongo_db_config.find(collectionName, query)
 
     def find_by_id(self, typ: str, attribute: str, id: int, getAttribute: str) -> str:
+        try:
             query = self._mongo_db_config.buildQuery(typ, attribute, id)
             asset_dict = self.load_data(typ, query)
             for doc in asset_dict:
                 return (doc.get(typ)).get(getAttribute)
+        except Exception as e:
+            logger.error(f"Finding Id failed: {e}")

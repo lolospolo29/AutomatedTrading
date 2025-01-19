@@ -5,9 +5,11 @@ from app.models.asset.Candle import Candle
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
+from app.monitoring.logging.logging_startup import logger
 
 
 class StrategyManager:
+    """Serves as Accessor for Strategy and Storage Access"""
 
     _instance = None
     _lock = threading.Lock()
@@ -21,8 +23,6 @@ class StrategyManager:
 
     # region Initializing
 
-    # todo strategy logic
-
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.strategies: dict[AssetBrokerStrategyRelation,Strategy] = {}
@@ -33,23 +33,32 @@ class StrategyManager:
     def register_strategy(self, relation:AssetBrokerStrategyRelation, strategy:Strategy) -> bool:
         if relation not in self.strategies:
             self.strategies[relation] = strategy
-            print(f"Strategy '{strategy.name}' created and added to the Strategy Manager.")
+            logger.info(f"Strategy {strategy.name} registered for relation {relation}")
             return True
         else:
-            print(f"Strategy '{strategy.name}' already exists in the Strategy Manager.")
+            logger.info(f"Strategy {strategy.name} already registered")
             return False
 
     def return_expected_time_frame(self, strategy: str) -> list:
-        if strategy in self.strategies:
-            return self.strategies[strategy].return_expected_time_frame()
-        return []
+        try:
+            if strategy in self.strategies:
+                return self.strategies[strategy].return_expected_time_frame()
+            return []
+        except Exception as e:
+            logger.exception(f"Return Timeframe for {strategy} failed: {e}")
 
     def get_entry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                   timeFrame: int) -> StrategyResult:
-        if relation.strategy in self.strategies:
-            return self.strategies[relation].get_entry(candles, timeFrame)
+        try:
+            if relation.strategy in self.strategies:
+                return self.strategies[relation].get_entry(candles, timeFrame)
+        except Exception as e:
+            logger.exception(f"Get Entry Failed for {relation.strategy}/{relation.asset}: {e}")
 
     def get_exit(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                  timeFrame: int, trade:Trade) -> StrategyResult:
-        if relation.strategy in self.strategies:
-            return self.strategies[relation].get_exit(candles, timeFrame, trade)
+        try:
+            if relation.strategy in self.strategies:
+                return self.strategies[relation].get_exit(candles, timeFrame, trade)
+        except Exception as e:
+            logger.exception(f"Get Exit Failed for {relation.strategy}/{relation}: {e}")

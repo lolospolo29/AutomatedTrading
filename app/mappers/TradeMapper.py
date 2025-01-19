@@ -12,6 +12,7 @@ from app.models.trade.Trade import Trade
 
 
 class TradeMapper:
+    """Maps from the Trade/Order Modells"""
     @staticmethod
     def parse_datetime(field: Any) -> Optional[datetime]:
         """

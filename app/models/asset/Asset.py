@@ -65,7 +65,7 @@ class Asset:
     def return_candles(self, time_frame: int, broker: str) -> list[Candle]:
         for series in self.candles_series:
             if self._is_broker_and_time_frame_in_candle_series(broker, time_frame, series):
-                return series.toList()
+                return series.to_list()
         return []
 
     def return_candle_series(self) -> list[CandleSeries]:

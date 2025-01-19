@@ -6,6 +6,11 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class NWOG:
+    """
+     ICT new week opening gap is basically the gap between the closing price on friday and the opening price
+     on Sunday. This gap may be due to many reasons like geopolitical factors or some fundamental news on
+     the weekend which may cause the price to deviate from its closing price
+     """
 
     def __init__(self):
         self.name = 'NWOG'
@@ -23,6 +28,6 @@ class NWOG:
                     all_levels.append(nwog)
                     # Add high and low of the New York midnight candle to levels
         except Exception as e:
-            logger.critical("NWOG Calculation Error")
+            logger.critical("NWOG Calculation Error with Exception {}".format(e))
         finally:
             return all_levels

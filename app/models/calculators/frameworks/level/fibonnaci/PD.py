@@ -7,7 +7,10 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class PD(ILevel):
-    """Premium/Discount Range of the Fiboannci Tool"""
+    """
+       ICT PD arrays are the arrangement of ICT trade entry tools in the premium and discount zone.
+       Traders use the PD arrays to find the optimal price for buying and selling in the market.
+    """
     def __init__(self):
         self.pd_levels: list[float] = [1.0, 0.5, 0]
         self.name = "PD"
@@ -56,6 +59,6 @@ class PD(ILevel):
             all_level.append(level05_obj)
             all_level.append(level1_obj)
         except Exception as e:
-            logger.error("Projecting PD failed")
+            logger.error("Projecting the PD failed with exception: {}".format(e))
         finally:
             return all_level

@@ -20,7 +20,7 @@ class BaseRatio(ABC):
             if stop == entry:
                 return entry
         except Exception:
-            raise CalculationExceptionError([entry, stop, ratio],"Calculate Profit")
+            raise CalculationExceptionError(f"Calculate Entry:{entry}:{stop}:{ratio}")
 
     @staticmethod
     def calculate_stop(entry:float, profit: float, ratio: float):
@@ -34,7 +34,7 @@ class BaseRatio(ABC):
             if profit == entry:
                 return entry#
         except Exception:
-            raise CalculationExceptionError([entry, profit, ratio],"Calculate Stop")
+            raise CalculationExceptionError(f"Calculate Entry:{entry}:{profit}:{ratio}")
 
     @staticmethod
     def calculate_entry(stop:float, profit:float, ratio:float) -> float:
@@ -50,7 +50,7 @@ class BaseRatio(ABC):
             if stop == profit:
                 return stop
         except Exception:
-            raise CalculationExceptionError([stop, profit, ratio],"Calculate Entry")
+            raise CalculationExceptionError(f"Calculate Entry:{stop}:{profit}:{ratio}")
     # endregion
 
     @staticmethod

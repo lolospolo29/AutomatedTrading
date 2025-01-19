@@ -37,4 +37,4 @@ class PreviousWeekLevels(ILevel):
             result = [level for levels in weekly_levels.values() for level in levels.values()]
             return result
         except Exception as e:
-            logger.error("Previous Week Levels Exception")
+            logger.error("Previous Week Levels failed with exception: {}".format(e))

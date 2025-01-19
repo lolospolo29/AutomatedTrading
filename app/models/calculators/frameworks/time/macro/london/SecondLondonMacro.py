@@ -1,4 +1,5 @@
 from app.interfaces.framework.ITimeWindow import ITimeWindow
+from app.monitoring.logging.logging_startup import logger
 
 
 class SecondLondonMacro(ITimeWindow):
@@ -6,10 +7,15 @@ class SecondLondonMacro(ITimeWindow):
         return self.is_in_entry_window(time)
 
     def is_in_entry_window(self, time):
-        current_hour = time.hour
-        current_minute = time.minute
+        try:
+            current_hour = time.hour
+            current_minute = time.minute
 
-        if 33 > current_minute >= 3  and current_hour == 9:
-            return True
+            if 33 > current_minute >= 3  and current_hour == 9:
+                return True
 
-        return False
+            return False
+        except Exception as e:
+            logger.critical("Second London Macro exception {}".format(e))
+        finally:
+            return False

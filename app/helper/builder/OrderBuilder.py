@@ -15,18 +15,14 @@ from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
 
 class OrderBuilder:
-    _instance = None  # Class-level attribute to hold the singleton instance
-
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(OrderBuilder, cls).__new__(cls)
-        return cls._instance
+    def __init__(self):
+        self.order = Order()
 
 
-    def create_order(self, relation:AssetBrokerStrategyRelation, entry_frame_work:
+    def create_order(self,relation:AssetBrokerStrategyRelation, entry_frame_work:
     FrameWork, symbol:str, confirmations:list[FrameWork], category:CategoryEnum, side:OrderDirectionEnum,
-                     risk_percentage:float, order_number:int, trade_id:str)->Order:
-        o = Order()
+                     risk_percentage:float, order_number:int, trade_id:str):
+        o = self.order
         o.trade_id = trade_id
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
                                                    relation.strategy, order_number)
@@ -40,11 +36,11 @@ class OrderBuilder:
         o.unrealizedProfit = 0.0
         o.risk_percentage = risk_percentage
         o.orderType = OrderTypeEnum.MARKET.value # set Default
-        return o
+        return self
 
-    @staticmethod
-    def set_defaults(order: Order, price:str=None, time_in_force:TimeInForceEnum=None, take_profit:str=None,
-                     stop_loss:str=None, reduce_only:bool=None, close_on_trigger:bool=None)->Order:
+    def set_defaults(self,price:str=None, time_in_force:TimeInForceEnum=None, take_profit:str=None,
+                     stop_loss:str=None, reduce_only:bool=None, close_on_trigger:bool=None):
+        order = self.order
         if price is not None:
             order.price = price
         if time_in_force is not None:
@@ -57,10 +53,9 @@ class OrderBuilder:
             order.reduceOnly = reduce_only
         if close_on_trigger is not None:
             order.closeOnTrigger = close_on_trigger
-        return order
+        return self
 
-    @staticmethod
-    def set_spot(order: Order, is_leverage:bool=None, market_unit:str=None, order_filter:str=None, orderlv:str=None)->Order:
+    def set_spot(self,order: Order, is_leverage:bool=None, market_unit:str=None, order_filter:str=None, orderlv:str=None):
         if is_leverage is not None:
             order.isLeverage = is_leverage
         if market_unit is not None:
@@ -69,12 +64,12 @@ class OrderBuilder:
             order.orderFilter = order_filter
         if orderlv is not None:
             order.orderlv = orderlv
-        return order
+        return self
 
-    @staticmethod
-    def set_conditional(order: Order, trigger_price:str=None, trigger_by:TriggerByEnum=None,
+    def set_conditional(self, trigger_price:str=None, trigger_by:TriggerByEnum=None,
                         tp_trigger_by:TriggerByEnum=None, sl_trigger_by:TriggerByEnum=None,
-                        trigger_direction:TriggerDirection=None)->Order:
+                        trigger_direction:TriggerDirection=None):
+        order = self.order
         if trigger_price is not None:
             order.triggerPrice = trigger_price
         if trigger_by is not None:
@@ -86,11 +81,11 @@ class OrderBuilder:
         if trigger_direction is not None:
             order.triggerDirection = trigger_direction.value
         order.orderType = OrderTypeEnum.LIMIT.value
-        return order
+        return self
 
-    @staticmethod
-    def set_limit(order:Order, tpsl_mode:TPSLModeEnum=None, tp_limit_price:str=None, sl_limit_price:str=None,
-                  tp_order_type:OrderTypeEnum=None, sl_order_type:OrderTypeEnum=None)->Order:
+    def set_limit(self,order:Order, tpsl_mode:TPSLModeEnum=None, tp_limit_price:str=None, sl_limit_price:str=None,
+                  tp_order_type:OrderTypeEnum=None, sl_order_type:OrderTypeEnum=None):
+        order = self.order
         if tpsl_mode is not None:
             order.tpslMode = tpsl_mode.value
         if tp_limit_price is not None:
@@ -104,8 +99,10 @@ class OrderBuilder:
         if tp_order_type is not None:
             order.tpOrderType = tp_order_type.value
         order.orderType = OrderTypeEnum.LIMIT.value
-        return order
+        return self
 
+    def build(self):
+        return self.order
 
     @staticmethod
     def _generate_order_link_id(asset: str, broker: str, strategy: str, order_number: int) -> str:

@@ -1,6 +1,7 @@
 from app.interfaces.framework.IConfirmation import IConfirmation
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Structure import Structure
+from app.monitoring.logging.logging_startup import logger
 
 
 class Choch(IConfirmation):
@@ -39,46 +40,48 @@ class Choch(IConfirmation):
         _param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
         :return: 'Choch_Bullish', 'Choch_Bearish' or None.
         """
-        if len(candles) < self.lookback:
-            return []
-        highs = []
-        lows = []
-        closes = []
-        ids = []
         structures = []
+        try:
+            if len(candles) < self.lookback:
+                return []
+            highs = []
+            lows = []
+            closes = []
+            ids = []
 
-        for candle in candles:
-            highs.append(candle.high)
-            lows.append(candle.low)
-            closes.append(candle.close)
-            ids.append(candle.id)
+            for candle in candles:
+                highs.append(candle.high)
+                lows.append(candle.low)
+                closes.append(candle.close)
+                ids.append(candle.id)
 
-        upper_fractal = None
-        lower_fractal = None
-        os = 0  # Keeps track of the order of structure (bullish or bearish)
+            upper_fractal = None
+            lower_fractal = None
+            os = 0  # Keeps track of the order of structure (bullish or bearish)
 
-        for i in range(self.lookback // 2, len(candles) - self.lookback // 2):
-            # Check for bullish fractal
-            if self.is_bullish_fractal(highs, i, self.lookback):
-                upper_fractal = {'value': highs[i], 'index': i, 'crossed': False}
+            for i in range(self.lookback // 2, len(candles) - self.lookback // 2):
+                # Check for bullish fractal
+                if self.is_bullish_fractal(highs, i, self.lookback):
+                    upper_fractal = {'value': highs[i], 'index': i, 'crossed': False}
 
-            # Check for bearish fractal
-            if self.is_bearish_fractal(lows, i, self.lookback):
-                lower_fractal = {'value': lows[i], 'index': i, 'crossed': False}
+                # Check for bearish fractal
+                if self.is_bearish_fractal(lows, i, self.lookback):
+                    lower_fractal = {'value': lows[i], 'index': i, 'crossed': False}
 
-            # Check crossover above the bullish fractal (ChoCH/BOS Bullish)
-            if upper_fractal and closes[i] > upper_fractal['value'] and not upper_fractal['crossed']:
-                upper_fractal['crossed'] = True
-                os = 1  # Set structure to bullish
+                # Check crossover above the bullish fractal (ChoCH/BOS Bullish)
+                if upper_fractal and closes[i] > upper_fractal['value'] and not upper_fractal['crossed']:
+                    upper_fractal['crossed'] = True
+                    os = 1  # Set structure to bullish
 
-                structure =  Structure(name=self.name, direction="Bullish", candle=candles[i])
-                structures.append(structure)
+                    structure =  Structure(name=self.name, direction="Bullish", candle=candles[i])
+                    structures.append(structure)
 
-            # Check crossover below the bearish fractal (ChoCH/BOS Bearish)
-            if lower_fractal and closes[i] < lower_fractal['value'] and not lower_fractal['crossed']:
-                lower_fractal['crossed'] = True
-                os = -1  # Set structure to bearish
-                structure =  Structure(name=self.name, direction="Bearish", candle=candles[i])
-                structures.append(structure)
-
+                # Check crossover below the bearish fractal (ChoCH/BOS Bearish)
+                if lower_fractal and closes[i] < lower_fractal['value'] and not lower_fractal['crossed']:
+                    lower_fractal['crossed'] = True
+                    os = -1  # Set structure to bearish
+                    structure =  Structure(name=self.name, direction="Bearish", candle=candles[i])
+                    structures.append(structure)
+        except Exception as e:
+            logger.error("CHOCH Confirmation Exception: {}".format(e))
         return structures

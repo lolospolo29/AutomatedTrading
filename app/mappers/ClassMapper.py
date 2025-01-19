@@ -7,6 +7,7 @@ from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExce
 
 
 class ClassMapper:
+    """Maps different kinds of classes to different kinds of objects."""
     def map_dict_to_dataclass(self, data: dict, cls: Type[dataclasses.dataclass]) -> dataclasses.dataclass:
         """Helper function to convert a dictionary into a dataclass object."""
         try:

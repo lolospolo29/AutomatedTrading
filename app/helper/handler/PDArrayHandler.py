@@ -2,6 +2,7 @@ import threading
 
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.PDArray import PDArray
+from app.monitoring.logging.logging_startup import logger
 
 
 class PDArrayHandler:
@@ -12,22 +13,28 @@ class PDArrayHandler:
         _lock = threading.Lock()
 
     def add_pd_array(self, pdArray: PDArray)->bool:
-        for pd in self.pdArray:
-            if self._compare_pd_arrays(pdArray, pd):
-                return False
-        self.pdArray.append(pdArray)
-        return True
+        try:
+            for pd in self.pdArray:
+                if self._compare_pd_arrays(pdArray, pd):
+                    return False
+            self.pdArray.append(pdArray)
+            return True
+        except Exception as e:
+            logger.error("Add PD Array Exception: {}".format(e))
 
     def return_pd_arrays(self) -> list[PDArray]:
         return self.pdArray
 
     def remove_pd_array(self, candles: list[Candle], timeFrame: int) -> None:
-        _ids = [candle.id for candle in candles]
-        pdArrays = self.pdArray.copy()
-        for pd in pdArrays:
-            if pd.timeframe == timeFrame:
-                if not pd.is_id_present(_ids):
-                    self.pdArray.remove(pd)
+        try:
+            _ids = [candle.id for candle in candles]
+            pdArrays = self.pdArray.copy()
+            for pd in pdArrays:
+                if pd.timeframe == timeFrame:
+                    if not pd.is_id_present(_ids):
+                        self.pdArray.remove(pd)
+        except Exception as e:
+            logger.error("Remove PD Array Exception: {}".format(e))
 
     @staticmethod
     def _compare_pd_arrays(pdArray1: PDArray, pdArray2: PDArray) ->bool:

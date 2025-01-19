@@ -1,6 +1,7 @@
 import threading
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.monitoring.logging.logging_startup import logger
 
 
 class TradeSemaphoreRegistry:
@@ -35,13 +36,13 @@ class TradeSemaphoreRegistry:
         # Versuche, einen Platz für die Relation zu belegen
         acquired = semaphore.acquire() # put in queue
         if not acquired:
-            raise ValueError(f"Maximale Anzahl von Trades für Relation {relation} erreicht!")
+            logger.exception("Acquired semaphore was already acquired")
 
     def release_trade(self, relation:AssetBrokerStrategyRelation):
         """Einen Trade für die gegebene Relation beenden."""
         with self._lock:
             if relation not in self.registry:
-                raise ValueError(f"Relation {relation} nicht registriert!")
+                logger.exception("Acquired semaphore was already acquired")
             semaphore = self.registry[relation]
         # Gebe einen Platz frei
         semaphore.release()

@@ -2,6 +2,7 @@ from typing import Any
 
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.FrameWork import FrameWork
+from app.monitoring.logging.logging_startup import logger
 
 
 class Structure(FrameWork):
@@ -24,14 +25,18 @@ class Structure(FrameWork):
 
         :return: A dictionary where the class name is the key and attributes that are not None are the value.
         """
-        attributes = {
-            "typ" : self.typ,
-            "name": self.name,
-            "direction": self.direction,
-            "candles": self.candle.to_dict(),
-        }
+        try:
+            attributes = {
+                "typ" : self.typ,
+                "name": self.name,
+                "direction": self.direction,
+                "candles": self.candle.to_dict(),
+            }
 
-        # Filter out attributes with None values
-        filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
+            # Filter out attributes with None values
+            filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
 
-        return {self.__class__.__name__: filtered_attributes}
+            return {self.__class__.__name__: filtered_attributes}
+        except Exception as e:
+            logger.critical(e)
+            raise ValueError

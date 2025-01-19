@@ -1,10 +1,9 @@
 from typing import Tuple, Any
 
-from app.models.calculators.ProfitStopAnalyzer import ProfitStopAnalyzer
+from app.helper.calculator.ProfitStopAnalyzer import ProfitStopAnalyzer
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.calculators.entry.PDRiskCalculator import PDRiskCalculator
+from app.helper.calculator.PDRiskCalculator import PDRiskCalculator
 from app.models.calculators.entry.orderWeightage.OrderWeightage import OrderWeightage
 from app.models.calculators.ProfitStopEntry import ProfitStopEntry
 from app.models.calculators.entry.ratio.BaseRatio import BaseRatio
@@ -46,6 +45,7 @@ class RiskCalculator:
 
     def set_order_weightage_percent(self, entries:list[ProfitStopEntry], mode: RiskMode) -> list[ProfitStopEntry]:
         return self._order_weightage.set_percentages_based_on_mode(entries, mode)
+
 
     # endregion
 

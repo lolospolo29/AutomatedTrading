@@ -6,6 +6,7 @@ from app.models.asset.Asset import Asset
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
 from app.models.asset.SMTPair import SMTPair
+from app.monitoring.logging.logging_startup import logger
 
 
 class AssetManager:
@@ -34,8 +35,11 @@ class AssetManager:
     # region CRUD
 
     def add_candle_to_db(self, candle: Candle):
-        if candle.timeframe >= 5:
-            self._mongo_db_data.add_candle_to_db(candle.asset, candle)
+        try:
+            if candle.timeframe >= 5:
+                self._mongo_db_data.add_candle_to_db(candle.asset, candle)
+        except Exception as e:
+            logger.critical("Failed to add candle to db with exception {}".format(e))
 
     def received_candles(self, asset: str) -> Candle:
         pass
@@ -45,9 +49,9 @@ class AssetManager:
     def register_asset(self, asset: Asset) -> bool:
         if not asset in self.assets:
             self.assets[asset.name] = asset
-            print(f"Asset '{asset.name}' created and added to Asset Manager.")
+            logger.info("Registered asset {}".format(asset.name))
             return True
-        print(f"Asset '{asset.name}' already exists.")
+        logger.warning("Asset {} already registered".format(asset.name))
         return False
 
     def return_all_assets(self):
@@ -59,33 +63,43 @@ class AssetManager:
 
     # region Add Functions
     def add_candle(self, json: dict) -> Candle:
-        candle: Candle = self._asset_mapper.map_candle_from_trading_view(json)
-        if candle.asset in self.assets:
-            self.assets[candle.asset].add_candle(candle)
-            return candle
-        raise ValueError
+        try:
+            candle: Candle = self._asset_mapper.map_candle_from_trading_view(json)
+            if candle.asset in self.assets:
+                self.assets[candle.asset].add_candle(candle)
+                return candle
+        except Exception as e:
+            logger.exception("Failed to add candle to db with exception {}".format(e))
     # endregion
 
     # region Return Functions
     def return_relations(self, asset: str, broker: str) -> list[AssetBrokerStrategyRelation]:
-        if asset in self.assets:
-            return self.assets[asset].return_relations_for_broker(broker)
-        raise ValueError(f"Asset '{asset}' not found.")
+        try:
+            if asset in self.assets:
+                return self.assets[asset].return_relations_for_broker(broker)
+        except Exception as e:
+            logger.exception("Failed to return relations for asset {}".format(asset))
 
     def return_smt_pair(self, asset: str) ->SMTPair:
-        if asset in self.assets:
-            return self.assets[asset].return_smt_pair()
-        raise ValueError(f"Asset '{asset}' not found.")
+        try:
+            if asset in self.assets:
+                return self.assets[asset].return_smt_pair()
+        except Exception as e:
+            logger.exception("Failed to return SMTPair for asset {}".format(asset))
 
     def return_candles(self, asset: str, broker: str, timeFrame: int) -> list[Candle]:
-        if asset in self.assets:
-            return self.assets[asset].return_candles(timeFrame, broker)
-        raise ValueError(f"Asset '{asset}' not found.")
+        try:
+            if asset in self.assets:
+                return self.assets[asset].return_candles(timeFrame, broker)
+        except Exception as e:
+            logger.exception("Failed to return candles for asset {}".format(asset))
 
     def return_all_relations(self, asset: str):
-        if asset in self.assets:
-            return self.assets[asset].relations
-        raise ValueError(f"Asset '{asset}' not found.")
+        try:
+            if asset in self.assets:
+                return self.assets[asset].relations
+        except Exception as e:
+            logger.exception("Failed to return relations for asset {}".format(asset))
     # endregion
 
 

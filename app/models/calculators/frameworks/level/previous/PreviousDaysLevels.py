@@ -46,4 +46,4 @@ class PreviousDaysLevels(ILevel):
             result = [level for levels in daily_levels.values() for level in levels.values()]
             return result
         except Exception as e:
-            logger.error("Previous Days Levels Error")
+            logger.error("Previous Days Levels Error" + str(e))

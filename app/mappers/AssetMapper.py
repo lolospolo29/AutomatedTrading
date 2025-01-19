@@ -3,6 +3,7 @@ from app.models.asset.Candle import Candle
 
 
 class AssetMapper:
+    """Maps the Candles from TradingView"""
     @staticmethod
     def map_candle_from_trading_view(json: dict) -> Candle:
         """

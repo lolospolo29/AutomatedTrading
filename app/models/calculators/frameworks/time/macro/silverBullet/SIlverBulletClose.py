@@ -1,16 +1,21 @@
 from app.interfaces.framework.ITimeWindow import ITimeWindow
+from app.monitoring.logging.logging_startup import logger
 
 
 # SB Macro
-class SecondNYMacro(ITimeWindow):
+class SilverBulletClose(ITimeWindow):
     def is_in_exit_window(self, time):
         return self.is_in_entry_window(time)
 
     def is_in_entry_window(self, time):
-        current_hour = time.hour
-        current_minute = time.minute
+        try:
+            current_hour = time.hour
 
-        if 20 <= current_hour < 21 :
-            return True
+            if 20 <= current_hour < 21 :
+                return True
 
-        return False
+            return False
+        except Exception as e:
+            logger.critical("SilverBulletClose: Exception occurred ", e)
+        finally:
+            return False

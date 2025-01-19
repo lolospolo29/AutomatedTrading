@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from app.models.calculators.frameworks.FrameWork import FrameWork
+from app.monitoring.logging.logging_startup import logger
+
 
 class Order:
 
@@ -81,18 +83,21 @@ class Order:
         return str(self.to_dict())
 
     def to_dict(self):
-        def transform_value(key, value):
-            """Applies necessary transformations to specific fields."""
-            if isinstance(value, list):
-                return [item.to_dict() for item in value if hasattr(item, "to_dict")]
-            elif hasattr(value, "to_dict"):
-                return value.to_dict()
-            return value
+        try:
+            def transform_value(key, value):
+                """Applies necessary transformations to specific fields."""
+                if isinstance(value, list):
+                    return [item.to_dict() for item in value if hasattr(item, "to_dict")]
+                elif hasattr(value, "to_dict"):
+                    return value.to_dict()
+                return value
 
-        return {
-            "Order": {
-                key: transform_value(key, getattr(self, key))
-                if hasattr(self, key) else None
-                for key in self.__annotations__.keys()
+            return {
+                "Order": {
+                    key: transform_value(key, getattr(self, key))
+                    if hasattr(self, key) else None
+                    for key in self.__annotations__.keys()
+                }
             }
-        }
+        except Exception as e:
+            logger.exception(e)

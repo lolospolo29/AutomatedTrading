@@ -1,4 +1,5 @@
 from app.interfaces.framework.ITimeWindow import ITimeWindow
+from app.monitoring.logging.logging_startup import logger
 
 
 # Lunch Macro
@@ -7,10 +8,15 @@ class LunchNYMacro(ITimeWindow):
         return self.is_in_entry_window(time)
 
     def is_in_entry_window(self, time):
-        current_hour = time.hour
-        current_minute = time.minute
+        try:
+            current_hour = time.hour
+            current_minute = time.minute
 
-        if (50 <= current_minute  and current_hour == 16) or (10 >= current_minute and current_hour == 17) :
-            return True
+            if (50 <= current_minute  and current_hour == 16) or (10 >= current_minute and current_hour == 17) :
+                return True
 
-        return False
+            return False
+        except Exception as e:
+            logger.critical("Lunch NY Macro Exception {}".format(e))
+        finally:
+            return False

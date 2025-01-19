@@ -8,6 +8,7 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class NewsService:
+    """Uses the EconomicScrapper to scrap news articles and store them in the List"""
     def __init__(self):
         self.economic_scrapper = EconomicScrapper()
         self.news_days:list[NewsDay] = []
@@ -21,7 +22,7 @@ class NewsService:
             Safe News on the Day to the List.
         """
         self.news_days = self.economic_scrapper.return_calendar()
-        self.logger.info(f"News Days received")
+        self.logger.info(f"News Days received"+len(self.news_days))
 
     def is_news_ahead(self, hour:int=1)->bool:
         """
@@ -37,13 +38,18 @@ class NewsService:
             utc_minus_5 = utc_now.astimezone(pytz.timezone('US/Eastern'))  # Eastern Time is UTC-5 during standard time
 
             for newsDay in self.news_days:
-                day = datetime.fromisoformat(newsDay.day_iso).date().day
-                if day == utc_minus_5.day:
-                    for news in newsDay.news_events:
-                        if (news.time.hour-hour == utc_minus_5.hour or news.time.hour+hour == utc_minus_5.hour or
-                                news.time.hour == utc_minus_5.hour) :
-                            self.logger.info(f"News Day {newsDay.day_iso} ahead")
-                            return True
+                try:
+                    day = datetime.fromisoformat(newsDay.day_iso).date().day
+                    if day == utc_minus_5.day:
+                        for news in newsDay.news_events:
+                            if (news.time.hour-hour == utc_minus_5.hour or news.time.hour+hour == utc_minus_5.hour or
+                                    news.time.hour == utc_minus_5.hour) :
+                                self.logger.info(f"News Day {newsDay.day_iso} ahead")
+                                return True
+                except Exception as e:
+                    logger.critical(f"News Day failed: {e}")
+                finally:
+                    continue
             return False
         except Exception as e:
             self.logger.critical(e)

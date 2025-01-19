@@ -6,7 +6,7 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class NDOG:
-
+    """ The NDOG is the gap between the opening price and closing price of the previous day"""
     def __init__(self):
         self.name = 'NDOG'
 
@@ -23,6 +23,6 @@ class NDOG:
                     all_levels.append(ndog)
                     # Add high and low of the New York midnight candle to levels
         except Exception as e:
-            logger.critical("NDOG Failed")
+            logger.critical("NDOG Failed with exception {}".format(e))
         finally:
             return all_levels

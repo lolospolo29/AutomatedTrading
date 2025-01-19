@@ -1,6 +1,7 @@
 from app.interfaces.framework.IConfirmation import IConfirmation
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Structure import Structure
+from app.monitoring.logging.logging_startup import logger
 
 
 class CISD(IConfirmation):
@@ -9,65 +10,69 @@ class CISD(IConfirmation):
         self.name = "CISD"
 
     def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
-        if len(candles) < self.lookback:
-            return []
-
-        row_candles = 0
-        direction = None
-        tracked_structures = []  # List of structures to track their levels
         current_structure = []
-        last_traded_structure = None  # Store the last structure that was traded
+        try:
+            if len(candles) < self.lookback:
+                return []
 
-        # Extract candle data
-        opens = [candle.open for candle in candles]
-        highs = [candle.high for candle in candles]
-        lows = [candle.low for candle in candles]
-        close = [candle.close for candle in candles]
+            row_candles = 0
+            direction = None
+            tracked_structures = []  # List of structures to track their levels
+            last_traded_structure = None  # Store the last structure that was traded
 
-        for i in range(1, len(close)):
-            # Determine the direction of the current candle
-            current_direction = 'Bullish' if close[i] > opens[i] else 'Bearish'
+            # Extract candle data
+            opens = [candle.open for candle in candles]
+            highs = [candle.high for candle in candles]
+            lows = [candle.low for candle in candles]
+            close = [candle.close for candle in candles]
 
-            # Initialize direction on the first candle
-            if direction is None:
-                direction = current_direction
-                row_candles = 1
-            # Same direction: continue tracking
-            elif current_direction == direction:
-                row_candles += 1
-            # Direction changes
-            else:
-                if row_candles >= self.lookback:
-                    if direction == 'Bearish':
-                        tracked_structures.append({
-                            "type": "Bearish",
-                            "level": max(highs[i - row_candles:i]),
-                            "candles": candles[i - 1]
-                        })
-                    elif direction == 'Bullish':
-                        tracked_structures.append({
-                            "type": "Bullish",
-                            "level": min(lows[i - row_candles:i]),
-                            "candles": candles[i - 1]
-                        })
+            for i in range(1, len(close)):
+                # Determine the direction of the current candle
+                current_direction = 'Bullish' if close[i] > opens[i] else 'Bearish'
 
-                # Reset for the new direction
-                direction = current_direction
-                row_candles = 1
+                # Initialize direction on the first candle
+                if direction is None:
+                    direction = current_direction
+                    row_candles = 1
+                # Same direction: continue tracking
+                elif current_direction == direction:
+                    row_candles += 1
+                # Direction changes
+                else:
+                    if row_candles >= self.lookback:
+                        if direction == 'Bearish':
+                            tracked_structures.append({
+                                "type": "Bearish",
+                                "level": max(highs[i - row_candles:i]),
+                                "candles": candles[i - 1]
+                            })
+                        elif direction == 'Bullish':
+                            tracked_structures.append({
+                                "type": "Bullish",
+                                "level": min(lows[i - row_candles:i]),
+                                "candles": candles[i - 1]
+                            })
 
-            # Check if any tracked structure is traded through
-            for struct in tracked_structures:
-                if struct["type"] == "Bearish" and close[i] > struct["level"]:
-                    last_traded_structure = Structure(self.name, "Bullish", candle=candles[i])
-                    current_structure.clear()
-                    current_structure.append(last_traded_structure)
-                    tracked_structures.remove(struct)  # Remove structure after it is traded through
-                elif struct["type"] == "Bullish" and close[i] < struct["level"]:
-                    last_traded_structure = Structure(self.name, "Bearish", candle=candles[i])
-                    current_structure.clear()
-                    current_structure.append(last_traded_structure)
-                    tracked_structures.remove(struct)  # Remove structure after it is traded through
+                    # Reset for the new direction
+                    direction = current_direction
+                    row_candles = 1
 
-        # Return the last traded structure
-        return current_structure
+                # Check if any tracked structure is traded through
+                for struct in tracked_structures:
+                    if struct["type"] == "Bearish" and close[i] > struct["level"]:
+                        last_traded_structure = Structure(self.name, "Bullish", candle=candles[i])
+                        current_structure.clear()
+                        current_structure.append(last_traded_structure)
+                        tracked_structures.remove(struct)  # Remove structure after it is traded through
+                    elif struct["type"] == "Bullish" and close[i] < struct["level"]:
+                        last_traded_structure = Structure(self.name, "Bearish", candle=candles[i])
+                        current_structure.clear()
+                        current_structure.append(last_traded_structure)
+                        tracked_structures.remove(struct)  # Remove structure after it is traded through
+
+                # Return the last traded structure
+        except Exception as e:
+            logger.error("CISD Confirmation Exception: {}".format(e))
+        finally:
+            return current_structure
 

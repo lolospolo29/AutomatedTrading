@@ -7,7 +7,10 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class OTE(ILevel):
-    """Standard OTE Fibonnaci Levels"""
+    """ICT OTE is the retracement level of price based on fibonacci between an established high and low
+       , from where price is expected to reverse.
+       At the ICT optimal trade entry level,
+       the risk is neither too little nor too high and is likely to give you the best return"""
     def __init__(self):
         # Fibonacci retracement levels to calculate
         self.retracement_levels: list[float] = [0.75, 0.62]

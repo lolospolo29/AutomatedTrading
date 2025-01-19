@@ -58,8 +58,6 @@ class PDRiskCalculator:
                 return self._volume_Imbalance.return_stop(pdArray, orderDirection, riskMode)
         except Exception as e:
             logger.info(f"Calculation failed with exception: {e}")
-        finally:
-            return -1
 
     def calculate_stops_specific(self, pdArrays:list[PDArray], orderDirection:OrderDirectionEnum, riskMode:RiskMode) -> list[float]:
         stops = []
@@ -73,7 +71,6 @@ class PDRiskCalculator:
             return stops
 
     def calculate_all_stops(self, pdArrays:list[PDArray], orderDirection:OrderDirectionEnum) -> list[float]:
-
         stops = []
         try:
 
@@ -123,8 +120,6 @@ class PDRiskCalculator:
 
         except Exception as e:
             logger.info("Exception occurred: {}".format(e))
-        finally:
-            return -1
 
     def calculate_entries_specific(self, pdArrays: list[PDArray], orderDirection:
                                    OrderDirectionEnum, riskMode: RiskMode) -> \
@@ -139,11 +134,8 @@ class PDRiskCalculator:
             return stops
 
     def calculate_all_entries(self, pdArrays: list[PDArray], orderDirection: OrderDirectionEnum) -> list[float]:
-
         stops = []
-
         try:
-
             riskMode = RiskMode.SAFE
 
             safeStops = self.calculate_entries_specific(pdArrays, orderDirection, riskMode)

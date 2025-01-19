@@ -11,7 +11,7 @@ class CandleSeries:
         self.timeFrame: int = timeFrame
         self.broker: str = broker
 
-    def addCandle(self, candle: Candle) -> None:
+    def add_candle(self, candle: Candle) -> None:
         candleList = list(self.candleSeries)
 
         # Find the correct position to insert using bisect (binary search)
@@ -27,13 +27,13 @@ class CandleSeries:
         if len(self.candleSeries) > self.candleSeries.maxlen:
             self.candleSeries.pop()
 
-    def returnCandleIDs(self) -> list:
+    def return_candle_i_ds(self) -> list:
         """
         Returns a list of all candle IDs in the series.
         """
         return [candle.id for candle in self.candleSeries]
 
-    def toList(self) -> list[Candle]:
+    def to_list(self) -> list[Candle]:
         """
         Convert the deque of Candle objects into a list.
         """

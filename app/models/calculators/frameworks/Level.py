@@ -1,5 +1,6 @@
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.FrameWork import FrameWork
+from app.monitoring.logging.logging_startup import logger
 
 
 class Level(FrameWork):
@@ -27,8 +28,13 @@ class Level(FrameWork):
         :param _ids: Liste von IDs, in der gesucht werden soll
         :return: True, wenn alle IDs von `self. Ids` in `ids_` enthalten sind, sonst False
         """
-        candlesIds = [candle.id for candle in self.candles]
-        return all(id_ in _ids for id_ in candlesIds)
+        try:
+            candlesIds = [candle.id for candle in self.candles]
+            return all(id_ in _ids for id_ in candlesIds)
+        except Exception as e:
+            logger.exception(e)
+        finally:
+            return False
 
     def to_dict(self) -> dict:
         """
@@ -36,16 +42,20 @@ class Level(FrameWork):
 
         :return: A dictionary where the class name is the key and attributes that are not None are the value.
         """
-        attributes = {
-            "typ" : self.typ,
-            "name": self.name,
-            "direction": self.direction,
-            "level": self.level if self.level else None,
-            "candles": [candle.to_dict() for candle in self.candles],
-            "fib_level": self.fib_level if self.fib_level else None,
-        }
+        try:
+            attributes = {
+                "typ" : self.typ,
+                "name": self.name,
+                "direction": self.direction,
+                "level": self.level if self.level else None,
+                "candles": [candle.to_dict() for candle in self.candles],
+                "fib_level": self.fib_level if self.fib_level else None,
+            }
 
-        # Filter out attributes with None values
-        filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
+            # Filter out attributes with None values
+            filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
 
-        return {self.__class__.__name__: filtered_attributes}
+            return {self.__class__.__name__: filtered_attributes}
+        except Exception as e:
+            logger.exception(e)
+            raise ValueError

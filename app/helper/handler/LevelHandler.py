@@ -2,6 +2,7 @@ import threading
 
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
+from app.monitoring.logging.logging_startup import logger
 
 
 class LevelHandler:
@@ -12,22 +13,28 @@ class LevelHandler:
 
 
     def add_level(self, new_level: Level) -> bool:
-        for level in self.levels:
-            if self._compare_levels(new_level, level):
-                return False
-        self.levels.append(new_level)
-        return True
+        try:
+            for level in self.levels:
+                if self._compare_levels(new_level, level):
+                    return False
+            self.levels.append(new_level)
+            return True
+        except Exception as e:
+            logger.error("Adding level failed", exc_info=e)
 
     def return_levels(self) -> list[Level]:
         return self.levels
 
     def remove_level(self, candles:list[Candle], timeframe: int) -> None:
-        _ids = [candle.id for candle in candles]
-        levels = self.levels.copy()
-        for level in levels:
-            if level.timeframe == timeframe:
-                if not level.is_id_present(_ids):
-                    self.levels.remove(level)
+        try:
+            _ids = [candle.id for candle in candles]
+            levels = self.levels.copy()
+            for level in levels:
+                if level.timeframe == timeframe:
+                    if not level.is_id_present(_ids):
+                        self.levels.remove(level)
+        except Exception as e:
+            logger.error("Remove Level Exception: {}".format(e))
 
     @staticmethod
     def _compare_levels(level1: Level, level2: Level) -> bool:

@@ -4,6 +4,7 @@ import threading
 from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.trade.Order import Order
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
+from app.monitoring.logging.logging_startup import logger
 
 
 class RiskManager:
@@ -87,31 +88,37 @@ class RiskManager:
 
     # region Risk Management
     def calculate_qty_market(self, asset_class:str, order:Order)->float:
-        moneyatrisk = self._calculate_money_at_risk()
-        order.money_at_risk = moneyatrisk
-        qty = 0.00
-        if asset_class == AssetClassEnum.CRYPTO.value:
-            if order.side == OrderDirectionEnum.BUY.value:
-                qty = self._calculate_crypto_trade_size(moneyatrisk,
-                                                                     (float(order.price) - float(order.stopLoss)))
-            if order.side == OrderDirectionEnum.SELL.value:
-                qty = self._calculate_crypto_trade_size(moneyatrisk,
-                                                                     (float(order.stopLoss) - float(order.price)))
+        try:
+            moneyatrisk = self._calculate_money_at_risk()
+            order.money_at_risk = moneyatrisk
+            qty = 0.00
+            if asset_class == AssetClassEnum.CRYPTO.value:
+                if order.side == OrderDirectionEnum.BUY.value:
+                    qty = self._calculate_crypto_trade_size(moneyatrisk,
+                                                                         (float(order.price) - float(order.stopLoss)))
+                if order.side == OrderDirectionEnum.SELL.value:
+                    qty = self._calculate_crypto_trade_size(moneyatrisk,
+                                                                         (float(order.stopLoss) - float(order.price)))
 
-        return self._round_down(abs(qty * order.risk_percentage))
+            return self._round_down(abs(qty * order.risk_percentage))
+        except Exception as e:
+            logger.exception("Failed to Calculate Qty Market.")
 
     def calculate_qty_limit(self, asset_class:str, order:Order)->float:
-        moneyatrisk = self._calculate_money_at_risk()
-        order.money_at_risk = moneyatrisk
-        qty = 0.00
-        if asset_class == AssetClassEnum.CRYPTO:
-            if order.side == OrderDirectionEnum.BUY.value:
-                qty = (self._calculate_crypto_trade_size
-                       (moneyatrisk, abs(float(order.price) - float(order.slLimitPrice))))
-            if order.side == OrderDirectionEnum.SELL.value:
-                qty = (self._calculate_crypto_trade_size
-                       (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
-        return self._round_down(abs(qty * order.risk_percentage))
+        try:
+            moneyatrisk = self._calculate_money_at_risk()
+            order.money_at_risk = moneyatrisk
+            qty = 0.00
+            if asset_class == AssetClassEnum.CRYPTO:
+                if order.side == OrderDirectionEnum.BUY.value:
+                    qty = (self._calculate_crypto_trade_size
+                           (moneyatrisk, abs(float(order.price) - float(order.slLimitPrice))))
+                if order.side == OrderDirectionEnum.SELL.value:
+                    qty = (self._calculate_crypto_trade_size
+                           (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
+            return self._round_down(abs(qty * order.risk_percentage))
+        except Exception as e:
+            logger.exception("Failed to Calculate Qty Limit.")
     # endregion
 # #
 # # # Input variables

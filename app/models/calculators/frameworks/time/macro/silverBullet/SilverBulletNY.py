@@ -1,4 +1,5 @@
 from app.interfaces.framework.ITimeWindow import ITimeWindow
+from app.monitoring.logging.logging_startup import logger
 
 
 # SB Macro
@@ -7,10 +8,13 @@ class SecondNYMacro(ITimeWindow):
         return self.is_in_entry_window(time)
 
     def is_in_entry_window(self, time):
-        current_hour = time.hour
-        current_minute = time.minute
+        try:
+            current_hour = time.hour
 
-        if 15 <= current_hour < 16 :
-            return True
+            if 15 <= current_hour < 16 :
+                return True
 
-        return False
+            return False
+        except Exception as e:
+            logger.critical("Silver Bullet NY Exception {}".format(e))
+            pass

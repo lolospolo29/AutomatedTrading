@@ -2,7 +2,7 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class BreakEven:
-    """Break Even Calculator"""
+    """Break Even Calculator for the Stop Loss"""
     def __init__(self):
         self.percentage = 75
 

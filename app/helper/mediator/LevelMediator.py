@@ -9,6 +9,7 @@ from app.models.calculators.frameworks.level.opens.NWOG import NWOG
 from app.models.calculators.frameworks.level.previous.PreviousDaysLevels import PreviousDaysLevels
 from app.models.calculators.frameworks.level.previous.PreviousSessionLevels import PreviousSessionLevels
 from app.models.calculators.frameworks.level.previous.PreviousWeekLevels import PreviousWeekLevels
+from app.monitoring.logging.logging_startup import logger
 
 
 class LevelMediator:
@@ -37,32 +38,42 @@ class LevelMediator:
     # endregion
 
     # region Calculators / Analyzing
-    def calculate_levels(self, level_type: str, candles: list[Candle], *args, **kwargs) -> list:
-        if level_type == "CBDR":
-            return self._cbdr.return_levels(candles)
-        if level_type == "previousDaysLevels":
-            return self._previous_days_level.return_levels(candles)
-        if level_type == "PreviousSessionLevels":
-            return self._previous_session_level.return_levels(candles)
-        if level_type == "PreviousWeekLevels":
-            return self._previous_week_levels.return_levels(candles)
+    def calculate_levels(self, level_type: str, candles: list[Candle]) -> list:
+        try:
+            if level_type == "CBDR":
+                return self._cbdr.return_levels(candles)
+            if level_type == "previousDaysLevels":
+                return self._previous_days_level.return_levels(candles)
+            if level_type == "PreviousWeekLevels":
+                return self._previous_week_levels.return_levels(candles)
+        except Exception as e:
+            logger.error("Error calculating levels: {}".format(e))
+
+    def calculate_previous_sessions(self, candles: list[Candle], time_windows) -> list:
+        return self._previous_session_level.return_levels(candles, time_windows)
 
     def calculate_equal_levels(self, candles: list[Candle], direction: str) -> list:
         return self._equal.returnLevels(candles, direction)
 
     def calculate_fibonacci(self, level_type, candles: list[Candle], lookback) -> list:
-        if level_type == "OTE":
-            return self._ote.return_levels(candles, lookback)
-        if level_type == "PD":
-            return self._pd.return_levels(candles, lookback)
-        if level_type == "STDV":
-            return self._stdv.return_levels(candles, lookback)
+        try:
+            if level_type == "OTE":
+                return self._ote.return_levels(candles, lookback)
+            if level_type == "PD":
+                return self._pd.return_levels(candles, lookback)
+            if level_type == "STDV":
+                return self._stdv.return_levels(candles, lookback)
+        except Exception as e:
+            logger.error("Error calculating levels: {}".format(e))
 
     def return_opening_gap(self, level_type:str, candles: list[Candle]) -> list:
-        if level_type == "NWOG":
-            return self._nwog.return_levels(candles)
-        if level_type == "NDOG":
-            return self._ndog.return_levels(candles)
+        try:
+            if level_type == "NWOG":
+                return self._nwog.return_levels(candles)
+            if level_type == "NDOG":
+                return self._ndog.return_levels(candles)
+        except Exception as e:
+            logger.error("Error calculating levels: {}".format(e))
     # endregion
 
 

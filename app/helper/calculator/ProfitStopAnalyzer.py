@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from app.models.calculators.ProfitStopEntry import ProfitStopEntry
 from app.models.calculators.RiskModeEnum import RiskMode
+from app.monitoring.logging.logging_startup import logger
 
 
 class ProfitStopAnalyzer:
@@ -32,44 +33,47 @@ class ProfitStopAnalyzer:
         Returns:
             list[ProfitStopEntry]: Sorted list of entries based on aggregated ranks.
         """
-        attribute_methods = {
-            "profit": [
-                ProfitStopAnalyzer.max_profit,
-                ProfitStopAnalyzer.profit_and_distance_tradeoff,
-                ProfitStopAnalyzer.optimal_profit_entry_sum,
-                ProfitStopAnalyzer.optimal_profit_stop_sum,
-            ],
-            "stop": [
-                ProfitStopAnalyzer.highest_stop,
-                ProfitStopAnalyzer.lowest_stop,
-                ProfitStopAnalyzer.maximal_distance,
-                ProfitStopAnalyzer.mid_range_stop,
-            ],
-            "entry": [
-                ProfitStopAnalyzer.lowest_entry,
-                ProfitStopAnalyzer.mid_range_entry,
-                ProfitStopAnalyzer.optimal_profit_entry_sum,
-            ],
-        }
+        try:
+            attribute_methods = {
+                "profit": [
+                    ProfitStopAnalyzer.max_profit,
+                    ProfitStopAnalyzer.profit_and_distance_tradeoff,
+                    ProfitStopAnalyzer.optimal_profit_entry_sum,
+                    ProfitStopAnalyzer.optimal_profit_stop_sum,
+                ],
+                "stop": [
+                    ProfitStopAnalyzer.highest_stop,
+                    ProfitStopAnalyzer.lowest_stop,
+                    ProfitStopAnalyzer.maximal_distance,
+                    ProfitStopAnalyzer.mid_range_stop,
+                ],
+                "entry": [
+                    ProfitStopAnalyzer.lowest_entry,
+                    ProfitStopAnalyzer.mid_range_entry,
+                    ProfitStopAnalyzer.optimal_profit_entry_sum,
+                ],
+            }
 
-        if attribute not in attribute_methods:
-            raise ValueError(f"Invalid attribute: {attribute}. Choose from {list(attribute_methods.keys())}.")
+            if attribute not in attribute_methods:
+                raise ValueError(f"Invalid attribute: {attribute}. Choose from {list(attribute_methods.keys())}.")
 
-        # Get relevant methods for the specified attribute
-        methods = attribute_methods[attribute]
+            # Get relevant methods for the specified attribute
+            methods = attribute_methods[attribute]
 
-        # Aggregate rankings from all relevant methods
-        rankings = defaultdict(int)  # To store cumulative rankings for each entry
-        for method in methods:
-            ranked_list = method(entries, len(entries))  # Get the full ranked list from each method
-            for rank, entry in enumerate(ranked_list):
-                rankings[entry] += rank  # Add the rank from this method
+            # Aggregate rankings from all relevant methods
+            rankings = defaultdict(int)  # To store cumulative rankings for each entry
+            for method in methods:
+                ranked_list = method(entries, len(entries))  # Get the full ranked list from each method
+                for rank, entry in enumerate(ranked_list):
+                    rankings[entry] += rank  # Add the rank from this method
 
-        # Sort entries by cumulative ranking score
-        sorted_entries = sorted(entries, key=lambda e: rankings[e])
+            # Sort entries by cumulative ranking score
+            sorted_entries = sorted(entries, key=lambda e: rankings[e])
 
-        # Return the top `x` entries
-        return sorted_entries[:x]
+            # Return the top `x` entries
+            return sorted_entries[:x]
+        except Exception as e:
+            logger.critical(f"An error occurred in Profit Stop Analyzer: {e}")
 
     @staticmethod
     def analyze_risk_mode(entries: list[ProfitStopEntry], x: int, risk_mode: RiskMode) -> list:
@@ -85,44 +89,47 @@ class ProfitStopAnalyzer:
         Returns:
             list[ProfitStopEntry]: Sorted list of entries based on aggregated ranks.
         """
-        risk_mode_methods = {
-            RiskMode.AGGRESSIVE: [
-                ProfitStopAnalyzer.max_profit,
-                ProfitStopAnalyzer.profit_and_distance_tradeoff,
-                ProfitStopAnalyzer.minimal_distance,
-            ],
-            RiskMode.MODERAT: [
-                ProfitStopAnalyzer.mid_range_stop,
-                ProfitStopAnalyzer.mid_range_entry,
-                ProfitStopAnalyzer.optimal_profit_entry_sum,
-                ProfitStopAnalyzer.optimal_profit_stop_sum,
-            ],
-            RiskMode.SAFE: [
-                ProfitStopAnalyzer.maximal_distance,
-                ProfitStopAnalyzer.highest_stop,
-                ProfitStopAnalyzer.lowest_stop,
-                ProfitStopAnalyzer.lowest_entry,
-            ],
-        }
+        try:
+            risk_mode_methods = {
+                RiskMode.AGGRESSIVE: [
+                    ProfitStopAnalyzer.max_profit,
+                    ProfitStopAnalyzer.profit_and_distance_tradeoff,
+                    ProfitStopAnalyzer.minimal_distance,
+                ],
+                RiskMode.MODERAT: [
+                    ProfitStopAnalyzer.mid_range_stop,
+                    ProfitStopAnalyzer.mid_range_entry,
+                    ProfitStopAnalyzer.optimal_profit_entry_sum,
+                    ProfitStopAnalyzer.optimal_profit_stop_sum,
+                ],
+                RiskMode.SAFE: [
+                    ProfitStopAnalyzer.maximal_distance,
+                    ProfitStopAnalyzer.highest_stop,
+                    ProfitStopAnalyzer.lowest_stop,
+                    ProfitStopAnalyzer.lowest_entry,
+                ],
+            }
 
-        if risk_mode not in risk_mode_methods:
-            raise ValueError(f"Invalid risk mode: {risk_mode}. Choose from {list(risk_mode_methods.keys())}.")
+            if risk_mode not in risk_mode_methods:
+                raise ValueError(f"Invalid risk mode: {risk_mode}. Choose from {list(risk_mode_methods.keys())}.")
 
-        # Get relevant methods for the specified risk mode
-        methods = risk_mode_methods[risk_mode]
+            # Get relevant methods for the specified risk mode
+            methods = risk_mode_methods[risk_mode]
 
-        # Aggregate rankings from all relevant methods
-        rankings = defaultdict(int)  # To store cumulative rankings for each entry
-        for method in methods:
-            ranked_list = method(entries, len(entries))  # Get the full ranked list from each method
-            for rank, entry in enumerate(ranked_list):
-                rankings[entry] += rank  # Add the rank from this method
+            # Aggregate rankings from all relevant methods
+            rankings = defaultdict(int)  # To store cumulative rankings for each entry
+            for method in methods:
+                ranked_list = method(entries, len(entries))  # Get the full ranked list from each method
+                for rank, entry in enumerate(ranked_list):
+                    rankings[entry] += rank  # Add the rank from this method
 
-        # Sort entries by cumulative ranking score
-        sorted_entries = sorted(entries, key=lambda e: rankings[e])
+            # Sort entries by cumulative ranking score
+            sorted_entries = sorted(entries, key=lambda e: rankings[e])
 
-        # Return the top `x` entries
-        return sorted_entries[:x]
+            # Return the top `x` entries
+            return sorted_entries[:x]
+        except Exception as e:
+            logger.critical(f"An error occurred in Profit Stop Analyzer: {e}")
 
     # Aggressiv
     @staticmethod

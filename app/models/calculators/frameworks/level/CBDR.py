@@ -7,7 +7,13 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class CBDR(ILevel):
-    """Central Bank Dealer Range 2 PM to 0 AM"""
+    """
+     Central Bank Dealer Range 2 PM to 0 AM
+     range refers to a predefined high and low level in price.
+     The Central Bank Dealers Range, in this context, represents a specific time period during the day
+     that holds significance for traders. It serves as a reference point for identifying potential
+     deviations in price
+     """
     def __init__(self):
         self.name = 'CBDR'
 

@@ -7,6 +7,7 @@ import pytz
 from app.db.mongodb.MongoDB import MongoDB
 from app.manager.initializer.SecretsManager import SecretsManager
 from app.models.asset.Candle import Candle
+from app.monitoring.logging.logging_startup import logger
 
 ny_tz = pytz.timezone('America/New_York')
 
@@ -33,30 +34,36 @@ class mongoDBData:
         self._mongo_db_data.add(asset, candle)
 
     def archive_data(self, asset: str) -> Any:
-        current_time_ny = datetime.datetime.now(ny_tz)
+        try:
+            current_time_ny = datetime.datetime.now(ny_tz)
 
-        # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
-        date60_days_ago_ny = current_time_ny - datetime.timedelta(days=60)
+            # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
+            date60_days_ago_ny = current_time_ny - datetime.timedelta(days=60)
 
-        # Umwandlung beider Zeiten in UTC
-        currentTimeUtc = current_time_ny.astimezone(pytz.utc)
-        date60_days_ago_utc = date60_days_ago_ny.astimezone(pytz.utc)
+            # Umwandlung beider Zeiten in UTC
+            currentTimeUtc = current_time_ny.astimezone(pytz.utc)
+            date60_days_ago_utc = date60_days_ago_ny.astimezone(pytz.utc)
 
-        query = 'AssetData.timeStamp'
+            query = 'AssetData.timeStamp'
 
-        self._mongo_db_data.deleteOldDocuments(asset, query, date60_days_ago_utc)
+            self._mongo_db_data.deleteOldDocuments(asset, query, date60_days_ago_utc)
+        except Exception as e:
+            logger.error("Archiving Data Exception: {}".format(e))
 
     def receive_data(self, asset:str, broker:str, timeframe:int, lookback: int):
-        current_time_ny = datetime.datetime.now(ny_tz)
+        try:
+            current_time_ny = datetime.datetime.now(ny_tz)
 
-        # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
-        three_days_ago = current_time_ny - datetime.timedelta(days=lookback)
+            # Berechne das Datum von vor 60 Tagen in der New Yorker Zeitzone
+            three_days_ago = current_time_ny - datetime.timedelta(days=lookback)
 
-        three_days_ago_utc = three_days_ago.astimezone(pytz.utc)
+            three_days_ago_utc = three_days_ago.astimezone(pytz.utc)
 
-        query = {
-            "Candle.broker": broker,
-            "Candle.timeFrame": timeframe,
-            "Candle.IsoTime": {"$gte": three_days_ago_utc}
-        }
-        return self._mongo_db_data.find(asset, query)
+            query = {
+                "Candle.broker": broker,
+                "Candle.timeFrame": timeframe,
+                "Candle.IsoTime": {"$gte": three_days_ago_utc}
+            }
+            return self._mongo_db_data.find(asset, query)
+        except Exception as e:
+            logger.error("Receive data error: {}".format(e))

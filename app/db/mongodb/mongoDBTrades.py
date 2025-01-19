@@ -13,6 +13,7 @@ from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.frameworks.Structure import Structure
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
+from app.monitoring.logging.logging_startup import logger
 
 
 class mongoDBTrades:
@@ -39,21 +40,25 @@ class mongoDBTrades:
     def find_trade_or_trades_by_id(self, id:str=None)->list[Trade]:
         trades = []
         res = []
-        if id is None:
-            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, None)
-        else:
-            query = self._mongo_db_trades.buildQuery("Trade", "id", str(id))
-            res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
-        for tradeInRes in res:
-            trade = self._trade_mapper.map_trade_from_db(tradeInRes)
-            orders = []
-            for order in trade.orders:
-                order = self.find_order_or_orders_by_id(order)
-                orders.extend(order)
-            trade.orders = []
-            trade.orders.extend(orders)
-            trades.append(trade)
-        return trades
+        try:
+            if id is None:
+                res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, None)
+            else:
+                query = self._mongo_db_trades.buildQuery("Trade", "id", str(id))
+                res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
+            for tradeInRes in res:
+                trade = self._trade_mapper.map_trade_from_db(tradeInRes)
+                orders = []
+                for order in trade.orders:
+                    order = self.find_order_or_orders_by_id(order)
+                    orders.extend(order)
+                trade.orders = []
+                trade.orders.extend(orders)
+                trades.append(trade)
+        except Exception as e:
+            logger.error("MongoDBTrades.find_trade_or_trades_by_id: Exception: {}".format(e))
+        finally:
+            return trades
 
     def find_order_or_orders_by_id(self, id: str=None) -> list[Order]:
         orders = []

@@ -2,6 +2,9 @@ from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRela
 from app.models.trade import Order
 import uuid
 
+from app.monitoring.logging.logging_startup import logger
+
+
 class Trade:
 
     def __init__(self, relation: AssetBrokerStrategyRelation=None, orders: list[Order]=None,id:str=None):
@@ -17,22 +20,24 @@ class Trade:
             self.id = uuid.uuid4()
         else:
             self.id = id
-    # todo file trade logging
 
 
     def to_dict(self):
         """Gibt alle Datenpunkte als Dictionary zurück"""
-        return {
-            "Trade": {
-                "id": str(self.id),
-                "orders": [order.orderLinkId for order in self.orders],
-                "asset": self.relation.asset ,
-                "broker": self.relation.broker ,
-                "strategy": self.relation.strategy ,
-                "side": self.side,
-                "unrealisedPnl": self.unrealisedPnl,
-                "leverage": self.leverage,
-                "size": self.size,
-                "tradeMode": self.tradeMode,
+        try:
+            return {
+                "Trade": {
+                    "id": str(self.id),
+                    "orders": [order.orderLinkId for order in self.orders],
+                    "asset": self.relation.asset ,
+                    "broker": self.relation.broker ,
+                    "strategy": self.relation.strategy ,
+                    "side": self.side,
+                    "unrealisedPnl": self.unrealisedPnl,
+                    "leverage": self.leverage,
+                    "size": self.size,
+                    "tradeMode": self.tradeMode,
+                }
             }
-        }
+        except Exception as e:
+            logger.exception(e)

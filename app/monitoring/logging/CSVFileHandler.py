@@ -2,6 +2,8 @@ import logging
 import csv
 from datetime import datetime
 
+
+
 class CSVFileHandler(logging.Handler):
     """
     Custom logging handler to write logs into a CSV file.
@@ -19,17 +21,23 @@ class CSVFileHandler(logging.Handler):
             self._write_header()
 
     def _write_header(self):
-        """Write the CSV header row."""
-        with open(self.filename, mode='w', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(["Level", "Message", "Timestamp"])
+        try:
+            """Write the CSV header row."""
+            with open(self.filename, mode='w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(["Level", "Message", "Timestamp"])
+        except Exception as e:
+            pass
 
     def emit(self, record):
         """Write a log record to the CSV file."""
-        # Create a timestamp manually
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            # Create a timestamp manually
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Write the log record to the CSV file
-        with open(self.filename, mode='a', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow([record.levelname, record.msg, timestamp])
+            # Write the log record to the CSV file
+            with open(self.filename, mode='a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow([record.levelname, record.msg, timestamp])
+        except Exception as e:
+            pass

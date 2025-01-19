@@ -1,4 +1,5 @@
 from app.interfaces.framework.ITimeWindow import ITimeWindow
+from app.monitoring.logging.logging_startup import logger
 
 
 class LondonOpen(ITimeWindow):
@@ -6,6 +7,11 @@ class LondonOpen(ITimeWindow):
         return self.is_in_entry_window(time)
 
     def is_in_entry_window(self, time) -> bool:
-        if  10 >= time.hour >= 7 :
-            return True
-        return False
+        try:
+            if  10 >= time.hour >= 7 :
+                return True
+            return False
+        except Exception as e:
+            logger.critical("London Open Error", e)
+        finally:
+            return False

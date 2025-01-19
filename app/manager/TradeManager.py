@@ -12,6 +12,7 @@ from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRela
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
+from app.monitoring.logging.logging_startup import logger
 
 
 class TradeManager:
@@ -48,7 +49,7 @@ class TradeManager:
                 self._trade_registry.acquire_trade(trade.relation)
                 if trade.id not in self._open_trades:
                     self._open_trades[trade.id] = trade
-                    print(f"Trade for '{trade.relation.broker}' "
+                    logger.info(f"Trade for '{trade.relation.broker}' "
                           f"with ID: {trade.id} created and added to the Trade Manager.")
 
     def remove_trade(self, trade: Trade) -> None:
@@ -196,7 +197,7 @@ class TradeManager:
     # endregion
 
 # todo order builder for every broker
-
+# todo execptions
 # tm = TradeManager()
 #
 # relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",2)

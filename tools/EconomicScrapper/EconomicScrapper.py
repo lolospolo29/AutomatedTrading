@@ -2,7 +2,7 @@ import re
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 import pytz
-
+from app.monitoring.logging.logging_startup import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -15,12 +15,17 @@ from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 local_tz = pytz.timezone('America/New_York')
 
 class EconomicScrapper:
+    """
+    Scrapes economic calendar data from TradingEconomics.com to extract information on news events and dates.
+    It processes event data to create structured objects with details like time, title, currency, and timezone adjustments.
+    The output is a list of NewsDay objects, each containing relevant news events for a specific day.
+    """
+
     def __init__(self):
         self.__options = Options()
         self.__service = \
             (Service('/Users/lauris/PycharmProjects/AutomatedTrading/tools/EconomicScrapper/chromedriver-mac-x64/chromedriver'))
 
-        self.__driver = webdriver.Chrome(service=self.__service, options=self.__options)
 
     @staticmethod
     def _extract_time_and_daytime(event_text):
@@ -84,6 +89,12 @@ class EconomicScrapper:
         return None  # Return None if no date found
 
     def return_calendar(self)->list[NewsDay]:
+        """
+        Scrapes the economic calendar from TradingEconomics.com and returns a list of NewsDay objects.
+        Each NewsDay contains news events with details like time, title, currency, and adjusted timezone information.
+        """
+
+        self.__driver = webdriver.Chrome(service=self.__service, options=self.__options)
         news_days = []
         try:
             # Open the website
@@ -118,51 +129,59 @@ class EconomicScrapper:
             current_news_day:NewsDay = None
             # Process each event and check for timestamp
             for index, event in enumerate(event_elements):
+                try:
+                    event_text = event.text.strip()
 
-                event_text = event.text.strip()
+                    date = self._extract_date_from_event(event_text)
 
-                date = self._extract_date_from_event(event_text)
+                    if not date is None:
+                        news_day = NewsDay(date,[])
+                        news_days.append(news_day)
+                        current_news_day = news_day
 
-                if not date is None:
-                    news_day = NewsDay(date,[])
-                    news_days.append(news_day)
-                    current_news_day = news_day
+                    # Extract time and daytime (AM/PM)
+                    time_obj, daytime = self._extract_time_and_daytime(event_text)
 
-                # Extract time and daytime (AM/PM)
-                time_obj, daytime = self._extract_time_and_daytime(event_text)
+                    if time_obj and daytime:
+                        title, currency = self._extract_title_and_currency(event_text)
 
-                if time_obj and daytime:
-                    title, currency = self._extract_title_and_currency(event_text)
-
-                    # Create NewsEvent dataclass and append to list
-                    news_event = NewsEvent(time=time_obj, title=title, currency=currency, daytime=daytime)
-                    current_news_day.news_events.append(news_event)
+                        # Create NewsEvent dataclass and append to list
+                        news_event = NewsEvent(time=time_obj, title=title, currency=currency, daytime=daytime)
+                        current_news_day.news_events.append(news_event)
+                except Exception as e:
+                    logger.critical("NewsDay exception: {}".format(e))
+                finally:
+                    continue
             try:
                 for news_day in news_days:
+                    try:
+                        # Convert newsDay.dayIso to a datetime object (without time)
+                        day_date = datetime.fromisoformat(news_day.day_iso).date()
 
-                    # Convert newsDay.dayIso to a datetime object (without time)
-                    day_date = datetime.fromisoformat(news_day.day_iso).date()
+                        for news_event in news_day.news_events:
+                            # Ensure newsEvent.time is a string and convert to a time object
+                            if isinstance(news_event.time, str):
+                                time_obj = datetime.strptime(news_event.time, "%H:%M:%S").time()
+                            elif isinstance(news_event.time, datetime):
+                                time_obj = news_event.time.time()
 
-                    for news_event in news_day.news_events:
-                        # Ensure newsEvent.time is a string and convert to a time object
-                        if isinstance(news_event.time, str):
-                            time_obj = datetime.strptime(news_event.time, "%H:%M:%S").time()
-                        elif isinstance(news_event.time, datetime):
-                            time_obj = news_event.time.time()
+                            # Adjust for AM/PM
+                            if news_event.daytime == "PM":
+                                # If PM, add 12 hours to the time (except for 12 PM which is already correct)
+                                if time_obj.hour != 12:
+                                    time_obj = time_obj.replace(hour=time_obj.hour + 12)
 
-                        # Adjust for AM/PM
-                        if news_event.daytime == "PM":
-                            # If PM, add 12 hours to the time (except for 12 PM which is already correct)
-                            if time_obj.hour != 12:
-                                time_obj = time_obj.replace(hour=time_obj.hour + 12)
+                            # Combine the date from newsDay and time from newsEvent
+                            combined_datetime = datetime.combine(day_date, time_obj)
 
-                        # Combine the date from newsDay and time from newsEvent
-                        combined_datetime = datetime.combine(day_date, time_obj)
+                            combined_datetime_with_tz = local_tz.localize(combined_datetime)
 
-                        combined_datetime_with_tz = local_tz.localize(combined_datetime)
-
-                        # Now, combined_datetime_with_tz is in UTC+1
-                        news_event.time = combined_datetime_with_tz
+                            # Now, combined_datetime_with_tz is in UTC+1
+                            news_event.time = combined_datetime_with_tz
+                    except Exception as e:
+                        logger.critical("NewsDay exception: {}".format(e))
+                    finally:
+                        continue
 
             except Exception as e:
                 print(e)
