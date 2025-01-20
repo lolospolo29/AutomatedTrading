@@ -10,31 +10,34 @@ class PDArrayHandler:
 
     def __init__(self):
         self.pdArray: list[PDArray] = []
-        _lock = threading.Lock()
+        self._lock = threading.Lock()
 
     def add_pd_array(self, pdArray: PDArray)->bool:
-        try:
-            for pd in self.pdArray:
-                if self._compare_pd_arrays(pdArray, pd):
-                    return False
-            self.pdArray.append(pdArray)
-            return True
-        except Exception as e:
-            logger.error("Add PD Array Exception: {}".format(e))
+        with self._lock:
+            try:
+                for pd in self.pdArray:
+                    if self._compare_pd_arrays(pdArray, pd):
+                        return False
+                self.pdArray.append(pdArray)
+                return True
+            except Exception as e:
+                logger.error("Add PD Array Exception: {}".format(e))
 
     def return_pd_arrays(self) -> list[PDArray]:
-        return self.pdArray
+        with self._lock:
+            return self.pdArray
 
     def remove_pd_array(self, candles: list[Candle], timeFrame: int) -> None:
-        try:
-            _ids = [candle.id for candle in candles]
-            pdArrays = self.pdArray.copy()
-            for pd in pdArrays:
-                if pd.timeframe == timeFrame:
-                    if not pd.is_id_present(_ids):
-                        self.pdArray.remove(pd)
-        except Exception as e:
-            logger.error("Remove PD Array Exception: {}".format(e))
+        with self._lock:
+            try:
+                _ids = [candle.id for candle in candles]
+                pdArrays = self.pdArray.copy()
+                for pd in pdArrays:
+                    if pd.timeframe == timeFrame:
+                        if not pd.is_id_present(_ids):
+                            self.pdArray.remove(pd)
+            except Exception as e:
+                logger.error("Remove PD Array Exception: {}".format(e))
 
     @staticmethod
     def _compare_pd_arrays(pdArray1: PDArray, pdArray2: PDArray) ->bool:

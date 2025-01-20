@@ -50,10 +50,16 @@ class LevelMediator:
             logger.error("Error calculating levels: {}".format(e))
 
     def calculate_previous_sessions(self, candles: list[Candle], time_windows) -> list:
-        return self._previous_session_level.return_levels(candles, time_windows)
+        try:
+            return self._previous_session_level.return_levels(candles, time_windows)
+        except Exception as e:
+            logger.error("Error calculating previous sessions: {}".format(e))
 
     def calculate_equal_levels(self, candles: list[Candle], direction: str) -> list:
-        return self._equal.returnLevels(candles, direction)
+        try:
+            return self._equal.returnLevels(candles, direction)
+        except Exception as e:
+            logger.error("Error calculating equal levels: {}".format(e))
 
     def calculate_fibonacci(self, level_type, candles: list[Candle], lookback) -> list:
         try:

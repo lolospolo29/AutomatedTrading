@@ -20,6 +20,7 @@ class CBDR(ILevel):
     def return_levels(self, candles: list[Candle]) -> list:
         """Use the Fibonnaci to define the Range"""
         try:
+            logger.info("Calculating CBDR")
             all_level = []
 
             high = -1

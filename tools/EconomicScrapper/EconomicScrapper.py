@@ -127,13 +127,14 @@ class EconomicScrapper:
 
 
             current_news_day:NewsDay = None
+            logger.debug(event_elements)
             # Process each event and check for timestamp
             for index, event in enumerate(event_elements):
                 try:
                     event_text = event.text.strip()
 
                     date = self._extract_date_from_event(event_text)
-
+                    logger.debug("Event text: {} and formatted Date {}".format(event_text, date))
                     if not date is None:
                         news_day = NewsDay(date,[])
                         news_days.append(news_day)
@@ -141,7 +142,7 @@ class EconomicScrapper:
 
                     # Extract time and daytime (AM/PM)
                     time_obj, daytime = self._extract_time_and_daytime(event_text)
-
+                    logger.debug("Time obj: {} and formatted Time {}".format(time_obj, time_obj))
                     if time_obj and daytime:
                         title, currency = self._extract_title_and_currency(event_text)
 
@@ -157,9 +158,10 @@ class EconomicScrapper:
                     try:
                         # Convert newsDay.dayIso to a datetime object (without time)
                         day_date = datetime.fromisoformat(news_day.day_iso).date()
-
+                        logger.debug("Day date: {}".format(day_date))
                         for news_event in news_day.news_events:
                             # Ensure newsEvent.time is a string and convert to a time object
+                            logger.debug("News event: {}".format(news_event))
                             if isinstance(news_event.time, str):
                                 time_obj = datetime.strptime(news_event.time, "%H:%M:%S").time()
                             elif isinstance(news_event.time, datetime):
@@ -171,6 +173,7 @@ class EconomicScrapper:
                                 if time_obj.hour != 12:
                                     time_obj = time_obj.replace(hour=time_obj.hour + 12)
 
+                            logger.debug("Time obj: {}".format(time_obj))
                             # Combine the date from newsDay and time from newsEvent
                             combined_datetime = datetime.combine(day_date, time_obj)
 
@@ -188,4 +191,5 @@ class EconomicScrapper:
         finally:
             # Close the WebDriver
             self.__driver.quit()
+            logger.info("Finished scraping Economic Scraper,Found {} news days.".format(len(news_days)))
             return news_days

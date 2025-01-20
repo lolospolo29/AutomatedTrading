@@ -54,13 +54,16 @@ class TradingService:
         :param jsonData: JSON Object from Any Price Signal Services.
         """
         candle: Candle = self._asset_manager.add_candle(jsonData)
+
+        logger.info("Received candle for Asset:{asset},{timeframe}".format(asset=candle.asset, timeframe=candle.timeframe))
+
         candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
         relations: list[AssetBrokerStrategyRelation] = self._asset_manager.return_relations(candle.asset, candle.broker)
+
+        logger.debug("Processing: {candle}, {relations}".format(candle=candle, relations=relations))
+
         if not self._news_service.is_news_ahead():
             self._analyze_strategy_for_entry(candle.asset, candle.broker, candle.timeframe, candles, relations)
-
-            for relation in relations:
-                self._analyze_strategy_for_entry(timeframe=candle.timeframe, candles=candles, relations=relation)
 
     @log_time
     def _analyze_strategy_for_entry(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation) -> None:
@@ -69,9 +72,9 @@ class TradingService:
         If there is a Signal for a Entry,the Strategy generates a Trade Object.
         That Object is used to Execute Orders in the Trade Manager.
 
-        :param timeframe: Timeframe to analyze.
-        :param candles: Candles to analyze.
-        :param relation Relation of the Asset,Strategy,Broker
+        :param timeframe: Timeframe to analyse.
+        :param candles: Candles to analyse.
+        :param relation of the Asset,Strategy,Broker
         """
 
         result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe)

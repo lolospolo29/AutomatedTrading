@@ -21,6 +21,7 @@ class PreviousSessionLevels:
             List[Level]: List of Level objects with names matching the session name.
         """
         try:
+            logger.info("Previous Session Levels Calculator")
             session_levels = []
 
             for window in time_windows:

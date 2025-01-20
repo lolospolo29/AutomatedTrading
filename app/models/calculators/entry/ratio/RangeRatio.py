@@ -19,6 +19,7 @@ class RangeRatio(BaseRatio):
             for ratio in rangeRatio:
                 try:
                     profit = self.calculate_profit(entry, stop, ratio)
+                    logger.debug("values: {},{},{},{}".format(profit, stop,entry,ratio))
                     if self.is_condition_full_filled(profit, stop, entry, direction):
                         estimatedProfits.append(ProfitStopEntry(profit,stop,entry))
                 except Exception as e:
@@ -38,6 +39,7 @@ class RangeRatio(BaseRatio):
             for ratio in rangeRatio:
                 try:
                     stop = self.calculate_stop(entry, profit, ratio)
+                    logger.debug("values: {},{},{},{}".format(profit, stop,entry,ratio))
                     if self.is_condition_full_filled(profit, stop, entry, direction):
                         estimatedStops.append(ProfitStopEntry(profit,stop,entry))
                 except Exception as e:
@@ -55,6 +57,7 @@ class RangeRatio(BaseRatio):
             for ratio in rangeRatio:
                 try:
                     entry = self.calculate_entry(stop, profit, ratio)
+                    logger.debug("values: {},{},{},{}".format(profit, stop,entry,ratio))
                     if self.is_condition_full_filled(profit, stop, entry, direction):
                         estimatedEntries.append(ProfitStopEntry(profit,stop,entry))
                 except Exception as e:
@@ -77,6 +80,7 @@ class RangeRatio(BaseRatio):
                     for j in range(len(stops)):
                         try:
                             stop = stops[j]
+                            logger.debug("values: {},{}".format(entry, stop))
                             profitStopEntryList.extend(self.calculate_range_profits
                                                        (entry, stop, rangeRatio, direction))
                         except Exception as e:
@@ -102,6 +106,7 @@ class RangeRatio(BaseRatio):
                     for j in range(len(profits)):
                         try:
                             profit = profits[j]
+                            logger.debug("values: {},{}".format(entry, profit))
                             profitStopEntryList.extend(self.calculate_range_stops
                                                        (entry, profit, rangeRatio, direction))
                         except Exception as e:
@@ -127,6 +132,7 @@ class RangeRatio(BaseRatio):
                     for j in range(len(profits)):
                         try:
                             profit = profits[j]
+                            logger.debug("values: {},{}".format(stop, profit))
                             profitStopEntryList.extend(self.calculate_range_entries
                                                        (stop, profit, rangeRatio, direction))
                         except Exception as e:

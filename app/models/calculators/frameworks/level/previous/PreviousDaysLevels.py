@@ -19,7 +19,7 @@ class PreviousDaysLevels(ILevel):
         """
         daily_levels = {}
         try:
-
+            logger.info("Calculating previous days levels")
             for candle in candles:
                 # Extract the date from isoTime (ignore time part)
                 day = candle.iso_time.date()

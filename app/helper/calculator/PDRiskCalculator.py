@@ -57,7 +57,7 @@ class PDRiskCalculator:
             if pdArray.name == "VI":
                 return self._volume_Imbalance.return_stop(pdArray, orderDirection, riskMode)
         except Exception as e:
-            logger.info(f"Calculation failed with exception: {e}")
+            logger.warning(f"Calculation of Stops failed with exception: {e}")
 
     def calculate_stops_specific(self, pdArrays:list[PDArray], orderDirection:OrderDirectionEnum, riskMode:RiskMode) -> list[float]:
         stops = []
@@ -66,14 +66,13 @@ class PDRiskCalculator:
                 stops.append(self.calculate_stop(pdArray, orderDirection, riskMode))
             return stops
         except Exception as e:
-            logger.info("Calculation Exception raised")
+            logger.warning("Calculation of Stops Error raised {e}".format(e=e))
         finally:
             return stops
 
     def calculate_all_stops(self, pdArrays:list[PDArray], orderDirection:OrderDirectionEnum) -> list[float]:
         stops = []
         try:
-
             riskMode = RiskMode.SAFE
 
             safeStops = self.calculate_stops_specific(pdArrays, orderDirection, riskMode)
@@ -92,7 +91,7 @@ class PDRiskCalculator:
 
             stops.extend(aggressiveStops)
         except Exception as e:
-            logger.info("Exception raised while calculating stops")
+            logger.warning("Calculation of Stops Error raised {e}".format(e=e))
         finally:
             return stops
     # endregion
@@ -119,7 +118,7 @@ class PDRiskCalculator:
                 return self._volume_Imbalance.return_entry(pdArray, orderDirection, riskMode)
 
         except Exception as e:
-            logger.error("Exception occurred: {}".format(e))
+            logger.warning("Calculation of Entries PD Error raised {e}".format(e=e))
 
     def calculate_entries_specific(self, pdArrays: list[PDArray], orderDirection:
                                    OrderDirectionEnum, riskMode: RiskMode) -> \
@@ -129,7 +128,7 @@ class PDRiskCalculator:
             for pdArray in pdArrays:
                 stops.append(self.calculate_entry(pdArray, orderDirection, riskMode))
         except Exception as e:
-            logger.error("PD Risk Calculator failed to calculate stops")
+            logger.warning("Calculation of Entries PD Error raised {e}".format(e=e))
         finally:
             return stops
 
@@ -154,7 +153,7 @@ class PDRiskCalculator:
 
             stops.extend(aggressiveStops)
         except Exception as e:
-            logger.info("PD Risk Calculator failed to calculate entries due to error")
+            logger.warning("Calculation of Entries PD Error raised {e}".format(e=e))
         finally:
             return stops
     # endregion

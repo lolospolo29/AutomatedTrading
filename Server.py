@@ -12,7 +12,7 @@ app = Flask(__name__)
 def receive_signal():
     json_data = request.get_json()
 
-    logger.info(f"Received signal data: {json_data}")
+    logger.debug(f"Received signal data: {json_data}")
 
     thread = Thread(target=signal_controller.trading_view_signal, args=(json_data,))
     thread.start()

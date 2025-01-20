@@ -45,8 +45,6 @@ class OTE(ILevel):
                 if low > candle.low:
                     low = candle.low
                     low_candle = candle
-
-
             candles:list[Candle] = [high_candle, low_candle]
 
             # Step 3: Calculate Bearish Fibonacci retracement levels (from high to low)

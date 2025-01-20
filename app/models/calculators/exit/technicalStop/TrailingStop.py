@@ -6,6 +6,8 @@ class TrailingStop:
     @staticmethod
     def returnFibonnaciTrailing(currentPrice: float, stop: float, entry: float) -> float:
         try:
+            logger.info("Calculating Trailing Stop")
+            logger.debug("values,{},{},{}".format(currentPrice, stop, entry))
             level = 0
             if stop < entry < currentPrice:
                 level = currentPrice - 0.75 * (currentPrice - entry)

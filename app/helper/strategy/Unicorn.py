@@ -26,6 +26,7 @@ class Unicorn(Strategy):
 
         self._TimeWindow = LondonOpen()
         self._TimeWindow2 = NYOpen()
+        #todo
 
 
         self.expectedTimeFrames = []

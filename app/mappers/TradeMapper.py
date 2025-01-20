@@ -41,7 +41,7 @@ class TradeMapper:
                 low=candle.get("low", 0.0),
                 close=candle.get("close", 0.0),
                 iso_time=self.parse_datetime(candle.get("iso_time")),
-                timeframe=candle.get("timeframe", ""),
+                timeframe=int(candle.get("timeframe", 0)),
                 id=candle.get("id")
             )
         except Exception:

@@ -14,7 +14,7 @@ class OrderWeightage:
             ProfitStopEntry (list[ProfitStopEntry]) with Percentages based on the mode.
         """
         try:
-            logger.info(f"Set Percentages Based on Mode,{mode}")
+            logger.info("Set Percentages Based on Mode:{mode},length:{coutn}".format(mode=mode,coutn=len(entries)))
             total_entries = len(entries)
             if total_entries == 0:
                 return entries

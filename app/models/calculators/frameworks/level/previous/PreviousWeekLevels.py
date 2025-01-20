@@ -8,6 +8,7 @@ class PreviousWeekLevels(ILevel):
     """Previous Week Levels"""
     def return_levels(self, candles: list[Candle]) -> list[Level]:
         try:
+            logger.info("Previous Week Levels returning")
             weekly_levels = {}
 
             for candle in candles:

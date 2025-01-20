@@ -34,163 +34,116 @@ class BybitHandler(IBrokerHandler):
         self._class_mapper = ClassMapper()
         self._rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
-
     # region get Methods
     @rate_limit_registry.rate_limited
     def return_open_and_closed_order(self, request_params: RequestParameters) -> list[BrokerOrder]:
+        brokerOrderList: list[BrokerOrder] = []
 
         openAndClosedOrders: OpenAndClosedOrders = (self._class_mapper.map_args_to_dataclass
-                                                   (OpenAndClosedOrders, request_params, RequestParameters))
-
+                                                    (OpenAndClosedOrders, request_params, RequestParameters))
         logger.info(f"Sending API-Call to Return Position Info Bybit,Symbol:{request_params.symbol}")
-        brokerOrderList: list[BrokerOrder] = []
-        try:
-            # Validierung der Eingabeparameter
-            if not openAndClosedOrders.validate():
-                raise ValueError("The Fields that were required were not given")
+        # Validierung der Eingabeparameter
+        if not openAndClosedOrders.validate():
+            raise ValueError("The Fields that were required were not given")
 
+        endPoint = EndPointEnum.OPENANDCLOSED.value
+        logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
+        method = "get"
 
-            endPoint = EndPointEnum.OPENANDCLOSED.value
-            logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
-            method = "get"
+        previousCursor: str = ""
 
-            previousCursor:str = ""
+        while True:
+            logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
+            params = openAndClosedOrders.to_query_string()
+            responseJson = self.__broker.send_request(endPoint, method, params)
 
-            while True:
-                try:
-                    logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
-                    params = openAndClosedOrders.to_query_string()
-                    responseJson = self.__broker.send_request(endPoint, method, params)
+            objList = responseJson.get("result").get("list")
+            nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
 
-                    objList = responseJson.get("result").get("list")
-                    nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
+            for obj in objList:
+                brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
 
-                    for obj in objList:
-                       try:
-                            brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
-                       except Exception as e:
-                                logger.error(str(obj))
-                       finally:
-                           continue
+            time.sleep(1)
+            if nextPageCursor == previousCursor or nextPageCursor == "":
+                break
 
-                    time.sleep(1)
-                    if nextPageCursor == previousCursor or nextPageCursor == "":
-                        break
+            previousCursor = nextPageCursor
+            openAndClosedOrders.cursor = nextPageCursor
+        return brokerOrderList
 
-                    previousCursor = nextPageCursor
-                    openAndClosedOrders.cursor = nextPageCursor
-                except Exception as e:
-                    logger.error(f"Request Error Open And Closed Order Bybit Symbol: {request_params.symbol}")
-                finally:
-                    continue
-
-        except Exception as e:
-            logger.critical(f"Request Open And Closed Order Error Bybit Symbol: {request_params.symbol}")
-        finally:
-            return brokerOrderList
 
     @rate_limit_registry.rate_limited
     def return_position_info(self, request_params:RequestParameters) -> list[BrokerPosition]:
-
         positionInfo: PositionInfo = (self._class_mapper.map_args_to_dataclass
                                       (PositionInfo, request_params, RequestParameters))
         logger.info(f"Sending Return Position Info API-Call to Bybit,Symbol:{request_params.symbol}")
         brokerPositionList: list[BrokerPosition] = []
-        try:
-            # Validierung der Eingabeparameter
-            if not positionInfo.validate():
-                raise ValueError("The Fields that were required were not given")
+        # Validierung der Eingabeparameter
+        if not positionInfo.validate():
+            raise ValueError("The Fields that were required were not given")
 
+        endPoint = EndPointEnum.POSITIONINFO.value
+        logger.info(f"Request Bybit Endpoint,Symbol:{request_params.symbol}{endPoint}")
+        method = "get"
 
-            endPoint = EndPointEnum.POSITIONINFO.value
-            logger.info(f"Request Bybit Endpoint,Symbol:{request_params.symbol}{endPoint}")
-            method = "get"
+        previousCursor: str = ""
 
-            previousCursor:str = ""
+        while True:
+            logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
+            params = positionInfo.to_query_string()
+            responseJson = self.__broker.send_request(endPoint, method, params)
 
-            while True:
-                try:
-                    logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
-                    params = positionInfo.to_query_string()
-                    responseJson = self.__broker.send_request(endPoint, method, params)
+            objList = responseJson.get("result").get("list")
+            nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
 
-                    objList = responseJson.get("result").get("list")
-                    nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
+            for obj in objList:
+                brokerPositionList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerPosition))
 
-                    for obj in objList:
-                        try:
-                            brokerPositionList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerPosition))
-                        except Exception as e:
-                            logger.error(str(obj))
-                        finally:
-                            continue
+            time.sleep(1)
+            if nextPageCursor == previousCursor or nextPageCursor == "":
+                break
 
-                    time.sleep(1)
-                    if nextPageCursor == previousCursor or nextPageCursor == "":
-                        break
+            previousCursor = nextPageCursor
+            positionInfo.cursor = nextPageCursor
+        return brokerPositionList
 
-                    previousCursor = nextPageCursor
-                    positionInfo.cursor = nextPageCursor
-                except Exception as e:
-                    logger.error(f"Request Error Return Position Info Bybit Symbol: {request_params.symbol}")
-                finally:
-                    continue
-        except Exception as e:
-            logger.critical(f"Request Error Return Position Info Bybit Symbol: {request_params.symbol}")
-        finally:
-            return brokerPositionList
 
     @rate_limit_registry.rate_limited
     def return_order_history(self, request_params: RequestParameters) -> list[BrokerOrder]:
-
         orderHistory: OrderHistory = (self._class_mapper.map_args_to_dataclass
-                                                    (OrderHistory, request_params, RequestParameters))
+                                      (OrderHistory, request_params, RequestParameters))
 
         logger.info(f"Sending API-Call to Return Order History  Bybit,Symbol:{request_params.symbol}")
         brokerOrderList: list[BrokerOrder] = []
-        try:
-            # Validierung der Eingabeparameter
-            if not orderHistory.validate():
-                raise ValueError("The Fields that were required were not given")
+        # Validierung der Eingabeparameter
+        if not orderHistory.validate():
+            raise ValueError("The Fields that were required were not given")
 
-            endPoint = EndPointEnum.HISTORY.value
+        endPoint = EndPointEnum.HISTORY.value
 
-            logger.info(f"Request Bybit Return Order History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
-            method = "get"
+        logger.info(f"Request Bybit Return Order History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
+        method = "get"
 
-            previousCursor:str = ""
+        previousCursor: str = ""
 
-            while True:
-                try:
-                    params = orderHistory.to_query_string()
-                    logger.info(f"Request Return Order History Bybit,Symbol:{request_params.symbol}")
-                    responseJson = self.__broker.send_request(endPoint, method, params)
+        while True:
+            params = orderHistory.to_query_string()
+            logger.info(f"Request Return Order History Bybit,Symbol:{request_params.symbol}")
+            responseJson = self.__broker.send_request(endPoint, method, params)
 
-                    objList = responseJson.get("result").get("list")
-                    nextPageCursor:str = responseJson.get("result").get("nextPageCursor")
+            objList = responseJson.get("result").get("list")
+            nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
 
-                    for obj in objList:
-                        try:
-                            brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
-                        except Exception as e:
-                            logger.error(str(obj))
-                        finally:
-                            continue
+            for obj in objList:
+                brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
 
-                    time.sleep(1)
-                    if nextPageCursor == previousCursor or nextPageCursor == "":
-                        break
+            time.sleep(1)
+            if nextPageCursor == previousCursor or nextPageCursor == "":
+                break
 
-                    previousCursor = nextPageCursor
-                    orderHistory.cursor = nextPageCursor
-                except Exception as e:
-                    logger.error(f"Request Error Return Order History Bybit Symbol: {request_params.symbol}")
-                finally:
-                    continue
-        except Exception as e:
-            logger.critical(f"Request Error Return Order History Bybit Symbol: {request_params.symbol}")
-        finally:
-            return brokerOrderList
+            previousCursor = nextPageCursor
+            orderHistory.cursor = nextPageCursor
+        return brokerOrderList
 
     # endregion
 
@@ -199,142 +152,119 @@ class BybitHandler(IBrokerHandler):
     def amend_order(self, request_params:RequestParameters) -> BrokerOrder:
         amendOrder: AmendOrder = (self._class_mapper.map_args_to_dataclass
                                   (AmendOrder, request_params, RequestParameters))
-        logger.info(f"Sending API-Call to Amend Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
+        logger.info(
+            f"Sending API-Call to Amend Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
 
-        try:
-            # Validierung der Eingabeparameter
-            if not amendOrder.validate():
-                raise ValueError("The Fields that were required were not given")
+        # Validierung der Eingabeparameter
+        if not amendOrder.validate():
+            raise ValueError("The Fields that were required were not given")
 
+        params = amendOrder.to_dict()
+        endPoint = EndPointEnum.AMEND.value
+        logger.info(
+            f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
 
-            params = amendOrder.to_dict()
-            endPoint = EndPointEnum.AMEND.value
-            logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
+        method = "post"
 
-            method = "post"
-
-            responseJson = self.__broker.send_request(endPoint, method, params)
-            result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
-            return result
-
-        except Exception as e:
-            logger.critical(f"Request Error Amend Order Bybit, OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
+        responseJson = self.__broker.send_request(endPoint, method, params)
+        result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        return result
 
     @rate_limit_registry.rate_limited
     def cancel_all_orders(self, request_params:RequestParameters) -> list[BrokerOrder]:
-
         cancelOrders: CancelAllOrders = (self._class_mapper.map_args_to_dataclass
                                          (CancelAllOrders, request_params, RequestParameters))
         logger.info(f"Sending API-Call to Cancel All Orders Bybit,Symbol:{request_params.symbol}")
+        # Validierung der Eingabeparameter
+        if not cancelOrders.validate():
+            raise ValueError("The Fields that were required were not given")
 
-        try:
-            # Validierung der Eingabeparameter
-            if not cancelOrders.validate():
-                raise ValueError("The Fields that were required were not given")
+        endPoint = EndPointEnum.CANCELALL.value
+        logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
 
-            endPoint = EndPointEnum.CANCELALL.value
-            logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
+        method = "post"
 
-            method = "post"
+        params = cancelOrders.to_dict()
 
-            params = cancelOrders.to_dict()
+        brokerOrderList: list[BrokerOrder] = []
 
-            brokerOrderList: list[BrokerOrder] = []
+        responseJson = self.__broker.send_request(endPoint, method, params)
 
-            responseJson = self.__broker.send_request(endPoint, method, params)
+        objList = responseJson.get("result").get("list")
 
-            objList = responseJson.get("result").get("list")
-
-            for obj in objList:
-                try:
-                    brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
-                except Exception as e:
-                    logger.error(f"Request Error Bybit Symbol: {request_params.symbol}")
-                finally:
-                    continue
-            return brokerOrderList
-
-        except Exception as e:
-            logger.critical(f"Request Error Cancel All Orders Bybit Symbol: {request_params.symbol}")
-
+        for obj in objList:
+            brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
+        return brokerOrderList
 
     @rate_limit_registry.rate_limited
     def cancel_order(self, request_params:RequestParameters) -> BrokerOrder:
         cancelOrder: CancelOrder = (self._class_mapper.map_args_to_dataclass
                                     (CancelOrder, request_params, RequestParameters))
-        logger.info(f"Sending API-Call to Cancel Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
-        try:
-            # Validierung der Eingabeparameter
-            if not cancelOrder.validate():
-                raise ValueError("The Fields that were required were not given")
+        logger.info(
+            f"Sending API-Call to Cancel Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
+        # Validierung der Eingabeparameter
+        if not cancelOrder.validate():
+            raise ValueError("The Fields that were required were not given")
 
-            params = cancelOrder.to_dict()
+        params = cancelOrder.to_dict()
 
-            endPoint = EndPointEnum.CANCEL.value
-            logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
-            method = "post"
+        endPoint = EndPointEnum.CANCEL.value
+        logger.info(
+            f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
+        method = "post"
 
-            responseJson = self.__broker.send_request(endPoint, method, params)
-            result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
-            return result
-
-        except Exception as e:
-            logger.critical(f"Request Error Cancel Order Bybit, OrderLinkId:{request_params.orderLinkId}, {request_params.symbol}")
+        responseJson = self.__broker.send_request(endPoint, method, params)
+        result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        return result
 
     @rate_limit_registry.rate_limited
     def place_order(self, request_params:RequestParameters) -> BrokerOrder:
-
         placeOrder: PlaceOrder = (self._class_mapper.map_args_to_dataclass
                                   (PlaceOrder, request_params, RequestParameters))
-        logger.info(f"Sending API-Call to Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
-        try:
-            # Validierung der Eingabeparameter
-            if not placeOrder.validate():
-                raise ValueError("The Fields that were required were not given")
+        logger.info(
+            f"Sending API-Call to Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
+        # Validierung der Eingabeparameter
+        if not placeOrder.validate():
+            raise ValueError("The Fields that were required were not given")
 
-            params = placeOrder.to_dict()
+        params = placeOrder.to_dict()
 
-            endPoint = EndPointEnum.PLACEORDER.value
-            logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint}")
-            method = "post"
+        endPoint = EndPointEnum.PLACEORDER.value
+        logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint}")
+        method = "post"
 
-            responseJson = self.__broker.send_request(endPoint, method, params)
-            result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
-            return result
+        responseJson = self.__broker.send_request(endPoint, method, params)
+        result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        return result
 
-        except Exception as e:
-            logger.critical(f"Request Error  Place Order Bybit, OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
 
     @rate_limit_registry.rate_limited
     def set_leverage(self, request_params:RequestParameters) -> bool:
         setLeverage: SetLeverage = (self._class_mapper.map_args_to_dataclass
-                                    (SetLeverage, request_params, RequestParameters))
+                                   (SetLeverage, request_params, RequestParameters))
         logger.info(f"Sending API-Call to Set Leverage Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
-        try:
-            # Validierung der Eingabeparameter
-            if not setLeverage.validate():
-                raise ValueError("The Fields that were required were not given")
+        # Validierung der Eingabeparameter
+        if not setLeverage.validate():
+            raise ValueError("The Fields that were required were not given")
 
-            params = setLeverage.to_dict()
+        params = setLeverage.to_dict()
 
-            endPoint = EndPointEnum.SETLEVERAGE.value
-            logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
+        endPoint = EndPointEnum.SETLEVERAGE.value
+        logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
 
-            method = "post"
+        method = "post"
 
-            def request_function():
-                """Encapsulated API request logic for retry utility."""
-                responseJson = self.__broker.send_request(endPoint, method, params)
-                if not responseJson.get("retMsg") == "OK":
-                    raise ValueError(responseJson.get("retMsg"))
+        def request_function():
+            """Encapsulated API request logic for retry utility."""
+            responseJson = self.__broker.send_request(endPoint, method, params)
+            if not responseJson.get("retMsg") == "OK":
+                raise ValueError(responseJson.get("retMsg"))
 
-            # Use retry utility to handle retries
-            return retry_request(request_function)
-        except Exception as e:
-            logger.critical(f"Request Error Set Leverage Bybit, OrderLinkId:{request_params.orderLinkId}")
+        # Use retry utility to handle retries
+        return retry_request(request_function)
 
     # endregion
-
+# todo error code raise Exception
 # bh = BybitHandler()
 # request = RequestParameters()
 # request.category = "linear"

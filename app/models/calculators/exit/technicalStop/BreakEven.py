@@ -8,6 +8,8 @@ class BreakEven:
 
     def IsPriceInBreakEvenRange(self, currentPrice:float, entry: float, takeProfit: float) -> bool:
         try:
+            logger.info("Calculating Break Even for Stop Loss")
+            logger.debug(f"values: {currentPrice}, {entry}, {takeProfit}")
             # Berechnung des Zielpreises basierend auf der angegebenen Prozentzahl
             targetPrice = entry + (takeProfit - entry) * (self.percentage / 100.0)
 

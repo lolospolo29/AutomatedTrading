@@ -31,6 +31,7 @@ class equalHL:
         equal_levels = []
         equal_lows = []
         equal_highs = []
+        logger.info("Calculating Equal Highs and Lows with Treshold Range")
         try:
 
             last_candle = candles[-1]

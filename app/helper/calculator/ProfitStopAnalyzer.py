@@ -33,6 +33,8 @@ class ProfitStopAnalyzer:
         Returns:
             list[ProfitStopEntry]: Sorted list of entries based on aggregated ranks.
         """
+        logger.Info("Analyzing ProfitStop Entry By Attribute:{count}".format(count=len(entries)))
+
         try:
             attribute_methods = {
                 "profit": [
@@ -89,6 +91,8 @@ class ProfitStopAnalyzer:
         Returns:
             list[ProfitStopEntry]: Sorted list of entries based on aggregated ranks.
         """
+        logger.Info("Analyzing ProfitStop Entry By Risk Mode:{count}".format(count=len(entries)))
+
         try:
             risk_mode_methods = {
                 RiskMode.AGGRESSIVE: [

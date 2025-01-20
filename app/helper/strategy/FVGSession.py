@@ -24,6 +24,7 @@ class FVGSession(Strategy):
         self._TimeWindow2 = NYOpen()
 
         self.expectedTimeFrames = []
+        #todo
 
         timeFrame = ExpectedTimeFrame(1,90)
         timeFrame2 = ExpectedTimeFrame(5,90)

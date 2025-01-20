@@ -80,7 +80,6 @@ class Breaker(IPDArray):
         Calculates Breakers inside a specific Range,which is Calculated by Breaking the Current Structure
         """
         pd_array_list = []
-
         try:
             if len(candles) < self.lookback:
                 return []

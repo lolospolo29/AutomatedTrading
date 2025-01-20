@@ -143,54 +143,58 @@ class TradeManager:
             with orderLock:
                 self._mongo_db_trades.update_order(order)
         except Exception as e:
-            logger.error(
-                f"Update Order DB Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
+            logger.error(f"Update Order DB Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
 
     def archiveOrderInDB(self, order: Order) -> None:
         logger.info(f"Archive Order in DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
-
         try:
             orderLock = self._lock_registry.get_lock(order.orderLinkId)
             with orderLock:
                 self._mongo_db_trades.archive_order(order)
         except Exception as e:
-            logger.error(
-                f"Archive Order in DB Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
+            logger.error(f"Archive Order in DB Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
 
     # endregion
 
     # region API Requests
     def place_trade(self, trade: Trade):
-            tradeLock = self._lock_registry.get_lock(trade.id)
-            with tradeLock:
-                if trade.id in self._open_trades:
-                    trade = self._open_trades[trade.id]
+        tradeLock = self._lock_registry.get_lock(trade.id)
+        with tradeLock:
+            if trade.id in self._open_trades:
+                trade = self._open_trades[trade.id]
 
-                    threads :list[threading.Thread]= []
+                threads: list[threading.Thread] = []
 
-                    for order in trade.orders:
-                        t = threading.Thread(target=self.place_order, args=(trade.relation.broker, order), daemon=True)
-                        threads.append(t)
+                for order in trade.orders:
+                    logger.info(
+                        f"Placing Order Thread Started,OrderLinkId:{order.orderLinkId},TradeId:{trade.id},Symbol:{order.symbol}")
+                    t = threading.Thread(target=self.place_order, args=(trade.relation.broker, order), daemon=True)
+                    threads.append(t)
 
+                for thread in threads:
+                    thread.start()
+
+                while True:
+                    done = True
                     for thread in threads:
-                        thread.start()
-
-                    while True:
-                        done = True
-                        for thread in threads:
-                            if thread.is_alive():
-                                done = False
-                        if done:
-                            break
+                        if thread.is_alive():
+                            done = False
+                    if done:
+                        logger.info(
+                            f"Finished waiting for Place Order Threads,TradeId:{trade.id},Symbol:{order.symbol}")
+                        break
 
     def place_order(self, broker:str, order: Order)->Order:
-        orderLock = self._lock_registry.get_lock(order.orderLinkId)
-        with orderLock:
-            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
-                                                    (RequestParameters, order, Order, broker=broker))
-            newOrder:BrokerOrder = self._broker_facade.place_order(requestParameters)
-            order = self._class_mapper.update_class_with_dataclass(newOrder, order)
-        return order
+        try:
+            orderLock = self._lock_registry.get_lock(order.orderLinkId)
+            with orderLock:
+                requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
+                                                        (RequestParameters, order, Order, broker=broker))
+                newOrder:BrokerOrder = self._broker_facade.place_order(requestParameters)
+                order = self._class_mapper.update_class_with_dataclass(newOrder, order)
+            return order
+        except Exception as e:
+            logger.error("Place Order Error to {broker}:{e}".format(broker=broker, e=e))
 
     def amend_order(self, broker:str, order:Order)->Order:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
@@ -243,7 +247,8 @@ class TradeManager:
     # endregion
 
 # todo order builder for every broker
-# todo execptions
+# todo dataflow
+# todo execptions handling,exceptions
 # tm = TradeManager()
 #
 # relation = AssetBrokerStrategyRelation("ABC","BYBIT","ABC",2)

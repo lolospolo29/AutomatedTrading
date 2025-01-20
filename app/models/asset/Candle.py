@@ -4,7 +4,7 @@ from datetime import datetime
 class Candle:
 
     def __init__(self, asset: str, broker: str, open: float, high: float, low: float, close: float,
-                 iso_time: datetime, timeframe: str, id:str=None):
+                 iso_time: datetime, timeframe: int, id:str=None):
             self.asset: str = asset
             self.broker: str = broker
             self.open: float = open
@@ -25,7 +25,7 @@ class Candle:
             else:
                 raise TypeError(f"IsoTime must be a string or datetime, got {type(iso_time).__name__}")
 
-            self.timeframe: str = timeframe
+            self.timeframe: int = timeframe
 
 
     def to_dict(self) -> dict:

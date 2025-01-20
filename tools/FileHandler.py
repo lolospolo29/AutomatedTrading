@@ -55,24 +55,27 @@ class FileHandler(FileSystemEventHandler):
                 event: The event triggered by the file system when a new file is created.
             """
             try:
+                logger.debug("Processed File {}".format(event.src_path))
                 filename = os.path.basename(event.src_path)
                 logger.info("Processing file {}".format(filename))
 
                 if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
                     candles_dict_list = self._parse_candle_data(event.src_path)
+                    logger.debug("Candles list {}".format(len(candles_dict_list)))
+
                     for candle_dict in candles_dict_list:
                         try:
                             candle: Candle = self._asset_manager.add_candle(candle_dict)
                             self._testing_strategy(candle.asset, candle.broker, candle.timeframe)
                         except Exception as e:
-                            logger.exception("Failed to add Candle to AssetManager from File: {}".format(e))
+                            logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
                         finally:
                             continue
 
                     self._move_to_archive(event.src_path)
                     self._archive()
             except Exception as e:
-                logger.error(e)
+                logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
 
     def _testing_strategy(self, asset, broker, timeFrame):
         try:
@@ -80,6 +83,7 @@ class FileHandler(FileSystemEventHandler):
             relations: list = self._asset_manager.return_relations(asset, broker)
             for relation in relations:
                 try:
+                    logger.debug("Processing Entries for {}".format(relation))
                     self._strategy_manager.get_entry(candles, relation, timeFrame)
                 except Exception as e:
                     logger.error("Failed to Analyze Strategy Manager: {}".format(e))
@@ -100,7 +104,6 @@ class FileHandler(FileSystemEventHandler):
                 reader = list(csv.DictReader(file))
 
                 for row in reversed(reader):
-                    try:
                         # change back to normal after debug reversed
                         description_json = json.loads(row["Description"])
                         # candle_data = description_json["Candle"]
@@ -120,15 +123,9 @@ class FileHandler(FileSystemEventHandler):
                             }
                         }
                         candles.append(formatted_candle)
-                    except Exception as e:
-                        logger.error(f"Failed to parse candle data: {row}")
-                        continue
-        except FileNotFoundError:
-            logger.error("File not found: {}".format(csv_filename))
-        except Exception as e:
-            logger.error(e)
-        finally:
             return candles
+        except Exception as e:
+            logger.error("Failed to Parse Candle Data from CSV: {e}".format(e=e))
     # endregion
 
     # region File Functions
@@ -174,13 +171,14 @@ class FileHandler(FileSystemEventHandler):
 
                     # Datei für das Datum erstellen oder anhängen
                     asset_file_path = os.path.join(asset_folder, f"{asset}_{date}.csv")
+                    logger.debug(f"Writing to {asset_file_path}")
                     with open(asset_file_path, "a") as f:
                         f.write(",".join(map(str, row.values)) + "\n")  # Originalzeile speichern
                 except Exception as e:
-                    logger.error(f"Fehler beim Verarbeiten der Zeile in {filename}: {e}")
+                    logger.error(f"Error Writing to: {filename}: {e}")
                     continue
 
-            logger.info(f"Verarbeitung von {filename} abgeschlossen.")
+            logger.info(f"Succeed :{filename}.")
 
     @staticmethod
     def _delete_file(file_path):

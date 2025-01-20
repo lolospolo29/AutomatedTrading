@@ -12,33 +12,32 @@ class FixedRatio(BaseRatio):
     # region Single Fixed Ratio Input
     def calculate_fixed_ratio_stop(self, entry: float, profit: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
         try:
+            logger.debug("values :{},{},{}".format(entry, profit, ratio))
             stop = self.calculate_stop(entry, profit, ratio)
             if  self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop,entry),True
         except Exception as e:
             logger.error("Fixed Ratio Exception thrown")
-        finally:
-            return None,False
 
     def calculate_fixed_profit(self, entry: float, stop: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
         try:
+            logger.debug("values :{},{},{}".format(entry, stop, ratio))
+
             profit = self.calculate_profit(entry, stop, ratio)
             if self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop,entry),True
         except Exception as e:
             logger.error("Fixed Profit Exception thrown")
-        finally:
-            return None,False
 
     def calculate_fixed_entry(self, stop: float, profit: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
         try:
+            logger.debug("values :{},{},{}".format(profit, stop, ratio))
+
             entry = self.calculate_entry(stop, profit, ratio)
             if self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop, entry),True
         except Exception as e:
             logger.error("Fixed Entry Exception thrown")
-        finally:
-            return None,False
     # endregion
 
     # region List Fixed Ratio Input
@@ -52,7 +51,7 @@ class FixedRatio(BaseRatio):
                         try:
                             entry = entries[i]
                             stop = stops[j]
-
+                            logger.debug("values :{},{},{}".format(entry, stop, ratio))
                             profit = self.calculate_profit(entry, stop, ratio)
 
                             if not self.is_condition_full_filled(profit, stop, entry, direction):
@@ -63,7 +62,6 @@ class FixedRatio(BaseRatio):
                             logger.warning("Profit Exception thrown")
                         finally:
                             continue
-
                 except Exception as e:
                     logger.warning("Profit Exception thrown")
                 finally:
@@ -85,6 +83,7 @@ class FixedRatio(BaseRatio):
                         try:
                             entry = entries[i]
                             profit = profits[j]
+                            logger.debug("values :{},{},{}".format(entry, profit, ratio))
 
                             stop = self.calculate_stop(entry, profit, ratio)
 
@@ -93,14 +92,13 @@ class FixedRatio(BaseRatio):
 
                             profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
                         except Exception as e:
-                            logger.warning("Profit Exception thrown")
+                            logger.warning("Stops Exception thrown")
                         finally:
                             continue
                 except Exception as e:
-                    logger.warning("Stop Exception thrown")
+                    logger.warning("Stops Exception thrown")
                 finally:
                     continue
-
             return profitStopEntryList
         except Exception as e:
             logger.exception("Stops Exception thrown")
@@ -110,9 +108,7 @@ class FixedRatio(BaseRatio):
 
     def calculate_entries(self, stops: list[float], profits: list[float], ratio: float,
                           direction: OrderDirectionEnum)-> list[ProfitStopEntry]:
-
         profitStopEntryList = []
-
         try:
             for i in range(len(stops)):
                 try:
@@ -120,7 +116,7 @@ class FixedRatio(BaseRatio):
                         try:
                             stop = stops[i]
                             profit = profits[j]
-
+                            logger.debug("values :{},{},{}".format(stop, profit, ratio))
                             entry = self.calculate_entry(stop, profit, ratio)
 
                             if not self.is_condition_full_filled(profit, stop, entry, direction):
