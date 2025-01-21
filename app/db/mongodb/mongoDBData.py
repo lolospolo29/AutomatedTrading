@@ -11,7 +11,7 @@ from app.monitoring.logging.logging_startup import logger
 
 ny_tz = pytz.timezone('America/New_York')
 
-
+#todo add candle data to db or csv
 class mongoDBData:
     _instance = None
     _lock = threading.Lock()

@@ -33,5 +33,3 @@ class mongoDBConfig:
         asset_dict = self.load_data(typ, query)
         for doc in asset_dict:
             return (doc.get(typ)).get(getAttribute)
-# todo requestdb class foreach db
-# todo logging status for how far trade,order,setup is in process

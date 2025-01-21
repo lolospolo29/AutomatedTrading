@@ -70,8 +70,6 @@ class ConfigManager:
 
             self._trades.extend(trades)
 
-            # todo fix
-
             self._add_data_to_list("AssetClass", asset_classes)
             self._add_data_to_list("Asset", assets)
             self._add_data_to_list("Broker", brokers)
@@ -91,7 +89,7 @@ class ConfigManager:
         for strategy in self._strategies:
                 for relation in self._relations:
                     try:
-                        if relation.strategy == strategy:
+                        if relation.strategy == strategy.name:
                             self._strategy_manager.register_strategy(relation, strategy)
                     except Exception as e:
                         logger.warning("Failed to register strategy {}".format(strategy.name))

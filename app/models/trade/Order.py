@@ -6,8 +6,6 @@ from app.monitoring.logging.logging_startup import logger
 
 class Order:
 
-    # todo add risk type for ai training later
-
     # Self Defined Parameters
     trade_id: str
     entry_frame_work: FrameWork

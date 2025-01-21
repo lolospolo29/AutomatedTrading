@@ -60,6 +60,7 @@ class TradeManager:
                 tradeLock = self._lock_registry.get_lock(trade.id)
                 with tradeLock:
                     if trade.id in self._open_trades:
+                        self._trade_registry.release_trade(trade.relation)
                         logger.info(f"Remove Trade,TradeId: {trade.id}")
                         self._open_trades.pop(trade.id)
         except Exception as e:
@@ -180,8 +181,7 @@ class TradeManager:
                         if thread.is_alive():
                             done = False
                     if done:
-                        logger.info(
-                            f"Finished waiting for Place Order Threads,TradeId:{trade.id},Symbol:{order.symbol}")
+                        logger.info(f"Finished waiting for Place Order Threads,TradeId:{trade.id},Symbol:{order.symbol}")
                         break
 
     def place_order(self, broker:str, order: Order)->Order:

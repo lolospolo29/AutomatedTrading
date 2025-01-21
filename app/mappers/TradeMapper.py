@@ -119,6 +119,7 @@ class TradeMapper:
         Returns None if required fields are missing.
         """
         try:
+            logger.debug("Mapping Trade,TradeId:{trade_id}".format(trade_id=trade_data.get("trade_id")))
             trade_dict = trade_data.get("Trade", {})
             relation = AssetBrokerStrategyRelation(
                 asset=trade_dict.get("asset", ""),
@@ -126,7 +127,6 @@ class TradeMapper:
                 strategy=trade_dict.get("strategy", ""),
                 max_trades=1
             )
-
             trade = Trade(
                 relation=relation,
                 orders=trade_dict.get("orders", []),

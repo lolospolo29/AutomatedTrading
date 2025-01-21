@@ -48,7 +48,7 @@ class AssetManager:
 
     # region Register And Return Assets
     def register_asset(self, asset: Asset) -> bool:
-        logger.info(f"Register Asset to db:{asset}")
+        logger.info(f"Register Asset to Asset Manager:{asset.name}")
 
         if not asset in self.assets:
             self.assets[asset.name] = asset

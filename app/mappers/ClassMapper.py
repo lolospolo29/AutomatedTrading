@@ -4,6 +4,7 @@ from dataclasses import is_dataclass, fields
 from typing import Type
 
 from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExceptionError
+from app.monitoring.logging.logging_startup import logger
 
 
 class ClassMapper:
@@ -11,6 +12,7 @@ class ClassMapper:
     def map_dict_to_dataclass(self, data: dict, cls: Type[dataclasses.dataclass]) -> dataclasses.dataclass:
         """Helper function to convert a dictionary into a dataclass object."""
         try:
+                logger.debug(f"Mapping {cls.__name__} to dataclass {data}")
                 # print(f"Converting data into {cls.__name__}...")  # Debugging
                 # Collect all field names for the dataclass
                 fieldnames = {f.name for f in dataclasses.fields(cls)}
@@ -19,9 +21,12 @@ class ClassMapper:
                 # Get the types of the fields
                 field_types = {f.name: f.type for f in dataclasses.fields(cls)}
 
+                logger.debug("Initializing class mapper with fieldnames: %s", fieldnames)
+
                 # Recursively handle nested dataclasses
                 for key, value in init_kwargs.items():
                     # print(f"Processing field: {key} -> {value}")  # Debugging
+                    logger.debug(f"{key}={value}")
 
                     if isinstance(value, dict) and hasattr(cls, key) and hasattr(getattr(cls, key), '__annotations__'):
                         # Recursively convert nested dataclass
@@ -56,6 +61,7 @@ class ClassMapper:
         If input_obj is provided, its fields are used as defaults, and kwargs override them.
         """
         try:
+            logger.debug(f"Mapping {cls.__name__} to dataclass {input_obj}")
             # Get all field names of the target dataclass
             cls_fields = {field.name: field for field in fields(cls)}
 
@@ -89,6 +95,7 @@ class ClassMapper:
             An instance of the target class with attributes populated from the dataclass instance.
         """
         try:
+            logger.debug(f"Mapping {target_cls.__name__} to class {dataclass_instance}")
             if not is_dataclass(dataclass_instance):
                 raise ValueError("The provided instance is not a dataclass.")
 
@@ -115,6 +122,7 @@ class ClassMapper:
             The updated target_instance.
         """
         try:
+            logger.debug(f"Updating class attributes from class {data_class_instance} to class {target_instance}")
             # Iterate over the fields of the dataclass and set them on the target instance
             for field in fields(data_class_instance):
                 setattr(target_instance, field.name, getattr(data_class_instance, field.name))

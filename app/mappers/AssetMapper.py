@@ -1,5 +1,6 @@
 from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExceptionError
 from app.models.asset.Candle import Candle
+from app.monitoring.logging.logging_startup import logger
 
 
 class AssetMapper:
@@ -16,6 +17,7 @@ class AssetMapper:
             Candle for Asset.
         """
         try:
+            logger.debug(json)
             candle = json.get("Candle")
             asset = candle.get("asset")
             broker = candle.get("broker")
