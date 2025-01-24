@@ -11,6 +11,10 @@ class TradeBuilder:
         self._Trade.relation = relation
         return self
 
+    def add_category(self, category):
+        self._Trade.category = category
+        return self
+
     def add_order(self, order:Order):
         if self._Trade.orders is None:
             self._Trade.orders = []

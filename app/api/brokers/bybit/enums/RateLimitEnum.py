@@ -2,11 +2,11 @@ from enum import Enum
 
 
 class RateLimitEnum(Enum):
-    returnOpenAndClosedOrder = 10
-    returnPositionInfo = 10
-    amendOrder = 10
-    returnOrderHistory = 2
-    cancelAllOrders = 10
-    cancelOrder = 10
-    placeOrder = 10
-    setLeverage = 10
+    return_open_and_closed_order = 10
+    return_position_info = 10
+    amend_order = 10
+    return_order_history = 2
+    cancel_all_orders = 10
+    cancel_order = 10
+    place_order  = 10
+    set_leverage = 10

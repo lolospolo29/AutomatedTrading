@@ -44,9 +44,9 @@ class mongoDBTrades:
         for tradeInRes in res:
             trade = self._trade_mapper.map_trade_from_db(tradeInRes)
             orders = []
-            for order in trade.orders:
-                order = self.find_order_or_orders_by_id(order)
-                orders.extend(order)
+            for _ids in trade.orders:
+                res = self.find_order_or_orders_by_id(_ids)
+                orders.extend(res)
             trade.orders = []
             trade.orders.extend(orders)
             trades.append(trade)

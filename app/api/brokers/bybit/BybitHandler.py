@@ -56,6 +56,8 @@ class BybitHandler(IBrokerHandler):
             logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
             params = openAndClosedOrders.to_query_string()
             responseJson = self.__broker.send_request(endPoint, method, params)
+            if not responseJson.get("retMsg") == "OK":
+                raise ValueError(responseJson.get("retMsg"))
 
             objList = responseJson.get("result").get("list")
             nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
@@ -92,6 +94,8 @@ class BybitHandler(IBrokerHandler):
             logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
             params = positionInfo.to_query_string()
             responseJson = self.__broker.send_request(endPoint, method, params)
+            if not responseJson.get("retMsg") == "OK":
+                raise ValueError(responseJson.get("retMsg"))
 
             objList = responseJson.get("result").get("list")
             nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
@@ -130,6 +134,8 @@ class BybitHandler(IBrokerHandler):
             params = orderHistory.to_query_string()
             logger.info(f"Request Return Order History Bybit,Symbol:{request_params.symbol}")
             responseJson = self.__broker.send_request(endPoint, method, params)
+            if not responseJson.get("retMsg") == "OK":
+                raise ValueError(responseJson.get("retMsg"))
 
             objList = responseJson.get("result").get("list")
             nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
@@ -167,6 +173,9 @@ class BybitHandler(IBrokerHandler):
         method = "post"
 
         responseJson = self.__broker.send_request(endPoint, method, params)
+        if not responseJson.get("retMsg") == "OK":
+            raise ValueError(responseJson.get("retMsg"))
+
         result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
         return result
 
@@ -189,6 +198,8 @@ class BybitHandler(IBrokerHandler):
         brokerOrderList: list[BrokerOrder] = []
 
         responseJson = self.__broker.send_request(endPoint, method, params)
+        if not responseJson.get("retMsg") == "OK":
+            raise ValueError(responseJson.get("retMsg"))
 
         objList = responseJson.get("result").get("list")
 
@@ -214,6 +225,8 @@ class BybitHandler(IBrokerHandler):
         method = "post"
 
         responseJson = self.__broker.send_request(endPoint, method, params)
+        if not responseJson.get("retMsg") == "OK":
+            raise ValueError(responseJson.get("retMsg"))
         result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
         return result
 
@@ -221,8 +234,7 @@ class BybitHandler(IBrokerHandler):
     def place_order(self, request_params:RequestParameters) -> BrokerOrder:
         placeOrder: PlaceOrder = (self._class_mapper.map_args_to_dataclass
                                   (PlaceOrder, request_params, RequestParameters))
-        logger.info(
-            f"Sending API-Call to Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
+        logger.info(f"Sending API-Call to Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not placeOrder.validate():
             raise ValueError("The Fields that were required were not given")
@@ -234,6 +246,8 @@ class BybitHandler(IBrokerHandler):
         method = "post"
 
         responseJson = self.__broker.send_request(endPoint, method, params)
+        if not responseJson.get("retMsg") == "OK":
+            raise ValueError(responseJson.get("retMsg"))
         result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
         return result
 
@@ -264,7 +278,6 @@ class BybitHandler(IBrokerHandler):
         return retry_request(request_function)
 
     # endregion
-# todo error code raise Exception
 # bh = BybitHandler()
 # request = RequestParameters()
 # request.category = "linear"

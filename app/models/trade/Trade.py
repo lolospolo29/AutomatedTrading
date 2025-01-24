@@ -7,9 +7,10 @@ from app.monitoring.logging.logging_startup import logger
 
 class Trade:
 
-    def __init__(self, relation: AssetBrokerStrategyRelation=None, orders: list[Order]=None,id:str=None):
+    def __init__(self, relation: AssetBrokerStrategyRelation=None, orders: list[Order]=None,id:str=None,category:str=None):
         self.orders : list[Order] = orders
         self.relation: AssetBrokerStrategyRelation = relation
+        self.category = category
         self.side = ""
         self.tpslMode = ""
         self.unrealisedPnl = 0
@@ -32,6 +33,7 @@ class Trade:
                     "asset": self.relation.asset ,
                     "broker": self.relation.broker ,
                     "strategy": self.relation.strategy ,
+                    "category": self.relation.strategy ,
                     "side": self.side,
                     "unrealisedPnl": self.unrealisedPnl,
                     "leverage": self.leverage,
@@ -40,4 +42,4 @@ class Trade:
                 }
             }
         except Exception as e:
-            logger.exception(e)
+            logger.exception("Mapping Error with TradeId: {tradeId},Error:{error}".format(tradeId=self.id,error=e))

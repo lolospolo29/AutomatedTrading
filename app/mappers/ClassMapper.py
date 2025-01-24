@@ -123,10 +123,46 @@ class ClassMapper:
         """
         try:
             logger.debug(f"Updating class attributes from class {data_class_instance} to class {target_instance}")
-            # Iterate over the fields of the dataclass and set them on the target instance
+            # Iterate over the fields of the dataclass and set them on the target instance only if not None
             for field in fields(data_class_instance):
-                setattr(target_instance, field.name, getattr(data_class_instance, field.name))
+                value = getattr(data_class_instance, field.name)
+                if value is not None:  # Check if the field is not None
+                    setattr(target_instance, field.name, value)
 
             return target_instance
         except Exception as e:
             raise MappingFailedExceptionError(type(data_class_instance).__name__)
+
+    @staticmethod
+    def map_class_to_dataclass(source_instance, target_dataclass_instance, overwrite=False):
+        """
+        Maps attributes from a class instance to a dataclass instance.
+
+        Args:
+            source_instance (object): Source class instance with attributes to map.
+            target_dataclass_instance (object): Target dataclass instance to update.
+            overwrite (bool): If True, overwrite fields in the dataclass even if they are not None.
+
+        Returns:
+            object: Updated dataclass instance.
+
+        Raises:
+            MappingFailedExceptionError: If the mapping fails for any reason.
+        """
+        if not is_dataclass(target_dataclass_instance):
+            raise TypeError("Target instance must be a dataclass")
+
+        try:
+            for field in fields(target_dataclass_instance):
+                field_name = field.name
+                if hasattr(source_instance, field_name):
+                    source_value = getattr(source_instance, field_name)
+                    target_value = getattr(target_dataclass_instance, field_name)
+
+                    # Set value only if it is not None in the source or overwrite is True
+                    if source_value is not None or overwrite:
+                        setattr(target_dataclass_instance, field_name, source_value)
+
+            return target_dataclass_instance
+        except Exception as e:
+            raise MappingFailedExceptionError(type(source_instance).__name__) from e

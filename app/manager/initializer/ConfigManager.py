@@ -42,7 +42,6 @@ class ConfigManager:
         self._strategy_factory: StrategyFactory = StrategyFactory()
         self._assets: list[Asset] = []
         self._brokers: list = []
-        self._strategies: list[Strategy] = []
         self._relations: list[AssetBrokerStrategyRelation] = []
         self._smtPairs: list[SMTPair] = []
         self._trades: list[Trade] = []
@@ -86,15 +85,10 @@ class ConfigManager:
             logger.info("Finished ConfigManager")
 
     def _initialize_managers(self):
-        for strategy in self._strategies:
-                for relation in self._relations:
-                    try:
-                        if relation.strategy == strategy.name:
-                            self._strategy_manager.register_strategy(relation, strategy)
-                    except Exception as e:
-                        logger.warning("Failed to register strategy {}".format(strategy.name))
-                    finally:
-                        continue
+        for relation in self._relations:
+            strategy = self._strategy_factory.return_class(relation.strategy)
+            if isinstance(strategy, Strategy):
+                self._strategy_manager.register_strategy(relation, strategy)
         for asset in self._assets:
             try:
                 for relation in self._relations:
@@ -133,7 +127,6 @@ class ConfigManager:
         for doc in dbList:
             try:
                 self._is_typ_asset_add_asset(typ, doc)
-                self._is_typ_strategy_add_strategy(typ, doc)
                 self._is_typ_relation_add_relation(typ, doc)
                 self._is_typ_smt_pair_add_pair(typ, doc)
                 self._is_typ_asset_class(typ, doc)
@@ -146,14 +139,6 @@ class ConfigManager:
             asset: Asset = Asset((doc.get(typ)).get("name"), self._asset_classes[doc.get(typ).get("assetClass")])
             self._assets.append(asset)
             logger.debug("Asset {} from database".format(asset.name))
-
-    def _is_typ_strategy_add_strategy(self, typ: str, doc: dict) -> None:
-        if typ == "Strategy":
-            strategyDict = doc.get(typ)
-            name = strategyDict.get("name")
-            strategy: Strategy = self._strategy_factory.return_class(name)
-            self._strategies.append(strategy)
-            logger.debug("Strategy {} from database".format(strategy.name))
 
     def _is_typ_relation_add_relation(self, typ: str, doc: dict) -> None:
         if typ == "AssetBrokerStrategyRelation":

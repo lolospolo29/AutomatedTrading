@@ -79,7 +79,7 @@ class TradingService:
 
         result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe)
 
-        if result.status == StrategyResultStatusEnum.NEWORDER.value:
+        if result == StrategyResultStatusEnum.NEWORDER.value:
             self._logger.info(f"New Entry found: {relation.asset}")
 
             self._trade_manager.register_trade(result.trade)

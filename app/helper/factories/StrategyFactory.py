@@ -12,4 +12,4 @@ class StrategyFactory:
             return FVGSession()
         if typ == "Unicorn":
             return Unicorn()
-        logger.debug(f"No strategy found for {typ}")
+        logger.warning(f"No strategy found for {typ}")

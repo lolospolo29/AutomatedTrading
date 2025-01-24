@@ -139,6 +139,7 @@ class TradeMapper:
             trade.tradeMode = trade_dict.get("tradeMode", "")
             trade.unrealisedPnl = trade_dict.get("unrealisedPnl", 0.0)
             trade.leverage = trade_dict.get("leverage", 0.0)
+            trade.category = trade_dict.get("category", "")
 
             return trade
         except Exception:
