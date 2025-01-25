@@ -69,12 +69,11 @@ class TradingService:
     def _analyze_strategy_for_entry(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation) -> None:
         """
         Analyses Strategy Logic.
-        If there is a Signal for a Entry,the Strategy generates a Trade Object.
+        If there is a Signal for Entry,the Strategy generates a Trade Object.
         That Object is used to Execute Orders in the Trade Manager.
 
         :param timeframe: Timeframe to analyse.
         :param candles: Candles to analyse.
-        :param relation of the Asset,Strategy,Broker
         """
 
         result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe)
@@ -83,5 +82,9 @@ class TradingService:
             self._logger.info(f"New Entry found: {relation.asset}")
 
             self._trade_manager.register_trade(result.trade)
-            self._trade_manager.
+            exceptionOrders,trade = self._trade_manager.place_trade(result.trade)
+
+            if exceptionOrders:
+                pass
+                # todo
 

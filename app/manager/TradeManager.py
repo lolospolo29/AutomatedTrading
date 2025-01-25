@@ -122,7 +122,7 @@ class TradeManager:
     # endregion
 
     # region API Requests
-    def place_trade(self, trade: Trade) -> list[Order]:
+    def place_trade(self, trade: Trade) -> tuple[list[Order],Trade]:
         tradeLock = self._lock_registry.get_lock(trade.id)
         with tradeLock:
             if trade.id in self._open_trades:
@@ -139,7 +139,7 @@ class TradeManager:
                         exceptionOrders.append(order)
                         break
 
-                return exceptionOrders
+                return exceptionOrders,trade
 
     def update_trade(self, trade: Trade) -> None:
         tradeLock = self._lock_registry.get_lock(trade.id)
