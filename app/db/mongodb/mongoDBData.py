@@ -11,7 +11,6 @@ from app.monitoring.logging.logging_startup import logger
 
 ny_tz = pytz.timezone('America/New_York')
 
-#todo add candle data to db or csv
 class mongoDBData:
     _instance = None
     _lock = threading.Lock()
@@ -31,7 +30,7 @@ class mongoDBData:
             self._initialized = True  # Markiere als initialisiert
 
     def add_candle_to_db(self, asset: str, candle: Candle):
-        self._mongo_db_data.add(asset, candle)
+        self._mongo_db_data.add(asset, candle.to_dict())
 
     def archive_data(self, asset: str) -> Any:
         logger.info(f"Arching data for {asset}")
@@ -60,6 +59,6 @@ class mongoDBData:
         query = {
             "Candle.broker": broker,
             "Candle.timeFrame": timeframe,
-            "Candle.IsoTime": {"$gte": three_days_ago_utc}
+            "Candle.iso_time": {"$gte": three_days_ago_utc}
         }
         return self._mongo_db_data.find(asset, query)

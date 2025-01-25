@@ -10,7 +10,6 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class AssetManager:
-
     _instance = None
     _lock = threading.Lock()
 
@@ -32,20 +31,6 @@ class AssetManager:
 
     # endregion
 
-    # region CRUD
-
-    def add_candle_to_db(self, candle: Candle):
-        logger.info(f"Adding candle to db:{candle.asset}")
-        try:
-            if candle.timeframe >= 5:
-                self._mongo_db_data.add_candle_to_db(candle.asset, candle)
-        except Exception as e:
-            logger.critical("Failed to add candle to db with exception {}".format(e))
-
-    def received_candles(self, asset: str) -> Candle:
-        pass
-    # endregion
-
     # region Register And Return Assets
     def register_asset(self, asset: Asset) -> bool:
         logger.info(f"Register Asset to Asset Manager:{asset.name}")
@@ -59,27 +44,45 @@ class AssetManager:
 
     def return_all_assets(self):
         assets = []
-        for name,asset in self.assets.items():
+        for name, asset in self.assets.items():
             assets.append(name)
         return assets
+
+    # endregion
+
+    # region CRUD
+
+    def _add_candle_to_db(self, candle: Candle):
+        logger.debug(f"Adding candle to db:{candle.asset}")
+        try:
+            self._mongo_db_data.add_candle_to_db(candle.asset, candle)
+        except Exception as e:
+            logger.critical("Failed to add candle to db with exception {}".format(e))
+
+    def received_candles(self, asset: str) -> Candle:
+        pass
+    # todo
+
     # endregion
 
     # region Add Functions
     def add_candle(self, json: dict) -> Candle:
         try:
             candle: Candle = self._asset_mapper.map_candle_from_trading_view(json)
-            logger.info(f"Add Candle to:{candle.asset}")
+            logger.debug(f"Add Candle to:{candle.asset}")
 
             if candle.asset in self.assets:
                 self.assets[candle.asset].add_candle(candle)
+                self._add_candle_to_db(candle)
                 return candle
         except Exception as e:
             logger.exception("Failed to add candle to db with exception {}".format(e))
+
     # endregion
 
     # region Return Functions
 
-    def return_asset_class(self,asset:str) -> str:
+    def return_asset_class(self, asset: str) -> str:
         try:
             if asset in self.assets:
                 return self.assets[asset].asset_class
@@ -93,7 +96,7 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to return relations for asset {}".format(asset))
 
-    def return_smt_pair(self, asset: str) ->SMTPair:
+    def return_smt_pair(self, asset: str) -> SMTPair:
         try:
             if asset in self.assets:
                 return self.assets[asset].return_smt_pair()
@@ -114,6 +117,3 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to return relations for asset {}".format(asset))
     # endregion
-
-
-

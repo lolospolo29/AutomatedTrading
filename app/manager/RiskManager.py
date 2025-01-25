@@ -21,23 +21,23 @@ class RiskManager:
 
     def __init__(self, max_drawdown:float = 1.0, max_risk_percentage:float = 0.5):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.max_drawdown: float = max_drawdown  # Maximaler Verlust in %
-            self.current_drawdown: float = 0.0  # Aktueller Drawdown
-            self.max_risk_percentage: float = max_risk_percentage
-            self.account_balance = 1000
+            self.__max_drawdown: float = max_drawdown  # Maximaler Verlust in %
+            self.__current_pnl: float = 0.0  # Aktueller Drawdown
+            self.__max_risk_percentage: float = max_risk_percentage
+            self.__account_balance = 1000
             self._initialized = True  # Markiere als initialisiert
 
-    def return_current_drawdown(self) -> float:
-        return self.current_drawdown
+    def return_current_pnl(self) -> float:
+        return self.__current_pnl
 
-    def add_closed_pnl_to_drawdown(self, closedPnl: float) -> None:
-        self.current_drawdown += closedPnl
+    def set_current_pnl(self, pnl: float) -> None:
+        self.__current_pnl += pnl
 
     def _calculate_money_at_risk(self):
         """
         Calculates money at risk based on account balance and risk percentage.
         """
-        return self.account_balance * (self.max_risk_percentage / 100)
+        return self.__account_balance * (self.__max_risk_percentage / 100)
 
     @staticmethod
     def _calculate_crypto_trade_size(money_at_risk, stop_loss_distance):

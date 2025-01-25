@@ -2,9 +2,6 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from app.api.POSTParams import POSTParams
-from app.models.trade.enums.CategoryEnum import CategoryEnum
-from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
-from app.models.trade.enums.TPSLModeEnum import TPSLModeEnum
 
 
 # post /v5/order/amend

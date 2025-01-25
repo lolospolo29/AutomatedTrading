@@ -186,17 +186,3 @@ class BrokerRequestBuilder:
         Finalize and return the configured RequestParameters object.
         """
         return self.request
-
-
-# builder = BrokerRequestBuilder()
-# request = (
-#     builder.set_broker("SomeBroker")
-#            .set_position_idx(1)
-#            .set_base_coin("BTC")
-#            .set_settle_coin("USD")
-#            .set_buy_leverage("10x")
-#            .set_sell_leverage("5x")
-#            .build()
-# )
-#
-# print(request)

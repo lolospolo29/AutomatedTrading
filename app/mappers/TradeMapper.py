@@ -90,10 +90,11 @@ class TradeMapper:
             attributes = [
                 "trade_id", "orderStatus", "risk_percentage", "money_at_risk", "unrealisedPnL",
                 "orderLinkId", "orderType", "symbol", "category", "side", "qty", "orderId",
-                "isLeverage", "marketUnit", "orderFilter", "orderlv", "stopLoss", "takeProfit",
+                "isLeverage", "marketUnit", "orderFilter", "orderIv", "stopLoss", "takeProfit",
                 "price", "timeInForce", "closeOnTrigger", "reduceOnly", "triggerPrice",
                 "triggerBy", "tpTriggerBy", "slTriggerBy", "triggerDirection", "tpslMode",
-                "tpLimitPrice", "tpOrderType", "slOrderType", "slLimitPrice", "lastPriceOnCreated"
+                "tpLimitPrice", "tpOrderType", "slOrderType", "slLimitPrice", "lastPriceOnCreated","createdTime",
+                "updatedTime","leavesQty","stopOrderType","orderStatus"
             ]
 
             # Dynamically assign attributes
@@ -101,8 +102,8 @@ class TradeMapper:
                 setattr(order, attr, order_dict.get(attr))
 
             # Parse datetime fields
-            logger.info(f"Mapping Order,OrderLinkId:{order_dict.get('orderLinkId')},Symbol:{order.symbol},TradeId:{order.trade_id}")
             # Map frameworks
+            logger.info(f"Mapping Order,OrderLinkId:{order_dict.get('orderLinkId')},Symbol:{order.symbol},TradeId:{order.trade_id}")
             order.entry_frame_work = self.map_framework(order_dict.get("entry_frame_work", {}))
             order.confirmations = [
                 self.map_framework(cf) for cf in order_dict.get("confirmations", []) if cf
@@ -134,12 +135,15 @@ class TradeMapper:
             )
             logger.info(f"Mapping Trade,TradingId:{trade.id}")
             # Set additional attributes
+            trade.category = trade_dict.get("category", "")
             trade.side = trade_dict.get("side", "")
-            trade.size = trade_dict.get("size", 0.0)
-            trade.tradeMode = trade_dict.get("tradeMode", "")
+            trade.tpslMode = trade_dict.get("tpslMode", "")
             trade.unrealisedPnl = trade_dict.get("unrealisedPnl", 0.0)
             trade.leverage = trade_dict.get("leverage", 0.0)
-            trade.category = trade_dict.get("category", "")
+            trade.size = trade_dict.get("size", 0.0)
+            trade.tradeMode = trade_dict.get("tradeMode", "")
+            trade.updatedTime = trade_dict.get("leverage", 0.0)
+            trade.createdTime = trade_dict.get("leverage", 0.0)
 
             return trade
         except Exception:

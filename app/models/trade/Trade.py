@@ -10,6 +10,12 @@ class Trade:
     def __init__(self, relation: AssetBrokerStrategyRelation=None, orders: list[Order]=None,id:str=None,category:str=None):
         self.orders : list[Order] = orders
         self.relation: AssetBrokerStrategyRelation = relation
+
+        if id is None:
+            self.id = uuid.uuid4()
+        else:
+            self.id = id
+
         self.category = category
         self.side = ""
         self.tpslMode = ""
@@ -17,10 +23,8 @@ class Trade:
         self.leverage = 0
         self.size = 0
         self.tradeMode = 0
-        if id is None:
-            self.id = uuid.uuid4()
-        else:
-            self.id = id
+        self.updatedTime = 0
+        self.createdTime = 0
 
 
     def to_dict(self):
@@ -35,10 +39,13 @@ class Trade:
                     "strategy": self.relation.strategy ,
                     "category": self.relation.strategy ,
                     "side": self.side,
+                    "tpslMode": self.tpslMode,
                     "unrealisedPnl": self.unrealisedPnl,
                     "leverage": self.leverage,
                     "size": self.size,
                     "tradeMode": self.tradeMode,
+                    "updatedTime": self.updatedTime,
+                    "createdTime": self.createdTime,
                 }
             }
         except Exception as e:

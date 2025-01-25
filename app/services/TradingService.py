@@ -55,7 +55,7 @@ class TradingService:
         """
         candle: Candle = self._asset_manager.add_candle(jsonData)
 
-        logger.info("Received candle for Asset:{asset},{timeframe}".format(asset=candle.asset, timeframe=candle.timeframe))
+        logger.debug("Received candle for Asset:{asset},{timeframe}".format(asset=candle.asset, timeframe=candle.timeframe))
 
         candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
         relations: list[AssetBrokerStrategyRelation] = self._asset_manager.return_relations(candle.asset, candle.broker)
@@ -83,5 +83,5 @@ class TradingService:
             self._logger.info(f"New Entry found: {relation.asset}")
 
             self._trade_manager.register_trade(result.trade)
-            trade = self._trade_manager.return_trades_for_relation(relation)
-            # todo order logic and exit logic
+            self._trade_manager.
+

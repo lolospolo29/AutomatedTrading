@@ -1,5 +1,4 @@
 import threading
-import uuid
 
 from app.api.brokers.BrokerFacade import BrokerFacade
 from app.api.brokers.BrokerRequestBuilder import BrokerRequestBuilder
@@ -7,16 +6,14 @@ from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.api.brokers.models.RequestParameters import RequestParameters
 from app.db.mongodb.mongoDBTrades import mongoDBTrades
-from app.helper.builder.TradeBuilder import TradeBuilder
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.RiskManager import RiskManager
+from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
-from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -41,6 +38,7 @@ class TradeManager:
             self._broker_facade = BrokerFacade()
             self._risk_manager = RiskManager()
             self._class_mapper = ClassMapper()
+            self._broker_mapper = BrokerMapper()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
@@ -75,7 +73,7 @@ class TradeManager:
 
     # region CRUD DB
 
-    def write_trade_to_db(self, trade: Trade):
+    def __write_trade_to_db(self, trade: Trade):
         with self._lock:
             tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
@@ -86,7 +84,7 @@ class TradeManager:
                 except Exception as e:
                     logger.error(f"Write Trade Error,TradeId: {trade.id}: {e}")
 
-    def update_trad_in_db(self, trade: Trade) -> None:
+    def __update_trade_in_db(self, trade: Trade) -> None:
         with self._lock:
             tradeLock = self._lock_registry.get_lock(trade.id)
             with tradeLock:
@@ -97,7 +95,7 @@ class TradeManager:
                 except Exception as e:
                     logger.error(f"Update Trade Error,TradeId: {trade.id}: {e}")
 
-    def write_order_to_db(self, order: Order) -> None:
+    def __write_order_to_db(self, order: Order) -> None:
         logger.info(
             f"Write Order To DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
 
@@ -109,7 +107,7 @@ class TradeManager:
             logger.error(
                 f"Write Order To DB Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
 
-    def update_order_in_db(self, order: Order) -> None:
+    def __update_order_in_db(self, order: Order) -> None:
         logger.info(
             f"Update Order in DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
         try:
@@ -134,7 +132,7 @@ class TradeManager:
 
                 for order in trade.orders:
                     try:
-                        self.place_order(trade.relation.broker, order)
+                        self.__place_order(trade.relation.broker, order)
                     except Exception as e:
                         logger.error(
                             f"Place Order Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
@@ -151,18 +149,68 @@ class TradeManager:
                 request: RequestParameters = BrokerRequestBuilder().set_broker(trade.relation.broker).set_symbol(
                     trade.relation.asset).set_category(trade.category).build()
 
-                res: list[Order] = self.return_open_and_closed_orders(request)
+                openAndClosedOrders: list[BrokerOrder] = self.__return_open_and_closed_orders(request)
 
-                for resOrders in res:
-                    print(resOrders.orderLinkId)
+                for onco in openAndClosedOrders:
+                    updatedOrder = False
+                    for order in trade.orders:
+                        if order.orderLinkId == onco.orderLinkId:
+                            updatedOrder = True
+                            self._broker_mapper.map_broker_order_to_order(onco, order)
 
-    def place_order(self, broker: str, order: Order) -> Order:
+                    if not updatedOrder:
+                        newOrder = Order()
+                        newOrder = self._broker_mapper.map_broker_order_to_order(onco, newOrder)
+                        trade.orders.append(newOrder)
+
+                for order in trade.orders:
+                    request.orderLinkId = order.orderLinkId
+                    orderHistory:list[BrokerOrder] = self.__return_order_history(request)
+                    for onco in orderHistory:
+                        if order.orderLinkId == onco.orderLinkId:
+                            self._broker_mapper.map_broker_order_to_order(onco, order)
+
+
+                positionInfo: list[BrokerPosition] = self.__return_position_info(request)
+
+                for pi in positionInfo:
+                    if pi.symbol == trade.relation.asset and pi.category == trade.category:
+                        self._broker_mapper.map_broker_position_to_trade(pi, trade)
+                try:
+                    self._mongo_db_trades.update_trade(trade)
+                except Exception as e:
+                    try:
+                        self._mongo_db_trades.add_trade_to_db(trade)
+                    except Exception as e:
+                        logger.error("Write Trade to DB Error,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
+
+                for order in trade.orders:
+                    try:
+                        self.__update_order_in_db(order)
+                    except Exception as e:
+                        try:
+                            self.__write_order_to_db(order)
+                        except Exception as e:
+                            logger.error("Write Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(orderLinkId=order.orderLinkId, e=e))
+
+
+    def archive_trade(self, trade: Trade) -> None:
+        tradeLock = self._lock_registry.get_lock(trade.id)
+        with tradeLock:
+            if trade.id in self._open_trades:
+                trade = self._open_trades[trade.id]
+                self._mongo_db_trades.archive_trade(trade)
+                self.remove_trade(trade)
+                for order in trade.orders:
+                    self._mongo_db_trades.archive_order(order)
+
+    def __place_order(self, broker: str, order: Order) -> Order:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
             requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
             newOrder: BrokerOrder = self._broker_facade.place_order(requestParameters)
-            return self._class_mapper.update_class_with_dataclass(newOrder, order)
+            return self._broker_mapper.map_broker_order_to_order(newOrder,order)
 
     def amend_order(self, broker: str, order: Order) -> Order:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
@@ -170,7 +218,7 @@ class TradeManager:
             requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
             newOrder: BrokerOrder = self._broker_facade.amend_order(requestParameters)
-            return self._class_mapper.update_class_with_dataclass(newOrder, order)
+            return self._broker_mapper.map_broker_order_to_order(newOrder,order)
 
     def cancel_order(self, broker: str, order: Order) -> Order:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
@@ -178,77 +226,81 @@ class TradeManager:
             requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
                                                     (RequestParameters, order, Order, broker=broker))
             newOrder: BrokerOrder = self._broker_facade.amend_order(requestParameters)
-            return self._class_mapper.update_class_with_dataclass(newOrder, order)
+            return self._broker_mapper.map_broker_order_to_order(newOrder,order)
 
-    def cancel_all_orders(self, requestParameters: RequestParameters) -> list[Order]:
+    def __cancel_all_orders(self, requestParameters: RequestParameters) -> list[BrokerOrder]:
         return self._broker_facade.cancel_all_orders(requestParameters)
 
-    def return_open_and_closed_orders(self, requestParameters: RequestParameters) -> list[Order]:
+    def __return_open_and_closed_orders(self, requestParameters: RequestParameters) -> list[BrokerOrder]:
         return self._broker_facade.return_open_and_closed_orders(requestParameters)
 
-    def return_position_info(self, requestParameters: RequestParameters) -> BrokerPosition:
+    def __return_position_info(self, requestParameters: RequestParameters) -> list[BrokerPosition]:
         return self._broker_facade.return_position_info(requestParameters)
 
-    def return_order_history(self, requestParameters: RequestParameters) -> list[Order]:
+    def __return_order_history(self, requestParameters: RequestParameters) -> list[BrokerOrder]:
         return self._broker_facade.return_order_history(requestParameters)
 
     # endregion
 
     # region Functions
 
-    def calculate_qty_for_trade_orders(self, trade: Trade, assetClass: str):
-        tradeLock = self._lock_registry.get_lock(trade.id)
-        with tradeLock:
-            if trade.id in self._open_trades:
-                trade = self._open_trades[trade.id]
-                for order in trade.orders:
-                    if order.orderType == OrderTypeEnum.MARKET.value:
-                        order.qty = str(self._risk_manager.calculate_qty_market(assetClass, order))
-                    if order.orderType == OrderTypeEnum.LIMIT.value:
-                        order.qty = str(self._risk_manager.calculate_qty_limit(assetClass, order))
+    def get_current_pnl(self):
+        pnl = 0
+        for trade in self._open_trades:
+            pnl += trade.unrealisedPnl()
+        self._risk_manager.set_current_pnl(pnl)
+        return self._risk_manager.return_current_pnl()
 
     def return_trades_for_relation(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list[Trade]:
         return [x for x in self._open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
     # endregion
 
 
-# todo order builder for every broker
 # todo execptions handling,exceptions
 # todo pydentic
 # todo testing
 # todo testing module
 # todo monitoring + blazor tool
-tm = TradeManager()
-
-relation = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
-relation2 = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
-
-order = Order()
-
-order.orderType = OrderTypeEnum.MARKET.value
-order.category = "linear"
-order.symbol = "XRPUSDT"
-order.risk_percentage = 0.33
-order.price = str(3.1)
-order.stopLoss = str(2.7)
-order.orderLinkId = uuid.uuid4().__str__()
-order.side = "Buy"
-
-trade = TradeBuilder().add_relation(relation).add_order(order).add_category("linear").build()
-
-tm.register_trade(trade)
-
-print(tm.return_trades_for_relation(relation2))
-
-tm.calculate_qty_for_trade_orders(trade, AssetClassEnum.CRYPTO.value)
-
-trades = tm.return_trades_for_relation(relation2)
-
-tm.place_trade(trade)
-
-trades = tm.return_trades_for_relation(relation)
-
-for trade in trades:
-    tm.update_trade(trade)
-
-print(trades)
+# trade_manager = TradeManager()
+#
+# relation = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
+# relation2 = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
+#
+# order1 = Order()
+#
+# order1.orderType = OrderTypeEnum.MARKET.value
+# order1.category = "linear"
+# order1.symbol = "XRPUSDT"
+# order1.qty = str(3)
+# order1.price = str(3.1)
+# order1.orderLinkId = uuid.uuid4().__str__()
+# order1.side = "Buy"
+#
+# order2 = Order()
+#
+# order2.orderType = OrderTypeEnum.LIMIT.value
+# order2.category = "linear"
+# order2.symbol = "XRPUSDT"
+# order2.qty = str(3)
+# order2.price = str(3.2)
+# order2.triggerPrice = str(3.3)
+# order2.triggerDirection = 1
+# order2.orderLinkId = uuid.uuid4().__str__()
+# order2.side = "Sell"
+#
+# trade1 = TradeBuilder().add_relation(relation).add_order(order1).add_order(order2).add_category("linear").build()
+#
+# trade_manager.register_trade(trade1)
+#
+# print(trade_manager.return_trades_for_relation(relation2))
+#
+# trades = trade_manager.return_trades_for_relation(relation2)
+#
+# trade_manager.place_trade(trade1)
+#
+# trades = trade_manager.return_trades_for_relation(relation)
+#
+# for res1 in trades:
+#     trade_manager.update_trade(res1)
+#
+# print(trades)

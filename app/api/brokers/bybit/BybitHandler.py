@@ -98,10 +98,13 @@ class BybitHandler(IBrokerHandler):
                 raise ValueError(responseJson.get("retMsg"))
 
             objList = responseJson.get("result").get("list")
+            category = responseJson.get("result").get("category")
             nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
 
             for obj in objList:
-                brokerPositionList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerPosition))
+                position = self._class_mapper.map_dict_to_dataclass(obj, BrokerPosition)
+                position.category = category
+                brokerPositionList.append(position)
 
             time.sleep(1)
             if nextPageCursor == previousCursor or nextPageCursor == "":

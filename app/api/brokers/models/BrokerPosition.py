@@ -7,6 +7,7 @@ from numpy import long
 @dataclass
 class BrokerPosition:
     positionIdx: Optional[int] = field(default=None)
+    category: Optional[int] = field(default=None)
     riskId: Optional[str] = field(default=None)
     riskLimitValue: Optional[str] = field(default=None)
     symbol: Optional[str] = field(default=None)

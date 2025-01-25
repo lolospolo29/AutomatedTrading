@@ -3,6 +3,7 @@ import threading
 from app.db.mongodb.MongoDB import MongoDB
 from app.db.mongodb.enum.MongoEndPointEnum import MongoEndPointEnum
 from app.manager.initializer.SecretsManager import SecretsManager
+from app.mappers.ClassMapper import ClassMapper
 from app.mappers.TradeMapper import TradeMapper
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
@@ -25,6 +26,7 @@ class mongoDBTrades:
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._secret_manager: SecretsManager = SecretsManager()
             self._trade_mapper = TradeMapper()
+            self._class_mapper = ClassMapper()
 
             self._mongo_db_trades: MongoDB = MongoDB("Trades", self._secret_manager.return_secret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
@@ -40,7 +42,7 @@ class mongoDBTrades:
             query = self._mongo_db_trades.buildQuery("Trade", "id", str(id))
             logger.info("Finding Trades in DB with Query: {}".format(query))
             res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
-            logger.info("Found Trades:{count}".format(count=len(res)))
+            logger.debug("Found Trades:{count}".format(count=len(res)))
         for tradeInRes in res:
             trade = self._trade_mapper.map_trade_from_db(tradeInRes)
             orders = []
@@ -62,7 +64,6 @@ class mongoDBTrades:
             res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
         for orderInRes in res:
                 orders.append(self._trade_mapper.map_order_from_db(orderInRes))
-                logger.info(f"Errors By Finding Orders in DB Exception, {orderInRes}")
         return orders
 
     # region Add / Update / Archive
@@ -99,6 +100,7 @@ class mongoDBTrades:
         query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
         self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
     # endregion
+
 # Testing
 # _mongo = mongoDBTrades()
 # pd = PDArray(name="FVG",direction="Bullish")
