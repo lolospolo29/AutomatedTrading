@@ -8,7 +8,6 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class RiskManager:
-
     _instance = None
     _lock = threading.Lock()
 
@@ -19,7 +18,7 @@ class RiskManager:
                     cls._instance = super(RiskManager, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self, max_drawdown:float = 1.0, max_risk_percentage:float = 0.5):
+    def __init__(self, max_drawdown: float = 1.0, max_risk_percentage: float = 0.5):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.__max_drawdown: float = max_drawdown  # Maximaler Verlust in %
             self.__current_pnl: float = 0.0  # Aktueller Drawdown
@@ -39,39 +38,88 @@ class RiskManager:
         """
         return self.__account_balance * (self.__max_risk_percentage / 100)
 
-    @staticmethod
-    def _calculate_crypto_trade_size(money_at_risk, stop_loss_distance):
+    def _calculate_crypto_trade_size(self, entry_price, stop_loss_price):
         """
         Calculates trade size for cryptocurrencies.
         Formula: Trade Size (Units) = Money at Risk / Stop Loss Distance
         """
-        return money_at_risk / stop_loss_distance
+        # Berechne das Risiko in Dollar
+        risk_amount = (self.__max_risk_percentage / 100) * self.__account_balance
 
-    @staticmethod
-    def _calculate_indices_commodities_trade_size(money_at_risk, stop_loss_points, value_per_point=100):
+        # Berechne den Abstand zwischen Entry und Stop-Loss
+        distance = abs(entry_price - stop_loss_price)
+
+        if distance == 0:
+            raise ValueError("Der Entry-Preis und der Stop-Loss-Preis dürfen nicht gleich sein.")
+
+        # Berechne die Quantity Size
+        quantity = risk_amount / distance
+        return quantity
+
+    def _calculate_indices_trade_size(self, entry_price, stop_loss_price, point_value=50):
         """
         Calculates trade size for indices and commodities.
         Formula: Trade Size (Contracts) = Money at Risk / (Stop Loss Points * Value per Point)
         """
-        return money_at_risk / (stop_loss_points * value_per_point)
+        # Calculate the risk amount in dollars
+        risk_amount = (self.__max_risk_percentage / 100) * self.__account_balance
 
-    @staticmethod
-    def _calculate_forex_trade_size_non_jpy(money_at_risk, stop_loss_pips, pip_value=1):
+        # Calculate the point distance
+        point_distance = abs(entry_price - stop_loss_price)
+
+        # Ensure no division by zero
+        if point_distance == 0:
+            raise ValueError("The entry price and stop-loss price cannot be the same.")
+
+        # Calculate the position size
+        position_size = risk_amount / (point_value * point_distance)
+        return position_size
+
+    def _calculate_forex_trade_size_jpy(self, entry_price, stop_loss_price, lot_size=100000):
         """
         Calculates trade size for non-JPY Forex pairs.
         Formula: Trade Size (Units) = Money at Risk / (Stop Loss in Pips * Pip Value)
         """
-        return money_at_risk / (stop_loss_pips * pip_value)
+        pip_value = (lot_size * 0.01) / entry_price
 
-    @staticmethod
-    def _calculate_forex_trade_size_jpy(money_at_risk, stop_loss_pips, exchange_rate=0.01):
+        return self._calculate_forex_trade_size_non_jpy(entry_price, stop_loss_price, pip_value=pip_value)
+
+    def _calculate_forex_trade_size_non_jpy(self, entry_price, stop_loss_price, pip_value=10):
         """
         Calculates trade size for JPY Forex pairs.
         Formula: Trade Size (Units) = Money at Risk / (Stop Loss Pips * Pip Value)
         Pip value is adjusted due to how JPY pairs are priced.
         """
-        pip_value = 0.01 / exchange_rate  # Adjusted pip value for JPY pairs
-        return money_at_risk / (stop_loss_pips * pip_value)
+        # Calculate the risk amount in dollars
+        risk_amount = (self.__max_risk_percentage / 100) * self.__account_balance
+
+        # Calculate the pip distance
+        pip_distance = abs(entry_price - stop_loss_price) * 10000  # Assumes 4 decimal place pairs like EUR/USD
+
+        # Calculate the position size in lots
+        if pip_distance == 0:
+            raise ValueError("The entry price and stop-loss price cannot be the same.")
+
+        position_size = risk_amount / (pip_value * pip_distance)
+        return position_size
+
+    def _calculate_commodity_position_size(self, entry_price, stop_loss_price, contract_size,
+                                          tick_size):
+        risk_amount = (self.__max_risk_percentage / 100) * self.__account_balance
+
+        # Calculate the tick value
+        tick_value = contract_size * tick_size
+
+        # Calculate the tick distance
+        tick_distance = abs(entry_price - stop_loss_price) / tick_size
+
+        # Ensure no division by zero
+        if tick_distance == 0:
+            raise ValueError("The entry price and stop-loss price cannot be the same.")
+
+        # Calculate the position size
+        position_size = risk_amount / (tick_value * tick_distance)
+        return position_size
 
     @staticmethod
     def _round_down(value: float) -> float:
@@ -87,72 +135,29 @@ class RiskManager:
         return math.floor(value / factor) * factor
 
     # region Risk Management
-    def calculate_qty_market(self, asset_class:str, order:Order)->float:
-        try:
-            moneyatrisk = self._calculate_money_at_risk()
-            order.money_at_risk = moneyatrisk
-            qty = 0.00
-            if asset_class == AssetClassEnum.CRYPTO.value:
-                if order.side == OrderDirectionEnum.BUY.value:
-                    qty = self._calculate_crypto_trade_size(moneyatrisk,
-                                                                         (float(order.price) - float(order.stopLoss)))
-                if order.side == OrderDirectionEnum.SELL.value:
-                    qty = self._calculate_crypto_trade_size(moneyatrisk,
-                                                                         (float(order.stopLoss) - float(order.price)))
+    def calculate_qty(self, asset_class: str, order: Order) -> float:
+        moneyatrisk = self._calculate_money_at_risk()
+        order.money_at_risk = moneyatrisk
+        qty = 0.00
+        if asset_class == AssetClassEnum.CRYPTO.value:
+            qty = self._calculate_crypto_trade_size(float(order.price), float(order.stopLoss))
+        if asset_class == AssetClassEnum.FX.value:
+            qty = self._calculate_forex_trade_size_non_jpy(float(order.price), float(order.stopLoss))
+        if asset_class == AssetClassEnum.FXJPY.value:
+            qty = self._calculate_forex_trade_size_jpy(float(order.price), float(order.stopLoss))
+        if asset_class == AssetClassEnum.COMMODITY.value:
+            qty = self._calculate_indices_trade_size(float(order.price), float(order.stopLoss))
 
-            return self._round_down(abs(qty * order.risk_percentage))
-        except Exception as e:
-            logger.exception("Failed to Calculate Qty Market.")
 
-    def calculate_qty_limit(self, asset_class:str, order:Order)->float:
-        try:
-            moneyatrisk = self._calculate_money_at_risk()
-            order.money_at_risk = moneyatrisk
-            qty = 0.00
-            if asset_class == AssetClassEnum.CRYPTO:
-                if order.side == OrderDirectionEnum.BUY.value:
-                    qty = (self._calculate_crypto_trade_size
-                           (moneyatrisk, abs(float(order.price) - float(order.slLimitPrice))))
-                if order.side == OrderDirectionEnum.SELL.value:
-                    qty = (self._calculate_crypto_trade_size
-                           (moneyatrisk, abs(float(order.slLimitPrice) - float(order.price))))
-            return self._round_down(abs(qty * order.risk_percentage))
-        except Exception as e:
-            logger.exception("Failed to Calculate Qty Limit.")
+        return self._round_down(abs(qty * order.risk_percentage))
+
     # endregion
-# #
-# # # Input variables
-# rm = RiskManager()
-# account_balance = 1000  # Your account balance in USD
-#
-# # Example 1: Cryptocurrency example
-# crypto_open_price = 98000
-# crypto_close_price = 97000
-# crypto_stop_loss_distance = crypto_open_price - crypto_close_price  # Distance in price
-# money_at_risk = rm._calculate_money_at_risk(account_balance)
-# print(money_at_risk)
-# crypto_trade_size = rm._calculate_crypto_trade_size(money_at_risk, crypto_stop_loss_distance)
-# print(crypto_trade_size)
-#
-# # Example 2: Indices/Commodities example
-# stop_loss_points = 10  # Example stop loss distance in points
-# value_per_point = 100  # Example $10 per point (typical for indices/commodities)
-# indices_commodities_trade_size = rm._calculate_indices_commodities_trade_size(
-#     money_at_risk, stop_loss_points, value_per_point
-# )
-# print(indices_commodities_trade_size)
-#
-# # Example 3: Forex Non-JPY
-# stop_loss_pips_non_jpy = 100  # Example stop loss of 50 pips
-# pip_value_non_jpy = 1  # Pip value for non-JPY pairs
-# forex_non_jpy_trade_size = rm._calculate_forex_trade_size_non_jpy(
-#     money_at_risk, stop_loss_pips_non_jpy, pip_value_non_jpy
-# )
-# print(forex_non_jpy_trade_size)
-# # Example 4: Forex JPY
-# stop_loss_pips_jpy = 100
-# exchange_rate_jpy = 0.01  # Example exchange rate for USD/JPY
-# forex_jpy_trade_size = rm._calculate_forex_trade_size_jpy(
-#     money_at_risk, stop_loss_pips_jpy, exchange_rate_jpy
-# )
-# print(forex_jpy_trade_size)
+
+
+entry_price = 3.13  # Einstiegspreis
+stop_loss_price = 2.90  # Stop-Loss-Preis
+
+rm = RiskManager()
+# Berechnung
+quantity = rm._calculate_crypto_trade_size(entry_price, stop_loss_price)
+print(quantity)

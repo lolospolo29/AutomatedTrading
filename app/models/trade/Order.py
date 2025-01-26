@@ -11,7 +11,7 @@ class Order:
     trade_id: str=None
     entry_frame_work: FrameWork=None
     confirmations: list[FrameWork]=[]
-    order_result_status: OrderResultStatusEnum=None
+    order_result_status: str=None
 
     risk_percentage: float=None
     money_at_risk: float=None

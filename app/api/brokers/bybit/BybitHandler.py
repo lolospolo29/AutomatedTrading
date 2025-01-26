@@ -4,6 +4,7 @@ import time
 from app.api.brokers.bybit.Bybit import Bybit
 from app.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
 from app.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
+from app.api.brokers.bybit.get.FundingHistory import FundingHistory
 from app.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from app.api.brokers.bybit.get.OrderHistory import OrderHistory
 from app.api.brokers.bybit.get.PostionInfo import PositionInfo
@@ -12,6 +13,7 @@ from app.api.brokers.bybit.post.CancelAllOrers import CancelAllOrders
 from app.api.brokers.bybit.post.CancelOrder import CancelOrder
 from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
 from app.api.brokers.bybit.post.SetLeverage import SetLeverage
+from app.api.brokers.models.BrokerFunding import BrokerFunding
 from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.helper.registry.RateLimitRegistry import RateLimitRegistry
@@ -158,6 +160,38 @@ class BybitHandler(IBrokerHandler):
             previousCursor = nextPageCursor
             orderHistory.cursor = nextPageCursor
         return brokerOrderList
+
+    @rate_limit_registry.rate_limited
+    def return_funding_history(self, request_params: RequestParameters) -> list[BrokerFunding]:
+        fundingHistory: FundingHistory = (self._class_mapper.map_args_to_dataclass
+                                      (FundingHistory, request_params, RequestParameters))
+
+        logger.info(f"Sending API-Call to Return Funding History  Bybit,Symbol:{request_params.symbol}")
+        brokeFundingList: list[BrokerFunding] = []
+        # Validierung der Eingabeparameter
+        if not fundingHistory.validate():
+            raise ValueError("The Fields that were required were not given")
+
+        endPoint = EndPointEnum.HISTORY.value
+
+        logger.info(f"Request Bybit Return Funding History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
+        method = "get"
+
+        params = fundingHistory.to_query_string()
+        logger.info(f"Request Return Funding History Bybit,Symbol:{request_params.symbol}")
+        responseJson = self.__broker.send_request(endPoint, method, params)
+        if not responseJson.get("retMsg") == "OK":
+            raise ValueError(responseJson.get("retMsg"))
+
+        objList = responseJson.get("result").get("list")
+        category = responseJson.get("result").get("category")
+
+        for obj in objList:
+            bf: BrokerOrder = self._class_mapper.map_dict_to_dataclass(obj, BrokerFunding)
+            bf.category = category
+            brokeFundingList.append(bf)
+
+        return brokeFundingList
 
     # endregion
 

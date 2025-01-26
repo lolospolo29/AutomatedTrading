@@ -91,6 +91,7 @@ class TradeManager:
                         self._mongo_db_trades.add_trade_to_db(trade)
                 except Exception as e:
                     logger.error(f"Write Trade Error,TradeId: {trade.id}: {e}")
+                    raise ValueError(e)
 
     def __update_trade_in_db(self, trade: Trade) -> None:
         with self._lock:
@@ -102,16 +103,17 @@ class TradeManager:
                         self._mongo_db_trades.update_trade(trade)
                 except Exception as e:
                     logger.error(f"Update Trade Error,TradeId: {trade.id}: {e}")
+                    raise ValueError(e)
 
     def __write_order_to_db(self, order: Order) -> None:
         logger.info(f"Write Order To DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
-
         try:
             orderLock = self._lock_registry.get_lock(order.orderLinkId)
             with orderLock:
                 self._mongo_db_trades.add_order_to_db(order)
         except Exception as e:
             logger.error(f"Write Order To DB Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
+            raise ValueError(e)
 
     def __update_order_in_db(self, order: Order) -> None:
         logger.info(f"Update Order in DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
@@ -121,7 +123,7 @@ class TradeManager:
                 self._mongo_db_trades.update_order(order)
         except Exception as e:
             logger.error(f"Update Order DB Error,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
-
+            raise ValueError(e)
 
     # endregion
 
@@ -187,7 +189,7 @@ class TradeManager:
                 return exceptionOrders,trade
 
 
-    def update_trade(self, trade: Trade) -> None:
+    def update_trade(self, trade: Trade) -> Trade:
         tradeLock = self._lock_registry.get_lock(trade.id)
         with tradeLock:
             if trade.id in self._open_trades:
@@ -240,10 +242,9 @@ class TradeManager:
                                 self.__write_order_to_db(order)
                             except Exception as e:
                                 logger.warning("Write Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(orderLinkId=order.orderLinkId, e=e))
-                                raise ValueError("Write Order To DB Error")
                 except Exception as e:
                     logger.warning("Something went Wrong with Updating,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
-
+                return trade
     def archive_trade(self, trade: Trade) -> None:
         tradeLock = self._lock_registry.get_lock(trade.id)
         with tradeLock:
@@ -310,54 +311,54 @@ class TradeManager:
 
 
 
-trade_manager = TradeManager()
-
-relation = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
-relation2 = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
-
-
-pd = PDArray("A","Buy")
-
-order1 = Order()
-order1.confirmations.append(pd)
-
-order1.orderType = OrderTypeEnum.MARKET.value
-order1.order_result_status = OrderResultStatusEnum.NEW
-order1.category = "linear"
-order1.symbol = "XRPUSDT"
-order1.qty = str(3)
-order1.price = str(3.1)
-order1.orderLinkId = uuid.uuid4().__str__()
-order1.side = "Buy"
-
-order2 = Order()
-
-order2.orderType = OrderTypeEnum.LIMIT.value
-order2.category = "linear"
-order2.symbol = "XRPUSDT"
-order2.qty = str(3)
-order2.price = str(3.2)
-order2.triggerPrice = str(3.3)
-order2.triggerDirection = 1
-order2.orderLinkId = uuid.uuid4().__str__()
-order2.side = "Sell"
-
-trade1 = TradeBuilder().add_relation(relation).add_order(order1).add_order(order2).add_category("linear").build()
-
-trade_manager.register_trade(trade1)
-
-print(trade_manager.return_trades_for_relation(relation2))
-
-trades = trade_manager.return_trades_for_relation(relation2)
-
-trade_manager.place_trade(trade1)
-
-trades = trade_manager.return_trades_for_relation(relation)
-
-for res1 in trades:
-    trade_manager.update_trade(res1)
-
-trades = trade_manager.return_trades_for_relation(relation)
-
-for res2 in trades:
-    trade_manager.cancel_trade(res2)
+# trade_manager = TradeManager()
+#
+# relation = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
+# relation2 = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
+#
+#
+# pd = PDArray("A","Buy")
+#
+# order1 = Order()
+# order1.confirmations.append(pd)
+#
+# order1.orderType = OrderTypeEnum.MARKET.value
+# order1.order_result_status = OrderResultStatusEnum.NEW.value
+# order1.category = "linear"
+# order1.symbol = "XRPUSDT"
+# order1.qty = str(3)
+# order1.price = str(3.1)
+# order1.orderLinkId = uuid.uuid4().__str__()
+# order1.side = "Buy"
+#
+# order2 = Order()
+#
+# order2.orderType = OrderTypeEnum.LIMIT.value
+# order2.category = "linear"
+# order2.symbol = "XRPUSDT"
+# order2.qty = str(3)
+# order2.price = str(3.2)
+# order2.triggerPrice = str(3.3)
+# order2.triggerDirection = 1
+# order2.orderLinkId = uuid.uuid4().__str__()
+# order2.side = "Sell"
+#
+# trade1 = TradeBuilder().add_relation(relation).add_order(order1).add_order(order2).add_category("linear").build()
+#
+# trade_manager.register_trade(trade1)
+#
+# print(trade_manager.return_trades_for_relation(relation2))
+#
+# trades = trade_manager.return_trades_for_relation(relation2)
+#
+# trade_manager.place_trade(trade1)
+#
+# trades2 = trade_manager.return_trades_for_relation(relation)
+#
+# for res1 in trades2:
+#     trade_manager.update_trade(res1)
+#
+# trades3 = trade_manager.return_trades_for_relation(relation)
+#
+# for res2 in trades3:
+#     trade_manager.cancel_trade(res2)
