@@ -88,13 +88,13 @@ class TradeMapper:
 
             # List of attributes to set dynamically
             attributes = [
-                "trade_id", "orderStatus", "risk_percentage", "money_at_risk", "unrealisedPnL",
+                "trade_id", "orderStatus", "risk_percentage", "order_result_status","money_at_risk", "unrealisedPnL",
                 "orderLinkId", "orderType", "symbol", "category", "side", "qty", "orderId",
                 "isLeverage", "marketUnit", "orderFilter", "orderIv", "stopLoss", "takeProfit",
                 "price", "timeInForce", "closeOnTrigger", "reduceOnly", "triggerPrice",
                 "triggerBy", "tpTriggerBy", "slTriggerBy", "triggerDirection", "tpslMode",
                 "tpLimitPrice", "tpOrderType", "slOrderType", "slLimitPrice", "lastPriceOnCreated","createdTime",
-                "updatedTime","leavesQty","stopOrderType","orderStatus"
+                "updatedTime","leavesQty","stopOrderType","orderStatus","leavesValue"
             ]
 
             # Dynamically assign attributes
@@ -142,8 +142,9 @@ class TradeMapper:
             trade.leverage = trade_dict.get("leverage", 0.0)
             trade.size = trade_dict.get("size", 0.0)
             trade.tradeMode = trade_dict.get("tradeMode", "")
-            trade.updatedTime = trade_dict.get("leverage", 0.0)
-            trade.createdTime = trade_dict.get("leverage", 0.0)
+            trade.updatedTime = trade_dict.get("updatedTime", 0.0)
+            trade.createdTime = trade_dict.get("createdTime", 0.0)
+            trade.positionValue = trade_dict.get("positionValue", 0.0)
 
             return trade
         except Exception:

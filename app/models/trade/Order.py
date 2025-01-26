@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.models.calculators.frameworks.FrameWork import FrameWork
+from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -8,8 +9,9 @@ class Order:
 
     # Self Defined Parameters
     trade_id: str=None
-    entry_frame_work: FrameWork
-    confirmations: list[FrameWork]
+    entry_frame_work: FrameWork=None
+    confirmations: list[FrameWork]=[]
+    order_result_status: OrderResultStatusEnum=None
 
     risk_percentage: float=None
     money_at_risk: float=None
@@ -61,6 +63,7 @@ class Order:
     leavesQty: str=None
     stopOrderType:str=None
     orderStatus: str=None
+    leavesValue: str=None
 
     def __init__(self):
         self.created_at = str(datetime.now())

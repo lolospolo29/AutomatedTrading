@@ -7,6 +7,7 @@ class BrokerOrder:
     avgPrice: Optional[str] = field(default=None)
     blockTradeId: Optional[str] = field(default=None)
     cancelType: Optional[str] = field(default=None)
+    category: Optional[str] = field(default=None)
     closeOnTrigger: Optional[bool] = field(default=None)
     createType: Optional[str] = field(default=None)
     createdTime: Optional[str] = field(default=None)

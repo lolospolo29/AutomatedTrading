@@ -39,3 +39,7 @@ class BrokerFacade:
     def return_order_history(self, request_params:RequestParameters):
         if request_params.broker.upper() in self.__registry:
             return self.__registry[request_params.broker].return_order_history(request_params)
+
+    def set_leverage(self, request_params:RequestParameters):
+        if request_params.broker.upper() in self.__registry:
+            return self.__registry[request_params.broker].set_leverage(request_params)

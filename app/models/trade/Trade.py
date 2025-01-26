@@ -25,6 +25,7 @@ class Trade:
         self.tradeMode = 0
         self.updatedTime = 0
         self.createdTime = 0
+        self.positionValue = 0
 
 
     def to_dict(self):

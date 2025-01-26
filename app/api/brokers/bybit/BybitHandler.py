@@ -25,6 +25,7 @@ from app.monitoring.retry_request import retry_request
 
 rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
+
 class BybitHandler(IBrokerHandler):
 
     def __init__(self):
@@ -60,10 +61,13 @@ class BybitHandler(IBrokerHandler):
                 raise ValueError(responseJson.get("retMsg"))
 
             objList = responseJson.get("result").get("list")
+            category = responseJson.get("result").get("category")
             nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
 
             for obj in objList:
-                brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
+                bo: BrokerOrder = self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder)
+                bo.category = category
+                brokerOrderList.append(bo)
 
             time.sleep(1)
             if nextPageCursor == previousCursor or nextPageCursor == "":
@@ -73,9 +77,8 @@ class BybitHandler(IBrokerHandler):
             openAndClosedOrders.cursor = nextPageCursor
         return brokerOrderList
 
-
     @rate_limit_registry.rate_limited
-    def return_position_info(self, request_params:RequestParameters) -> list[BrokerPosition]:
+    def return_position_info(self, request_params: RequestParameters) -> list[BrokerPosition]:
         positionInfo: PositionInfo = (self._class_mapper.map_args_to_dataclass
                                       (PositionInfo, request_params, RequestParameters))
         logger.info(f"Sending Return Position Info API-Call to Bybit,Symbol:{request_params.symbol}")
@@ -102,9 +105,9 @@ class BybitHandler(IBrokerHandler):
             nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
 
             for obj in objList:
-                position = self._class_mapper.map_dict_to_dataclass(obj, BrokerPosition)
-                position.category = category
-                brokerPositionList.append(position)
+                pi: PositionInfo = self._class_mapper.map_dict_to_dataclass(obj, BrokerPosition)
+                pi.category = category
+                brokerPositionList.append(pi)
 
             time.sleep(1)
             if nextPageCursor == previousCursor or nextPageCursor == "":
@@ -113,7 +116,6 @@ class BybitHandler(IBrokerHandler):
             previousCursor = nextPageCursor
             positionInfo.cursor = nextPageCursor
         return brokerPositionList
-
 
     @rate_limit_registry.rate_limited
     def return_order_history(self, request_params: RequestParameters) -> list[BrokerOrder]:
@@ -141,10 +143,13 @@ class BybitHandler(IBrokerHandler):
                 raise ValueError(responseJson.get("retMsg"))
 
             objList = responseJson.get("result").get("list")
+            category = responseJson.get("result").get("category")
             nextPageCursor: str = responseJson.get("result").get("nextPageCursor")
 
             for obj in objList:
-                brokerOrderList.append(self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder))
+                bo: BrokerOrder = self._class_mapper.map_dict_to_dataclass(obj, BrokerOrder)
+                bo.category = category
+                brokerOrderList.append(bo)
 
             time.sleep(1)
             if nextPageCursor == previousCursor or nextPageCursor == "":
@@ -158,7 +163,7 @@ class BybitHandler(IBrokerHandler):
 
     # region post Methods
     @rate_limit_registry.rate_limited
-    def amend_order(self, request_params:RequestParameters) -> BrokerOrder:
+    def amend_order(self, request_params: RequestParameters) -> BrokerOrder:
         amendOrder: AmendOrder = (self._class_mapper.map_args_to_dataclass
                                   (AmendOrder, request_params, RequestParameters))
         logger.info(
@@ -179,11 +184,11 @@ class BybitHandler(IBrokerHandler):
         if not responseJson.get("retMsg") == "OK":
             raise ValueError(responseJson.get("retMsg"))
 
-        result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
+        result:BrokerOrder = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
         return result
 
     @rate_limit_registry.rate_limited
-    def cancel_all_orders(self, request_params:RequestParameters) -> list[BrokerOrder]:
+    def cancel_all_orders(self, request_params: RequestParameters) -> list[BrokerOrder]:
         cancelOrders: CancelAllOrders = (self._class_mapper.map_args_to_dataclass
                                          (CancelAllOrders, request_params, RequestParameters))
         logger.info(f"Sending API-Call to Cancel All Orders Bybit,Symbol:{request_params.symbol}")
@@ -201,7 +206,7 @@ class BybitHandler(IBrokerHandler):
         brokerOrderList: list[BrokerOrder] = []
 
         responseJson = self.__broker.send_request(endPoint, method, params)
-        if not responseJson.get("retMsg") == "OK":
+        if not responseJson.get("success") == "1":
             raise ValueError(responseJson.get("retMsg"))
 
         objList = responseJson.get("result").get("list")
@@ -211,7 +216,7 @@ class BybitHandler(IBrokerHandler):
         return brokerOrderList
 
     @rate_limit_registry.rate_limited
-    def cancel_order(self, request_params:RequestParameters) -> BrokerOrder:
+    def cancel_order(self, request_params: RequestParameters) -> BrokerOrder:
         cancelOrder: CancelOrder = (self._class_mapper.map_args_to_dataclass
                                     (CancelOrder, request_params, RequestParameters))
         logger.info(
@@ -234,10 +239,11 @@ class BybitHandler(IBrokerHandler):
         return result
 
     @rate_limit_registry.rate_limited
-    def place_order(self, request_params:RequestParameters) -> BrokerOrder:
+    def place_order(self, request_params: RequestParameters) -> BrokerOrder:
         placeOrder: PlaceOrder = (self._class_mapper.map_args_to_dataclass
                                   (PlaceOrder, request_params, RequestParameters))
-        logger.info(f"Sending API-Call to Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
+        logger.info(
+            f"Sending API-Call to Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not placeOrder.validate():
             raise ValueError("The Fields that were required were not given")
@@ -254,12 +260,12 @@ class BybitHandler(IBrokerHandler):
         result = self._class_mapper.map_dict_to_dataclass(responseJson['result'], BrokerOrder)
         return result
 
-
     @rate_limit_registry.rate_limited
-    def set_leverage(self, request_params:RequestParameters) -> bool:
+    def set_leverage(self, request_params: RequestParameters) -> bool:
         setLeverage: SetLeverage = (self._class_mapper.map_args_to_dataclass
-                                   (SetLeverage, request_params, RequestParameters))
-        logger.info(f"Sending API-Call to Set Leverage Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
+                                    (SetLeverage, request_params, RequestParameters))
+        logger.info(
+            f"Sending API-Call to Set Leverage Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not setLeverage.validate():
             raise ValueError("The Fields that were required were not given")
@@ -267,7 +273,8 @@ class BybitHandler(IBrokerHandler):
         params = setLeverage.to_dict()
 
         endPoint = EndPointEnum.SETLEVERAGE.value
-        logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
+        logger.info(
+            f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
 
         method = "post"
 
@@ -292,4 +299,3 @@ class BybitHandler(IBrokerHandler):
 # request.triggerPrice = "1.9"
 # request.price = "1.9"
 # bh.cancel_all_orders(request)
-

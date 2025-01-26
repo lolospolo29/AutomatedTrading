@@ -78,7 +78,7 @@ class TradingService:
 
         result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe)
 
-        if result == StrategyResultStatusEnum.NEWORDER.value:
+        if result.status.NEWTRADE.value:
             self._logger.info(f"New Entry found: {relation.asset}")
 
             self._trade_manager.register_trade(result.trade)
@@ -87,4 +87,9 @@ class TradingService:
             if exceptionOrders:
                 pass
                 # todo
+            # todo execptions handling,exceptions
+            # todo pydantic
+            # todo testing
+            # todo testing module
+            # todo monitoring + blazor tool
 

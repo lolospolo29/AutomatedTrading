@@ -3,7 +3,6 @@ from enum import Enum
 
 class StrategyResultStatusEnum(Enum):
     NEWTRADE = "New Trade"
-    NEWORDER = "New Order"
-    AMENDORDER = "Amend Order"
-    CANCELL = "Cancel Order"
+    CHANGED = "Changed Trade"
+    CLOSE = "Close Trade"
     NONEW = "No New Found"

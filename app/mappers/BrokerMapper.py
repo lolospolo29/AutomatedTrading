@@ -36,15 +36,11 @@ class BrokerMapper:
             logger.error(f"Mapping Error for Order,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
 
     @staticmethod
-    def map_broker_position_to_trade(broker_position:BrokerPosition, trade:Trade,check_time:bool=None) -> Trade:
+    def map_broker_position_to_trade(broker_position:BrokerPosition, trade:Trade,check_time:bool=True) -> Trade:
         try:
-            try:
-                if broker_position.updatedTime < trade.updatedTime and check_time:
-                    return trade
-                else:
-                    trade.createdTime = broker_position.createdTIme
-                    trade.updatedTime = trade.updatedTime
-            finally:
+            if int(broker_position.updatedTime) > trade.updatedTime and check_time:
+                trade.createdTime = broker_position.createdTIme
+                trade.updatedTime = broker_position.updatedTime
                 trade.tradeMode = broker_position.tradeMode
                 trade.side = broker_position.side
                 trade.tpslMode = broker_position.tpslMode
@@ -52,7 +48,10 @@ class BrokerMapper:
                 trade.leverage = broker_position.leverage
                 trade.size = broker_position.size
                 trade.tradeMode = broker_position.tradeMode
+                trade.positionValue = broker_position.positionValue
 
                 return trade
         except Exception as e:
             logger.error(f"Update Trade Error,TradeId: {trade.id}: {e}")
+        finally:
+            return trade

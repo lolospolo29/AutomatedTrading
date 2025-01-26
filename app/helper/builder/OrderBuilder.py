@@ -20,9 +20,9 @@ class OrderBuilder:
     def __init__(self):
         self.order = Order()
 
-    def create_order(self,relation:AssetBrokerStrategyRelation, entry_frame_work:
-                     FrameWork, symbol:str, confirmations:list[FrameWork], category:CategoryEnum, side:OrderDirectionEnum,
-                     risk_percentage:float, order_number:int, trade_id:str):
+    def create_order(self,relation:AssetBrokerStrategyRelation,  symbol:str, confirmations:list[FrameWork], category:str, side:str,
+                     risk_percentage:float, order_number:int, trade_id:str,entry_frame_work:
+                     FrameWork=None):
         o = self.order
         o.trade_id = trade_id
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
@@ -31,8 +31,8 @@ class OrderBuilder:
         o.confirmations = confirmations
         o.entry_frame_work = entry_frame_work
         o.symbol = symbol
-        o.category = category.value
-        o.side = side.value
+        o.category = category
+        o.side = side
         o.money_at_risk = 0.0
         o.unrealizedProfit = 0.0
         o.risk_percentage = risk_percentage
