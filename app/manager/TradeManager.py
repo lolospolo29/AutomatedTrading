@@ -140,7 +140,7 @@ class TradeManager:
                     try:
                         self.__place_order(trade.relation.broker, order)
                     except Exception as e:
-                        logger.error(f"Place Order Error,"
+                        logger.warning(f"Place Order Error,"
                                      f"OrderLinkId: {order.orderLinkId},"
                                      f"TradeId:{order.trade_id},Symbol:{order.symbol},OrderType:{order.orderType}")
                         exceptionOrders.append(order)
@@ -164,6 +164,7 @@ class TradeManager:
                         if order.order_result_status == OrderResultStatusEnum.NEW.value:
                            self.__place_order(trade.relation.broker,order)
                     except Exception as e:
+                        exception_orders.append(order)
                         logger.warning("Amending Order Error,OrderLinkId:{id},Order Status:{status},"
                                        "Symbol:{symbol}".format(id=order.orderLinkI,
                                                                 status=order.order_result_status,symbol=order.symbol))
@@ -175,6 +176,7 @@ class TradeManager:
             if trade.id in self._open_trades:
                 trade = self._open_trades[trade.id]
                 exceptionOrders: list[Order] = []
+
                 for order in trade.orders:
                     try:
                         self.__cancel_order(trade.relation.broker, order)
@@ -202,7 +204,7 @@ class TradeManager:
                     cancel_size_order = self.__place_order(trade.relation.broker,cancel_size_order)
                 except Exception as e:
                     exceptionOrders.append(cancel_size_order)
-                    logger.error(f"Failed To Cancel Order,OrderLinkId: {cancel_size_order.orderLinkId},TradeId:{cancel_size_order.trade_id},Symbol:{cancel_size_order.symbol}")
+                    logger.warning(f"Failed To Cancel Order,OrderLinkId: {cancel_size_order.orderLinkId},TradeId:{cancel_size_order.trade_id},Symbol:{cancel_size_order.symbol}")
 
                 return exceptionOrders,trade
 
@@ -224,11 +226,11 @@ class TradeManager:
                             if order.orderLinkId == onco.orderLinkId:
                                 updatedOrder = True
                                 self._broker_mapper.map_broker_order_to_order(onco, order)
-
-                        if not updatedOrder:
-                            newOrder = Order()
-                            newOrder = self._broker_mapper.map_broker_order_to_order(onco, newOrder)
-                            trade.orders.append(newOrder)
+                        #
+                        # if not updatedOrder:
+                        #     newOrder = Order()
+                        #     newOrder = self._broker_mapper.map_broker_order_to_order(onco, newOrder)
+                        #     trade.orders.append(newOrder)
 
                     for order in trade.orders:
                         request.orderLinkId = order.orderLinkId

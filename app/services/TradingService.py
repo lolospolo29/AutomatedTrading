@@ -161,7 +161,7 @@ class TradingService:
 
         if result.status.CLOSE.value:
             self._logger.info(f"Close Exit found: {relation.asset}")
-
+            self._trade_manager.update_trade(result.trade)
             self._closing_trade(result.trade)
 
         if result.status.CHANGED.value:
@@ -171,6 +171,7 @@ class TradingService:
             self._trade_manager.update_trade(trade)
 
             if exceptionOrders:
+                logger.error("Found Exception Orders,TradeId:{id}".format(id=result.trade.id))
                 self._closing_trade(result.trade)
 
     def _closing_trade(self,trade:Trade)->None:
@@ -178,7 +179,7 @@ class TradingService:
         exceptionOrders, trade = self._trade_manager.cancel_trade(trade)
         trade = self._trade_manager.update_trade(trade)
         self._trade_manager.archive_trade(trade)
-        self._logger.warning(f"Canceled Trade: TradeId:{trade.id},"
+        self._logger.info(f"Canceled Trade: TradeId:{trade.id},"
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
 
             # todo smt
