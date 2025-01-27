@@ -148,8 +148,26 @@ class TradeManager:
 
                 return exceptionOrders,trade
     def amend_trade(self, trade: Trade) -> tuple[list[Order],Trade]:
-        pass
-        #todo
+        tradeLock = self._lock_registry.get_lock(trade.id)
+        with tradeLock:
+            if trade.id in self._open_trades:
+                trade:Trade = self._open_trades[trade.id]
+
+                exception_orders: list[Order] = []
+
+                for order in trade.orders:
+                    try:
+                        if order.order_result_status == OrderResultStatusEnum.AMEND.value:
+                            self.__amend_order(trade.relation.broker,order)
+                        if order.order_result_status == OrderResultStatusEnum.CLOSE.value:
+                            self.__cancel_order(trade.relation.broker,order)
+                        if order.order_result_status == OrderResultStatusEnum.NEW.value:
+                           self.__place_order(trade.relation.broker,order)
+                    except Exception as e:
+                        logger.warning("Amending Order Error,OrderLinkId:{id},Order Status:{status},"
+                                       "Symbol:{symbol}".format(id=order.orderLinkI,
+                                                                status=order.order_result_status,symbol=order.symbol))
+            return exception_orders,trade
 
     def cancel_trade(self, trade: Trade) -> tuple[list[Order],Trade]:
         tradeLock = self._lock_registry.get_lock(trade.id)
@@ -245,6 +263,7 @@ class TradeManager:
                 except Exception as e:
                     logger.warning("Something went Wrong with Updating,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
                 return trade
+
     def archive_trade(self, trade: Trade) -> None:
         tradeLock = self._lock_registry.get_lock(trade.id)
         with tradeLock:

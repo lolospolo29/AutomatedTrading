@@ -6,6 +6,8 @@ import pytz
 
 from app.db.mongodb.MongoDB import MongoDB
 from app.manager.initializer.SecretsManager import SecretsManager
+from app.mappers.AssetMapper import AssetMapper
+from app.mappers.TradeMapper import TradeMapper
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
 
@@ -26,6 +28,7 @@ class mongoDBData:
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
 
             self._secret_manager: SecretsManager = SecretsManager()
+            self._trade_mapper:TradeMapper = TradeMapper()
             self._mongo_db_data: MongoDB = MongoDB("TradingData", self._secret_manager.return_secret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
 
@@ -62,3 +65,14 @@ class mongoDBData:
             "Candle.iso_time": {"$gte": three_days_ago_utc}
         }
         return self._mongo_db_data.find(asset, query)
+
+    def receive_asset_data(self,asset)->list[Candle]:
+        candlesDict:list =  self._mongo_db_data.find(asset, None)
+        candles:list[Candle] = []
+        for candle in candlesDict:
+            try:
+                candles.append(self._trade_mapper.map_candle(candle))
+            finally:
+                continue
+
+        return candles

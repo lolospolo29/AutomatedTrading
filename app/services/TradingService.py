@@ -182,7 +182,6 @@ class TradingService:
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
 
             # todo smt
-            # todo risk manager lot size
             # todo order builder
             # todo execptions handling,exceptions
             # todo pydantic

@@ -59,9 +59,17 @@ class AssetManager:
         except Exception as e:
             logger.critical("Failed to add candle to db with exception {}".format(e))
 
-    def received_candles(self, asset: str) -> Candle:
-        pass
-    # todo
+    def received_candles(self, asset: str):
+        if asset in self.assets:
+            logger.debug(f"Adding candle to db:{asset}")
+            try:
+                candles:list[Candle] = self._mongo_db_data.receive_asset_data(asset)
+
+                for candle in candles:
+                    self.assets[candle.asset].add_candle(candle)
+
+            except Exception as e:
+                logger.critical("Failed to add candle to db with exception {}".format(e))
 
     # endregion
 

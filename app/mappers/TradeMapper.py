@@ -1,5 +1,5 @@
-from typing import Optional, Dict, Any, List
 from datetime import datetime
+from typing import Optional, Dict, Any
 
 from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExceptionError
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
@@ -14,6 +14,7 @@ from app.monitoring.logging.logging_startup import logger
 
 class TradeMapper:
     """Maps from the Trade/Order Modells"""
+
     @staticmethod
     def parse_datetime(field: Any) -> Optional[datetime]:
         """
@@ -44,7 +45,7 @@ class TradeMapper:
                 timeframe=int(candle.get("timeframe", 0)),
                 id=candle.get("id")
             )
-        except Exception:
+        except Exception as e:
             raise MappingFailedExceptionError("Candle")
 
     def map_framework(self,data: Dict[str, Any]) -> Optional[Any]:

@@ -152,12 +152,3 @@ class RiskManager:
         return self._round_down(abs(qty * order.risk_percentage))
 
     # endregion
-
-
-entry_price = 3.13  # Einstiegspreis
-stop_loss_price = 2.90  # Stop-Loss-Preis
-
-rm = RiskManager()
-# Berechnung
-quantity = rm._calculate_crypto_trade_size(entry_price, stop_loss_price)
-print(quantity)
