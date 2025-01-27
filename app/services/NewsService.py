@@ -26,12 +26,13 @@ class NewsService:
         self.news_days = self.economic_scrapper.return_calendar()
         self.logger.info("News Days received : {count}".format(count=self.news_days))
 
-    def is_news_ahead(self, hour: int = 1) -> bool:
+    def is_news_ahead(self, hour: int = 1) -> tuple[bool, str]:
         """
         Checks if the news day is ahead.
 
         Returns:
             True if the news day is ahead, False otherwise.
+            And the message
         """
         try:
             utc_now = datetime.now(pytz.utc)
@@ -50,11 +51,11 @@ class NewsService:
                                     news.time.hour - hour == utc_minus_5.hour or news.time.hour + hour == utc_minus_5.hour or
                                     news.time.hour == utc_minus_5.hour):
                                 self.logger.info(f"News Day {newsDay.day_iso} ahead")
-                                return True
+                                return True,"News {title}: At {news_hour}".format(title=news.title,news_hour=news.time.hour)
                 except Exception as e:
                     logger.critical(f"News Day failed: {e}")
                 finally:
                     continue
-            return False
+            return False,""
         except Exception as e:
             self.logger.critical(e)

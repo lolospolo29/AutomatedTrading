@@ -41,12 +41,12 @@ class TradingService:
             self._strategy_manager: StrategyManager = StrategyManager()
             self._news_service :NewsService = NewsService()
             #self._news_service.receive_news()
+            self.news_event_ahead_counter = 0
             self._logger = logger
             self._logger.info("TradingService initialized")
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
-
     @log_time
     def handle_price_action_signal(self, jsonData: Dict[str, Any]) -> None:
         """
@@ -60,7 +60,9 @@ class TradingService:
 
         candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
 
-        if not self._news_service.is_news_ahead():
+        is_news_ahead,message = self._news_service.receive_news()
+
+        if not is_news_ahead:
 
             relations: list[AssetBrokerStrategyRelation] = self._asset_manager.return_relations(candle.asset, candle.broker)
 
@@ -72,6 +74,11 @@ class TradingService:
                 threads.append(thread)
             for thread in threads:
                 thread.start()
+
+        elif is_news_ahead:
+            self.news_event_ahead_counter += 1
+            if self.news_event_ahead_counter % 10 == 0:
+                self._logger.info(message)
 
 
     def _process_relation_strategy(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation):
@@ -169,10 +176,8 @@ class TradingService:
 
             exceptionOrders,trade = self._trade_manager.amend_trade(result.trade)
             self._trade_manager.update_trade(trade)
-
-            if exceptionOrders:
-                logger.error("Found Exception Orders,TradeId:{id}".format(id=result.trade.id))
-                self._closing_trade(result.trade)
+        if result.status.NOCHANGE.value and timeframe >= 5:
+            self._trade_manager.update_trade(trade)
 
     def _closing_trade(self,trade:Trade)->None:
 
@@ -181,12 +186,11 @@ class TradingService:
         self._trade_manager.archive_trade(trade)
         self._logger.info(f"Canceled Trade: TradeId:{trade.id},"
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
-
+            # todo handler automated
             # todo smt
-            # todo order builder
             # todo execptions handling,exceptions
             # todo pydantic
             # todo testing
             # todo testing module
             # todo monitoring + blazor tool
-
+            # todo telegram

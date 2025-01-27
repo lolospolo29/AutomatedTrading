@@ -1,13 +1,10 @@
-import string
 import random
-from datetime import datetime
+import string
 
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.calculators.frameworks.FrameWork import FrameWork
-from app.models.trade.enums.CategoryEnum import CategoryEnum
+from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
-from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
-from app.models.trade.enums.OrderStatusEnum import OrderStatusEnum
 from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.models.trade.enums.TPSLModeEnum import TPSLModeEnum
 from app.models.trade.enums.TimeInForceEnum import TimeInForceEnum
@@ -36,8 +33,9 @@ class OrderBuilder:
         o.money_at_risk = 0.0
         o.unrealizedProfit = 0.0
         o.risk_percentage = risk_percentage
+        o.order_result_status = OrderResultStatusEnum.NEW.value
         o.orderType = OrderTypeEnum.MARKET.value # set Default
-        logger.info(f"Building Order, OrderLinkId:{o.orderLinkId}, Symbol:{o.symbol},TradeId:{o.trade_id}")
+        logger.debug(f"Building Order, OrderLinkId:{o.orderLinkId}, Symbol:{o.symbol},TradeId:{o.trade_id}")
         return self
 
     def set_defaults(self,price:str=None, time_in_force:TimeInForceEnum=None, take_profit:str=None,
@@ -63,8 +61,6 @@ class OrderBuilder:
             order.isLeverage = is_leverage
         if market_unit is not None:
             order.marketUnit = market_unit
-        if order_filter is not None:
-            order.orderFilter = order_filter
         if orderlv is not None:
             order.orderlv = orderlv
         return self

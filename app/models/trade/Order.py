@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from app.models.calculators.frameworks.FrameWork import FrameWork
-from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.monitoring.logging.logging_startup import logger
 
 
