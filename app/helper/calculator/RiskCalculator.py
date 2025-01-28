@@ -1,5 +1,6 @@
 from typing import Tuple, Any
 
+from app.helper.calculator.PositionSizeCalculator import PositionSizeCalculator
 from app.helper.calculator.ProfitStopAnalyzer import ProfitStopAnalyzer
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -38,6 +39,7 @@ class RiskCalculator:
             self._trailing_stop = TrailingStop()
             self.pd_risk_calculator = PDRiskCalculator()
             self.profit_stop_analyzer = ProfitStopAnalyzer()
+            self.position_size_calculator = PositionSizeCalculator()
             self._initialized: bool = True  # Mark as initialized
     # endregion
 

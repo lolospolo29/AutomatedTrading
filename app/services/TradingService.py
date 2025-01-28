@@ -186,11 +186,6 @@ class TradingService:
         self._trade_manager.archive_trade(trade)
         self._logger.info(f"Canceled Trade: TradeId:{trade.id},"
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
-            # todo handler automated
-            # todo smt
-            # todo execptions handling,exceptions
-            # todo pydantic
             # todo testing
             # todo testing module
-            # todo monitoring + blazor tool
-            # todo telegram
+            # todo execptions handling,exceptions

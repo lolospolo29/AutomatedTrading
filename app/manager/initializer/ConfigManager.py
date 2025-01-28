@@ -85,12 +85,12 @@ class ConfigManager:
             logger.info("Finished ConfigManager")
 
     def _initialize_managers(self):
-        for relation in self._relations:
-            strategy = self._strategy_factory.return_class(relation.strategy)
-            if isinstance(strategy, Strategy):
-                self._strategy_manager.register_strategy(relation, strategy)
         for asset in self._assets:
             try:
+                for smtPair in self._smtPairs:
+                    for pair in smtPair.smt_pairs:
+                        if pair == asset.name:
+                            asset.add_smt_pair(smtPair)
                 for relation in self._relations:
                     try:
                         if relation.asset == asset.name:
@@ -102,13 +102,30 @@ class ConfigManager:
 
                             for expectedTimeFrame in expectedTimeFrames:
                                 asset.add_candle_series(expectedTimeFrame.timeframe, expectedTimeFrame.max_Len,
-                                                        relation.broker)
+                                                      relation.broker)
+                        for smt_pair in asset.smt_pairs:
+                            try:
+                                if smt_pair == relation.strategy:
+                                    asset1 = smt_pair.smt_pairs[0]
+                                    asset2 = smt_pair.smt_pairs[1]
+                                    strategy = self._strategy_factory.return_smt_strategy(relation.strategy,smt_pair.correlation,asset1,asset2)
+                                    if isinstance(strategy, Strategy):
+                                        if asset1 == asset.name:
+                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset2)
+                                        if asset2 == asset.name:
+                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset1)
+                            except Exception as e:
+                                logger.warning("Failed to register asset SMT Pair Strategy{}".format(asset.name))
+                        try:
+                            strategy = self._strategy_factory.return_strategy(relation.strategy)
+                            if isinstance(strategy, Strategy):
+                                self._strategy_manager.register_strategy(relation, strategy)
+                        except  Exception as e:
+                            logger.warning("Failed to register asset Strategy {}".format(asset.name))
+
                     except Exception as e:
                         logger.warning("Failed to register asset {}".format(asset.name))
-                for smtPair in self._smtPairs:
-                        for pair in smtPair.smt_pairs:
-                            if pair == asset.name:
-                                asset.add_smt_pair(smtPair)
+
                 self._asset_manager.register_asset(asset)
             except Exception as e:
                 logger.warning("Failed to register asset {}".format(asset.name))
@@ -134,6 +151,7 @@ class ConfigManager:
                 logger.warning("Failed within doc {}".format(doc.id))
             finally:
                 continue
+
     def _is_typ_asset_add_asset(self, typ: str, doc: dict) -> None:
         if typ == "Asset":
             asset: Asset = Asset((doc.get(typ)).get("name"), self._asset_classes[doc.get(typ).get("assetClass")])

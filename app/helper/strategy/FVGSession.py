@@ -10,11 +10,10 @@ from app.models.calculators.frameworks.Structure import Structure
 from app.models.calculators.frameworks.time.London import LondonOpen
 from app.models.calculators.frameworks.time.NYOpen import NYOpen
 
-
+# FVG CRT 4H
 class FVGSession(Strategy):
     def __init__(self):
         name:str = "FVG"
-        super().__init__(name,False)
 
         self._PDMediator = PDMediator()
         self._ConfirmationMediator = StructureMediator()
@@ -35,6 +34,8 @@ class FVGSession(Strategy):
         self.expectedTimeFrames.append(timeFrame2)
         self.expectedTimeFrames.append(timeFrame3)
         self.expectedTimeFrames.append(timeFrame4)
+        super().__init__(name,self.expectedTimeFrames)
+
 
     def isInTime(self,time) -> bool:
         if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):

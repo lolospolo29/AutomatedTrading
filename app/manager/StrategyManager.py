@@ -29,6 +29,18 @@ class StrategyManager:
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
+    def register_smt_strategy(self, relation_smt:AssetBrokerStrategyRelation, strategy_smt:Strategy, asset2:str) -> bool:
+        if relation_smt not in self.strategies:
+            for relation, strategy in self.strategies.items():  # Iteriere durch Relation-Struktur und Strategien
+                if relation.asset == asset2:  # Prüfe, ob die Relation das gewünschte Asset enthält
+                    self.strategies[relation_smt] = strategy
+                    return True
+            self.strategies[relation_smt] = strategy_smt
+            logger.info(f"Strategy {strategy_smt.name} registered for relation {relation_smt}")
+            return True
+        else:
+            logger.info(f"Strategy {strategy_smt.name} already registered")
+            return False
 
     def register_strategy(self, relation:AssetBrokerStrategyRelation, strategy:Strategy) -> bool:
         if relation not in self.strategies:

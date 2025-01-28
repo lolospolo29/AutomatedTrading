@@ -71,6 +71,7 @@ class PDMediator:
             logger.error("Error calculating PD array: {}".format(e))
 
     def return_candle_range(self, pd_type: str, pdArray: PDArray) -> tuple[float, float]:
+        """:return low and High of the PD Array"""
         try:
             if pd_type == "BPR":
                 return self._bpr.return_candle_range(pdArray)
