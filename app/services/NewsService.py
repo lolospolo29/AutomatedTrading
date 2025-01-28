@@ -8,7 +8,19 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class NewsService:
-    """Uses the EconomicScrapper to scrap news articles and store them in the List"""
+    """
+    Handles operations related to economic news, including receiving and analyzing news days.
+
+    This class interacts with an economic scrapper to receive news events and determine if any
+    relevant news is ahead within a specified timeframe.
+
+    :ivar economic_scrapper: An instance of the EconomicScrapper used to fetch economic news data.
+    :type economic_scrapper: EconomicScrapper
+    :ivar news_days: A list holding news days and their corresponding news events.
+    :type news_days: list[NewsDay]
+    :ivar logger: Logger instance used for logging information, warnings, and errors.
+    :type logger: Logger
+    """
 
     def __init__(self):
         self.economic_scrapper = EconomicScrapper()

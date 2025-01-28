@@ -15,8 +15,31 @@ from app.services.NewsService import NewsService
 
 class TradingService:
     """
-    The Trading Service serves as the Interface between the Strategy,Asset and the Trade Manager.
-    Manages the Dataflow from Incoming Price Signals and fits it into a Business Logic
+    Manages the core trading operations, including price action signal handling, strategy evaluation,
+    and trade management. This service acts as an intermediary between asset management, strategy
+    execution, and trade execution layers in a trading platform.
+
+    Provides functionality for:
+    - Receiving price action signals and processing them through strategies.
+    - Managing trades based on strategy outputs.
+    - Handling entry and exit conditions for trades.
+
+    Thread-safe Singleton instance ensures centralized service usage within the application.
+
+    :ivar _asset_manager: Manages and tracks assets and their data.
+    :type _asset_manager: AssetManager
+    :ivar _trade_manager: Manages trade execution, amendments, and archival.
+    :type _trade_manager: TradeManager
+    :ivar _strategy_manager: Executes and evaluates trading strategies.
+    :type _strategy_manager: StrategyManager
+    :ivar _news_service: Handles news-related events, implications, or constraints in trading.
+    :type _news_service: NewsService
+    :ivar news_event_ahead_counter: Counter to track the number of encountered news events ahead.
+    :type news_event_ahead_counter: int
+    :ivar _logger: Logger instance for auditing and operational monitoring.
+    :type _logger: Logger
+    :ivar _initialized: Internal state flag for service initialization.
+    :type _initialized: bool
     """
     # region Singleton
 

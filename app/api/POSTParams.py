@@ -4,6 +4,14 @@ from dataclasses import asdict
 
 
 class POSTParams(ABC):
+    """
+    Represents an abstract base class for POST request parameters.
+
+    This class serves as a base for all POST request parameter containers.
+    It is intended to enforce the implementation of parameter validation
+    in derived classes, as well as to provide a standardized way to convert
+    the parameters into a JSON string format.
+    """
     @abstractmethod
     def validate(self):
         pass

@@ -10,6 +10,23 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class AssetManager:
+    """
+    Manages and centralizes operations related to financial assets.
+
+    This singleton class serves as the central repository for managing assets, including
+    registration, CRUD operations on candle data, and retrieval of asset-specific information
+    or relationships. It ensures safe concurrent access and provides utility methods for interacting
+    with the stored resources.
+
+    :ivar assets: A dictionary holding the registered assets, with asset names as keys and Asset
+        objects as values.
+    :type assets: dict[str, Asset]
+    :ivar _mongo_db_data: MongoDB data handler for interacting with the database.
+    :type _mongo_db_data: mongoDBData
+    :ivar _asset_mapper: AssetMapper object responsible for mapping data between external
+        systems and internal representations.
+    :type _asset_mapper: AssetMapper
+    """
     _instance = None
     _lock = threading.Lock()
 

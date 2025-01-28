@@ -44,15 +44,15 @@ class Unicorn(Strategy):
 
         super().__init__(name, self.expectedTimeFrames)
 
-    def returnExpectedTimeFrame(self) -> list:
+    def return_expected_time_frame(self) -> list:
         return self.expectedTimeFrames
 
-    def isInTime(self, time) -> bool:
+    def is_in_time(self, time) -> bool:
         if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):
             return True
         return False
 
-    def analyzeData(self, candles: list, timeFrame: int):
+    def _analyzeData(self, candles: list, timeFrame: int):
         if timeFrame == 240:
             ote = self._LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
             for level in ote:
@@ -63,12 +63,12 @@ class Unicorn(Strategy):
             last_candle = candles[-1]
             time = last_candle.iso_time
 
-            if self.isInTime(time):
+            if self.is_in_time(time):
                 breaker = self._PDMediator.calculate_pd_array("BRK", candles)
                 for brk in breaker:
                     self._pd_array_handler.add_pd_array(brk)
 
-            if self.isInTime(time):
+            if self.is_in_time(time):
                 fvgs = self._PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
                 for fvg in fvgs:
                     self._pd_array_handler.add_pd_array(fvg)
@@ -76,15 +76,15 @@ class Unicorn(Strategy):
         self._pd_array_handler.remove_pd_array(candles,timeFrame)
         self._level_handler.remove_level(candles,timeFrame)
 
-    def getEntry(self, candles: list, timeFrame: int) ->StrategyResult:
-        self.analyzeData(candles, timeFrame)
+    def get_entry(self, candles: list, timeFrame: int) ->StrategyResult:
+        self._analyzeData(candles, timeFrame)
         pds = self._pd_array_handler.return_pd_arrays()
         if candles and pds:
 
             last_candle: Candle = candles[-1]
             time = last_candle.iso_time
 
-            if not self.isInTime(time):
+            if not self.is_in_time(time):
                 return StrategyResult()
 
             if timeFrame == 5 and len(candles) > 10:
@@ -111,5 +111,5 @@ class Unicorn(Strategy):
                                 if fvg.direction == "Bearish" and breaker.direction == "Bearish":
                                     return StrategyResult()
 
-    def getExit(self, candles: list, timeFrame: int,trade:Trade)->StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade:Trade)->StrategyResult:
         pass

@@ -23,20 +23,20 @@ class SMTStrategy(Strategy):
                                        asset_2=self.asset_2,
                                        correlation=self.correlation)
 
-    def getExit(self, candles: list, timeFrame: int, trade: Trade) -> StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade: Trade) -> StrategyResult:
         """
         Placeholder method for calculating the exit strategy.
         """
-        raise NotImplementedError("SMTStrategy.getExit must be implemented.")
+        raise NotImplementedError("SMTStrategy.get_exit must be implemented.")
 
-    def getEntry(self, candles: list, timeFrame: int) -> StrategyResult:
+    def get_entry(self, candles: list, timeFrame: int) -> StrategyResult:
         """
         Placeholder method for calculating the entry strategy.
         """
-        raise NotImplementedError("SMTStrategy.getEntry must be implemented.")
+        raise NotImplementedError("SMTStrategy.get_entry must be implemented.")
 
-    def isInTime(self, time) -> bool:
+    def is_in_time(self, time) -> bool:
         """
         Placeholder method for determining whether a trade opportunity exists during the specified time.
         """
-        raise NotImplementedError("SMTStrategy.isInTime must be implemented.")
+        raise NotImplementedError("SMTStrategy.is_in_time must be implemented.")

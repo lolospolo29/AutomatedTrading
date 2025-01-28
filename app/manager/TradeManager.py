@@ -1,5 +1,4 @@
 import threading
-import uuid
 
 from app.api.brokers.BrokerFacade import BrokerFacade
 from app.api.brokers.BrokerRequestBuilder import BrokerRequestBuilder
@@ -8,24 +7,54 @@ from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.api.brokers.models.RequestParameters import RequestParameters
 from app.db.mongodb.mongoDBTrades import mongoDBTrades
 from app.helper.builder.OrderBuilder import OrderBuilder
-from app.helper.builder.TradeBuilder import TradeBuilder
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.models.trade.enums.OrderStatusEnum import OrderStatusEnum
-from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.monitoring.logging.logging_startup import logger
 
 
 class TradeManager:
+    """
+    Manages trading operations, including initializing necessary components, maintaining
+    trade states, and interacting with external systems such as databases and brokers.
+
+    This class is implemented as a thread-safe singleton. It provides interfaces to perform
+    trading activities such as registering, removing, updating, and interacting with trades
+    and orders in a secure, concurrent environment. Trades and orders are persisted to
+    the database and handled with locking mechanisms to ensure consistency and
+    prevent race conditions.
+
+    :ivar _instance: Singleton instance of the TradeManager.
+    :type _instance: TradeManager
+    :ivar _lock: Thread lock for concurrent-safe operations.
+    :type _lock: threading.Lock
+    :ivar _trade_registry: Registry for trade-related semaphore handling.
+    :type _trade_registry: TradeSemaphoreRegistry
+    :ivar _lock_registry: Registry for lock management associated with trades and orders.
+    :type _lock_registry: LockRegistry
+    :ivar _open_trades: Dictionary to track active trades by their ID.
+    :type _open_trades: dict[str, Trade]
+    :ivar _mongo_db_trades: Interface for interacting with the trades collection in MongoDB.
+    :type _mongo_db_trades: mongoDBTrades
+    :ivar _broker_facade: Facade to abstract broker-specific implementations.
+    :type _broker_facade: BrokerFacade
+    :ivar _risk_manager: Component to handle risk management logic.
+    :type _risk_manager: RiskManager
+    :ivar _class_mapper: Mapper utility for reflection-based class identification or matching.
+    :type _class_mapper: ClassMapper
+    :ivar _broker_mapper: Mapper utility tailored for broker-specific configurations or mappings.
+    :type _broker_mapper: BrokerMapper
+    :ivar _initialized: Flag to ensure one-time initialization of the instance.
+    :type _initialized: bool
+    """
     # region Initializing
     _instance = None
     _lock = threading.Lock()

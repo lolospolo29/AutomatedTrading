@@ -29,7 +29,27 @@ rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
 
 class BybitHandler(IBrokerHandler):
+    """
+    Handles interaction with the Bybit API offering various methods to retrieve and manipulate
+    broker data. This includes services for fetching orders, positions, funding history, and
+    handling order amendments and cancellations. The class makes use of rate limits, ensures
+    data validation, and leverages mappings between input parameters and API-compatible objects.
 
+    The BybitHandler integrates with the services provided by the Bybit broker and organizes
+    queries and responses. It allows for paginated requests, error handling, and transformation
+    of response objects into standardized data structures.
+
+    :ivar name: The name of the broker associated with this handler.
+    :type name: str
+    :ivar __broker: An instance of the Bybit client used for sending API requests.
+    :type __broker: Bybit
+    :ivar __is_lock_active: Boolean status indicating whether a lock is active.
+    :type __is_lock_active: bool
+    :ivar _class_mapper: Provides utilities to map arguments and dictionaries to dataclass objects.
+    :type _class_mapper: ClassMapper
+    :ivar _rate_limit_registry: Manages the rate limits for various API calls.
+    :type _rate_limit_registry: RateLimitRegistry
+    """
     def __init__(self):
         self.name = "BYBIT"
         self.__broker: Bybit = Bybit("BYBIT")

@@ -138,12 +138,40 @@ class ProfitStopAnalyzer:
     # Aggressiv
     @staticmethod
     def max_profit(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit maximalem Profit."""
+        """
+        Calculate the maximum profit entries from the given list of ProfitStopEntry objects.
+
+        The function sorts the entries based on their profit value in descending order
+        and returns the top `x` entries from the sorted list.
+
+        :param entries: A list of ProfitStopEntry objects to be evaluated.
+        :type entries: list[ProfitStopEntry]
+        :param x: The number of top entries to be returned from the sorted list.
+        :type x: int
+        :return: A list of the top `x` ProfitStopEntry objects based on their profit values.
+        :rtype: list
+        """
         return sorted(entries, key=lambda e: e.profit, reverse=True)[:x]
 
     @staticmethod
     def profit_and_distance_tradeoff(entries: list[ProfitStopEntry], x: int) -> list:
-        """Optimierung von Profit mit Bestrafung für große Stop-Entry-Abstände."""
+        """
+        Sorts a list of profit stop entries based on a trade-off between profit and
+        distance, returning the top x entries. The trade-off is calculated by
+        subtracting twice the absolute difference between the stop and entry values
+        from the profit. The higher this resulting value, the higher priority the
+        entry receives in the sorted list. The returned list is sorted in descending
+        order of priority.
+
+        :param entries:
+            A list of ProfitStopEntry objects to be sorted based on profit and a
+            distance tradeoff.
+        :param x:
+            An integer indicating the number of top entries to return.
+        :return:
+            A list containing the top x ProfitStopEntry objects based on
+            trade-off calculation.
+        """
         return sorted(
             entries,
             key=lambda e: e.profit - 2 * abs(e.stop - e.entry),
@@ -152,51 +180,167 @@ class ProfitStopAnalyzer:
 
     @staticmethod
     def minimal_distance(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit dem geringsten Abstand zwischen Stop und Entry."""
+        """
+        Calculates and returns the subset of entries with the minimal distance
+        between their `stop` and `entry` values. This is determined by sorting
+        the input entries by the absolute difference (`|stop - entry|`) in ascending
+        order and selecting the top `x` entries with the smallest distances.
+
+        :param entries: A list of ProfitStopEntry objects containing `stop` and
+            `entry` attributes used for distance calculation.
+        :param x: The number of entries to return after sorting by minimal distance.
+        :return: A list of the top `x` ProfitStopEntry objects based on minimal
+            distance between their `stop` and `entry` values.
+        """
         return sorted(entries, key=lambda e: abs(e.stop - e.entry))[:x]
 
     # Moderat
     @staticmethod
     def mid_range_stop(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit mittleren Stop-Werten."""
+        """
+        Calculate and return the list of entries closest to the median stop value.
+
+        This method finds entries whose stop values are closest to the median stop
+        value based on the absolute difference. It then returns the top `x` entries
+        sorted by their proximity to this median value.
+
+        :param entries: A list of ProfitStopEntry objects, each containing attributes
+            relevant for determining proximity to the median stop.
+        :param x: An integer value specifying the number of closest entries to retrieve.
+        :return: A list of `ProfitStopEntry` objects sorted by their absolute difference
+            from the median stop value.
+        """
         return sorted(entries,
                       key=lambda e: abs(e.stop - sum(entry.stop for entry in entries) / len(entries)))[:x]
 
     @staticmethod
     def mid_range_entry(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit mittleren Entry-Werten."""
+        """
+        Calculates and returns a list of entries with values that are closer to the
+        mid-range of the provided entries. The mid-range is computed based on the
+        average of the ``entry`` attribute of the given ``entries``. Only the top ``x``
+        entries closest to the mid-range are selected. The entries are sorted in
+        ascending order of their distance from the mid-range, and the resulting list
+        contains up to ``x`` entries.
+
+        :param entries: A list of ``ProfitStopEntry`` objects, where each object
+            contains an ``entry`` attribute used for computation.
+        :type entries: list[ProfitStopEntry]
+        :param x: The maximum number of entries to return, which are closest to the
+            computed mid-range value.
+        :type x: int
+        :return: A list of up to ``x`` ``ProfitStopEntry`` objects, sorted by their
+            proximity to the mid-range of all entries.
+        :rtype: list[ProfitStopEntry]
+        """
         return sorted(entries,
                       key=lambda e: abs(e.entry - sum(entry.entry for entry in entries) / len(entries)))[:x]
 
     @staticmethod
     def optimal_profit_entry_sum(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit der höchsten Summe aus Profit und Entry."""
+        """
+        Sorts a list of profit stop entries by the sum of their profit and entry values in descending
+        order and returns the top X entries according to this criterion.
+
+        :param entries: A list of ProfitStopEntry objects to be evaluated.
+        :param x: The number of top entries to return.
+        :return: A list containing the top X ProfitStopEntry objects sorted by their profit and entry
+                 sum in descending order.
+        """
         return sorted(entries, key=lambda e: e.profit + e.entry, reverse=True)[:x]
 
     @staticmethod
     def optimal_profit_stop_sum(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit der höchsten Summe aus Profit und Stop."""
+        """
+        Determines the `x` entries with the highest combined `profit` and `stop` values
+        from a list of `ProfitStopEntry` objects. The method sorts the entries in
+        descending order based on the sum of their `profit` and `stop` attributes
+        and returns the top `x` entries.
+
+        :param entries:
+            A list of `ProfitStopEntry` objects representing the entries to be sorted.
+        :param x:
+            An integer specifying the number of top entries to return based on the
+            combined `profit` and `stop` values.
+        :return:
+            A list of `ProfitStopEntry` objects representing the top `x` entries
+            sorted by the combined value of their `profit` and `stop` attributes.
+        """
         return sorted(entries, key=lambda e: e.profit + e.stop, reverse=True)[:x]
 
     # Safe
     @staticmethod
     def maximal_distance(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit dem größten Abstand zwischen Stop und Entry."""
+        """
+        Calculate the maximum distance between stop and entry prices for a given number
+        of profit stop entries.
+
+        This method sorts the entries based on the absolute difference between the
+        `stop` and `entry` attributes in descending order, and limits the output to the
+        top `x` entries with the greatest distance.
+
+        :param entries: A list of ProfitStopEntry objects, where each entry contains
+            `stop` and `entry` attributes.
+        :param x: The number of top entries to be included in the resulting list,
+            sorted by maximal distance.
+        :return: A list of the top `x` ProfitStopEntry objects sorted by their maximum
+            absolute distance between stop and entry.
+        """
         return sorted(entries, key=lambda e: abs(e.stop - e.entry), reverse=True)[:x]
 
     @staticmethod
     def highest_stop(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit dem höchsten Stop-Wert."""
+        """
+        Determines the highest 'x' entries from the provided list based on the 'stop' attribute.
+
+        This static method sorts the given list of `ProfitStopEntry` objects in descending
+        order based on their `stop` attribute. It then retrieves the top 'x' entries
+        from the sorted list.
+
+        :param entries: A list of `ProfitStopEntry` objects, where each object contains
+            a 'stop' attribute that signifies a stopping value.
+        :param x: An integer indicating the number of top entries to return after sorting.
+        :return: A new list of `ProfitStopEntry` objects representing the 'x' highest
+            stop values available.
+        """
         return sorted(entries, key=lambda e: e.stop, reverse=True)[:x]
 
     @staticmethod
     def lowest_stop(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit dem niedrigsten Stop-Wert."""
+        """
+        Determine the lowest 'stop' values from a list of ProfitStopEntry objects.
+
+        This method sorts the provided list of ProfitStopEntry objects by their
+        'stop' attribute in ascending order and then returns the specified
+        number of entries with the smallest 'stop' values.
+
+        :param entries: A list of ProfitStopEntry objects to be sorted and filtered.
+        :type entries: list[ProfitStopEntry]
+
+        :param x: The number of lowest stop values to return after sorting.
+        :type x: int
+
+        :return: A list containing the 'x' ProfitStopEntry objects with the lowest
+            'stop' values.
+        :rtype: list[ProfitStopEntry]
+        """
         return sorted(entries, key=lambda e: e.stop)[:x]
 
     @staticmethod
     def lowest_entry(entries: list[ProfitStopEntry], x: int) -> list:
-        """Finde die x Einträge mit dem niedrigsten Entry-Wert."""
+        """
+        Finds the lowest `x` entries from the given list of ProfitStopEntry `entries`.
+        The entries are sorted by the `entry` attribute in ascending order, and then the
+        first `x` entries are selected and returned.
+
+        :param entries: A list of ProfitStopEntry objects to be sorted and filtered.
+        :type entries: list[ProfitStopEntry]
+        :param x: The number of lowest entries to retrieve from the list.
+        :type x: int
+        :return: A list containing the lowest `x` entries from `entries`, sorted by
+            the `entry` attribute.
+        :rtype: list[ProfitStopEntry]
+        """
         return sorted(entries, key=lambda e: e.entry)[:x]
 
 # entries = [

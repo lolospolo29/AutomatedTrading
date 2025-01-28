@@ -4,6 +4,19 @@ from app.interfaces.IBrokerHandler import IBrokerHandler
 
 
 class BrokerFacade:
+    """
+    Acts as a centralized facade for managing and delegating broker-related operations across supported brokers.
+
+    The BrokerFacade class simplifies interactions with multiple brokers by maintaining a registry
+    of broker handlers and delegating various operations such as placing orders, amending orders,
+    canceling orders, and retrieving order or position information to the corresponding broker
+    handlers. The class provides a unified API to execute these operations, reducing the complexity
+    of handling broker-specific logic across multiple systems.
+
+    :ivar __registry: A private dictionary that maps broker names to their corresponding broker
+        handler instances.
+    :type __registry: dict[str, IBrokerHandler]
+    """
     def __init__(self):
         self.__registry:dict[str,IBrokerHandler]= {}
         __bh = BybitHandler()

@@ -4,7 +4,22 @@ from functools import wraps
 
 
 class RateLimitRegistry:
+    """
+    Manages rate limiting using semaphores for functions based on provided enums.
 
+    The `RateLimitRegistry` class is designed as a singleton to maintain a registry
+    of semaphores for rate limiting functionality. It ensures that semaphores are
+    created and managed uniquely for a given set of enumerated values and are used
+    to throttle function execution. This helps in applying rate limits to specific
+    functions environments where concurrent calls are controlled.
+
+    :ivar _instances: Dictionary storing singleton instances for each `rate_limit_enum`.
+                       It ensures one instance per enum, maintaining thread safety.
+    :type _instances: dict
+    :ivar _lock: Threading lock to manage concurrent access and ensure thread-safe
+                 creation of instances.
+    :type _lock: threading.Lock
+    """
     _instances = {}  # Store instances for different rate_limit_enum classes
     _lock = threading.Lock()  # Lock for thread safety
 

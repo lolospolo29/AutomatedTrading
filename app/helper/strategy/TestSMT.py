@@ -15,7 +15,7 @@ class TestSMTStrategy(SMTStrategy):
         name = "TestSMTStrategy"
         super().__init__(name, timeFrames,asset_1,asset_2,correlation)
 
-    def getExit(self, candles: list, timeFrame: int, trade: Trade) -> StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade: Trade) -> StrategyResult:
         """
         Mock implementation of the exit strategy. For testing purposes, it exits
         when there are more than 10 candles.
@@ -30,7 +30,7 @@ class TestSMTStrategy(SMTStrategy):
         """
         return StrategyResult(Trade())
 
-    def getEntry(self, candles: list, timeFrame: int) -> StrategyResult:
+    def get_entry(self, candles: list, timeFrame: int) -> StrategyResult:
         """
         Mock implementation of the entry strategy. For testing purposes, it enters
         if the candle list contains exactly 5 candles.
@@ -44,7 +44,7 @@ class TestSMTStrategy(SMTStrategy):
         """
         return StrategyResult(Trade())
 
-    def isInTime(self, time) -> bool:
+    def is_in_time(self, time) -> bool:
         """
         Mock implementation to always indicate the trade is within the allowed time.
 

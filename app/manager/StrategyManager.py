@@ -9,7 +9,18 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class StrategyManager:
-    """Serves as Accessor for Strategy and Storage Access"""
+    """
+    Manages strategy instances for asset-broker relations.
+
+    StrategyManager provides a singleton implementation to manage and interact
+    with trading strategies associated with specific asset-broker relations.
+    It offers methods to register new strategies and retrieve expected insights
+    or actions (e.g., entry or exit strategies) based on provided data.
+
+    :ivar strategies: Dictionary mapping AssetBrokerStrategyRelation instances
+                      to their associated Strategy instances.
+    :type strategies: dict[AssetBrokerStrategyRelation, Strategy]
+    """
 
     _instance = None
     _lock = threading.Lock()
@@ -54,7 +65,7 @@ class StrategyManager:
     def return_expected_time_frame(self, strategy: str) -> list:
         try:
             if strategy in self.strategies:
-                return self.strategies[strategy].returnExpectedTimeFrame()
+                return self.strategies[strategy].return_expected_time_frame()
             return []
         except Exception as e:
             logger.exception(f"Return Timeframe for {strategy} failed: {e}")
@@ -64,7 +75,7 @@ class StrategyManager:
         try:
             if relation.strategy in self.strategies:
                 logger.info(f"Strategy {relation.asset} get Entry")
-                return self.strategies[relation].getEntry(candles, timeFrame)
+                return self.strategies[relation].get_entry(candles, timeFrame)
         except Exception as e:
             logger.exception(f"Get Entry Failed for {relation.strategy}/{relation.asset}: {e}")
 
@@ -73,6 +84,6 @@ class StrategyManager:
         try:
             if relation.strategy in self.strategies:
                 logger.info(f"Strategy {relation.asset} get Exit TimeFrame,TradeId: {trade.id}")
-                return self.strategies[relation].getExit(candles, timeFrame, trade)
+                return self.strategies[relation].get_exit(candles, timeFrame, trade)
         except Exception as e:
             logger.exception(f"Get Exit Failed for {relation.strategy}/{relation}: {e}")

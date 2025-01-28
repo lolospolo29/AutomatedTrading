@@ -12,14 +12,14 @@ class Strategy:
         self.timeFrames: list[ExpectedTimeFrame] = timeFrames
         self.riskCalculator: RiskCalculator = RiskCalculator()
 
-    def returnExpectedTimeFrame(self)->list[ExpectedTimeFrame]:
+    def return_expected_time_frame(self)->list[ExpectedTimeFrame]:
         return self.timeFrames
     @abstractmethod
-    def getExit(self, candles: list, timeFrame: int,trade:Trade)->StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade:Trade)->StrategyResult:
         pass
     @abstractmethod
-    def getEntry(self, candles: list, timeFrame: int)-> StrategyResult:
+    def get_entry(self, candles: list, timeFrame: int)-> StrategyResult:
         pass
     @abstractmethod
-    def isInTime(self,time)->bool:
+    def is_in_time(self, time)->bool:
         pass
