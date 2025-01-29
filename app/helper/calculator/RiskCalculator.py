@@ -75,9 +75,7 @@ class RiskCalculator:
             self._invalidation_steady = InvalidationSteady()
             self._be = BreakEven()
             self._trailing_stop = TrailingStop()
-            self.pd_risk_calculator = PDRiskCalculator()
-            self.profit_stop_analyzer = ProfitStopAnalyzer()
-            self.position_size_calculator = PositionSizeCalculator()
+
             self._initialized: bool = True  # Mark as initialized
     # endregion
 

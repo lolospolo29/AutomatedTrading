@@ -1,6 +1,6 @@
 import threading
 
-from app.api.brokers.BrokerFacade import BrokerFacade
+from app.helper.facade.BrokerFacade import BrokerFacade
 from app.api.brokers.BrokerRequestBuilder import BrokerRequestBuilder
 from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.api.brokers.models.BrokerPosition import BrokerPosition

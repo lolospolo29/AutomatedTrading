@@ -1,6 +1,7 @@
 from typing import Any
 
 from app.models.asset.Candle import Candle
+from app.models.calculators.frameworks.Structure import Structure
 from app.models.calculators.frameworks.structure.BOS import BOS
 from app.models.calculators.frameworks.structure.CISD import CISD
 from app.models.calculators.frameworks.structure.Choch import Choch
@@ -52,7 +53,7 @@ class StructureMediator:
     # endregion
 
     # region Analyzing
-    def calculate_confirmation(self, confirmation_type: str, candles: list[Candle]) -> Any:
+    def calculate_confirmation(self, confirmation_type: str, candles: list[Candle]) -> list[Structure]:
         """
         Calculates and returns a confirmation based on the specified confirmation type
         and a list of candlesticks. The method internally delegates to the appropriate

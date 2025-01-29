@@ -1,9 +1,5 @@
-from app.helper.calculator.RiskCalculator import RiskCalculator
 from app.helper.handler.LevelHandler import LevelHandler
-from app.helper.handler.PDArrayHandler import PDArrayHandler
-from app.helper.mediator.LevelMediator import LevelMediator
-from app.helper.mediator.PDMediator import PDMediator
-from app.helper.mediator.StructureMediator import StructureMediator
+from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.frameworks.time.London import LondonOpen
@@ -20,26 +16,20 @@ class Unicorn(Strategy):
     def __init__(self):
         name: str = "Unicorn"
 
-        self._PDMediator = PDMediator()
-        self._ConfirmationMediator = StructureMediator()
-        self._LevelMediator: LevelMediator = LevelMediator()
-        self._RiskMediator: RiskCalculator = RiskCalculator()
+        self._strategy_handler = StrategyFacade()
 
         self._TimeWindow = LondonOpen()
         self._TimeWindow2 = NYOpen()
         self._level_handler = LevelHandler()
-        self._pd_array_handler = PDArrayHandler()
 
         self.expectedTimeFrames = []
 
         timeFrame = ExpectedTimeFrame(1, 90)
         timeFrame2 = ExpectedTimeFrame(5, 90)
-        timeFrame3 = ExpectedTimeFrame(15, 90)
         timeFrame4 = ExpectedTimeFrame(240, 1)
 
         self.expectedTimeFrames.append(timeFrame)
         self.expectedTimeFrames.append(timeFrame2)
-        self.expectedTimeFrames.append(timeFrame3)
         self.expectedTimeFrames.append(timeFrame4)
 
         super().__init__(name, self.expectedTimeFrames)
@@ -54,7 +44,7 @@ class Unicorn(Strategy):
 
     def _analyzeData(self, candles: list, timeFrame: int):
         if timeFrame == 240:
-            ote = self._LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
+            ote = self._strategy_handler.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
             for level in ote:
                 self._level_handler.add_level(level)
 
@@ -64,22 +54,22 @@ class Unicorn(Strategy):
             time = last_candle.iso_time
 
             if self.is_in_time(time):
-                breaker = self._PDMediator.calculate_pd_array("BRK", candles)
+                breaker = self._strategy_handler.PDMediator.calculate_pd_array("BRK", candles)
                 for brk in breaker:
-                    self._pd_array_handler.add_pd_array(brk)
+                    self._strategy_handler.pd_array_handler.add_pd_array(brk)
 
             if self.is_in_time(time):
-                fvgs = self._PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
+                fvgs = self._strategy_handler.PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
                 for fvg in fvgs:
-                    self._pd_array_handler.add_pd_array(fvg)
+                    self._strategy_handler.pd_array_handler.add_pd_array(fvg)
 
-        self._pd_array_handler.remove_pd_array(candles,timeFrame)
+        self._strategy_handler.pd_array_handler.remove_pd_array(candles,timeFrame)
         self._level_handler.remove_level(candles,timeFrame)
 
     def get_entry(self, candles: list, timeFrame: int) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self._pd_array_handler.return_pd_arrays()
-        if candles and pds:
+        pds = self._strategy_handler.pd_array_handler.return_pd_arrays()
+        if candles and pds and timeFrame == 5:
 
             last_candle: Candle = candles[-1]
             time = last_candle.iso_time
@@ -92,9 +82,9 @@ class Unicorn(Strategy):
                 fvgs: list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
 
                 for breaker in breakers:
-                    breakerLow,breakerHigh = self._PDMediator.return_candle_range("BRK", breaker)
+                    breakerLow,breakerHigh = self._strategy_handler.PDMediator.return_candle_range("BRK", breaker)
                     for fvg in fvgs:
-                        fvgLow,fvgHigh = self._PDMediator.return_candle_range("FVG", fvg)
+                        fvgLow,fvgHigh = self._strategy_handler.PDMediator.return_candle_range("FVG", fvg)
 
                         # Check if FVG and Breaker overlap
                         if fvgLow <= breakerHigh and fvgHigh >= breakerLow:

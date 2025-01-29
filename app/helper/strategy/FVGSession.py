@@ -1,16 +1,9 @@
-from app.helper.handler.LevelHandler import LevelHandler
-from app.helper.handler.PDArrayHandler import PDArrayHandler
+from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Candle import Candle
-from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
-from app.models.strategy.Strategy import Strategy
-from app.helper.mediator.StructureMediator import StructureMediator
-from app.helper.mediator.LevelMediator import LevelMediator
-from app.helper.mediator.PDMediator import PDMediator
-from app.models.calculators.frameworks.Level import Level
-from app.models.calculators.frameworks.PDArray import PDArray
-from app.models.calculators.frameworks.Structure import Structure
 from app.models.calculators.frameworks.time.London import LondonOpen
 from app.models.calculators.frameworks.time.NYOpen import NYOpen
+from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
 
@@ -20,27 +13,17 @@ class FVGSession(Strategy):
     def __init__(self):
         name:str = "FVG"
 
-        self._PDMediator = PDMediator()
-        self._ConfirmationMediator = StructureMediator()
-        self._LevelMediator : LevelMediator= LevelMediator()
+        self._strategy_facade = StrategyFacade()
 
         self._TimeWindow = LondonOpen()
         self._TimeWindow2 = NYOpen()
 
-        self._level_handler = LevelHandler()
-        self._pd_array_handler = PDArrayHandler()
-
         self.expectedTimeFrames = []
 
-
         timeFrame = ExpectedTimeFrame(1,90)
-        timeFrame2 = ExpectedTimeFrame(5,90)
-        timeFrame3 = ExpectedTimeFrame(15,90)
         timeFrame4 = ExpectedTimeFrame(240,1)
 
         self.expectedTimeFrames.append(timeFrame)
-        self.expectedTimeFrames.append(timeFrame2)
-        self.expectedTimeFrames.append(timeFrame3)
         self.expectedTimeFrames.append(timeFrame4)
         super().__init__(name,self.expectedTimeFrames)
 
@@ -54,24 +37,24 @@ class FVGSession(Strategy):
             last_candle = candles[-1]
             time = last_candle.iso_time
             if timeFrame == 240:
-                range = self._LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
+                range = self._strategy_facade.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
                 for level in range:
-                    self._level_handler.add_level(level)
+                    self._strategy_facade.level_handler.add_level(level)
 
 
             if timeFrame == 1:
                 if self.is_in_time(time):
-                    fvgs = self._PDMediator.calculate_pd_array("FVG", candles, lookback=3)
+                    fvgs = self._strategy_facade.PDMediator.calculate_pd_array("FVG", candles, lookback=3)
                     for fvg in fvgs:
-                        self._pd_array_handler.add_pd_array(fvg)
-            self._pd_array_handler.remove_pd_array(candles,timeFrame)
-            self._level_handler.remove_level(candles,timeFrame)
+                        self._strategy_facade.pd_array_handler.add_pd_array(fvg)
+            self._strategy_facade.level_handler.remove_pd_array(candles, timeFrame)
+            self._strategy_facade.pd_array_handler.remove_level(candles, timeFrame)
 
 
     def get_entry(self, candles: list, timeFrame: int)->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self._pd_array_handler.return_pd_arrays()
-        levels = self._level_handler.return_levels()
+        pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
+        levels = self._strategy_facade.level_handler.return_levels()
         if candles and pds and len(candles) > 5 and timeFrame == 1:
 
                 last_candle: Candle = candles[-1]
@@ -101,7 +84,7 @@ class FVGSession(Strategy):
 
                 if len(oneMFvgs) > 0:
                     for fvg in oneMFvgs:
-                        fvg_low,fvg_high = self._PDMediator.return_candle_range(fvg.name, fvg)
+                        fvg_low,fvg_high = self._strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
                         if fvg.direction == "Bullish" and directionSweep == "Bearish":
                             if prelast_candle.close > fvg_low > last_candle.close:
                                 currentInversed.append(fvg)
