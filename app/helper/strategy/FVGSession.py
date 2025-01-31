@@ -47,8 +47,8 @@ class FVGSession(Strategy):
                     fvgs = self._strategy_facade.PDMediator.calculate_pd_array("FVG", candles, lookback=3)
                     for fvg in fvgs:
                         self._strategy_facade.pd_array_handler.add_pd_array(fvg)
-            self._strategy_facade.level_handler.remove_pd_array(candles, timeFrame)
-            self._strategy_facade.pd_array_handler.remove_level(candles, timeFrame)
+            self._strategy_facade.level_handler.remove_level(candles, timeFrame)
+            self._strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
 
 
     def get_entry(self, candles: list, timeFrame: int)->StrategyResult:

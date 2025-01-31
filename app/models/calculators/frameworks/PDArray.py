@@ -29,8 +29,6 @@ class PDArray(FrameWork):
             return all(id_ in ids_ for id_ in candlesIds)
         except Exception as e:
             logger.critical(e)
-        finally:
-            return False
 
     def to_dict(self) -> dict:
         """

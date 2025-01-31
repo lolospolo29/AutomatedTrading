@@ -105,7 +105,10 @@ class TradeMapper:
             # Parse datetime fields
             # Map frameworks
             logger.info(f"Mapping Order,OrderLinkId:{order_dict.get('orderLinkId')},Symbol:{order.symbol},TradeId:{order.trade_id}")
-            order.entry_frame_work = self.map_framework(order_dict.get("entry_frame_work", {}))
+            try:
+                order.entry_frame_work = self.map_framework(order_dict.get("entry_frame_work", {}))
+            except Exception:
+                pass
             order.confirmations = [
                 self.map_framework(cf) for cf in order_dict.get("confirmations", []) if cf
             ]

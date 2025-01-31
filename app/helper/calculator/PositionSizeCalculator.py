@@ -118,5 +118,7 @@ class PositionSizeCalculator:
             qty = self.calculate_forex_trade_size_jpy(float(order.price), float(order.stopLoss))
         if asset_class == AssetClassEnum.COMMODITY.value:
             qty = self.calculate_indices_trade_size(float(order.price), float(order.stopLoss))
+        if asset_class == AssetClassEnum.INDICE.value:
+            qty = self.calculate_indices_trade_size(float(order.price), float(order.stopLoss))
 
         return self._round_down(abs(qty * order.risk_percentage))

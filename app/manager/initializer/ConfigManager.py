@@ -98,11 +98,7 @@ class ConfigManager:
                             asset.add_strategy(relation.strategy)
                             asset.add_relation(relation)
                             self._trade_semaphore_registry.register_relation(relation)
-                            expectedTimeFrames: list = self._strategy_manager.return_expected_time_frame(relation.strategy)
 
-                            for expectedTimeFrame in expectedTimeFrames:
-                                asset.add_candle_series(expectedTimeFrame.timeframe, expectedTimeFrame.max_Len,
-                                                      relation.broker)
                         for smt_pair in asset.smt_pairs:
                             try:
                                 if smt_pair == relation.strategy:
@@ -111,9 +107,9 @@ class ConfigManager:
                                     strategy = self._strategy_factory.return_smt_strategy(relation.strategy,smt_pair.correlation,asset1,asset2)
                                     if isinstance(strategy, Strategy):
                                         if asset1 == asset.name:
-                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset2)
+                                            self._strategy_manager.register_smt_strategy(relation.strategy, strategy,asset2)
                                         if asset2 == asset.name:
-                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset1)
+                                            self._strategy_manager.register_smt_strategy(relation.strategy, strategy,asset1)
                             except Exception as e:
                                 logger.warning("Failed to register asset SMT Pair Strategy{}".format(asset.name))
                         try:
@@ -122,6 +118,12 @@ class ConfigManager:
                                 self._strategy_manager.register_strategy(relation, strategy)
                         except  Exception as e:
                             logger.warning("Failed to register asset Strategy {}".format(asset.name))
+
+                        expectedTimeFrames: list = self._strategy_manager.return_expected_time_frame(relation)
+
+                        for expectedTimeFrame in expectedTimeFrames:
+                            asset.add_candle_series(expectedTimeFrame.timeframe, expectedTimeFrame.max_Len,
+                                                    relation.broker)
 
                     except Exception as e:
                         logger.warning("Failed to register asset {}".format(asset.name))

@@ -3,6 +3,30 @@ Alert ID,Ticker,Name,Description,Time
   ""Candle"": {
     ""asset"": ""BTCUSDT"",
     ""broker"" : ""BYBIT"",
+    ""open"": 98277.13,
+    ""high"": 98277.13,
+    ""low"": 98251,
+    ""close"": 98251,
+    ""IsoTime"": ""2025-01-05T16:12:00Z"",
+    ""timeFrame"": 1
+    }
+}",2025-01-05T16:13:01Z
+1786169876,"BYBIT:BTCUSDT, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 98281,
+    ""high"": 98281,
+    ""low"": 98261.28,
+    ""close"": 98277.13,
+    ""IsoTime"": ""2025-01-05T16:11:00Z"",
+    ""timeFrame"": 1
+    }
+}",2025-01-05T16:12:00Z
+1786169876,"BYBIT:BTCUSDT, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT"",
+    ""broker"" : ""BYBIT"",
     ""open"": 98229.04,
     ""high"": 98337.5,
     ""low"": 98229.04,

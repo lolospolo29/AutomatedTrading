@@ -31,7 +31,7 @@ class LevelHandler:
         with self._lock:
             try:
                 _ids = [candle.id for candle in candles]
-                levels = self.levels.copy()
+                levels = self.levels
                 for level in levels:
                     if level.timeframe == timeframe:
                         if not level.is_id_present(_ids):

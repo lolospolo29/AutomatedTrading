@@ -1,4 +1,6 @@
 from app.helper.strategy.FVGSession import FVGSession
+from app.helper.strategy.LondonSB import LondonSB
+from app.helper.strategy.OTEFourH import OTEFourH
 from app.helper.strategy.TestSMT import TestSMTStrategy
 from app.helper.strategy.Unicorn import Unicorn
 from app.models.strategy.Strategy import Strategy
@@ -13,6 +15,10 @@ class StrategyFactory:
             return FVGSession()
         if typ == "Unicorn":
             return Unicorn()
+        if typ == "OTEFourH":
+            return OTEFourH()
+        if typ == "LondonSB":
+            return LondonSB()
         logger.warning(f"No strategy found for {typ}")
     @staticmethod
     def return_smt_strategy(typ: str,correlation:str,asset1:str,asset2:str) -> Strategy:

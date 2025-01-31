@@ -10,9 +10,9 @@ from app.models.trade.Trade import Trade
 
 # Unicorn Entry with 4H PD Range Bias
 
-class Unicorn(Strategy):
+class LondonSB(Strategy):
     def __init__(self):
-        name: str = "Unicorn"
+        name: str = "LondonSB"
 
         self._strategy_facade = StrategyFacade()
 

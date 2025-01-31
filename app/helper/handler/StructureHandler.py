@@ -29,7 +29,7 @@ class StructureHandler:
         with self._lock:
             try:
                 _ids = [candle.id for candle in candles]
-                structures = self.structures.copy()
+                structures = self.structures
                 for structure in structures:
                     if structure.timeframe == timeFrame:
                         if not structure.is_id_present(_ids):

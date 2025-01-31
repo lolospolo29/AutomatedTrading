@@ -18,7 +18,10 @@ class Structure(FrameWork):
         :param ids_: Liste von IDs, in der gesucht werden soll
         :return: True, wenn `self.id` in `ids_` enthalten ist, sonst False
         """
-        return self.candle.id in ids_
+        for id_ in ids_:
+            if id_ == self.candle.id:
+                return True
+        return False
     def to_dict(self) -> dict:
         """
         Converts the object to a dictionary representation.

@@ -29,24 +29,19 @@ class BOS(IConfirmation):
                 lows.append(candle.low)
                 closes.append(candle.close)
 
-            last_bullish_high_candle = None
-            last_bearish_low_candle = None
 
             for i in range(len(candles)):
                 # Track the last significant bullish high
                 if i >= self.lookback:
                     if closes[i] > max(highs[i - self.lookback:i]):
-                        last_bullish_high_candle = candles[i]
-                    structure = Structure(self.name, direction="Bullish", candle=last_bullish_high_candle)
-                    structures.append(structure)
+                        structure = Structure(name=self.name, direction="Bullish", candle=candles[i-1])
+                        structures.append(structure)
 
                 # Track the last significant bearish low
                 if i >= self.lookback:
                     if closes[i] < min(lows[i - self.lookback:i]):
-                        last_bearish_low_candle = candles[i]
-                        structure = Structure(self.name, direction="Bearish",candle=last_bearish_low_candle)
+                        structure = Structure(name=self.name, direction="Bearish",candle=candles[i-1])
                         structures.append(structure)
+            return structures
         except Exception as e:
             logger.error("BOS Confirmation Exception: {}".format(e))
-        finally:
-            return structures

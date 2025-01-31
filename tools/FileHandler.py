@@ -59,8 +59,10 @@ class FileHandler(FileSystemEventHandler):
                 filename = os.path.basename(event.src_path)
                 logger.info("Processing file {}".format(filename))
 
-                if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
-                    candles_dict_list = self._parse_candle_data(event.src_path)
+               # if (filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv")):
+                if filename.endswith(".csv"):
+                   # candles_dict_list = self._parse_candle_data(event.src_path)
+                    candles_dict_list = self._parse_candle_data_from_file(event.src_path)
                     logger.debug("Candles list {}".format(len(candles_dict_list)))
 
                     for candle_dict in candles_dict_list:
@@ -95,6 +97,27 @@ class FileHandler(FileSystemEventHandler):
     # endregion
 
     # region CSV Parsing
+    @staticmethod
+    def _parse_candle_data_from_file(csv_filename)-> list[dict]:
+        candles = []
+        try:
+            with open(csv_filename, mode='r', newline='') as file:
+                reader = list(csv.DictReader(file))
+
+                for row in reversed(reader):
+                    high = float(row.get("high"))
+                    low = float(row.get("low"))
+                    opens = float(row.get("open"))
+                    close = float(row.get("close"))
+                    time = row.get("time")
+                    broker = "CAPITALCOM"
+                    asset = "DXY"
+                    candle = Candle(asset, broker, opens, high, low, close, datetime.now(), 240)
+                    candles.append(candle.to_dict())
+            return candles
+        except Exception as e:
+            logger.error("Failed to Parse Candle Data from CSV: {e}".format(e=e))
+
     @staticmethod
     def _parse_candle_data(csv_filename) -> list[dict]:
         """Parses the Candle Data from a TradingView CSV"""

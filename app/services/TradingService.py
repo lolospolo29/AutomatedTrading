@@ -62,8 +62,8 @@ class TradingService:
             self._asset_manager: AssetManager = AssetManager()
             self._trade_manager: TradeManager = TradeManager()
             self._strategy_manager: StrategyManager = StrategyManager()
-            self._news_service :NewsService = NewsService()
-            #self._news_service.receive_news()
+        #    self._news_service :NewsService = NewsService()
+         #   self._news_service.receive_news()
             self.news_event_ahead_counter = 0
             self._logger = logger
             self._logger.info("TradingService initialized")

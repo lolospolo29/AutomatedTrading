@@ -7,4 +7,5 @@ class AssetClassEnum(Enum):
     FXJPY = "FXJPY"
     COMMODITY = "Commodity"
     GOLD = "Gold"
+    INDICE = "Indice"
 

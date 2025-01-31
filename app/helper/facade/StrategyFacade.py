@@ -20,12 +20,12 @@ class StrategyFacade:
         self.StructureMediator:StructureMediator = StructureMediator()
         self.LevelMediator: LevelMediator = LevelMediator()
 
-        self.Risk_Calculator: RiskCalculator = RiskCalculator()
 
         self.pd_array_handler = PDArrayHandler()
         self.structure_handler = StructureHandler()
         self.level_handler = LevelHandler()
 
+        self.Risk_Calculator: RiskCalculator = RiskCalculator()
         self.pd_risk_calculator = PDRiskCalculator()
         self.profit_stop_analyzer = ProfitStopAnalyzer()
         self.position_size_calculator = PositionSizeCalculator()

@@ -62,18 +62,18 @@ class StrategyManager:
             logger.info(f"Strategy {strategy.name} already registered")
             return False
 
-    def return_expected_time_frame(self, strategy: str) -> list:
+    def return_expected_time_frame(self, relation: AssetBrokerStrategyRelation) -> list:
         try:
-            if strategy in self.strategies:
-                return self.strategies[strategy].return_expected_time_frame()
+            if relation in self.strategies:
+                return self.strategies[relation].return_expected_time_frame()
             return []
         except Exception as e:
-            logger.exception(f"Return Timeframe for {strategy} failed: {e}")
+            logger.exception(f"Return Timeframe for {relation} failed: {e}")
 
     def get_entry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                   timeFrame: int) -> StrategyResult:
         try:
-            if relation.strategy in self.strategies:
+            if relation in self.strategies:
                 logger.info(f"Strategy {relation.asset} get Entry")
                 return self.strategies[relation].get_entry(candles, timeFrame)
         except Exception as e:
@@ -82,7 +82,7 @@ class StrategyManager:
     def get_exit(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
                  timeFrame: int, trade:Trade) -> StrategyResult:
         try:
-            if relation.strategy in self.strategies:
+            if relation in self.strategies:
                 logger.info(f"Strategy {relation.asset} get Exit TimeFrame,TradeId: {trade.id}")
                 return self.strategies[relation].get_exit(candles, timeFrame, trade)
         except Exception as e:

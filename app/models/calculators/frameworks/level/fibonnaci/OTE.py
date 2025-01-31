@@ -12,6 +12,18 @@ class OTE(ILevel):
        At the ICT optimal trade entry level,
        the risk is neither too little nor too high and is likely to give you the best return"""
     def __init__(self):
+        """
+        A class instance for handling the OTE (Optimal Trade Entry) retracement levels.
+
+        The purpose is to calculate Fibonacci retracement levels commonly used in trading
+        strategies for identifying optimal trading entries.
+
+        Attributes:
+            retracement_levels (list[float]): A list defining percentages of retracement
+                levels, typically used to measure pullbacks in price.
+            name (str): The name of the retracement strategy or mechanism.
+
+        """
         # Fibonacci retracement levels to calculate
         self.retracement_levels: list[float] = [0.75, 0.62]
         self.name = "OTE"
@@ -39,10 +51,10 @@ class OTE(ILevel):
 
             # Collecting high and low values from each data point
             for candle in candles:
-                if high  < candle.high:
+                if high  < float(candle.high):
                     high = candle.high
                     high_candle = candle
-                if low > candle.low:
+                if low > float(candle.low):
                     low = candle.low
                     low_candle = candle
             candles:list[Candle] = [high_candle, low_candle]

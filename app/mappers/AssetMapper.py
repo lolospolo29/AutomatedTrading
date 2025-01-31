@@ -60,8 +60,8 @@ class AssetMapper:
             close = candle.get("close")
             high = candle.get("high")
             low = candle.get("low")
-            iso_time = candle.get("IsoTime")
-            timeFrame = candle.get("timeFrame")
+            iso_time = candle.get("iso_time")
+            timeFrame = candle.get("timeframe")
             return Candle(asset, broker, open, high, low, close, iso_time, timeFrame)
         except Exception as e:
             raise MappingFailedExceptionError("Candle")
