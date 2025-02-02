@@ -76,5 +76,3 @@ class mongoDBData:
                 continue
 
         return candles
-
-# todo receive candles and analyse

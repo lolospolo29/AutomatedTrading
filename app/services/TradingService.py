@@ -217,4 +217,3 @@ class TradingService:
         self._trade_manager.archive_trade(trade)
         self._logger.info(f"Canceled Trade: TradeId:{trade.id},"
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
-    # todo testing module

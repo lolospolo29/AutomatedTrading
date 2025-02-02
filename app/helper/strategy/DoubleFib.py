@@ -12,6 +12,7 @@ from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnu
 from app.models.trade.Trade import Trade
 from app.models.trade.enums.CategoryEnum import CategoryEnum
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
+from app.models.trade.enums.StopOrderTypeEnum import StopOrderTypeEnum
 
 
 # Double Fib

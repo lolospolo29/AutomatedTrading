@@ -83,57 +83,36 @@ class TradeManager:
 
     # region Register Remove Dict
     def register_trade(self, trade: Trade) -> None:
-        with self._lock:
-            tradeLock = self._lock_registry.get_lock(trade.id)
-            with tradeLock:
-                try:
-                    self._trade_registry.register_relation(trade.relation)
-                    self._trade_registry.acquire_trade(trade.relation)
-                    if trade.id not in self._open_trades:
-                        self._open_trades[trade.id] = trade
-                        logger.info(f"Register Trade,TradeId: {trade.id}")
-                except Exception as e:
-                    logger.error(f"Register Trade Error,TradeId: {trade.id}: {e}")
+        tradeLock = self._lock_registry.get_lock(trade.id)
+        with tradeLock:
+            try:
+                self._trade_registry.register_relation(trade.relation)
+                self._trade_registry.acquire_trade(trade.relation)
+                if trade.id not in self._open_trades:
+                    self._open_trades[trade.id] = trade
+                    logger.info(f"Register Trade,TradeId: {trade.id}")
+            except Exception as e:
+                logger.error(f"Register Trade Error,TradeId: {trade.id}: {e}")
 
     def __remove_trade(self, trade: Trade) -> None:
-        try:
-            with self._lock:
-                tradeLock = self._lock_registry.get_lock(trade.id)
-                with tradeLock:
-                    if trade.id in self._open_trades:
-                        self._trade_registry.release_trade(trade.relation)
-                        self._open_trades.pop(trade.id)
-                        logger.info(f"Remove Trade,TradeId: {trade.id}")
-        except Exception as e:
-            logger.error(f"Remove Trade Error,TradeId: {trade.id}: {e}")
+        if trade.id in self._open_trades:
+            self._trade_registry.release_trade(trade.relation)
+            self._open_trades.pop(trade.id)
+            logger.info(f"Remove Trade,TradeId: {trade.id}")
 
     # endregion
 
     # region CRUD DB
 
     def __write_trade_to_db(self, trade: Trade):
-        with self._lock:
-            tradeLock = self._lock_registry.get_lock(trade.id)
-            with tradeLock:
-                try:
-                    if trade.id in self._open_trades:
-                        logger.info(f"Write Trade To DB,TradeId: {trade.id}")
-                        self._mongo_db_trades.add_trade_to_db(trade)
-                except Exception as e:
-                    logger.error(f"Write Trade Error,TradeId: {trade.id}: {e}")
-                    raise ValueError(e)
+        if trade.id in self._open_trades:
+            logger.info(f"Write Trade To DB,TradeId: {trade.id}")
+            self._mongo_db_trades.add_trade_to_db(trade)
 
     def __update_trade_in_db(self, trade: Trade) -> None:
-        with self._lock:
-            tradeLock = self._lock_registry.get_lock(trade.id)
-            with tradeLock:
-                try:
-                    if trade.id in self._open_trades:
-                        logger.info(f"Update To DB,TradeId: {trade.id}")
-                        self._mongo_db_trades.update_trade(trade)
-                except Exception as e:
-                    logger.error(f"Update Trade Error,TradeId: {trade.id}: {e}")
-                    raise ValueError(e)
+        if trade.id in self._open_trades:
+            logger.info(f"Update To DB,TradeId: {trade.id}")
+            self._mongo_db_trades.update_trade(trade)
 
     def __write_order_to_db(self, order: Order) -> None:
         logger.info(f"Write Order To DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
@@ -383,8 +362,6 @@ class TradeManager:
     def return_trades_for_relation(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list[Trade]:
         return [x for x in self._open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
     # endregion
-
-
 
 # trade_manager = TradeManager()
 #
