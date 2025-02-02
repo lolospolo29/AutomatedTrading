@@ -71,11 +71,11 @@ class StrategyManager:
             logger.exception(f"Return Timeframe for {relation} failed: {e}")
 
     def get_entry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                  timeFrame: int) -> StrategyResult:
+                  timeFrame: int,asset_class:str) -> StrategyResult:
         try:
             if relation in self.strategies:
                 logger.info(f"Strategy {relation.asset} get Entry")
-                return self.strategies[relation].get_entry(candles, timeFrame)
+                return self.strategies[relation].get_entry(candles, timeFrame,relation,asset_class)
         except Exception as e:
             logger.exception(f"Get Entry Failed for {relation.strategy}/{relation.asset}: {e}")
 
@@ -84,6 +84,6 @@ class StrategyManager:
         try:
             if relation in self.strategies:
                 logger.info(f"Strategy {relation.asset} get Exit TimeFrame,TradeId: {trade.id}")
-                return self.strategies[relation].get_exit(candles, timeFrame, trade)
+                return self.strategies[relation].get_exit(candles, timeFrame, trade,relation)
         except Exception as e:
             logger.exception(f"Get Exit Failed for {relation.strategy}/{relation}: {e}")

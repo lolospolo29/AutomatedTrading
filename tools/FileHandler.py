@@ -34,7 +34,6 @@ class FileHandler(FileSystemEventHandler):
                     cls._instance = super(FileHandler, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
 
@@ -46,7 +45,7 @@ class FileHandler(FileSystemEventHandler):
 
     # region Watcher
     def on_created(self, event):
-            """
+        """
             Handles file creation events in the monitored directory. Processes new CSV files that match
             TradingView alert log naming patterns by parsing candle data, testing strategies, and moving
             processed files to the archive.
@@ -54,30 +53,30 @@ class FileHandler(FileSystemEventHandler):
             Args:
                 event: The event triggered by the file system when a new file is created.
             """
-            try:
-                logger.debug("Processed File {}".format(event.src_path))
-                filename = os.path.basename(event.src_path)
-                logger.info("Processing file {}".format(filename))
+        try:
+            logger.debug("Processed File {}".format(event.src_path))
+            filename = os.path.basename(event.src_path)
+            logger.info("Processing file {}".format(filename))
 
-               # if (filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv")):
-                if filename.endswith(".csv"):
-                   # candles_dict_list = self._parse_candle_data(event.src_path)
-                    candles_dict_list = self._parse_candle_data_from_file(event.src_path)
-                    logger.debug("Candles list {}".format(len(candles_dict_list)))
+            if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
 
-                    for candle_dict in candles_dict_list:
-                        try:
-                            candle: Candle = self._asset_manager.add_candle(candle_dict)
-                            self._testing_strategy(candle.asset, candle.broker, candle.timeframe)
-                        except Exception as e:
-                            logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
-                        finally:
-                            continue
+                candles_dict_list = self._parse_candle_data(event.src_path)
+                # candles_dict_list = self._parse_candle_data_from_file(event.src_path)
+                logger.debug("Candles list {}".format(len(candles_dict_list)))
 
-                    self._move_to_archive(event.src_path)
-                    self._archive()
-            except Exception as e:
-                logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
+                for candle_dict in candles_dict_list:
+                    try:
+                        candle: Candle = self._asset_manager.add_candle(candle_dict)
+                        #self._testing_strategy(candle.asset, candle.broker, candle.timeframe)
+                    except Exception as e:
+                        logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
+                    finally:
+                        continue
+
+                self._move_to_archive(event.src_path)
+                self._archive()
+        except Exception as e:
+            logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
 
     def _testing_strategy(self, asset, broker, timeFrame):
         try:
@@ -88,7 +87,7 @@ class FileHandler(FileSystemEventHandler):
                     logger.debug("Processing Entries for {}".format(relation))
                     self._strategy_manager.get_entry(candles, relation, timeFrame)
                 except Exception as e:
-                    logger.error("Failed to Analyze Strategy Manager: {}".format(e))
+                    logger.debug("Failed to Analyze Strategy Manager: {}".format(e))
                 finally:
                     continue
         except Exception as e:
@@ -98,7 +97,7 @@ class FileHandler(FileSystemEventHandler):
 
     # region CSV Parsing
     @staticmethod
-    def _parse_candle_data_from_file(csv_filename)-> list[dict]:
+    def _parse_candle_data_from_file(csv_filename) -> list[dict]:
         candles = []
         try:
             with open(csv_filename, mode='r', newline='') as file:
@@ -127,28 +126,29 @@ class FileHandler(FileSystemEventHandler):
                 reader = list(csv.DictReader(file))
 
                 for row in reversed(reader):
-                        # change back to normal after debug reversed
-                        description_json = json.loads(row["Description"])
-                        # candle_data = description_json["Candle"]
-                        candle_data = description_json.get("Candle", {})
+                    # change back to normal after debug reversed
+                    description_json = json.loads(row["Beschreibung"])
+                    # candle_data = description_json["Candle"]
+                    candle_data = description_json.get("Candle", {})
 
-                        # Structure candle data to match the desired output format
-                        formatted_candle = {
-                            'Candle': {
-                                'iso_time': candle_data.get('IsoTime', ''),
-                                'asset': candle_data.get('asset', ''),
-                                'broker': candle_data.get('broker', ''),
-                                'close': float(candle_data.get('close', 0.0)),
-                                'high': float(candle_data.get('high', 0.0)),
-                                'low': float(candle_data.get('low', 0.0)),
-                                'open': float(candle_data.get('open', 0.0)),
-                                'timeframe': int(candle_data.get('timeFrame', 0))
-                            }
+                    # Structure candle data to match the desired output format
+                    formatted_candle = {
+                        'Candle': {
+                            'iso_time': candle_data.get('iso_time', ''),
+                            'asset': candle_data.get('asset', ''),
+                            'broker': candle_data.get('broker', ''),
+                            'close': float(candle_data.get('close', 0.0)),
+                            'high': float(candle_data.get('high', 0.0)),
+                            'low': float(candle_data.get('low', 0.0)),
+                            'open': float(candle_data.get('open', 0.0)),
+                            'timeframe': int(candle_data.get('timeframe', 0))
                         }
-                        candles.append(formatted_candle)
+                    }
+                    candles.append(formatted_candle)
             return candles
         except Exception as e:
             logger.error("Failed to Parse Candle Data from CSV: {e}".format(e=e))
+
     # endregion
 
     # region File Functions
@@ -198,7 +198,7 @@ class FileHandler(FileSystemEventHandler):
                     with open(asset_file_path, "a") as f:
                         f.write(",".join(map(str, row.values)) + "\n")  # Originalzeile speichern
                 except Exception as e:
-                    logger.error(f"Error Writing to: {filename}: {e}")
+                    logger.debug(f"Error Writing to: {filename}: {e}")
                     continue
 
             logger.info(f"Succeed :{filename}.")

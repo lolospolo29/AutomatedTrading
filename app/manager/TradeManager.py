@@ -10,6 +10,7 @@ from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.RiskManager import RiskManager
+from app.manager.exceptions.ErrorTradeException import ErrorTradeException
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
@@ -240,59 +241,77 @@ class TradeManager:
 
     def update_trade(self, trade: Trade) -> Trade:
         tradeLock = self._lock_registry.get_lock(trade.id)
-        with tradeLock:
-            if trade.id in self._open_trades:
-                try:
-                    trade = self._open_trades[trade.id]
-                    request: RequestParameters = BrokerRequestBuilder().set_broker(trade.relation.broker).set_symbol(
-                        trade.relation.asset).set_category(trade.category).build()
+        try:
+            with tradeLock:
+                if trade.id in self._open_trades:
+                        trade = self._open_trades[trade.id]
+                        request: RequestParameters = BrokerRequestBuilder().set_broker(trade.relation.broker).set_symbol(
+                            trade.relation.asset).set_category(trade.category).build()
 
-                    openAndClosedOrders: list[BrokerOrder] = self.__return_open_and_closed_orders(request)
+                        openAndClosedOrders: list[BrokerOrder] = self.__return_open_and_closed_orders(request)
 
-                    for onco in openAndClosedOrders:
-                        updatedOrder = False
+                        for onco in openAndClosedOrders:
+                            updatedOrder = False
+                            for order in trade.orders:
+                                if order.orderLinkId == onco.orderLinkId:
+                                    updatedOrder = True
+                                    self._broker_mapper.map_broker_order_to_order(onco, order)
+                            #
+                            # if not updatedOrder:
+                            #     newOrder = Order()
+                            #     newOrder = self._broker_mapper.map_broker_order_to_order(onco, newOrder)
+                            #     trade.orders.append(newOrder)
+
+                        if len(trade.orders) == 0:
+                            raise ErrorTradeException("Trade has no Orders,TradeId{id},Symbol:{symbol}".format(id=trade.id,symbol=trade.relation.asset),"")
+
+                        remove_error_orders = []
+
                         for order in trade.orders:
-                            if order.orderLinkId == onco.orderLinkId:
-                                updatedOrder = True
-                                self._broker_mapper.map_broker_order_to_order(onco, order)
-                        #
-                        # if not updatedOrder:
-                        #     newOrder = Order()
-                        #     newOrder = self._broker_mapper.map_broker_order_to_order(onco, newOrder)
-                        #     trade.orders.append(newOrder)
+                            request.orderLinkId = order.orderLinkId
+                            orderHistory:list[BrokerOrder] = self.__return_order_history(request)
+                            for onco in orderHistory:
+                                if order.orderLinkId == onco.orderLinkId:
+                                    self._broker_mapper.map_broker_order_to_order(onco, order)
+                            if order.order_result_status is None:
+                                remove_error_orders.append(order)
+                        trade.orders.pop(remove_error_orders)
 
-                    for order in trade.orders:
-                        request.orderLinkId = order.orderLinkId
-                        orderHistory:list[BrokerOrder] = self.__return_order_history(request)
-                        for onco in orderHistory:
-                            if order.orderLinkId == onco.orderLinkId:
-                                self._broker_mapper.map_broker_order_to_order(onco, order)
+                        for order in remove_error_orders:
+                            trade.orders.pop(order)
 
+                        positionInfo: list[BrokerPosition] = self.__return_position_info(request)
 
-                    positionInfo: list[BrokerPosition] = self.__return_position_info(request)
-
-                    for pi in positionInfo:
-                        if pi.symbol == trade.relation.asset and pi.category == trade.category:
-                            self._broker_mapper.map_broker_position_to_trade(pi, trade)
-                    try:
-                        self._mongo_db_trades.update_trade(trade)
-                    except Exception as e:
+                        for pi in positionInfo:
+                            if pi.symbol == trade.relation.asset and pi.category == trade.category:
+                                self._broker_mapper.map_broker_position_to_trade(pi, trade)
                         try:
-                            self._mongo_db_trades.add_trade_to_db(trade)
-                        except Exception as e:
-                            logger.warning("Write Trade to DB Error,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
-                            raise ValueError("Write Order To DB Error")
-
-                    for order in trade.orders:
-                        try:
-                            self.__update_order_in_db(order)
+                            self._mongo_db_trades.update_trade(trade)
                         except Exception as e:
                             try:
-                                self.__write_order_to_db(order)
+                                self._mongo_db_trades.add_trade_to_db(trade)
                             except Exception as e:
-                                logger.warning("Write Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(orderLinkId=order.orderLinkId, e=e))
-                except Exception as e:
-                    logger.warning("Something went Wrong with Updating,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
+                                logger.warning("Write Trade to DB Error,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
+                                raise ValueError("Write Order To DB Error")
+
+                        if len(trade.orders) == 0:
+                            raise ErrorTradeException(
+                                "Trade has no Orders,TradeId{id},Symbol:{symbol}".format(id=trade.id,
+                                                                                         symbol=trade.relation.asset)
+                                                                                         ,"")
+                        for order in trade.orders:
+                            try:
+                                self.__update_order_in_db(order)
+                            except Exception as e:
+                                try:
+                                    self.__write_order_to_db(order)
+                                except Exception as e:
+                                    logger.warning("Write Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(orderLinkId=order.orderLinkId, e=e))
+        except ErrorTradeException as e:
+            self.archive_trade(trade)
+            return trade
+        except Exception as e:
+                logger.warning("Something went Wrong with Updating,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
                 return trade
 
     def archive_trade(self, trade: Trade) -> None:
@@ -302,9 +321,15 @@ class TradeManager:
                 trade = self._open_trades[trade.id]
                 self._mongo_db_trades.archive_trade(trade)
                 self.__remove_trade(trade)
-                for order in trade.orders:
-                    self._mongo_db_trades.archive_order(order)
-
+                try:
+                    for order in trade.orders:
+                        try:
+                            self._mongo_db_trades.archive_order(order)
+                        except Exception as e:
+                            logger.warning("Archive Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(orderLinkId=order.orderLinkId, e=e))
+                except  Exception as e:
+                    logger.warning("Something went Wrong with Archiving,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
+    #region API
     def __place_order(self, broker: str, order: Order) -> Order:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
@@ -343,7 +368,7 @@ class TradeManager:
 
     def __return_order_history(self, request_parameters: RequestParameters) -> list[BrokerOrder]:
         return self._broker_facade.return_order_history(request_parameters)
-
+    # endregion
     # endregion
 
     # region Functions

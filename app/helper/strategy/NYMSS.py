@@ -14,11 +14,13 @@ from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
 
 
-# Unicorn Entry with 4H PD Range Bias
+# NY MSS
 
-class Unicorn(Strategy):
+class NYMSS(Strategy):
+
+
     def __init__(self):
-        name: str = "Unicorn"
+        name: str = "NYMSS"
 
         self._strategy_handler = StrategyFacade()
 
@@ -28,11 +30,9 @@ class Unicorn(Strategy):
 
         self.expectedTimeFrames = []
 
-        timeFrame = ExpectedTimeFrame(1, 90)
         timeFrame2 = ExpectedTimeFrame(5, 90)
-        timeFrame4 = ExpectedTimeFrame(240, 1)
+        timeFrame4 = ExpectedTimeFrame(60, 4)
 
-        self.expectedTimeFrames.append(timeFrame)
         self.expectedTimeFrames.append(timeFrame2)
         self.expectedTimeFrames.append(timeFrame4)
 
@@ -42,15 +42,16 @@ class Unicorn(Strategy):
         return self.expectedTimeFrames
 
     def is_in_time(self, time) -> bool:
-        if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):
+        if self._TimeWindow2.is_in_entry_window(time):
             return True
         return False
 
     def _analyzeData(self, candles: list, timeFrame: int):
-        if timeFrame == 240:
-            ote = self._strategy_handler.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
-            for level in ote:
-                self._level_handler.add_level(level)
+        if timeFrame == 60:
+            fvgs = self._strategy_handler.PDMediator.calculate_pd_array("FVG", candles)
+            for fvg in fvgs:
+                fvg.timeframe = 60
+                self._level_handler.add_level(fvg)
 
         if timeFrame == 5:
 
@@ -58,21 +59,15 @@ class Unicorn(Strategy):
             time = last_candle.iso_time
 
             if self.is_in_time(time):
-                breaker = self._strategy_handler.PDMediator.calculate_pd_array("BRK", candles)
-                for brk in breaker:
-                    self._strategy_handler.pd_array_handler.add_pd_array(brk)
-
-            if self.is_in_time(time):
                 fvgs = self._strategy_handler.PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
                 for fvg in fvgs:
                     self._strategy_handler.pd_array_handler.add_pd_array(fvg)
 
         self._strategy_handler.pd_array_handler.remove_pd_array(candles,timeFrame)
-        self._strategy_handler.level_handler.remove_level(candles,timeFrame)
 
     def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self._strategy_handler.pd_array_handler.return_pd_arrays()
+        pds:list[PDArray] = self._strategy_handler.pd_array_handler.return_pd_arrays()
         if candles and pds and timeFrame == 5:
 
             last_candle: Candle = candles[-1]
@@ -81,31 +76,22 @@ class Unicorn(Strategy):
             if not self.is_in_time(time):
                 return StrategyResult()
 
-            if timeFrame == 5 and len(candles) > 10:
-                breakers: list[PDArray] = [brk for brk in pds if brk.name == "Breaker"]
-                fvgs: list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
+            fvgs_one_hour: list[PDArray] = [fvg for fvg in pds if fvg.name == "FVG" and fvg.timeframe == 60]
+            fvgs_five_minute:list[PDArray] = [fvg for fvg in pds if fvg.name == "FVG" and fvg.timeframe == 5]
 
-                for breaker in breakers:
-                    breakerLow,breakerHigh = self._strategy_handler.PDMediator.return_candle_range("BRK", breaker)
-                    for fvg in fvgs:
-                        fvgLow,fvgHigh = self._strategy_handler.PDMediator.return_candle_range("FVG", fvg)
-
-                        # Check if FVG and Breaker overlap
-                        if fvgLow <= breakerHigh and fvgHigh >= breakerLow:
-                            in_fvg_range = fvgLow <= last_candle.close <= fvgHigh
-
-                            # Prüfen, ob der Schlusskurs in der Breaker-Range ist
-                            in_breaker_range = breakerLow <= last_candle.close <= breakerHigh
-
-                            # Prüfen, ob der Schlusskurs in beiden Ranges ist
-                            if in_fvg_range and in_breaker_range:
-                                if fvg.direction == "Bullish" and breaker.direction == "Bullish":
-                                    return StrategyResult()
-
-                                if fvg.direction == "Bearish" and breaker.direction == "Bearish":
-                                    return StrategyResult()
+            for fvg1 in fvgs_one_hour:
+                fvg_one_h_low, fvg_one_h_high = self._strategy_handler.PDMediator.return_candle_range("FVG", fvg1)
+                for fvg5 in fvgs_five_minute:
+                    fvg_five_min_low, fvg_five_min_high = self._strategy_handler.PDMediator.return_candle_range("FVG", fvg5)
+                    if fvg1.direction == fvg5.direction:
+                        if fvg_one_h_low <= fvg_five_min_low and fvg_one_h_high >= fvg_five_min_high:
+                            if fvg1.direction == "Bullish":
+                                return StrategyResult()
+                            if fvg1.direction == "Bearish":
+                                return StrategyResult()
         else:
             return StrategyResult()
+
 
 
     def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:

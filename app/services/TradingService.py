@@ -7,6 +7,7 @@ from app.manager.TradeManager import TradeManager
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
 from app.models.strategy.StrategyResult import StrategyResult
+from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 from app.models.trade.Trade import Trade
 from app.monitoring.log_time import log_time
 from app.monitoring.logging.logging_startup import logger
@@ -83,9 +84,9 @@ class TradingService:
 
         candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
 
-        is_news_ahead,message = self._news_service.receive_news()
+      #  is_news_ahead,message = self._news_service.receive_news()
 
-        if not is_news_ahead:
+        if True: # todo news check if not is news ahead
 
             relations: list[AssetBrokerStrategyRelation] = self._asset_manager.return_relations(candle.asset, candle.broker)
 
@@ -98,7 +99,7 @@ class TradingService:
             for thread in threads:
                 thread.start()
 
-        elif is_news_ahead:
+        elif False:
             self.news_event_ahead_counter += 1
             if self.news_event_ahead_counter % 10 == 0:
                 self._logger.info(message)
@@ -130,11 +131,13 @@ class TradingService:
             threads = []
 
             for trade in trades:
-                thread = threading.Thread(target=self._analyze_strategy_for_entry,
+                thread = threading.Thread(target=self._analyze_strategy_for_exit,
                                           args=(timeframe,candles,relation,trade), daemon=True)
                 threads.append(thread)
             for thread in threads:
                 thread.start()
+            for thread in threads:
+                thread.join(240)
 
     @log_time
     def _analyze_strategy_for_entry(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation) -> None:
@@ -146,10 +149,12 @@ class TradingService:
         :param timeframe: Timeframe to analyse.
         :param candles: Candles to analyse.
         """
+        asset_class = self._asset_manager.return_asset_class(relation.asset)
 
-        result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe)
 
-        if result.status.NEWTRADE.value:
+        result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe,asset_class)
+
+        if result.status == StrategyResultStatusEnum.NEWTRADE.value:
             self._logger.info(f"New Entry found: {relation.asset}")
 
             self._trade_manager.register_trade(result.trade)
@@ -189,18 +194,21 @@ class TradingService:
         """
         result: StrategyResult = self._strategy_manager.get_exit(candles, relation, timeframe,trade)
 
-        if result.status.CLOSE.value:
+
+        if result.status == StrategyResultStatusEnum.CLOSE.value:
             self._logger.info(f"Close Exit found: {relation.asset}")
             self._trade_manager.update_trade(result.trade)
             self._closing_trade(result.trade)
 
-        if result.status.CHANGED.value:
+        if result.status == StrategyResultStatusEnum.CHANGED.value:
             self._logger.info(f"Changed Exit found: {relation.asset}")
 
             exceptionOrders,trade = self._trade_manager.amend_trade(result.trade)
             self._trade_manager.update_trade(trade)
-        if result.status.NOCHANGE.value and timeframe >= 5:
+        if result.status == StrategyResultStatusEnum.NOCHANGE.value:
             self._trade_manager.update_trade(trade)
+        else:
+            self._trade_manager.archive_trade(trade)
 
     def _closing_trade(self,trade:Trade)->None:
 
@@ -209,6 +217,4 @@ class TradingService:
         self._trade_manager.archive_trade(trade)
         self._logger.info(f"Canceled Trade: TradeId:{trade.id},"
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
-            # todo testing
-            # todo testing module
-            # todo execptions handling,exceptions
+    # todo testing module

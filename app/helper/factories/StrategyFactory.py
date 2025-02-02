@@ -1,3 +1,4 @@
+from app.helper.strategy.DoubleFib import DoubleFib
 from app.helper.strategy.FVGSession import FVGSession
 from app.helper.strategy.LondonSB import LondonSB
 from app.helper.strategy.OTEFourH import OTEFourH
@@ -19,6 +20,8 @@ class StrategyFactory:
             return OTEFourH()
         if typ == "LondonSB":
             return LondonSB()
+        if typ == "DoubleFib":
+            return DoubleFib()
         logger.warning(f"No strategy found for {typ}")
     @staticmethod
     def return_smt_strategy(typ: str,correlation:str,asset1:str,asset2:str) -> Strategy:

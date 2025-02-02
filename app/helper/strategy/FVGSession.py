@@ -1,5 +1,9 @@
+from typing import Optional
+
 from app.helper.facade.StrategyFacade import StrategyFacade
+from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
+from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.time.London import LondonOpen
 from app.models.calculators.frameworks.time.NYOpen import NYOpen
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
@@ -10,6 +14,8 @@ from app.models.trade.Trade import Trade
 
 # FVG CRT 4H
 class FVGSession(Strategy):
+
+
     def __init__(self):
         name:str = "FVG"
 
@@ -20,11 +26,11 @@ class FVGSession(Strategy):
 
         self.expectedTimeFrames = []
 
-        timeFrame = ExpectedTimeFrame(1,90)
-        timeFrame4 = ExpectedTimeFrame(240,1)
+        timeframe = ExpectedTimeFrame(1,90)
+        timeframe4 = ExpectedTimeFrame(240,1)
 
-        self.expectedTimeFrames.append(timeFrame)
-        self.expectedTimeFrames.append(timeFrame4)
+        self.expectedTimeFrames.append(timeframe)
+        self.expectedTimeFrames.append(timeframe4)
         super().__init__(name,self.expectedTimeFrames)
 
 
@@ -51,7 +57,7 @@ class FVGSession(Strategy):
             self._strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
 
 
-    def get_entry(self, candles: list, timeFrame: int)->StrategyResult:
+    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         levels = self._strategy_facade.level_handler.return_levels()
@@ -78,21 +84,23 @@ class FVGSession(Strategy):
                         directionSweep = "Bearish"
 
 
-                oneMFvgs = [fvg for fvg in pds if fvg.name == "FVG" and fvg.timeframe == 1]
+                one_m_fvgs = [fvg for fvg in pds if fvg.name == "FVG" and fvg.timeframe == 1]
 
-                currentInversed = []
+                current_inversed = []
 
-                if len(oneMFvgs) > 0:
-                    for fvg in oneMFvgs:
+                if len(one_m_fvgs) > 0:
+                    for fvg in one_m_fvgs:
                         fvg_low,fvg_high = self._strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
                         if fvg.direction == "Bullish" and directionSweep == "Bearish":
                             if prelast_candle.close > fvg_low > last_candle.close:
-                                currentInversed.append(fvg)
+                                current_inversed.append(fvg)
                         if fvg.direction == "Bearish" and directionSweep == "Bullish":
                             if last_candle.close > fvg_high > prelast_candle.close:
-                                currentInversed.append(fvg)
-                if len(currentInversed) > 0:
+                                current_inversed.append(fvg)
+                if len(current_inversed) > 0:
                     return StrategyResult()
+        else:
+            return StrategyResult()
 
-    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade) -> StrategyResult:
+    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade,relation:AssetBrokerStrategyRelation) -> StrategyResult:
         pass

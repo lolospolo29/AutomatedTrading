@@ -59,7 +59,7 @@ class TradeMapper:
                 framework = PDArray(pd_array.get("name", ""), pd_array.get("direction", ""))
                 candles = [self.map_candle(c) for c in pd_array.get("candles", []) if c]
                 framework.add_candles(candles)
-                framework.timeFrame = pd_array.get("timeFrame", "")
+                framework.timeFrame = pd_array.get("timeframe", "")
                 return framework
 
             if "Level" in data:

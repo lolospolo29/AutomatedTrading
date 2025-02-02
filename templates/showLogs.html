@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -31,16 +33,21 @@
         const eventSource = new EventSource("/stream");
 
         eventSource.onmessage = function(event) {
-            // Split the incoming data by newline and add each as a separate line
-            const lines = event.data.split("\\n");
+            // Füge neue Log-Zeilen hinzu
+            const lines = event.data.split("\n"); // Hier war vorher "\\n", was falsch war
             lines.forEach(line => {
-                if (line.trim() !== "") {  // Only append if there's content
+                if (line.trim() !== "") {  // Leere Zeilen ignorieren
                     const lineElement = document.createTextNode(line + "\n");
                     logContent.appendChild(lineElement);
                 }
             });
-            logContent.scrollTop = logContent.scrollHeight; // Auto-scroll to the bottom
+
+            // Auto-Scroll nur, wenn der Benutzer nicht hochgescrollt hat
+            if (logContent.scrollHeight - logContent.clientHeight <= logContent.scrollTop + 50) {
+                logContent.scrollTop = logContent.scrollHeight;
+            }
         };
+
     </script>
 </body>
 </html>

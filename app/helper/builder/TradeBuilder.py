@@ -1,3 +1,5 @@
+import uuid
+
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
@@ -6,6 +8,7 @@ from app.models.trade.Trade import Trade
 class TradeBuilder:
     def __init__(self):
         self._Trade = Trade()
+        self._Trade.id = str(uuid.uuid4())
 
     def add_relation(self, relation:AssetBrokerStrategyRelation):
         self._Trade.relation = relation

@@ -39,7 +39,7 @@ class PDArray(FrameWork):
         try:
             attributes = {
                 "typ" : self.typ,
-                "timeFrame" : self.timeFrame,
+                "timeframe" : self.timeframe,
                 "name": self.name,
                 "direction": self.direction,
                 "candles": [candle.to_dict() for candle in self.candles],

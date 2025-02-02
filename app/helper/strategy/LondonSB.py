@@ -1,5 +1,9 @@
+from typing import Optional
+
 from app.helper.facade.StrategyFacade import StrategyFacade
+from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
+from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.frameworks.time.macro.silverBullet.SilverBulletLondon import SilverBulletLondon
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
@@ -11,6 +15,8 @@ from app.models.trade.Trade import Trade
 # Unicorn Entry with 4H PD Range Bias
 
 class LondonSB(Strategy):
+
+
     def __init__(self):
         name: str = "LondonSB"
 
@@ -22,7 +28,7 @@ class LondonSB(Strategy):
 
         timeFrame = ExpectedTimeFrame(1, 90)
         timeFrame2 = ExpectedTimeFrame(5, 90)
-        timeFrame4 = ExpectedTimeFrame(60, 1)
+        timeFrame4 = ExpectedTimeFrame(240, 1)
 
         self.expectedTimeFrames.append(timeFrame)
         self.expectedTimeFrames.append(timeFrame2)
@@ -40,7 +46,7 @@ class LondonSB(Strategy):
 
     def _analyzeData(self, candles: list, timeFrame: int):
 
-        if timeFrame == 60:
+        if timeFrame == 240:
             pds = self._strategy_facade.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
             for pd in pds:
                 self._strategy_facade.level_handler.add_level(pd)
@@ -63,11 +69,12 @@ class LondonSB(Strategy):
         self._strategy_facade.pd_array_handler.remove_pd_array(candles,timeFrame)
         self._strategy_facade.structure_handler.remove_structure(candles,timeFrame)
 
-    def get_entry(self, candles: list, timeFrame: int) ->StrategyResult:
+    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         structures = self._strategy_facade.structure_handler.return_structure()
-        if candles and pds and structures and timeFrame == 1:
+        levels = self._strategy_facade.level_handler.return_levels()
+        if candles and pds and structures and levels and timeFrame == 1:
 
             last_candle: Candle = candles[-1]
             time = last_candle.iso_time
@@ -77,16 +84,18 @@ class LondonSB(Strategy):
             if not self.is_in_time(time):
                 return StrategyResult()
 
-            if timeFrame == 5 and len(candles) > 10:
-                fvgs: list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
-                pds: list[PDArray] = [pd for pd in pds if pd.name == "PD"]
+            fvgs: list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
+            pds: list[PDArray] = [pd for pd in pds if pd.name == "PD"]
 
-                for fvg in fvgs:
-                    fvgLow,fvgHigh = self._strategy_facade.PDMediator.return_candle_range("FVG", fvg)
-                    if fvgLow <= last_candle.close <= fvgHigh:
-                        if last_structure.direction == "Bullish":
-                            return StrategyResult()
+            for fvg in fvgs:
+                fvgLow, fvgHigh = self._strategy_facade.PDMediator.return_candle_range("FVG", fvg)
+                if fvgLow <= last_candle.close <= fvgHigh:
+                    if last_structure.direction == "Bullish":
+                        return StrategyResult()
+                    if last_structure.direction == "Bearish":
+                        return StrategyResult()
+        else:
+            return StrategyResult()
 
-
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade)->StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:
         pass

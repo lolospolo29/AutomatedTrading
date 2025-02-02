@@ -28,7 +28,7 @@ class mongoDBConfig:
         return self._mongo_db_config.find(collectionName, query)
 
     def find_by_id(self, typ: str, attribute: str, id: int, getAttribute: str) -> str:
-        logger.info("Finding {typ} by id {id}".format(typ=typ, id=id))
+        logger.debug("Finding {typ} by id {id}".format(typ=typ, id=id))
         query = self._mongo_db_config.buildQuery(typ, attribute, id)
         asset_dict = self.load_data(typ, query)
         for doc in asset_dict:

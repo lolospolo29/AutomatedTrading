@@ -27,6 +27,16 @@ class Trade:
         self.createdTime = 0
         self.positionValue = 0
 
+    def add_order(self, order: Order):
+        if self.orders is None:
+            self.orders = []
+        if self.orders is not None:
+            self.orders.append(order)
+    def add_orders(self, orders: list[Order]):
+        if self.orders is None:
+            self.orders = []
+        if self.orders is not None:
+            self.orders.extend(orders)
 
     def to_dict(self):
         """Gibt alle Datenpunkte als Dictionary zurück"""
@@ -38,7 +48,7 @@ class Trade:
                     "asset": self.relation.asset ,
                     "broker": self.relation.broker ,
                     "strategy": self.relation.strategy ,
-                    "category": self.relation.strategy ,
+                    "category": self.category ,
                     "side": self.side,
                     "tpslMode": self.tpslMode,
                     "unrealisedPnl": self.unrealisedPnl,

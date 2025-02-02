@@ -1,5 +1,9 @@
+from typing import Optional
+
 from app.helper.facade.StrategyFacade import StrategyFacade
+from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
+from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.Structure import Structure
 from app.models.calculators.frameworks.time.Asia import Asia
 from app.models.calculators.frameworks.time.London import LondonOpen
@@ -10,8 +14,28 @@ from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
 
 
-# FVG CRT 4H
 class OTEFourH(Strategy):
+    """
+    Implements a trading strategy called OTEFourH. This class is a specialization of the Strategy
+    base class and is specifically tailored to operate on specific timeframes and market conditions.
+    It incorporates time window functionality for different trading sessions (London, New York, Asia)
+    alongside expected timeframes relevant for analysis and decision-making. The strategy leverages
+    components such as level calculations, pattern detection, Fibonacci retracements, and confirmation
+    structures to generate trading entries and exits.
+
+    :ivar _strategy_facade: Provides facade access to mediator patterns for level, pattern array,
+        and structure handling used in the strategy operations.
+    :type _strategy_facade: StrategyFacade
+    :ivar _TimeWindow: Defines the operational time window for the London session.
+    :type _TimeWindow: LondonOpen
+    :ivar _TimeWindow2: Defines the operational time window for the New York session.
+    :type _TimeWindow2: NYOpen
+    :ivar _TimeWindow3: Defines the operational time window for the Asia session.
+    :type _TimeWindow3: Asia
+    :ivar expectedTimeFrames: A list of expected timeframes utilized in this strategy for
+        analysis and validations.
+    :type expectedTimeFrames: list[ExpectedTimeFrame]
+    """
     def __init__(self):
         name:str = "OTEFourH"
 
@@ -54,7 +78,7 @@ class OTEFourH(Strategy):
                 self._strategy_facade.structure_handler.remove_structure(candles, timeFrame)
 
 
-    def get_entry(self, candles: list[Candle], timeFrame: int)->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         levels = self._strategy_facade.level_handler.return_levels()
@@ -77,6 +101,9 @@ class OTEFourH(Strategy):
                 if fvg.direction == latest_structure.direction:
                     if fvg_high >= min_level.level and fvg_low <= max_level.level:
                         return StrategyResult()
+        else:
+            return StrategyResult()
 
-    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade) -> StrategyResult:
+
+    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade,relation:AssetBrokerStrategyRelation) -> StrategyResult:
         pass

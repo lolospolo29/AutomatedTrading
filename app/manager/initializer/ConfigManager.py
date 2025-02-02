@@ -107,9 +107,9 @@ class ConfigManager:
                                     strategy = self._strategy_factory.return_smt_strategy(relation.strategy,smt_pair.correlation,asset1,asset2)
                                     if isinstance(strategy, Strategy):
                                         if asset1 == asset.name:
-                                            self._strategy_manager.register_smt_strategy(relation.strategy, strategy,asset2)
+                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset2)
                                         if asset2 == asset.name:
-                                            self._strategy_manager.register_smt_strategy(relation.strategy, strategy,asset1)
+                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset1)
                             except Exception as e:
                                 logger.warning("Failed to register asset SMT Pair Strategy{}".format(asset.name))
                         try:
@@ -136,6 +136,7 @@ class ConfigManager:
         for trade in self._trades:
             try:
                 self._trade_manager.register_trade(trade)
+                self._trade_manager.update_trade(trade)
             except Exception as e:
                 logger.exception("Failed to register trade {}".format(trade.id))
 
