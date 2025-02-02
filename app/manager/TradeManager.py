@@ -250,11 +250,9 @@ class TradeManager:
                             request.orderLinkId = order.orderLinkId
                             orderHistory:list[BrokerOrder] = self.__return_order_history(request)
                             for onco in orderHistory:
-                                if order.orderLinkId == onco.orderLinkId:
-                                    self._broker_mapper.map_broker_order_to_order(onco, order)
+                                if order.orderLinkId == onco.orderLinkId:                                    self._broker_mapper.map_broker_order_to_order(onco, order)
                             if order.order_result_status is None:
                                 remove_error_orders.append(order)
-                        trade.orders.pop(remove_error_orders)
 
                         for order in remove_error_orders:
                             trade.orders.pop(order)

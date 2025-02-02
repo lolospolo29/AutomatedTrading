@@ -18,5 +18,3 @@ class SecondNYMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Second NY Macro Exception {}".format(e))
-        finally:
-            return False

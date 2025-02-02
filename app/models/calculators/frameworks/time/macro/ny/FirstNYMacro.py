@@ -18,6 +18,4 @@ class FirstNYMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("First NY Macro Error: {}".format(e))
-        finally:
-            return False
 

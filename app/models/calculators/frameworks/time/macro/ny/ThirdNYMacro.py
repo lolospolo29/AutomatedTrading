@@ -18,5 +18,3 @@ class ThirdNYMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Third NY Macro Exception: {}".format(e))
-        finally:
-            return False

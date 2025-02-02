@@ -17,5 +17,3 @@ class SecondLondonMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Second London Macro exception {}".format(e))
-        finally:
-            return False

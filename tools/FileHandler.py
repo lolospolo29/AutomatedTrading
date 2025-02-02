@@ -148,6 +148,7 @@ class FileHandler(FileSystemEventHandler):
             return candles
         except Exception as e:
             logger.error("Failed to Parse Candle Data from CSV: {e}".format(e=e))
+            return candles
 
     # endregion
 

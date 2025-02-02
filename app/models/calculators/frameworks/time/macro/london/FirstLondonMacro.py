@@ -17,5 +17,3 @@ class FirstLondonMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("First London Macro Error: {}".format(e))
-        finally:
-            return False

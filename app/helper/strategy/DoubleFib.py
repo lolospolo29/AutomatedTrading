@@ -5,6 +5,8 @@ from app.helper.handler.LevelHandler import LevelHandler
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
+from app.models.calculators.frameworks.time.macro.quarter.FirstQuarterWindow import FirstQuarterWindow
+from app.models.calculators.frameworks.time.macro.quarter.LastQuarterWindow import LastQuarterWindow
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
@@ -27,6 +29,9 @@ class DoubleFib(Strategy):
 
         self._level_handler = LevelHandler()
 
+        self.first_quarter_window = FirstQuarterWindow()
+        self.second_quarter_window = LastQuarterWindow()
+
         self.expectedTimeFrames = []
 
         timeFrame2 = ExpectedTimeFrame(1, 90)
@@ -39,7 +44,9 @@ class DoubleFib(Strategy):
         return self.expectedTimeFrames
 
     def is_in_time(self, time) -> bool:
-        return True # todo later add only macros
+        if self.first_quarter_window.is_in_entry_window(time) or self.second_quarter_window.is_in_entry_window(time):
+            return True
+        return False
 
     def _analyzeData(self, candles: list, timeFrame: int):
         if timeFrame == 1 and len(candles) > 60:
@@ -102,16 +109,18 @@ class DoubleFib(Strategy):
                                                     ,category=CategoryEnum.LINEAR.value, side=order_dir
                                                     ,risk_percentage=1
                                                     ,order_number=1
-                                                    ,trade_id=trade.id).set_defaults(price=last_candle.close
-                                                    ,take_profit=take_profit,stop_loss=stop).build()
+                                                    ,trade_id=trade.id).set_defaults(price=str(last_candle.close)
+                                                    ,take_profit=str(take_profit),stop_loss=str(stop)).build()
 
-                self._strategy_handler.position_size_calculator.calculate_qty(asset_class=asset_class, order=order)
+                order.qty = str(self._strategy_handler.position_size_calculator.calculate_qty(asset_class=asset_class, order=order))
                 trade.add_order(order)
                 return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NEWTRADE.value)
+            # todo split stop and profit entry order
+            # todo trail stop
             else:
                 return StrategyResult()
         else:
             return StrategyResult()
 
     def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:
-        return StrategyResult()
+        return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)

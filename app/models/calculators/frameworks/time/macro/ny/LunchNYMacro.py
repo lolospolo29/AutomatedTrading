@@ -18,5 +18,3 @@ class LunchNYMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Lunch NY Macro Exception {}".format(e))
-        finally:
-            return False

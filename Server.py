@@ -1,7 +1,7 @@
 import queue
 from threading import Thread
 
-from flask import Flask, request, Response, render_template
+from flask import Flask, request, Response, render_template, jsonify
 
 from app.ClassInstances import signal_controller
 from app.monitoring.logging.logging_startup import logger, log_queue
@@ -19,17 +19,7 @@ def receive_signal():
 
     return f'Received Analyse data: {json_data}'
 
-# data.py
-def get_data():
-    return ["Apple", "Banana", "Cherry"]
-
 @app.route('/')
-def index():
-    data = get_data()  # Get the data from the Python file
-    return render_template('index.html', data=data)  # Pass it to the template
-
-
-@app.route('/console')
 def show_logs():
      return render_template('showLogs.html')
 

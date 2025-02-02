@@ -17,5 +17,3 @@ class SilverBulletClose(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("SilverBulletClose: Exception occurred ", e)
-        finally:
-            return False

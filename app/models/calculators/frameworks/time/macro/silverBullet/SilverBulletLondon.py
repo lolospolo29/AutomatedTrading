@@ -17,5 +17,3 @@ class SilverBulletLondon(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Silver Bullet London Exception", e)
-        finally:
-            return False
