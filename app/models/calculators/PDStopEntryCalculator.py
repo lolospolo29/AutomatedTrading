@@ -12,7 +12,7 @@ from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.monitoring.logging.logging_startup import logger
 
 
-class PDRiskCalculator:
+class PDStopEntryCalculator:
     """PD Risk Calculator for Profit Stop Entries of the PD Arrays"""
 
     # region Initializing
@@ -20,7 +20,7 @@ class PDRiskCalculator:
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super(PDRiskCalculator, cls).__new__(cls)
+            cls._instance = super(PDStopEntryCalculator, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):

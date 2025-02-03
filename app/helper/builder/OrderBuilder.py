@@ -19,7 +19,7 @@ class OrderBuilder:
 
     def create_order(self,relation:AssetBrokerStrategyRelation,  symbol:str, confirmations:list[FrameWork], category:str, side:str,
                      risk_percentage:float, order_number:int, trade_id:str,entry_frame_work:
-                     FrameWork=None):
+                     FrameWork=None,qty=None):
         o = self.order
         o.trade_id = trade_id
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
@@ -35,16 +35,18 @@ class OrderBuilder:
         o.risk_percentage = risk_percentage
         o.order_result_status = OrderResultStatusEnum.NEW.value
         o.orderType = OrderTypeEnum.MARKET.value # set Default
+        if qty is not None:
+            o.qty = qty
         logger.debug(f"Building Order, OrderLinkId:{o.orderLinkId}, Symbol:{o.symbol},TradeId:{o.trade_id}")
         return self
 
-    def set_defaults(self,price:str=None, time_in_force:TimeInForceEnum=None, take_profit:str=None,
+    def set_defaults(self,price:str=None, time_in_force:str=None, take_profit:str=None,
                      stop_loss:str=None, reduce_only:bool=None, close_on_trigger:bool=None):
         order = self.order
         if price is not None:
             order.price = price
         if time_in_force is not None:
-            order.timeInForce = time_in_force.value
+            order.timeInForce = time_in_force
         if take_profit is not None:
             order.takeProfit = take_profit
         if stop_loss is not None:
@@ -65,38 +67,37 @@ class OrderBuilder:
             order.orderlv = orderlv
         return self
 
-    def set_conditional(self, trigger_price:str=None, trigger_by:TriggerByEnum=None,
-                        tp_trigger_by:TriggerByEnum=None, sl_trigger_by:TriggerByEnum=None,
-                        trigger_direction:TriggerDirection=None):
+    def set_conditional(self, trigger_price:str=None, trigger_by:str=None,
+                        tp_trigger_by:str=None, sl_trigger_by:str=None,
+                        trigger_direction:str=None):
         order = self.order
         if trigger_price is not None:
             order.triggerPrice = trigger_price
         if trigger_by is not None:
-            order.triggerBy = trigger_by.value
+            order.triggerBy = trigger_by
         if tp_trigger_by is not None:
-            order.tpTriggerBy = tp_trigger_by.value
+            order.tpTriggerBy = tp_trigger_by
         if sl_trigger_by is not None:
-            order.slTriggerBy = sl_trigger_by.value
+            order.slTriggerBy = sl_trigger_by
         if trigger_direction is not None:
-            order.triggerDirection = trigger_direction.value
-        order.orderType = OrderTypeEnum.LIMIT.value
+            order.triggerDirection = trigger_direction
         return self
 
-    def set_limit(self, tpsl_mode:TPSLModeEnum=None, tp_limit_price:str=None, sl_limit_price:str=None,
-                  tp_order_type:OrderTypeEnum=None, sl_order_type:OrderTypeEnum=None):
+    def set_limit(self, tpsl_mode:str=None, tp_limit_price:str=None, sl_limit_price:str=None,
+                  tp_order_type:str=None, sl_order_type:str=None):
         order = self.order
         if tpsl_mode is not None:
-            order.tpslMode = tpsl_mode.value
+            order.tpslMode = tpsl_mode
         if tp_limit_price is not None:
             order.tpLimitPrice = tp_limit_price
         if sl_limit_price is not None:
             order.slLimitPrice = sl_limit_price
         if tp_order_type is not None:
-            order.tpOrderType = tp_order_type.value
+            order.tpOrderType = tp_order_type
         if sl_order_type is not None:
-            order.slOrderType = sl_order_type.value
+            order.slOrderType = sl_order_type
         if tp_order_type is not None:
-            order.tpOrderType = tp_order_type.value
+            order.tpOrderType = tp_order_type
         order.orderType = OrderTypeEnum.LIMIT.value
         return self
 

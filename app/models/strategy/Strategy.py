@@ -1,9 +1,7 @@
 from abc import abstractmethod
-from typing import Optional
 
-from app.helper.calculator.RiskCalculator import RiskCalculator
+from app.models.calculators.ProfitStopEntryCalculator import ProfitStopEntryCalculator
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
@@ -13,7 +11,7 @@ class Strategy:
     def __init__(self,name: str,timeFrames:list[ExpectedTimeFrame]):
         self.name: str = name
         self.timeFrames: list[ExpectedTimeFrame] = timeFrames
-        self.riskCalculator: RiskCalculator = RiskCalculator()
+        self.riskCalculator: ProfitStopEntryCalculator = ProfitStopEntryCalculator()
 
     def return_expected_time_frame(self)->list[ExpectedTimeFrame]:
         return self.timeFrames

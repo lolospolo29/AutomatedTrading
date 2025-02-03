@@ -1,0 +1,13 @@
+Alarm ID,"Ticker, Name",Name,Beschreibung,Zeit
+1786169876,"BYBIT:BTCUSDT, 1m",,"{
+  ""Candle"": {
+    ""asset"": ""BTCUSDT"",
+    ""broker"" : ""BYBIT"",
+    ""open"": 101095.19,
+    ""high"": 101104.68,
+    ""low"": 100891.3,
+    ""close"": 101024.11,
+    ""iso_time"": ""2025-02-03T21:08:00Z"",
+    ""timeframe"": 1
+    }
+}",2025-02-03T21:09:00Z

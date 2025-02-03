@@ -62,25 +62,35 @@ class OTE(ILevel):
             # Step 3: Calculate Bearish Fibonacci retracement levels (from high to low)
             level075_bullish = high - 0.75 * (high - low)
             level062_bullish = high - 0.62 * (high - low)
+            level150_bullish = high - 1.5 * (high - low)
 
             # Step 4: Calculate Bullish Fibonacci retracement levels (from low to high)
             level075_bearish = low + 0.75 * (high - low)
             level062_bearish = low + 0.62 * (high - low)
+            level150_bearish = low + 1.5 * (high - low)
 
             # Step 5: Create Level objects for each Fibonacci level with bullish/bearish names
             level075_bearish_obj = Level(name=self.name, level=level075_bearish)
             level075_bearish_obj.set_fib_level(0.75, "Bearish", candles)
             level062_bearish_obj = Level(name=self.name, level=level062_bearish)
             level062_bearish_obj.set_fib_level(0.62, "Bearish", candles)
+            level150_bearish_obj = Level(name=self.name, level=level150_bearish)
+            level150_bearish_obj.set_fib_level(1.5, "Bearish", candles)
+
             level075_bullish_obj = Level(name=self.name, level=level075_bullish)
             level075_bullish_obj.set_fib_level(0.75, "Bullish", candles)
             level062_bullish_obj = Level(name=self.name, level=level062_bullish)
             level062_bullish_obj.set_fib_level(0.62, "Bullish", candles)
+            level150_bullish_obj = Level(name=self.name, level=level150_bullish)
+            level150_bullish_obj.set_fib_level(1.5, "Bullish", candles)
 
             all_levels.append(level075_bearish_obj)
             all_levels.append(level062_bearish_obj)
+            all_levels.append(level150_bearish_obj)
+
             all_levels.append(level075_bullish_obj)
             all_levels.append(level062_bullish_obj)
+            all_levels.append(level150_bullish_obj)
         except Exception as e:
             logger.error("Projecting of Fibonnaci Levels failed")
         finally:

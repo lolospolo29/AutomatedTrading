@@ -14,7 +14,8 @@ from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnu
 from app.models.trade.Trade import Trade
 from app.models.trade.enums.CategoryEnum import CategoryEnum
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
-from app.models.trade.enums.StopOrderTypeEnum import StopOrderTypeEnum
+from app.models.trade.enums.TriggerByEnum import TriggerByEnum
+from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
 
 # Double Fib
@@ -68,7 +69,7 @@ class DoubleFib(Strategy):
             if not self.is_in_time(time):
                 return StrategyResult()
 
-            levels:list[Level] = levels[-4:]
+            levels:list[Level] = levels[-6:]
 
             bullish_ote_level_min = None
             bullish_ote_level_max = None
@@ -91,36 +92,74 @@ class DoubleFib(Strategy):
             stop = None
             take_profit = None
             order_dir = None
+            exit_dir = None
+            profit_dir = None
+            stop_dir = None
+
             if bullish_ote_level_min <= last_candle.close <= bullish_ote_level_max:
                 stop = min(profit_stop_entry)
                 take_profit = max(profit_stop_entry)
                 order_dir = OrderDirectionEnum.BUY.value
+                exit_dir = OrderDirectionEnum.SELL.value
+                profit_dir = TriggerDirection.RISE.value
+                stop_dir = TriggerDirection.FALL.value
 
             if bearish_ote_level_min <= last_candle.close <= bearish_ote_level_max:
                 stop = max(profit_stop_entry)
                 take_profit = min(profit_stop_entry)
                 order_dir = OrderDirectionEnum.SELL.value
+                exit_dir = OrderDirectionEnum.BUY.value
+                profit_dir = TriggerDirection.FALL.value
+                stop_dir = TriggerDirection.RISE.value
 
             if order_dir:
+
                 trade = TradeBuilder().add_side(side=order_dir).add_category(category=CategoryEnum.LINEAR.value).add_relation(
                     relation=relation).build()
 
-                order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
+                entry_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
                                                     ,category=CategoryEnum.LINEAR.value, side=order_dir
                                                     ,risk_percentage=1
                                                     ,order_number=1
-                                                    ,trade_id=trade.id).set_defaults(price=str(last_candle.close)
-                                                    ,take_profit=str(take_profit),stop_loss=str(stop)).build()
+                                                    ,trade_id=trade.id).build()
 
-                order.qty = str(self._strategy_handler.position_size_calculator.calculate_qty(asset_class=asset_class, order=order))
-                trade.add_order(order)
+                stop_order =  OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
+                                                          ,category=CategoryEnum.LINEAR.value, side=exit_dir
+                                                          ,risk_percentage=1
+                                                          ,order_number=2
+                                                          ,trade_id=trade.id).set_conditional(
+                                                          trigger_direction=stop_dir
+                                                          ,trigger_price=stop,trigger_by=
+                                                          TriggerByEnum.MARKPRICE.value).set_limit(price=stop).build()
+
+                take_profit_order =  OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
+                                                          ,category=CategoryEnum.LINEAR.value, side=exit_dir
+                                                          ,risk_percentage=1
+                                                          ,order_number=3
+                                                          ,trade_id=trade.id).set_conditional(
+                                                          trigger_direction=profit_dir
+                                                          ,trigger_price=take_profit,trigger_by=
+                                                          TriggerByEnum.MARKPRICE.value).build()
+
+                qty = str(self._strategy_handler.risk_calculator.calculate_order_qty(asset_class=asset_class
+                                                                                     ,entry_price=float(last_candle.close)
+                                                                                     ,exit_price=float(stop_order.price)))
+
+                entry_order.qty = qty
+                take_profit_order.qty = qty
+                stop_order.qty = qty
+
+                trade.add_order(entry_order)
+                trade.add_order(stop_order)
+                trade.add_order(take_profit_order)
+
                 return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NEWTRADE.value)
-            # todo split stop and profit entry order
-            # todo trail stop
             else:
                 return StrategyResult()
         else:
             return StrategyResult()
 
     def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:
+        # todo trail stop
+        #todo implement more assets to this strategy
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)

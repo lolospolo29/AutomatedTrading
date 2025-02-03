@@ -16,3 +16,4 @@ class InvalidationClose:
                 return True
             return False
 
+# todo pd array invalidation specific

@@ -6,13 +6,13 @@ from app.models.calculators.RiskModeEnum import RiskMode
 from app.monitoring.logging.logging_startup import logger
 
 
-class ProfitStopAnalyzer:
+class ProfitStopEntrySorter:
     # region Initializing
     _instance = None  # Class-level attribute to hold the singleton instance
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super(ProfitStopAnalyzer, cls).__new__(cls)
+            cls._instance = super(ProfitStopEntrySorter, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
@@ -38,21 +38,21 @@ class ProfitStopAnalyzer:
         try:
             attribute_methods = {
                 "profit": [
-                    ProfitStopAnalyzer.max_profit,
-                    ProfitStopAnalyzer.profit_and_distance_tradeoff,
-                    ProfitStopAnalyzer.optimal_profit_entry_sum,
-                    ProfitStopAnalyzer.optimal_profit_stop_sum,
+                    ProfitStopEntrySorter.max_profit,
+                    ProfitStopEntrySorter.profit_and_distance_tradeoff,
+                    ProfitStopEntrySorter.optimal_profit_entry_sum,
+                    ProfitStopEntrySorter.optimal_profit_stop_sum,
                 ],
                 "stop": [
-                    ProfitStopAnalyzer.highest_stop,
-                    ProfitStopAnalyzer.lowest_stop,
-                    ProfitStopAnalyzer.maximal_distance,
-                    ProfitStopAnalyzer.mid_range_stop,
+                    ProfitStopEntrySorter.highest_stop,
+                    ProfitStopEntrySorter.lowest_stop,
+                    ProfitStopEntrySorter.maximal_distance,
+                    ProfitStopEntrySorter.mid_range_stop,
                 ],
                 "entry": [
-                    ProfitStopAnalyzer.lowest_entry,
-                    ProfitStopAnalyzer.mid_range_entry,
-                    ProfitStopAnalyzer.optimal_profit_entry_sum,
+                    ProfitStopEntrySorter.lowest_entry,
+                    ProfitStopEntrySorter.mid_range_entry,
+                    ProfitStopEntrySorter.optimal_profit_entry_sum,
                 ],
             }
 
@@ -96,21 +96,21 @@ class ProfitStopAnalyzer:
         try:
             risk_mode_methods = {
                 RiskMode.AGGRESSIVE: [
-                    ProfitStopAnalyzer.max_profit,
-                    ProfitStopAnalyzer.profit_and_distance_tradeoff,
-                    ProfitStopAnalyzer.minimal_distance,
+                    ProfitStopEntrySorter.max_profit,
+                    ProfitStopEntrySorter.profit_and_distance_tradeoff,
+                    ProfitStopEntrySorter.minimal_distance,
                 ],
                 RiskMode.MODERAT: [
-                    ProfitStopAnalyzer.mid_range_stop,
-                    ProfitStopAnalyzer.mid_range_entry,
-                    ProfitStopAnalyzer.optimal_profit_entry_sum,
-                    ProfitStopAnalyzer.optimal_profit_stop_sum,
+                    ProfitStopEntrySorter.mid_range_stop,
+                    ProfitStopEntrySorter.mid_range_entry,
+                    ProfitStopEntrySorter.optimal_profit_entry_sum,
+                    ProfitStopEntrySorter.optimal_profit_stop_sum,
                 ],
                 RiskMode.SAFE: [
-                    ProfitStopAnalyzer.maximal_distance,
-                    ProfitStopAnalyzer.highest_stop,
-                    ProfitStopAnalyzer.lowest_stop,
-                    ProfitStopAnalyzer.lowest_entry,
+                    ProfitStopEntrySorter.maximal_distance,
+                    ProfitStopEntrySorter.highest_stop,
+                    ProfitStopEntrySorter.lowest_stop,
+                    ProfitStopEntrySorter.lowest_entry,
                 ],
             }
 

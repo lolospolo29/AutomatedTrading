@@ -18793,3 +18793,146 @@ INFO,"Request Bybit Return Order History  Endpoint,Symbol:BTCUSDT/v5/order/histo
 INFO,"Request Return Order History Bybit,Symbol:BTCUSDT",2025-02-02 22:23:03
 INFO,"Request Return Order History Bybit,Symbol:BTCUSDT",2025-02-02 22:23:04
 WARNING,"Something went Wrong with Updating,TradeId: dcd23faf-ffbd-4cec-887f-25f034e21e53: 'list' object cannot be interpreted as an integer",2025-02-02 22:23:06
+INFO,TradingService initialized,2025-02-03 21:59:33
+INFO,Initializing ConfigManager,2025-02-03 21:59:33
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-03 21:59:33
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-03 21:59:33
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-03 21:59:33
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-03 21:59:33
+INFO,Registered asset BTCUSDT,2025-02-03 21:59:33
+INFO,Strategy FVG already registered,2025-02-03 21:59:33
+INFO,Strategy OTEFourH already registered,2025-02-03 21:59:33
+INFO,Strategy DoubleFib already registered,2025-02-03 21:59:33
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-03 21:59:33
+INFO,Registered asset USDT.D,2025-02-03 21:59:33
+INFO,Strategy FVG already registered,2025-02-03 21:59:33
+INFO,Strategy OTEFourH already registered,2025-02-03 21:59:33
+INFO,Strategy DoubleFib already registered,2025-02-03 21:59:33
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-03 21:59:33
+INFO,Registered asset EURUSD,2025-02-03 21:59:33
+INFO,Strategy FVG already registered,2025-02-03 21:59:33
+INFO,Strategy OTEFourH already registered,2025-02-03 21:59:33
+INFO,Strategy DoubleFib already registered,2025-02-03 21:59:33
+INFO,Register Asset to Asset Manager:DXY,2025-02-03 21:59:33
+INFO,Registered asset DXY,2025-02-03 21:59:33
+INFO,Finished ConfigManager,2025-02-03 21:59:33
+INFO,Time taken by run_starting_setup: 0.0359 seconds,2025-02-03 21:59:33
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-03 21:59:33
+INFO,b' * Debug mode: off\n',2025-02-03 21:59:33
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:80
+ * Running on http://192.168.178.94:80",2025-02-03 21:59:33
+INFO,[33mPress CTRL+C to quit[0m,2025-02-03 21:59:33
+INFO,Processing file TradingView_Alerts_Log_2025-02-03.csv,2025-02-03 21:59:49
+ERROR,Failed to Parse Candle Data from CSV: Expecting value: line 1 column 1 (char 0),2025-02-03 21:59:49
+INFO,File moved to _archive: /Users/lauris/PycharmProjects/AutomatedTrading/incomingFiles/_archive/TradingView_Alerts_Log_2025-02-03.csv,2025-02-03 21:59:50
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (13).csv,2025-02-03 21:59:50
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (13).csv.,2025-02-03 21:59:50
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-03.csv,2025-02-03 21:59:50
+INFO,Succeed :TradingView_Alerts_Log_2025-02-03.csv.,2025-02-03 21:59:50
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (2).csv,2025-02-03 21:59:50
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (2).csv.,2025-02-03 21:59:50
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (11).csv,2025-02-03 21:59:50
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (11).csv.,2025-02-03 21:59:50
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (9).csv,2025-02-03 21:59:50
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (9).csv.,2025-02-03 21:59:50
+INFO,"52.32.178.7 - - [03/Feb/2025 22:00:19] ""%s"" %s %s",2025-02-03 22:00:19
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:00:19
+INFO,Time taken by handle_price_action_signal: 0.0057 seconds,2025-02-03 22:00:19
+INFO,Time taken by _analyze_strategy_for_entry: 0.0034 seconds,2025-02-03 22:00:19
+INFO,"127.0.0.1 - - [03/Feb/2025 22:00:23] ""%s"" %s %s",2025-02-03 22:00:23
+INFO,"127.0.0.1 - - [03/Feb/2025 22:00:23] ""%s"" %s %s",2025-02-03 22:00:23
+INFO,"127.0.0.1 - - [03/Feb/2025 22:00:23] ""%s"" %s %s",2025-02-03 22:00:23
+INFO,"127.0.0.1 - - [03/Feb/2025 22:00:23] ""%s"" %s %s",2025-02-03 22:00:23
+INFO,"52.32.178.7 - - [03/Feb/2025 22:01:08] ""%s"" %s %s",2025-02-03 22:01:08
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:01:08
+INFO,Time taken by handle_price_action_signal: 0.0120 seconds,2025-02-03 22:01:08
+INFO,"34.212.75.30 - - [03/Feb/2025 22:02:02] ""%s"" %s %s",2025-02-03 22:02:02
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:02:02
+INFO,Time taken by handle_price_action_signal: 0.0102 seconds,2025-02-03 22:02:02
+INFO,"52.32.178.7 - - [03/Feb/2025 22:03:00] ""%s"" %s %s",2025-02-03 22:03:00
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:03:00
+INFO,Time taken by handle_price_action_signal: 0.0125 seconds,2025-02-03 22:03:00
+INFO,"34.212.75.30 - - [03/Feb/2025 22:04:00] ""%s"" %s %s",2025-02-03 22:04:00
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:04:00
+INFO,Time taken by handle_price_action_signal: 0.0118 seconds,2025-02-03 22:04:00
+INFO,"34.212.75.30 - - [03/Feb/2025 22:05:01] ""%s"" %s %s",2025-02-03 22:05:01
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:05:01
+INFO,Time taken by handle_price_action_signal: 0.0073 seconds,2025-02-03 22:05:01
+INFO,"52.32.178.7 - - [03/Feb/2025 22:06:01] ""%s"" %s %s",2025-02-03 22:06:01
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:06:01
+INFO,Time taken by handle_price_action_signal: 0.0068 seconds,2025-02-03 22:06:01
+INFO,Time taken by _analyze_strategy_for_entry: 273.1184 seconds,2025-02-03 22:06:36
+INFO,Time taken by _analyze_strategy_for_entry: 34.6352 seconds,2025-02-03 22:06:36
+INFO,Time taken by _analyze_strategy_for_entry: 155.1129 seconds,2025-02-03 22:06:36
+INFO,Time taken by _analyze_strategy_for_entry: 215.2929 seconds,2025-02-03 22:06:36
+INFO,Time taken by _analyze_strategy_for_entry: 94.5351 seconds,2025-02-03 22:06:36
+INFO,Time taken by _analyze_strategy_for_entry: 327.9821 seconds,2025-02-03 22:06:36
+INFO,"34.212.75.30 - - [03/Feb/2025 22:07:00] ""%s"" %s %s",2025-02-03 22:07:00
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:07:00
+INFO,Time taken by handle_price_action_signal: 0.0024 seconds,2025-02-03 22:07:00
+INFO,Time taken by _analyze_strategy_for_entry: 7.4193 seconds,2025-02-03 22:07:08
+INFO,"52.32.178.7 - - [03/Feb/2025 22:08:00] ""%s"" %s %s",2025-02-03 22:08:00
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:08:00
+INFO,Time taken by handle_price_action_signal: 0.0077 seconds,2025-02-03 22:08:00
+INFO,Time taken by _analyze_strategy_for_entry: 0.0065 seconds,2025-02-03 22:08:00
+INFO,"52.32.178.7 - - [03/Feb/2025 22:09:00] ""%s"" %s %s",2025-02-03 22:09:00
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:09:01
+INFO,Time taken by handle_price_action_signal: 0.0085 seconds,2025-02-03 22:09:01
+INFO,Time taken by _analyze_strategy_for_entry: 0.0062 seconds,2025-02-03 22:09:01
+INFO,Processing file TradingView_Alerts_Log_2025-02-03 (2).csv,2025-02-03 22:09:30
+INFO,"52.32.178.7 - - [03/Feb/2025 22:10:00] ""%s"" %s %s",2025-02-03 22:10:00
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:10:00
+INFO,Time taken by handle_price_action_signal: 0.0043 seconds,2025-02-03 22:10:00
+INFO,Time taken by _analyze_strategy_for_entry: 0.0014 seconds,2025-02-03 22:10:00
+INFO,TradingService initialized,2025-02-03 22:10:07
+INFO,Initializing ConfigManager,2025-02-03 22:10:07
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-03 22:10:07
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-03 22:10:07
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-03 22:10:07
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-03 22:10:07
+INFO,Registered asset BTCUSDT,2025-02-03 22:10:07
+INFO,Strategy FVG already registered,2025-02-03 22:10:07
+INFO,Strategy OTEFourH already registered,2025-02-03 22:10:07
+INFO,Strategy DoubleFib already registered,2025-02-03 22:10:07
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-03 22:10:07
+INFO,Registered asset USDT.D,2025-02-03 22:10:07
+INFO,Strategy FVG already registered,2025-02-03 22:10:07
+INFO,Strategy OTEFourH already registered,2025-02-03 22:10:07
+INFO,Strategy DoubleFib already registered,2025-02-03 22:10:07
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-03 22:10:07
+INFO,Registered asset EURUSD,2025-02-03 22:10:07
+INFO,Strategy FVG already registered,2025-02-03 22:10:07
+INFO,Strategy OTEFourH already registered,2025-02-03 22:10:07
+INFO,Strategy DoubleFib already registered,2025-02-03 22:10:07
+INFO,Register Asset to Asset Manager:DXY,2025-02-03 22:10:07
+INFO,Registered asset DXY,2025-02-03 22:10:07
+INFO,Finished ConfigManager,2025-02-03 22:10:07
+INFO,Time taken by run_starting_setup: 0.0208 seconds,2025-02-03 22:10:07
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-03 22:10:07
+INFO,b' * Debug mode: off\n',2025-02-03 22:10:07
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:80
+ * Running on http://192.168.178.94:80",2025-02-03 22:10:07
+INFO,[33mPress CTRL+C to quit[0m,2025-02-03 22:10:07
+INFO,"127.0.0.1 - - [03/Feb/2025 22:10:08] ""%s"" %s %s",2025-02-03 22:10:08
+INFO,Processing file TradingView_Alerts_Log_2025-02-03 (3).csv,2025-02-03 22:10:22
+INFO,"34.212.75.30 - - [03/Feb/2025 22:11:00] ""%s"" %s %s",2025-02-03 22:11:00
+INFO,Strategy BTCUSDT get Entry,2025-02-03 22:11:00
+INFO,Time taken by handle_price_action_signal: 0.0094 seconds,2025-02-03 22:11:00
+INFO,Time taken by _analyze_strategy_for_entry: 0.0030 seconds,2025-02-03 22:11:00
+INFO,File moved to _archive: /Users/lauris/PycharmProjects/AutomatedTrading/incomingFiles/_archive/TradingView_Alerts_Log_2025-02-03 (3).csv,2025-02-03 22:11:48
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (13).csv,2025-02-03 22:11:48
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (13).csv.,2025-02-03 22:11:49
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-03.csv,2025-02-03 22:11:49
+INFO,Succeed :TradingView_Alerts_Log_2025-02-03.csv.,2025-02-03 22:11:49
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-03 (3).csv,2025-02-03 22:11:49
+INFO,Succeed :TradingView_Alerts_Log_2025-02-03 (3).csv.,2025-02-03 22:11:49
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (2).csv,2025-02-03 22:11:49
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (2).csv.,2025-02-03 22:11:49
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (11).csv,2025-02-03 22:11:49
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (11).csv.,2025-02-03 22:11:49
+INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (9).csv,2025-02-03 22:11:49
+INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (9).csv.,2025-02-03 22:11:49

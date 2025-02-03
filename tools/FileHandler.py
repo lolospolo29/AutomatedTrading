@@ -61,6 +61,7 @@ class FileHandler(FileSystemEventHandler):
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
 
                 candles_dict_list = self._parse_candle_data(event.src_path)
+
                 # candles_dict_list = self._parse_candle_data_from_file(event.src_path)
                 logger.debug("Candles list {}".format(len(candles_dict_list)))
 
