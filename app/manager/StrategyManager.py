@@ -53,6 +53,9 @@ class StrategyManager:
             logger.info(f"Strategy {strategy_smt.name} already registered")
             return False
 
+    def return_strategies(self)->list[Strategy]:
+        return [x for x in self.strategies.values()]
+
     def register_strategy(self, relation:AssetBrokerStrategyRelation, strategy:Strategy) -> bool:
         if relation not in self.strategies:
             self.strategies[relation] = strategy

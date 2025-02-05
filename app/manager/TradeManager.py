@@ -359,10 +359,17 @@ class TradeManager:
 
     def return_trades_for_relation(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list[Trade]:
         return [x for x in self._open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
+
+
+    def return_trades(self) -> list[Trade]:
+        t1 = Trade(AssetBrokerStrategyRelation("A","A","QA",1))
+        self.register_trade(t1)
+        # todo remove after testing
+        return [x for x in self._open_trades.values()]
     # endregion
 
 # trade_manager = TradeManager()
-#
+
 # relation = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
 # relation2 = AssetBrokerStrategyRelation("XRPUSDT", "BYBIT", "ABC", 1)
 #

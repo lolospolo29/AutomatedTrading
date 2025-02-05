@@ -27,6 +27,9 @@ class NewsService:
         self.news_days: list[NewsDay] = []
         self.logger = logger
 
+    def return_news_days(self)->list[NewsDay]:
+        return self.news_days
+
     def receive_news(self):
         """
         Receiving the News from Scrapper.

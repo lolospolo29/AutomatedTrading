@@ -7,7 +7,7 @@ from app.ClassInstances import signal_controller
 from app.monitoring.logging.logging_startup import logger, log_queue
 
 app = Flask(__name__)
-
+# region POST APP Route
 @app.route('/tradingview', methods=['post'])
 def receive_signal():
     json_data = request.get_json()
@@ -18,6 +18,7 @@ def receive_signal():
     thread.start()
 
     return f'Received Analyse data: {json_data}'
+# endregion
 
 @app.route('/')
 def show_logs():
@@ -37,6 +38,24 @@ def stream_logs():
 
     return Response(generate(), mimetype='text/event-stream')
 
+# region GET APP Route
+@app.route('/get-trades', methods=['GET'])
+def get_data():
+    return jsonify(signal_controller.get_trades())
+
+@app.route('/get-news-days', methods=['GET'])
+def get_data():
+    return jsonify(signal_controller.get_news_days())
+
+@app.route('/get-news-assets', methods=['GET'])
+def get_data():
+    return jsonify(signal_controller.get_assets())
+
+@app.route('/get-strategies', methods=['GET'])
+def get_data():
+    return jsonify(signal_controller.get_strategies())
+# endregion
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=5000)

@@ -40,23 +40,25 @@ class Trade:
 
     def to_dict(self):
         """Gibt alle Datenpunkte als Dictionary zurück"""
+        """Gibt alle Datenpunkte als Dictionary zurück, selbst wenn Werte fehlen"""
         try:
             return {
                 "Trade": {
-                    "id": str(self.id),
-                    "orders": [order.orderLinkId for order in self.orders],
-                    "asset": self.relation.asset ,
-                    "broker": self.relation.broker ,
-                    "strategy": self.relation.strategy ,
-                    "category": self.category ,
-                    "side": self.side,
-                    "tpslMode": self.tpslMode,
-                    "unrealisedPnl": self.unrealisedPnl,
-                    "leverage": self.leverage,
-                    "size": self.size,
-                    "tradeMode": self.tradeMode,
-                    "updatedTime": self.updatedTime,
-                    "createdTime": self.createdTime,
+                    "id": str(self.id) if self.id else "",  # Ensure string format
+                    "orders": [order.orderLinkId for order in (self.orders or [])],  # Ensure list
+                    "asset": getattr(self.relation, "asset", ""),  # Use default empty string
+                    "broker": getattr(self.relation, "broker", ""),
+                    "strategy": getattr(self.relation, "strategy", ""),
+                    "category": self.category if self.category is not None else "",
+                    "side": self.side if self.side is not None else "",
+                    "tpslMode": self.tpslMode if self.tpslMode is not None else "",
+                    "unrealisedPnl": self.unrealisedPnl if self.unrealisedPnl is not None else 0.0,
+                    # Default to 0.0 for numbers
+                    "leverage": self.leverage if self.leverage is not None else 1,  # Default leverage to 1
+                    "size": self.size if self.size is not None else 0,
+                    "tradeMode": self.tradeMode if self.tradeMode is not None else "",
+                    "updatedTime": self.updatedTime if self.updatedTime is not None else "",
+                    "createdTime": self.createdTime if self.createdTime is not None else "",
                 }
             }
         except Exception as e:

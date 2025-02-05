@@ -18936,3 +18936,380 @@ INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (11).csv,2025-02-03 22:
 INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (11).csv.,2025-02-03 22:11:49
 INFO,Verarbeite Datei: TradingView_Alerts_Log_2025-02-02 (9).csv,2025-02-03 22:11:49
 INFO,Succeed :TradingView_Alerts_Log_2025-02-02 (9).csv.,2025-02-03 22:11:49
+INFO,TradingService initialized,2025-02-05 18:36:05
+INFO,Initializing ConfigManager,2025-02-05 18:36:05
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 18:36:05
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 18:36:05
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 18:36:05
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 18:36:05
+INFO,Registered asset BTCUSDT,2025-02-05 18:36:05
+INFO,Strategy FVG already registered,2025-02-05 18:36:05
+INFO,Strategy OTEFourH already registered,2025-02-05 18:36:05
+INFO,Strategy DoubleFib already registered,2025-02-05 18:36:05
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 18:36:05
+INFO,Registered asset USDT.D,2025-02-05 18:36:05
+INFO,Strategy FVG already registered,2025-02-05 18:36:05
+INFO,Strategy OTEFourH already registered,2025-02-05 18:36:05
+INFO,Strategy DoubleFib already registered,2025-02-05 18:36:05
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 18:36:05
+INFO,Registered asset EURUSD,2025-02-05 18:36:05
+INFO,Strategy FVG already registered,2025-02-05 18:36:05
+INFO,Strategy OTEFourH already registered,2025-02-05 18:36:05
+INFO,Strategy DoubleFib already registered,2025-02-05 18:36:05
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 18:36:05
+INFO,Registered asset DXY,2025-02-05 18:36:05
+INFO,Finished ConfigManager,2025-02-05 18:36:05
+INFO,Time taken by run_starting_setup: 0.0433 seconds,2025-02-05 18:36:05
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 18:36:05
+INFO,b' * Debug mode: off\n',2025-02-05 18:36:05
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 18:36:05
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 18:36:05
+INFO,"127.0.0.1 - - [05/Feb/2025 18:36:09] ""%s"" %s %s",2025-02-05 18:36:09
+INFO,"127.0.0.1 - - [05/Feb/2025 18:36:09] ""%s"" %s %s",2025-02-05 18:36:09
+INFO,"127.0.0.1 - - [05/Feb/2025 18:36:10] ""%s"" %s %s",2025-02-05 18:36:10
+INFO,"127.0.0.1 - - [05/Feb/2025 18:36:10] ""%s"" %s %s",2025-02-05 18:36:10
+INFO,"127.0.0.1 - - [05/Feb/2025 18:36:52] ""%s"" %s %s",2025-02-05 18:36:52
+INFO,"127.0.0.1 - - [05/Feb/2025 18:37:39] ""%s"" %s %s",2025-02-05 18:37:39
+INFO,TradingService initialized,2025-02-05 19:03:12
+INFO,Initializing ConfigManager,2025-02-05 19:03:12
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:03:12
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:03:12
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:03:12
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:03:12
+INFO,Registered asset BTCUSDT,2025-02-05 19:03:12
+INFO,Strategy FVG already registered,2025-02-05 19:03:12
+INFO,Strategy OTEFourH already registered,2025-02-05 19:03:12
+INFO,Strategy DoubleFib already registered,2025-02-05 19:03:12
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:03:12
+INFO,Registered asset USDT.D,2025-02-05 19:03:12
+INFO,Strategy FVG already registered,2025-02-05 19:03:12
+INFO,Strategy OTEFourH already registered,2025-02-05 19:03:12
+INFO,Strategy DoubleFib already registered,2025-02-05 19:03:12
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:03:12
+INFO,Registered asset EURUSD,2025-02-05 19:03:12
+INFO,Strategy FVG already registered,2025-02-05 19:03:12
+INFO,Strategy OTEFourH already registered,2025-02-05 19:03:12
+INFO,Strategy DoubleFib already registered,2025-02-05 19:03:12
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:03:12
+INFO,Registered asset DXY,2025-02-05 19:03:12
+INFO,Finished ConfigManager,2025-02-05 19:03:12
+INFO,Time taken by run_starting_setup: 0.0206 seconds,2025-02-05 19:03:12
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:03:12
+INFO,b' * Debug mode: off\n',2025-02-05 19:03:12
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:03:12
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:03:12
+INFO,"127.0.0.1 - - [05/Feb/2025 19:03:13] ""%s"" %s %s",2025-02-05 19:03:13
+INFO,"127.0.0.1 - - [05/Feb/2025 19:03:26] ""%s"" %s %s",2025-02-05 19:03:26
+INFO,"127.0.0.1 - - [05/Feb/2025 19:03:28] ""%s"" %s %s",2025-02-05 19:03:28
+INFO,"127.0.0.1 - - [05/Feb/2025 19:05:17] ""%s"" %s %s",2025-02-05 19:05:17
+INFO,TradingService initialized,2025-02-05 19:06:45
+INFO,Initializing ConfigManager,2025-02-05 19:06:45
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:06:45
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:06:45
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:06:45
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:06:45
+INFO,Registered asset BTCUSDT,2025-02-05 19:06:45
+INFO,Strategy FVG already registered,2025-02-05 19:06:45
+INFO,Strategy OTEFourH already registered,2025-02-05 19:06:45
+INFO,Strategy DoubleFib already registered,2025-02-05 19:06:45
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:06:45
+INFO,Registered asset USDT.D,2025-02-05 19:06:45
+INFO,Strategy FVG already registered,2025-02-05 19:06:45
+INFO,Strategy OTEFourH already registered,2025-02-05 19:06:45
+INFO,Strategy DoubleFib already registered,2025-02-05 19:06:45
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:06:45
+INFO,Registered asset EURUSD,2025-02-05 19:06:45
+INFO,Strategy FVG already registered,2025-02-05 19:06:45
+INFO,Strategy OTEFourH already registered,2025-02-05 19:06:45
+INFO,Strategy DoubleFib already registered,2025-02-05 19:06:45
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:06:45
+INFO,Registered asset DXY,2025-02-05 19:06:45
+INFO,Finished ConfigManager,2025-02-05 19:06:45
+INFO,Time taken by run_starting_setup: 0.0197 seconds,2025-02-05 19:06:45
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:06:45
+INFO,b' * Debug mode: off\n',2025-02-05 19:06:45
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:06:45
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:06:45
+INFO,"127.0.0.1 - - [05/Feb/2025 19:06:47] ""%s"" %s %s",2025-02-05 19:06:47
+INFO,"Register Trade,TradeId: b2a86cbd-34fe-4b8b-a02d-78f395d70da8",2025-02-05 19:06:50
+INFO,"127.0.0.1 - - [05/Feb/2025 19:06:52] ""%s"" %s %s",2025-02-05 19:06:52
+INFO,"Register Trade,TradeId: 40578208-5f8b-445a-87a0-05070e24c601",2025-02-05 19:07:56
+INFO,"Register Trade,TradeId: 86c4a0a0-ecb3-443d-aa87-7ae4192e22f8",2025-02-05 19:08:57
+INFO,TradingService initialized,2025-02-05 19:09:41
+INFO,Initializing ConfigManager,2025-02-05 19:09:41
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:09:41
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:09:41
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:09:41
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:09:41
+INFO,Registered asset BTCUSDT,2025-02-05 19:09:41
+INFO,Strategy FVG already registered,2025-02-05 19:09:41
+INFO,Strategy OTEFourH already registered,2025-02-05 19:09:41
+INFO,Strategy DoubleFib already registered,2025-02-05 19:09:41
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:09:41
+INFO,Registered asset USDT.D,2025-02-05 19:09:41
+INFO,Strategy FVG already registered,2025-02-05 19:09:41
+INFO,Strategy OTEFourH already registered,2025-02-05 19:09:41
+INFO,Strategy DoubleFib already registered,2025-02-05 19:09:41
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:09:41
+INFO,Registered asset EURUSD,2025-02-05 19:09:41
+INFO,Strategy FVG already registered,2025-02-05 19:09:41
+INFO,Strategy OTEFourH already registered,2025-02-05 19:09:41
+INFO,Strategy DoubleFib already registered,2025-02-05 19:09:41
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:09:41
+INFO,Registered asset DXY,2025-02-05 19:09:41
+INFO,Finished ConfigManager,2025-02-05 19:09:41
+INFO,Time taken by run_starting_setup: 0.0180 seconds,2025-02-05 19:09:41
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:09:41
+INFO,b' * Debug mode: off\n',2025-02-05 19:09:41
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:09:41
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:09:41
+INFO,"127.0.0.1 - - [05/Feb/2025 19:09:42] ""%s"" %s %s",2025-02-05 19:09:42
+INFO,"Register Trade,TradeId: 173d3303-654f-460f-8326-ed241848dc9b",2025-02-05 19:09:46
+INFO,TradingService initialized,2025-02-05 19:10:03
+INFO,Initializing ConfigManager,2025-02-05 19:10:03
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:10:03
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:10:03
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:10:03
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:10:03
+INFO,Registered asset BTCUSDT,2025-02-05 19:10:03
+INFO,Strategy FVG already registered,2025-02-05 19:10:03
+INFO,Strategy OTEFourH already registered,2025-02-05 19:10:03
+INFO,Strategy DoubleFib already registered,2025-02-05 19:10:03
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:10:03
+INFO,Registered asset USDT.D,2025-02-05 19:10:03
+INFO,Strategy FVG already registered,2025-02-05 19:10:03
+INFO,Strategy OTEFourH already registered,2025-02-05 19:10:03
+INFO,Strategy DoubleFib already registered,2025-02-05 19:10:03
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:10:03
+INFO,Registered asset EURUSD,2025-02-05 19:10:03
+INFO,Strategy FVG already registered,2025-02-05 19:10:03
+INFO,Strategy OTEFourH already registered,2025-02-05 19:10:03
+INFO,Strategy DoubleFib already registered,2025-02-05 19:10:03
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:10:03
+INFO,Registered asset DXY,2025-02-05 19:10:03
+INFO,Finished ConfigManager,2025-02-05 19:10:03
+INFO,Time taken by run_starting_setup: 0.0182 seconds,2025-02-05 19:10:03
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:10:03
+INFO,b' * Debug mode: off\n',2025-02-05 19:10:03
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:10:03
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:10:03
+INFO,"127.0.0.1 - - [05/Feb/2025 19:10:04] ""%s"" %s %s",2025-02-05 19:10:04
+INFO,"Register Trade,TradeId: eaecb697-c1ac-4648-b7ae-98c5731dd6ea",2025-02-05 19:10:33
+INFO,"Register Trade,TradeId: 7c4d8a30-6e95-469f-93ee-652e27929939",2025-02-05 19:10:45
+INFO,"127.0.0.1 - - [05/Feb/2025 19:10:48] ""%s"" %s %s",2025-02-05 19:10:48
+INFO,"127.0.0.1 - - [05/Feb/2025 19:10:48] ""%s"" %s %s",2025-02-05 19:10:48
+INFO,"Register Trade,TradeId: 3d1dd78d-6305-4a38-bbd0-de41d6dbf442",2025-02-05 19:11:25
+INFO,"Register Trade,TradeId: 18177800-7412-4363-8171-1039366f3c78",2025-02-05 19:11:35
+INFO,"Register Trade,TradeId: b62bc526-5116-48f3-817c-6686413b4c4e",2025-02-05 19:11:52
+INFO,"Register Trade,TradeId: 07849765-d3c9-44a8-9ef9-2dcaaf2ec6f7",2025-02-05 19:12:03
+INFO,TradingService initialized,2025-02-05 19:14:46
+INFO,Initializing ConfigManager,2025-02-05 19:14:46
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:14:46
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:14:46
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:14:46
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:14:46
+INFO,Registered asset BTCUSDT,2025-02-05 19:14:46
+INFO,Strategy FVG already registered,2025-02-05 19:14:46
+INFO,Strategy OTEFourH already registered,2025-02-05 19:14:46
+INFO,Strategy DoubleFib already registered,2025-02-05 19:14:46
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:14:46
+INFO,Registered asset USDT.D,2025-02-05 19:14:46
+INFO,Strategy FVG already registered,2025-02-05 19:14:46
+INFO,Strategy OTEFourH already registered,2025-02-05 19:14:46
+INFO,Strategy DoubleFib already registered,2025-02-05 19:14:46
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:14:46
+INFO,Registered asset EURUSD,2025-02-05 19:14:46
+INFO,Strategy FVG already registered,2025-02-05 19:14:46
+INFO,Strategy OTEFourH already registered,2025-02-05 19:14:46
+INFO,Strategy DoubleFib already registered,2025-02-05 19:14:46
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:14:46
+INFO,Registered asset DXY,2025-02-05 19:14:46
+INFO,Finished ConfigManager,2025-02-05 19:14:46
+INFO,Time taken by run_starting_setup: 0.1445 seconds,2025-02-05 19:14:46
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:14:46
+INFO,b' * Debug mode: off\n',2025-02-05 19:14:46
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:14:46
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:14:46
+INFO,"127.0.0.1 - - [05/Feb/2025 19:14:48] ""%s"" %s %s",2025-02-05 19:14:48
+INFO,"Register Trade,TradeId: 0e0b2d6d-667e-4a22-87d0-131d1b0594e5",2025-02-05 19:14:53
+INFO,TradingService initialized,2025-02-05 19:16:27
+INFO,Initializing ConfigManager,2025-02-05 19:16:27
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:16:28
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:16:28
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:16:28
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:16:28
+INFO,Registered asset BTCUSDT,2025-02-05 19:16:28
+INFO,Strategy FVG already registered,2025-02-05 19:16:28
+INFO,Strategy OTEFourH already registered,2025-02-05 19:16:28
+INFO,Strategy DoubleFib already registered,2025-02-05 19:16:28
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:16:28
+INFO,Registered asset USDT.D,2025-02-05 19:16:28
+INFO,Strategy FVG already registered,2025-02-05 19:16:28
+INFO,Strategy OTEFourH already registered,2025-02-05 19:16:28
+INFO,Strategy DoubleFib already registered,2025-02-05 19:16:28
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:16:28
+INFO,Registered asset EURUSD,2025-02-05 19:16:28
+INFO,Strategy FVG already registered,2025-02-05 19:16:28
+INFO,Strategy OTEFourH already registered,2025-02-05 19:16:28
+INFO,Strategy DoubleFib already registered,2025-02-05 19:16:28
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:16:28
+INFO,Registered asset DXY,2025-02-05 19:16:28
+INFO,Finished ConfigManager,2025-02-05 19:16:28
+INFO,Time taken by run_starting_setup: 0.1433 seconds,2025-02-05 19:16:28
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:16:28
+INFO,b' * Debug mode: off\n',2025-02-05 19:16:28
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:16:28
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:16:28
+INFO,"127.0.0.1 - - [05/Feb/2025 19:16:30] ""%s"" %s %s",2025-02-05 19:16:30
+INFO,"Register Trade,TradeId: dd115934-1cc6-4af0-94b0-765c66efecd7",2025-02-05 19:16:37
+ERROR,Exception on /get-trades [GET],2025-02-05 19:16:55
+INFO,"127.0.0.1 - - [05/Feb/2025 19:16:55] ""%s"" %s %s",2025-02-05 19:16:55
+INFO,"Register Trade,TradeId: 863faad9-9fc7-4501-b907-14e7cf814b83",2025-02-05 19:19:09
+INFO,TradingService initialized,2025-02-05 19:25:19
+INFO,Initializing ConfigManager,2025-02-05 19:25:19
+INFO,"Mapping Trade,TradingId:0e1d75c9-832a-4e25-8f7b-3698dbe14d5b",2025-02-05 19:25:19
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:25:19
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:25:19
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:25:19
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:25:19
+INFO,Registered asset BTCUSDT,2025-02-05 19:25:19
+INFO,Strategy FVG already registered,2025-02-05 19:25:19
+INFO,Strategy OTEFourH already registered,2025-02-05 19:25:19
+INFO,Strategy DoubleFib already registered,2025-02-05 19:25:19
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:25:19
+INFO,Registered asset USDT.D,2025-02-05 19:25:19
+INFO,Strategy FVG already registered,2025-02-05 19:25:19
+INFO,Strategy OTEFourH already registered,2025-02-05 19:25:19
+INFO,Strategy DoubleFib already registered,2025-02-05 19:25:19
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:25:19
+INFO,Registered asset EURUSD,2025-02-05 19:25:19
+INFO,Strategy FVG already registered,2025-02-05 19:25:19
+INFO,Strategy OTEFourH already registered,2025-02-05 19:25:19
+INFO,Strategy DoubleFib already registered,2025-02-05 19:25:19
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:25:19
+INFO,Registered asset DXY,2025-02-05 19:25:19
+INFO,"Register Trade,TradeId: 0e1d75c9-832a-4e25-8f7b-3698dbe14d5b",2025-02-05 19:25:19
+INFO,"Sending API-Call to Return Position Info Bybit,Symbol:BTCUSDT",2025-02-05 19:25:19
+INFO,"Request Bybit Endpoint,Symbol:/v5/order/realtime",2025-02-05 19:25:19
+INFO,"Request Return Position Info Bybit,Symbol:BTCUSDT",2025-02-05 19:25:19
+INFO,"Arching Trade,OrderLinkId:0e1d75c9-832a-4e25-8f7b-3698dbe14d5b",2025-02-05 19:25:31
+INFO,"Remove Trade,TradeId: 0e1d75c9-832a-4e25-8f7b-3698dbe14d5b",2025-02-05 19:25:32
+INFO,Finished ConfigManager,2025-02-05 19:25:46
+INFO,Time taken by run_starting_setup: 26.7867 seconds,2025-02-05 19:25:46
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:25:46
+INFO,b' * Debug mode: off\n',2025-02-05 19:25:46
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:25:46
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:25:46
+INFO,"127.0.0.1 - - [05/Feb/2025 19:25:46] ""%s"" %s %s",2025-02-05 19:25:46
+INFO,TradingService initialized,2025-02-05 19:30:29
+INFO,Initializing ConfigManager,2025-02-05 19:30:29
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:30:29
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:30:29
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:30:29
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:30:29
+INFO,Registered asset BTCUSDT,2025-02-05 19:30:29
+INFO,Strategy FVG already registered,2025-02-05 19:30:29
+INFO,Strategy OTEFourH already registered,2025-02-05 19:30:29
+INFO,Strategy DoubleFib already registered,2025-02-05 19:30:29
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:30:29
+INFO,Registered asset USDT.D,2025-02-05 19:30:29
+INFO,Strategy FVG already registered,2025-02-05 19:30:29
+INFO,Strategy OTEFourH already registered,2025-02-05 19:30:29
+INFO,Strategy DoubleFib already registered,2025-02-05 19:30:29
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:30:29
+INFO,Registered asset EURUSD,2025-02-05 19:30:29
+INFO,Strategy FVG already registered,2025-02-05 19:30:29
+INFO,Strategy OTEFourH already registered,2025-02-05 19:30:29
+INFO,Strategy DoubleFib already registered,2025-02-05 19:30:29
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:30:29
+INFO,Registered asset DXY,2025-02-05 19:30:29
+INFO,Finished ConfigManager,2025-02-05 19:30:29
+INFO,Time taken by run_starting_setup: 0.0207 seconds,2025-02-05 19:30:29
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:30:29
+INFO,b' * Debug mode: off\n',2025-02-05 19:30:29
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:30:29
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:30:29
+INFO,"127.0.0.1 - - [05/Feb/2025 19:30:31] ""%s"" %s %s",2025-02-05 19:30:31
+INFO,"Register Trade,TradeId: 7cb747ef-5277-4561-aab8-6731ad98beb7",2025-02-05 19:30:44
+ERROR,"Mapping Error with TradeId: 7cb747ef-5277-4561-aab8-6731ad98beb7,Error:'NoneType' object is not iterable",2025-02-05 19:30:44
+INFO,"Register Trade,TradeId: 3687f6cf-5036-4357-a8eb-e042e14b5886",2025-02-05 19:31:13
+ERROR,"Mapping Error with TradeId: 7cb747ef-5277-4561-aab8-6731ad98beb7,Error:'NoneType' object is not iterable",2025-02-05 19:31:13
+ERROR,"Mapping Error with TradeId: 3687f6cf-5036-4357-a8eb-e042e14b5886,Error:'NoneType' object is not iterable",2025-02-05 19:31:13
+INFO,"127.0.0.1 - - [05/Feb/2025 19:31:19] ""%s"" %s %s",2025-02-05 19:31:19
+INFO,"127.0.0.1 - - [05/Feb/2025 19:31:19] ""%s"" %s %s",2025-02-05 19:31:19
+INFO,"Register Trade,TradeId: c7620e2f-af91-425a-a3e1-e2ec1f1f4f24",2025-02-05 19:33:01
+INFO,TradingService initialized,2025-02-05 19:36:50
+INFO,Initializing ConfigManager,2025-02-05 19:36:50
+INFO,Strategy FVG registered for relation EURUSDCAPITALCOMFVGSession,2025-02-05 19:36:50
+INFO,Strategy OTEFourH registered for relation DXYCAPITALCOMOTEFourH,2025-02-05 19:36:50
+INFO,Strategy DoubleFib registered for relation BTCUSDTBYBITDoubleFib,2025-02-05 19:36:50
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-05 19:36:50
+INFO,Registered asset BTCUSDT,2025-02-05 19:36:50
+INFO,Strategy FVG already registered,2025-02-05 19:36:50
+INFO,Strategy OTEFourH already registered,2025-02-05 19:36:50
+INFO,Strategy DoubleFib already registered,2025-02-05 19:36:50
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-05 19:36:50
+INFO,Registered asset USDT.D,2025-02-05 19:36:50
+INFO,Strategy FVG already registered,2025-02-05 19:36:50
+INFO,Strategy OTEFourH already registered,2025-02-05 19:36:50
+INFO,Strategy DoubleFib already registered,2025-02-05 19:36:50
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-05 19:36:50
+INFO,Registered asset EURUSD,2025-02-05 19:36:50
+INFO,Strategy FVG already registered,2025-02-05 19:36:50
+INFO,Strategy OTEFourH already registered,2025-02-05 19:36:50
+INFO,Strategy DoubleFib already registered,2025-02-05 19:36:50
+INFO,Register Asset to Asset Manager:DXY,2025-02-05 19:36:50
+INFO,Registered asset DXY,2025-02-05 19:36:50
+INFO,Finished ConfigManager,2025-02-05 19:36:50
+INFO,Time taken by run_starting_setup: 0.0186 seconds,2025-02-05 19:36:50
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-05 19:36:50
+INFO,b' * Debug mode: off\n',2025-02-05 19:36:50
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-05 19:36:50
+INFO,[33mPress CTRL+C to quit[0m,2025-02-05 19:36:50
+INFO,"127.0.0.1 - - [05/Feb/2025 19:36:52] ""%s"" %s %s",2025-02-05 19:36:52
+INFO,"Register Trade,TradeId: d32c26b0-d0eb-43b2-a32c-0251435f6add",2025-02-05 19:36:56
+INFO,"127.0.0.1 - - [05/Feb/2025 19:37:11] ""%s"" %s %s",2025-02-05 19:37:11
+INFO,"Register Trade,TradeId: ebd2407c-622d-48ee-81db-a7dcb781a5b7",2025-02-05 19:37:50
+INFO,"127.0.0.1 - - [05/Feb/2025 19:38:30] ""%s"" %s %s",2025-02-05 19:38:30
+INFO,"Register Trade,TradeId: 757bad38-c2e1-4a77-b149-6dd166628ade",2025-02-05 19:40:41
+ERROR,"Traceback (most recent call last):
+  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/CC73BE68-C6CF-4DB0-B21E-AF537E0106E7/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/_pydevd_bundle/pydevd_comm.py"", line 1903, in do_it
+    var_obj = pydevd_vars.getVariable(self.thread_id, self.frame_id, scope, attrs)
+  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/CC73BE68-C6CF-4DB0-B21E-AF537E0106E7/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/_pydevd_bundle/pydevd_vars.py"", line 242, in getVariable
+    var = resolver.resolve(var, k)
+  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/CC73BE68-C6CF-4DB0-B21E-AF537E0106E7/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/_pydevd_bundle/pydevd_resolver.py"", line 224, in resolve
+    raise UnableToResolveVariableException()
+_pydevd_bundle.pydevd_resolver.UnableToResolveVariableException
+
+",2025-02-05 19:41:07
+INFO,"127.0.0.1 - - [05/Feb/2025 19:41:15] ""%s"" %s %s",2025-02-05 19:41:15

@@ -59,11 +59,8 @@ class AssetManager:
         logger.warning("Asset {} already registered".format(asset.name))
         return False
 
-    def return_all_assets(self):
-        assets = []
-        for name, asset in self.assets.items():
-            assets.append(name)
-        return assets
+    def return_all_assets(self)->list[Asset]:
+        return [x for x in self.assets.values()]
 
     # endregion
 

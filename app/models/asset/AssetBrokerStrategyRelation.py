@@ -12,5 +12,14 @@ class AssetBrokerStrategyRelation:
         return False
 
     def __str__(self):
-        return self.asset + self.broker + self.strategy
+        return f"{self.asset} {self.broker} {self.strategy}"
 
+    def to_dict(self) -> dict:
+        return {
+            "AssetBrokerStrategyRelation": {
+                "asset": self.asset,
+                "broker": self.broker,
+                "strategy": self.strategy,
+                "max_trades": self.max_trades
+            }
+        }

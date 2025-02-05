@@ -9,12 +9,12 @@ class Asset:
     # region Initializing
     def __init__(self, name: str, asset_class:str):
         self.name: str = name
-        self.asset_class = asset_class
+        self.asset_class:str = asset_class
         self.brokers: list[str] = []
         self.strategies: list[str] = []
         self.smt_pairs: list[SMTPair] = []
-        self.candles_series: list[CandleSeries] = []
         self.relations: list[AssetBrokerStrategyRelation] = []
+        self.candles_series: list[CandleSeries] = []
     # endregion
 
     # region Add Functions
@@ -85,7 +85,19 @@ class Asset:
         for assignment in self.relations:
             if broker == assignment.broker:
                 relations.append(assignment)
-        return relations
+        return relations#
+
+    def to_dict(self) -> dict:
+        return {
+            "Asset": {
+                "name": self.name,
+                "asset_class": self.asset_class,
+                "brokers": self.brokers,
+                "strategies": self.strategies,
+                "smt_pairs": [pair.to_dict() for pair in self.smt_pairs],
+                "relations": [relation.to_dict() for relation in self.relations]
+            }
+        }
     # endregion
 
     # region Checking

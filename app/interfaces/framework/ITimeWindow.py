@@ -9,3 +9,7 @@ class ITimeWindow(ABC):  # Entry / Exit Times
     @abstractmethod
     def is_in_exit_window(self, time):
         pass
+
+    @abstractmethod
+    def to_dict(self):
+        pass

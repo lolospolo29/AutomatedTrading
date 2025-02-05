@@ -65,7 +65,6 @@ class TradingService:
             self._strategy_manager: StrategyManager = StrategyManager()
         #    self._news_service :NewsService = NewsService()
          #   self._news_service.receive_news()
-            self.news_event_ahead_counter = 0
             self._logger = logger
             self._logger.info("TradingService initialized")
             self._initialized = True  # Markiere als initialisiert
@@ -90,7 +89,7 @@ class TradingService:
 
             relations: list[AssetBrokerStrategyRelation] = self._asset_manager.return_relations(candle.asset, candle.broker)
 
-            logger.debug("Processing: {candle}, {relations}".format(candle=candle, relations=relations))
+            self._logger.debug("Processing: {candle}, {relations}".format(candle=candle, relations=relations))
             threads:list[threading.Thread] = []
             for relation in relations:
                 thread = threading.Thread(target=self._process_relation_strategy,
@@ -98,11 +97,6 @@ class TradingService:
                 threads.append(thread)
             for thread in threads:
                 thread.start()
-
-        elif False:
-            self.news_event_ahead_counter += 1
-            if self.news_event_ahead_counter % 10 == 0:
-                self._logger.info(message)
 
 
     def _process_relation_strategy(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation):

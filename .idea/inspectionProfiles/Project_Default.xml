@@ -31,7 +31,7 @@
     <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredIdentifiers">
         <list>
-          <option value="test.asyncioTest.*" />
+          <option value="news_event_ahead_counter" />
         </list>
       </option>
     </inspection_tool>
