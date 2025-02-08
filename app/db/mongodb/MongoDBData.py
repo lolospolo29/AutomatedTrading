@@ -31,7 +31,7 @@ class MongoDBData(MongoDB):
             self._initialized = True  # Markiere als initialisiert
 
     def add_candle_to_db(self, asset: str, candle: Candle):
-        self.add(asset, candle.to_dict())
+        self.add(asset, candle.model_dump_json())
 
     def archive_data(self, asset: str) -> Any:
         logger.info(f"Arching data for {asset}")
@@ -61,13 +61,6 @@ class MongoDBData(MongoDB):
         }
         return self.find(asset, query)
 
-    def receive_asset_data(self, asset) -> list[Candle]:
-        candlesDict: list = self.find(asset, None)
-        candles: list[Candle] = []
-        for candle in candlesDict:
-            try:
-                candles.append(self._dto_mapper.map_candle(candle))
-            finally:
-                continue
+    def receive_asset_data(self, asset) -> list:
+        return self.find(asset, None)
 
-        return candles

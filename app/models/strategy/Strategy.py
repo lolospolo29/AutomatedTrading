@@ -1,14 +1,17 @@
 from abc import abstractmethod, ABC
+from typing import Optional
+
+from pydantic import BaseModel
 
 from app.interfaces.framework.ITimeWindow import ITimeWindow
 from app.models.asset.Relation import Relation
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 
 
-class Strategy(ABC):
-    name:str
-    timeframes:list[ExpectedTimeFrame]
-    time_windows:list[ITimeWindow]
+class Strategy(BaseModel):
+    name:str=None
+    timeframes:Optional[list[ExpectedTimeFrame]]=None
+    time_windows:Optional[list[ITimeWindow]]=None
 
     def is_in_time(self, time) -> bool:
         for time_window in self.time_windows:

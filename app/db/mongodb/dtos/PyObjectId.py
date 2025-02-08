@@ -1,0 +1,14 @@
+from bson import ObjectId
+
+
+class PyObjectId(ObjectId):
+    """Custom Pydantic-compatible ObjectId type"""
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v, info):
+        if not ObjectId.is_valid(v):
+            raise ValueError("Invalid ObjectId")
+        return ObjectId(v)

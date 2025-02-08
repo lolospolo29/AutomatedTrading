@@ -3,5 +3,6 @@ from pydantic import BaseModel
 
 class SMTPair(BaseModel):
     strategy: str
-    smt_pairs: list[str]
+    asset_a:str
+    asset_b:str
     correlation: str

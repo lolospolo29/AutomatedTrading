@@ -4,7 +4,7 @@ from app.models.asset.Relation import Relation
 from app.monitoring.logging.logging_startup import logger
 
 
-class TradeSemaphoreRegistry:
+class SemaphoreRegistry:
     """
     A thread-safe registry that manages semaphores for trade limits on different
     asset-broker-strategy relations.
@@ -16,7 +16,7 @@ class TradeSemaphoreRegistry:
     across the application.
 
     :ivar _instance: The singleton instance of the registry.
-    :type _instance: TradeSemaphoreRegistry
+    :type _instance: SemaphoreRegistry
     :ivar _lock: A threading.Lock to ensure thread safety during registry operations.
     :type _lock: threading.Lock
     :ivar registry: A mapping of AssetBrokerStrategyRelation to their corresponding
@@ -32,27 +32,26 @@ class TradeSemaphoreRegistry:
         if not cls._instance:
             with cls._lock:
                 if not cls._instance:
-                    cls._instance = super(TradeSemaphoreRegistry, cls).__new__(cls, *args, **kwargs)
+                    cls._instance = super(SemaphoreRegistry, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     def __init__(self): # maxtradesperrelation fix
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.registry:dict[Relation,threading.Semaphore] = {}  # Map: Relation -> Semaphore
+            self.registry:dict[str,threading.Semaphore] = {}  # Map: Relation -> Semaphore
             self._initialized = True
 
-    def register_relation(self, relation:Relation):
+    def register_relation(self, key:str,max_semaphores:int=1):
         """Eine neue Relation registrieren."""
         with self._lock:
-            if relation not in self.registry:
+            if key not in self.registry:
                 # Erstelle Semaphore mit der maximal erlaubten Anzahl von Trades
-                self.registry[relation] = threading.Semaphore(relation.max_trades)
-# todo refactor with str and int input instead of relation
-    def acquire_trade(self, relation:Relation):
+                self.registry[key] = threading.Semaphore(max_semaphores)
+    def acquire_trade(self,  key:str):
         """Einen Trade für die gegebene Relation starten."""
         with self._lock:
-            if relation not in self.registry:
-                self.register_relation(relation)  # Automatische Registrierung
-            semaphore:threading.Semaphore = self.registry[relation]
+            if key not in self.registry:
+                self.register_relation(key)  # Automatische Registrierung
+            semaphore:threading.Semaphore = self.registry[key]
         # Versuche, einen Platz für die Relation zu belegen
         acquired = semaphore.acquire() # put in queue
         if not acquired:

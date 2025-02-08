@@ -7,7 +7,7 @@ from app.api.brokers.models.RequestParameters import RequestParameters
 from app.db.mongodb.MongoDBTrades import MongoDBTrades
 from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.registry.LockRegistry import LockRegistry
-from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
+from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
@@ -44,7 +44,7 @@ class TradeManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._trade_registry = TradeSemaphoreRegistry()
+            self._trade_registry = SemaphoreRegistry()
             self._lock_registry = LockRegistry()
             self._open_trades: dict[str, Trade] = {}
             self._mongo_db_trades: MongoDBTrades = MongoDBTrades()
@@ -61,8 +61,8 @@ class TradeManager:
         tradeLock = self._lock_registry.get_lock(trade.id)
         with tradeLock:
             try:
-                self._trade_registry.register_relation(trade.relation)
-                self._trade_registry.acquire_trade(trade.relation)
+                self._trade_registry.register_relation(trade.relation.__str__())
+                self._trade_registry.acquire_trade(trade.relation.__str__())
                 if trade.id not in self._open_trades:
                     self._open_trades[trade.id] = trade
                     logger.info(f"Register Trade,TradeId: {trade.id}")
@@ -337,7 +337,7 @@ class TradeManager:
 
 
     def return_trades(self) -> list[Trade]:
-        t1 = Trade(Relation(asset="A",broker="A",strategy= "QA",max_trades= 1))
+        t1 = Trade(relation=Relation(asset="a",broker="a",strategy="a",max_trades=1))
         self.register_trade(t1)
         # todo remove after testing
         return [x for x in self._open_trades.values()]

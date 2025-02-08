@@ -8,6 +8,7 @@ from app.models.trade.Trade import Trade
 
 # FVG CRT 4H
 class FVGSession(Strategy):
+    name:str = "FVGSession"
     _strategy_facade:StrategyFacade = StrategyFacade()
 
 

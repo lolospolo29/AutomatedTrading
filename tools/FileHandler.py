@@ -241,5 +241,3 @@ class FileHandler(FileSystemEventHandler):
         except Exception as e:
             logger.error(f"Error moving file {src_path} to _archive: {e}")
     # endregion
-
-# todo refactor clean

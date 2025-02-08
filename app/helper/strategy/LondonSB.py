@@ -15,11 +15,6 @@ class LondonSB(Strategy):
     def return_expected_time_frame(self) -> list:
         return self.expectedTimeFrames
 
-    def is_in_time(self, time) -> bool:
-        if self._silver_bullet_london.is_in_entry_window(time):
-            return True
-        return False
-
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
 
         if timeFrame == 240:

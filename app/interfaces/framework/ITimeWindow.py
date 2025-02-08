@@ -1,7 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from pydantic import BaseModel
 
 
-class ITimeWindow(ABC):  # Entry / Exit Times
+class ITimeWindow(BaseModel):  # Entry / Exit Times
     @abstractmethod
     def is_in_entry_window(self, time):
         pass

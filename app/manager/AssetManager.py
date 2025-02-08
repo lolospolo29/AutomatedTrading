@@ -39,8 +39,6 @@ class AssetManager:
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.assets: dict[str,Asset] = {}
-            self.dto_mapper = None
-            #todo
             self._mongo_db_data = MongoDBData()
             self._initialized = True  # Markiere als initialisiert
 
@@ -75,7 +73,10 @@ class AssetManager:
         if asset in self.assets:
             logger.debug(f"Adding candle to db:{asset}")
             try:
-                candles:list[Candle] = self._mongo_db_data.receive_asset_data(asset)
+                candles_db = self._mongo_db_data.receive_asset_data(asset)
+                candles = []
+                for candle_db in candles_db:
+                    candles.append(Candle.model_validate(candle_db))
 
                 for candle in candles:
                     self.assets[candle.asset].candles_series.append(candle)
