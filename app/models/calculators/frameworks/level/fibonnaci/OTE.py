@@ -18,11 +18,6 @@ class OTE(ILevel):
         The purpose is to calculate Fibonacci retracement levels commonly used in trading
         strategies for identifying optimal trading entries.
 
-        Attributes:
-            retracement_levels (list[float]): A list defining percentages of retracement
-                levels, typically used to measure pullbacks in price.
-            name (str): The name of the retracement strategy or mechanism.
-
         """
         # Fibonacci retracement levels to calculate
         self.retracement_levels: list[float] = [0.75, 0.62]
@@ -92,6 +87,6 @@ class OTE(ILevel):
             all_levels.append(level062_bullish_obj)
             all_levels.append(level150_bullish_obj)
         except Exception as e:
-            logger.error("Projecting of Fibonnaci Levels failed")
+            logger.error("Return Levels failed with exception:{e}".format(e=e))
         finally:
             return all_levels

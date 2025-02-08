@@ -1,8 +1,4 @@
 from datetime import datetime
-from typing import Optional
-
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.calculators.frameworks.FrameWork import FrameWork
 
 from app.models.strategy.SMTStrategy import SMTStrategy
 from app.models.strategy.StrategyResult import StrategyResult

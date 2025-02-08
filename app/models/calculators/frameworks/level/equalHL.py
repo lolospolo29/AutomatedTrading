@@ -8,7 +8,8 @@ class equalHL:
     technical analysis tool that marks identical price levels on a trading chart using the current time-frame,
     assisting traders in identifying potential support and resistance zones or liquidity draws
     """
-    def _findMedian(self,values:list[float]):
+    @staticmethod
+    def _findMedian(values:list[float]):
         sums = sum(values)
         return sums/len(values)
 
@@ -73,7 +74,6 @@ class equalHL:
     def _detect_equal_lows(self, candles: list[Candle], timeframe) -> list[Level]:
         equalLows = []
         lows = []
-        ids = []
         # Collecting high and low values from each data point
         for candle in candles:
             lows.append(candle.low)

@@ -1,5 +1,3 @@
-from typing import Any
-
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.monitoring.logging.logging_startup import logger

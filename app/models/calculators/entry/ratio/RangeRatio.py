@@ -23,7 +23,7 @@ class RangeRatio(BaseRatio):
                     if self.is_condition_full_filled(profit, stop, entry, direction):
                         estimatedProfits.append(ProfitStopEntry(profit,stop,entry))
                 except Exception as e:
-                    logger.warning("Profit Range Exception thrown")
+                    logger.warning("Profit Range Exception thrown,error:{e}".format(e=e))
                 finally:
                     continue
 
@@ -43,10 +43,10 @@ class RangeRatio(BaseRatio):
                     if self.is_condition_full_filled(profit, stop, entry, direction):
                         estimatedStops.append(ProfitStopEntry(profit,stop,entry))
                 except Exception as e:
-                    logger.warning("Stop Range Exception thrown")
+                    logger.warning("Stop Range Exception thrown,error:{e}".format(e=e))
 
         except Exception as e:
-            logger.exception("Stops Range Exception thrown")
+            logger.exception("Stops Range Exception thrown,error:{e}".format(e=e))
         finally:
             return estimatedStops
 
@@ -61,9 +61,9 @@ class RangeRatio(BaseRatio):
                     if self.is_condition_full_filled(profit, stop, entry, direction):
                         estimatedEntries.append(ProfitStopEntry(profit,stop,entry))
                 except Exception as e:
-                    logger.warning("Entry Range Exception thrown")
+                    logger.warning("Entry Range Exception thrown,error:{e}".format(e=e))
         except Exception as e:
-            logger.info("Entries Exception thrown")
+            logger.info("Entries Exception thrown,error:{e}".format(e=e))
 
         return estimatedEntries
     # endregion
@@ -84,15 +84,15 @@ class RangeRatio(BaseRatio):
                             profitStopEntryList.extend(self.calculate_range_profits
                                                        (entry, stop, rangeRatio, direction))
                         except Exception as e:
-                            logger.warning("Entry Range Exception thrown")
+                            logger.warning("Entry Range Exception thrown,error:{e}".format(e=e))
                         finally:
                             continue
                 except Exception as e:
-                    logger.warning("Entry Range Exception thrown")
+                    logger.warning("Entry Range Exception thrown,error:{e}".format(e=e))
                 finally:
                     continue
         except Exception as e:
-            logger.exception("Profits Exception thrown")
+            logger.exception("Profits Exception thrown,error:{e}".format(e=e))
         finally:
             return profitStopEntryList
 
@@ -110,15 +110,15 @@ class RangeRatio(BaseRatio):
                             profitStopEntryList.extend(self.calculate_range_stops
                                                        (entry, profit, rangeRatio, direction))
                         except Exception as e:
-                            logger.warning("Stops Exception thrown")
+                            logger.warning("Stops Exception thrown,error:{e}".format(e=e))
                         finally:
                             continue
                 except Exception as e:
-                    logger.warning("Stops Exception thrown")
+                    logger.warning("Stops Exception thrown,error:{e}".format(e=e))
                 finally:
                     continue
         except Exception as e:
-            logger.exception("Stops Exception thrown")
+            logger.exception("Stops Exception thrown,error:{e}".format(e=e))
         finally:
             return profitStopEntryList
 
@@ -136,11 +136,11 @@ class RangeRatio(BaseRatio):
                             profitStopEntryList.extend(self.calculate_range_entries
                                                        (stop, profit, rangeRatio, direction))
                         except Exception as e:
-                            logger.warning("Entries Range Exception thrown")
+                            logger.warning("Entries Range Exception thrown,error:{e}".format(e=e))
                 except Exception as e:
-                    logger.warning("Entries Range Exception thrown")
+                    logger.warning("Entries Range Exception thrown,error:{e}".format(e=e))
         except Exception as e:
-            logger.exception("Entries Exception thrown")
+            logger.exception("Entries Exception thrown,error:{e}".format(e=e))
         finally:
             return profitStopEntryList
     # endregion

@@ -41,19 +41,16 @@ class Level(FrameWork):
         :return: A dictionary where the class name is the key and attributes that are not None are the value.
         """
         try:
-            attributes = {
+            return {
                 "typ" : self.typ,
                 "name": self.name,
                 "direction": self.direction,
-                "level": self.level if self.level else None,
+                "level": self.level,
                 "candles": [candle.to_dict() for candle in self.candles],
-                "fib_level": self.fib_level if self.fib_level else None,
+                "fib_level": self.fib_level,
             }
 
-            # Filter out attributes with None values
-            filtered_attributes = {key: value for key, value in attributes.items() if value is not None}
 
-            return {self.__class__.__name__: filtered_attributes}
         except Exception as e:
             logger.exception(e)
             raise ValueError

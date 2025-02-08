@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from dataclasses import asdict
 
 
+# noinspection PyTypeChecker
 class POSTParams(ABC):
     """
     Represents an abstract base class for POST request parameters.

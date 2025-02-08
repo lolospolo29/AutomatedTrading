@@ -35,11 +35,10 @@ class mongoDBTrades:
 
     def find_trade_or_trades_by_id(self, id: str = None) -> list[Trade]:
         trades = []
-        res = []
         if id is None:
             res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, None)
         else:
-            query = self._mongo_db_trades.buildQuery("Trade", "id", str(id))
+            query = self._mongo_db_trades.buildQuery("id", str(id))
             logger.info("Finding Trades in DB with Query: {}".format(query))
             res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
             logger.debug("Found Trades:{count}".format(count=len(res)))
@@ -60,7 +59,7 @@ class mongoDBTrades:
         if id is None:
             res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, None)
         else:
-            query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(id))
+            query = self._mongo_db_trades.buildQuery("orderLinkId", str(id))
             res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
         for orderInRes in res:
                 orders.append(self._trade_mapper.map_order_from_db(orderInRes))
@@ -73,14 +72,14 @@ class mongoDBTrades:
 
     def update_trade(self, trade: Trade):
         logger.info(f"Updating Trade,OrderLinkId:{trade.id}")
-        query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
+        query = self._mongo_db_trades.buildQuery( "id", str(trade.id))
         res = self._mongo_db_trades.find(MongoEndPointEnum.OPENTRADES.value, query)
         self._mongo_db_trades.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade.to_dict())
 
     def archive_trade(self, trade: Trade):
         logger.info(f"Arching Trade,OrderLinkId:{trade.id}")
         self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDTRADES.value, trade.to_dict())
-        query = self._mongo_db_trades.buildQuery("Trade", "id", str(trade.id))
+        query = self._mongo_db_trades.buildQuery( "id", str(trade.id))
         self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
 
     def add_order_to_db(self, order: Order):
@@ -90,40 +89,14 @@ class mongoDBTrades:
     def update_order(self, order: Order):
         logger.info(f"Update Order To DB,OrderLinkId: {order.orderLinkId},Symbol: {order.symbol}")
 
-        query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
+        query = self._mongo_db_trades.buildQuery( "orderLinkId", str(order.orderLinkId))
         res = self._mongo_db_trades.find(MongoEndPointEnum.OPENORDERS.value, query)
         self._mongo_db_trades.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.to_dict())
 
     def archive_order(self, order: Order):
         logger.info(f"Arching Order To DB,OrderLinkId: {order.orderLinkId}, Symbol: {order.symbol}")
         self._mongo_db_trades.add(MongoEndPointEnum.CLOSEDORDERS.value, order.to_dict())
-        query = self._mongo_db_trades.buildQuery("Order", "orderLinkId", str(order.orderLinkId))
+        query = self._mongo_db_trades.buildQuery( "orderLinkId", str(order.orderLinkId))
         self._mongo_db_trades.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
     # endregion
-
-# Testing
-# _mongo = mongoDBTrades()
-# pd = PDArray(name="FVG",direction="Bullish")
-# c1:Candle = Candle("BTC", "broker", 132.2, 132, 122, 12,iso_time=datetime.now(),timeframe=5)
-# pd.candles.append(c1)
-# level = Level("FVG",132)
-# level.candles.append(c1)
-# struct = Structure("BOS","Bullish",candle=c1)
-#
-# order = Order()
-# order.entry_frame_work = pd
-# order.confirmations = []
-# order.confirmations.append(pd)
-# order.confirmations.append(level)
-# order.confirmations.append(struct)
-# order.orderLinkId = "132"
-#
-# _mongo.add_order_to_db(order)
-#
-# trade = Trade(AssetBrokerStrategyRelation("A","ABC","AC"),[order])
-#
-# _mongo.add_trade_to_db(trade)
-#
-# trades = _mongo.find_trade_or_trades_by_id()
-# for trade in trades:
-#     print(trade.to_dict())
+# todo db testing

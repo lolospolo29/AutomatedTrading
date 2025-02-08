@@ -1,5 +1,3 @@
-from typing import Any
-
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Structure import Structure
 from app.models.calculators.frameworks.structure.BOS import BOS
@@ -9,6 +7,7 @@ from app.models.calculators.frameworks.structure.SMT import SMT
 from app.monitoring.logging.logging_startup import logger
 
 
+# noinspection PyTypeChecker
 class StructureMediator:
     """
     Acts as a mediator for structural analysis involving various confirmation

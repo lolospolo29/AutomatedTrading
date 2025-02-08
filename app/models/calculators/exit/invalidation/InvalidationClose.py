@@ -15,5 +15,3 @@ class InvalidationClose:
             if candle.close > stop:
                 return True
             return False
-
-# todo pd array invalidation specific

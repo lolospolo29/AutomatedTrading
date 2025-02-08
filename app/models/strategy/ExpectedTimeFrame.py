@@ -5,8 +5,6 @@ class ExpectedTimeFrame:
 
     def to_dict(self) -> dict:
         return {
-            "ExpectedTimeFrame": {
                 "timeframe": self.timeframe,
                 "maxLen": self.max_Len,
-            }
         }

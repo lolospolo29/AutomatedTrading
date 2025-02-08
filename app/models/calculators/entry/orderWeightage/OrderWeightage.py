@@ -29,7 +29,7 @@ class OrderWeightage:
                 # Safe mode: heavier weight to later entries
                 return self._set_safe_weightage(entries)
         except Exception as e:
-            raise CalculationExceptionError("Order Weightage")
+            logger.error("Order Weightage Exception: {}".format(e))
 
 
     @staticmethod

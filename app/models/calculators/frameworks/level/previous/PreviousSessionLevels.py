@@ -1,4 +1,3 @@
-from app.interfaces.framework.ILevel import ILevel
 from app.interfaces.framework.ITimeWindow import ITimeWindow
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level

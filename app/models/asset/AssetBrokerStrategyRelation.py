@@ -16,10 +16,8 @@ class AssetBrokerStrategyRelation:
 
     def to_dict(self) -> dict:
         return {
-            "AssetBrokerStrategyRelation": {
                 "asset": self.asset,
                 "broker": self.broker,
                 "strategy": self.strategy,
                 "max_trades": self.max_trades
-            }
         }

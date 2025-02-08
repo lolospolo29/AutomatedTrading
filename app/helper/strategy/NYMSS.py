@@ -1,10 +1,7 @@
-from typing import Optional
-
-from app.helper.handler.LevelHandler import LevelHandler
 from app.helper.facade.StrategyFacade import StrategyFacade
+from app.helper.handler.LevelHandler import LevelHandler
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.frameworks.time.London import LondonOpen
 from app.models.calculators.frameworks.time.NYOpen import NYOpen
@@ -17,7 +14,6 @@ from app.models.trade.Trade import Trade
 # NY MSS
 
 class NYMSS(Strategy):
-
 
     def __init__(self):
         name: str = "NYMSS"
@@ -46,7 +42,7 @@ class NYMSS(Strategy):
             return True
         return False
 
-    def _analyzeData(self, candles: list, timeFrame: int):
+    def _analyzeData(self, candles: list[Candle], timeFrame: int):
         if timeFrame == 60:
             fvgs = self._strategy_handler.PDMediator.calculate_pd_array("FVG", candles)
             for fvg in fvgs:
@@ -65,7 +61,7 @@ class NYMSS(Strategy):
 
         self._strategy_handler.pd_array_handler.remove_pd_array(candles,timeFrame)
 
-    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds:list[PDArray] = self._strategy_handler.pd_array_handler.return_pd_arrays()
         if candles and pds and timeFrame == 5:

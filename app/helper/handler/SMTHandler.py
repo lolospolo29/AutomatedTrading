@@ -11,35 +11,12 @@ class SMTHandler:
     candles. The class maintains separate candle storage for each asset,
     categorized by timeframes, and ensures proper synchronization across
     assets.
-
-    :ivar asset_1: The identifier of the first asset being managed.
-    :type asset_1: str
-    :ivar asset_2: The identifier of the second asset being managed.
-    :type asset_2: str
-    :ivar broker_1: The name or identifier of the broker for the first asset.
-    :type broker_1: str
-    :ivar broker_2: The name or identifier of the broker for the second asset.
-    :type broker_2: str
-    :ivar candles_asset_1: A dictionary mapping timeframes to lists of candles
-        for the first asset.
-    :type candles_asset_1: dict
-    :ivar candles_asset_2: A dictionary mapping timeframes to lists of candles
-        for the second asset.
-    :type candles_asset_2: dict
-    :ivar _lock: A threading lock used to ensure thread-safe operations.
-    :type _lock: threading.Lock
     """
     def __init__(self, asset_1: str, asset_2: str,correlation:str):
-        """
-        Initializes the CandlePairHandler for two assets, storing candles in a thread-safe way.
-        """
+
         self.asset_1 = asset_1
         self.asset_2 = asset_2
         self.correlation = correlation
-
-        # Dictionaries to store candles by timeframe
-        # Each dictionary key is a timeframe (e.g., 1, 5, 15 minutes)
-        # Each value is a list of Candle objects
         self.candles_asset_1 = {}
         self.candles_asset_2 = {}
 
@@ -64,7 +41,7 @@ class SMTHandler:
                 raise ValueError(
                     f"Candle asset '{candle.asset}' is not part of the pair '{self.asset_1}/{self.asset_2}'.")
 
-    def get_synchronized_candles(self, timeframe: int) -> Union[List[Candle], List[Candle]]:
+    def get_synchronized_candles(self, timeframe: int) -> tuple[list[Candle], list[Candle]]:
         """
         Returns synchronized lists of candles for both assets at the specified timeframe.
 
@@ -90,7 +67,8 @@ class SMTHandler:
 
             return synchronized_1, synchronized_2
 
-    def _add_to_candle_list(self, candle_dict: dict, candle: Candle) -> None:
+    @staticmethod
+    def _add_to_candle_list(candle_dict: dict, candle: Candle) -> None:
         """
         Adds a Candle to a specific dictionary by timeframe.
 
@@ -102,9 +80,10 @@ class SMTHandler:
             candle_dict[candle.timeframe] = []
         candle_dict[candle.timeframe].append(candle)
 
+    @staticmethod
     def _synchronize_candles_by_time(
-            self, candles_1: List[Candle], candles_2: List[Candle]
-    ) -> Union[List[Candle], List[Candle]]:
+            candles_1: List[Candle], candles_2: List[Candle]
+    ) -> tuple[list[Candle], list[Candle]]:
         """
         Synchronizes two lists of candles so they have the same length and match on `iso_time`.
 

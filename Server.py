@@ -18,6 +18,14 @@ def receive_signal():
     thread.start()
 
     return f'Received Analyse data: {json_data}'
+
+@app.route('/post-data', methods=['POST'])
+def post_data():
+    data = request.get_json()  # Get the JSON data sent with the POST request
+    name = data.get('name')
+    message = data.get('message')
+    return jsonify({"status": "success", "received_name": name, "received_message": message})
+
 # endregion
 
 @app.route('/')
@@ -40,19 +48,19 @@ def stream_logs():
 
 # region GET APP Route
 @app.route('/get-trades', methods=['GET'])
-def get_data():
+def get_trades():
     return jsonify(signal_controller.get_trades())
 
 @app.route('/get-news-days', methods=['GET'])
-def get_data():
+def get_news():
     return jsonify(signal_controller.get_news_days())
 
 @app.route('/get-news-assets', methods=['GET'])
-def get_data():
+def get_assets():
     return jsonify(signal_controller.get_assets())
 
 @app.route('/get-strategies', methods=['GET'])
-def get_data():
+def get_strategies():
     return jsonify(signal_controller.get_strategies())
 # endregion
 

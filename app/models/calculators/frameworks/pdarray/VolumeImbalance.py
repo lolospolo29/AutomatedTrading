@@ -30,7 +30,7 @@ class VolumeImbalance(IPDArray):
             if risk_mode.MODERAT:
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("Volume Imbalance Entry Error")
+            logger.error("Volume Imbalance Entry Error with Exception"+str(e))
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
@@ -54,7 +54,7 @@ class VolumeImbalance(IPDArray):
                 if risk_mode.AGGRESSIVE:
                     return max(close)
         except Exception as e:
-            raise CalculationExceptionError("Volume Imbalance Stop Error")
+            logger.error("Volume Imbalance Stop Error with Exception"+str(e))
 
     def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
@@ -74,7 +74,7 @@ class VolumeImbalance(IPDArray):
             # Return the gap range
             return low,high
         except Exception as e:
-            raise CalculationExceptionError("Volume Imbalance Candle Range Error")
+            logger.error("Volume Imbalance return candle range error with Exception"+str(e))
 
     def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         pd_arrays = []

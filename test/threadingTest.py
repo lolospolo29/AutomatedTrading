@@ -8,7 +8,7 @@ def func():
     time.sleep(uniform(5, 10))
 
 def main():
-    from threading import Thread, Event, Lock
+    from threading import Thread
 
     threads:list[Thread] = []
     for i in range(100):
@@ -45,7 +45,7 @@ def hello_there():
             print("hello there")
 
 def main2():
-    from threading import Thread, Event, Lock
+    from threading import Thread
     hello = Thread(target=hello_there)
     hello.start() # start
     l.acquire() # setze lock solange bis er l.released() wird mit oder timeout released ihn
@@ -119,6 +119,7 @@ def connect():
     # Acquire a semaphore to use a connection
     pool_sema.acquire()
     try:
+        # noinspection PyUnusedLocal
         conn = connectdb()
         try:
             # Use the connection (simulated work)
@@ -210,6 +211,7 @@ def uselockAlternative():
 def main7():
     a = threading.Thread(target=uselock)
     a.start()
+    # noinspection PyShadowingNames
     b = threading.Thread(target=uselockAlternative)
     b.start()
 # endregion

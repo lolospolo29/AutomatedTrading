@@ -1,5 +1,4 @@
 from app.helper.builder.OrderBuilder import OrderBuilder
-from app.helper.builder.TradeBuilder import TradeBuilder
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.helper.handler.LevelHandler import LevelHandler
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
@@ -16,7 +15,6 @@ from app.models.trade.enums.CategoryEnum import CategoryEnum
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.models.trade.enums.TriggerByEnum import TriggerByEnum
 from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
-
 
 # Double Fib
 
@@ -49,7 +47,7 @@ class DoubleFib(Strategy):
             return True
         return False
 
-    def _analyzeData(self, candles: list, timeFrame: int):
+    def _analyzeData(self, candles: list[Candle], timeFrame: int):
         if timeFrame == 1 and len(candles) > 60:
             ote = self._strategy_handler.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=60)
             for level in ote:
@@ -58,7 +56,7 @@ class DoubleFib(Strategy):
 
 
 
-    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
         levels:list[Level] = self._strategy_handler.level_handler.return_levels()
         if candles and levels and timeFrame == 1:
@@ -113,9 +111,8 @@ class DoubleFib(Strategy):
                 stop_dir = TriggerDirection.RISE.value
 
             if order_dir:
-
-                trade = TradeBuilder().add_side(side=order_dir).add_category(category=CategoryEnum.LINEAR.value).add_relation(
-                    relation=relation).build()
+                trade = Trade(relation=relation,category=CategoryEnum.LINEAR.value)
+                trade.side = order_dir
 
                 entry_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
                                                     ,category=CategoryEnum.LINEAR.value, side=order_dir

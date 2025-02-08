@@ -31,7 +31,7 @@ class Void(IPDArray):
             if risk_mode.MODERAT:
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("Void Entry Error")
+            logger.error("Void Entry Error with Exception"+str(e))
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
@@ -55,7 +55,7 @@ class Void(IPDArray):
                 if risk_mode.AGGRESSIVE:
                     return max(close)
         except Exception as e:
-            raise CalculationExceptionError("Void Stop Error")
+            logger.error("Void Stop Error with Exception"+str(e))
 
     def return_candle_range(self, pd_array: PDArray) -> tuple[float, float]:
         """
@@ -75,7 +75,7 @@ class Void(IPDArray):
             # Return the gap range
             return low,high
         except Exception as e:
-            raise CalculationExceptionError("Void Candle Range Error")
+            logger.error("Void return candle range error with Exception"+str(e))
 
     def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
 
@@ -88,7 +88,6 @@ class Void(IPDArray):
             if lookback is not None and len(candles) < lookback:
                 return []
 
-            opens = [candle.open for candle in candles]
             highs = [candle.high for candle in candles]
             lows = [candle.low for candle in candles]
             close = [candle.close for candle in candles]

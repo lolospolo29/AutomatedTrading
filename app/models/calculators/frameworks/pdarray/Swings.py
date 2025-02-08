@@ -32,7 +32,7 @@ class Swings(IPDArray):
                 if risk_mode == RiskMode.AGGRESSIVE:
                     return min (low)
         except Exception as ex:
-            raise CalculationExceptionError("Swings Stop Error")
+            logger.error("Swing Stop Error with Exception {}".format(ex))
 
     def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
@@ -51,7 +51,7 @@ class Swings(IPDArray):
 
             return low,high
         except Exception as e:
-            raise CalculationExceptionError("Swings Candle Range Error")
+            logger.error("Swing Candle Range Error with Exception {}".format(e))
 
     def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         # Step 1: Apply lookback to limit the range of candles

@@ -2,6 +2,7 @@ import logging
 import csv
 from datetime import datetime
 
+from app.monitoring.logging.logging_startup import logger
 
 
 class CSVFileHandler(logging.Handler):
@@ -27,7 +28,7 @@ class CSVFileHandler(logging.Handler):
                 writer = csv.writer(f)
                 writer.writerow(["Level", "Message", "Timestamp"])
         except Exception as e:
-            pass
+            logger.error(f"Error writing CSV header: {e}")
 
     def emit(self, record):
         """Write a log record to the CSV file."""
@@ -40,4 +41,4 @@ class CSVFileHandler(logging.Handler):
                 writer = csv.writer(f)
                 writer.writerow([record.levelname, record.msg, timestamp])
         except Exception as e:
-            pass
+            logger.error(f"Error writing log record to CSV file: {e}")

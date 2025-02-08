@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Optional, Dict, Any
 
-from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExceptionError
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
 from app.models.calculators.frameworks.Level import Level
@@ -26,27 +25,26 @@ class TradeMapper:
                     return datetime.fromisoformat(field["$date"].replace("Z", ""))
             return field
         except Exception:
-            raise MappingFailedExceptionError("Datetime")
+            raise ValueError("Invalid datetime field")
 
     def map_candle(self,candle_data: Dict[str, Any]) -> Optional[Candle]:
         """
         Map Candle data, returning None if required fields are missing.
         """
         try:
-            candle = candle_data.get("Candle", {})
             return Candle(
-                asset=candle.get("asset"),
-                broker=candle.get("broker"),
-                open=candle.get("open", 0.0),
-                high=candle.get("high", 0.0),
-                low=candle.get("low", 0.0),
-                close=candle.get("close", 0.0),
-                iso_time=self.parse_datetime(candle.get("iso_time")),
-                timeframe=int(candle.get("timeframe", 0)),
-                id=candle.get("id")
+                asset=candle_data.get("asset"),
+                broker=candle_data.get("broker"),
+                open=candle_data.get("open"),
+                high=candle_data.get("high"),
+                low=candle_data.get("low"),
+                close=candle_data.get("close"),
+                iso_time=self.parse_datetime(candle_data.get("iso_time")),
+                timeframe=int(candle_data.get("timeframe")),
+                id=candle_data.get("id")
             )
         except Exception as e:
-            raise MappingFailedExceptionError("Candle")
+            logger.error(f"Mapping Candle Error: {e}")
 
     def map_framework(self,data: Dict[str, Any]) -> Optional[Any]:
         """
@@ -65,7 +63,7 @@ class TradeMapper:
             if "Level" in data:
                 level = data.get("Level", {})
                 candles = [self.map_candle(c) for c in level.get("candles", []) if c]
-                framework = Level(level.get("name", ""), level.get("level", 0.0))
+                framework = Level(level.get("name", ""), level.get("level"))
                 framework.set_fib_level(level.get("fib_level", 0.0), level.get("direction", ""), candles)
                 return framework
 
@@ -76,7 +74,7 @@ class TradeMapper:
                 return framework
             return None
         except Exception:
-            raise MappingFailedExceptionError("Framework")
+            raise ValueError("Invalid framework data")
 
     def map_order_from_db(self,order_data: Dict[str, Any]) -> Optional[Order]:
         """
@@ -101,7 +99,6 @@ class TradeMapper:
             # Dynamically assign attributes
             for attr in attributes:
                 setattr(order, attr, order_dict.get(attr))
-
             # Parse datetime fields
             # Map frameworks
             logger.info(f"Mapping Order,OrderLinkId:{order_dict.get('orderLinkId')},Symbol:{order.symbol},TradeId:{order.trade_id}")
@@ -115,7 +112,7 @@ class TradeMapper:
 
             return order
         except Exception:
-            raise MappingFailedExceptionError("Order")
+            raise ValueError("Invalid Order data")
 
     @staticmethod
     def map_trade_from_db(trade_data: Dict[str, Any]) -> Optional[Trade]:
@@ -125,31 +122,32 @@ class TradeMapper:
         """
         try:
             logger.debug("Mapping Trade,TradeId:{trade_id}".format(trade_id=trade_data.get("trade_id")))
-            trade_dict = trade_data.get("Trade", {})
             relation = AssetBrokerStrategyRelation(
-                asset=trade_dict.get("asset", ""),
-                broker=trade_dict.get("broker", ""),
-                strategy=trade_dict.get("strategy", ""),
+                asset=trade_data.get("asset", ""),
+                broker=trade_data.get("broker", ""),
+                strategy=trade_data.get("strategy", ""),
                 max_trades=1
             )
             trade = Trade(
                 relation=relation,
-                orders=trade_dict.get("orders", []),
-                id=trade_dict.get("id")
+                id=trade_data.get("id")
             )
+
             logger.info(f"Mapping Trade,TradingId:{trade.id}")
             # Set additional attributes
-            trade.category = trade_dict.get("category", "")
-            trade.side = trade_dict.get("side", "")
-            trade.tpslMode = trade_dict.get("tpslMode", "")
-            trade.unrealisedPnl = trade_dict.get("unrealisedPnl", 0.0)
-            trade.leverage = trade_dict.get("leverage", 0.0)
-            trade.size = trade_dict.get("size", 0.0)
-            trade.tradeMode = trade_dict.get("tradeMode", "")
-            trade.updatedTime = trade_dict.get("updatedTime", 0.0)
-            trade.createdTime = trade_dict.get("createdTime", 0.0)
-            trade.positionValue = trade_dict.get("positionValue", 0.0)
+            trade.category = trade_data.get("category", "")
+            trade.side = trade_data.get("side", "")
+            trade.tpslMode = trade_data.get("tpslMode", "")
+            trade.unrealisedPnl = trade_data.get("unrealisedPnl")
+            trade.leverage = trade_data.get("leverage")
+            trade.size = trade_data.get("size")
+            trade.tradeMode = trade_data.get("tradeMode")
+            trade.updatedTime = trade_data.get("updatedTime")
+            trade.createdTime = trade_data.get("createdTime")
+            trade.positionValue = trade_data.get("positionValue")
 
             return trade
         except Exception:
-            raise MappingFailedExceptionError("Trade")
+            raise ValueError("Invalid Trade data")
+
+# todo refactor mapping

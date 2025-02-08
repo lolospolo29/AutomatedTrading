@@ -123,6 +123,7 @@ def simulate_flow():
 
 
 # Combined callback to handle both manual flow addition and simulation refresh
+# noinspection PyUnusedLocal
 @app.callback(
     Output("dataflow-graph", "figure"),
     [Input("add-flow-button", "n_clicks"), Input("refresh-interval", "n_intervals")],

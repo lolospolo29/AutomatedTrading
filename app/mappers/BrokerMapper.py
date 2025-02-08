@@ -33,7 +33,7 @@ class BrokerMapper:
                 return order
 
         except Exception as e:
-            logger.error(f"Mapping Error for Order,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
+            logger.error(f"Mapping Error for Order,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol},Error: {e}")
 
     @staticmethod
     def map_broker_position_to_trade(broker_position:BrokerPosition, trade:Trade,check_time:bool=True) -> Trade:

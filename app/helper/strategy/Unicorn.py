@@ -1,10 +1,7 @@
-from typing import Optional
-
-from app.helper.handler.LevelHandler import LevelHandler
 from app.helper.facade.StrategyFacade import StrategyFacade
+from app.helper.handler.LevelHandler import LevelHandler
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.frameworks.time.London import LondonOpen
 from app.models.calculators.frameworks.time.NYOpen import NYOpen
@@ -46,7 +43,7 @@ class Unicorn(Strategy):
             return True
         return False
 
-    def _analyzeData(self, candles: list, timeFrame: int):
+    def _analyzeData(self, candles: list[Candle], timeFrame: int):
         if timeFrame == 240:
             ote = self._strategy_handler.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
             for level in ote:
@@ -70,7 +67,7 @@ class Unicorn(Strategy):
         self._strategy_handler.pd_array_handler.remove_pd_array(candles,timeFrame)
         self._strategy_handler.level_handler.remove_level(candles,timeFrame)
 
-    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_handler.pd_array_handler.return_pd_arrays()
         if candles and pds and timeFrame == 5:

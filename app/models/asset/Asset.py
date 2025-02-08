@@ -89,14 +89,12 @@ class Asset:
 
     def to_dict(self) -> dict:
         return {
-            "Asset": {
                 "name": self.name,
                 "asset_class": self.asset_class,
                 "brokers": self.brokers,
                 "strategies": self.strategies,
                 "smt_pairs": [pair.to_dict() for pair in self.smt_pairs],
                 "relations": [relation.to_dict() for relation in self.relations]
-            }
         }
     # endregion
 

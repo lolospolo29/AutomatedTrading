@@ -97,8 +97,8 @@ class MongoDB:
         return list(collection.find(query))
 
     @staticmethod
-    def buildQuery(class_name: str, attribute: str, value: Any) -> Any:
-        return {f"{class_name}.{attribute}": value}
+    def buildQuery(attribute: str, value: Any) -> Any:
+        return {f"{attribute}": value}
 
     def deleteOldDocuments(self, collection_name: str, date_field: Any, iso_date: Any) -> Any:
         """

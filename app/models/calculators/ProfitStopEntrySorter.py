@@ -6,6 +6,7 @@ from app.models.calculators.RiskModeEnum import RiskMode
 from app.monitoring.logging.logging_startup import logger
 
 
+# noinspection PyTypeChecker
 class ProfitStopEntrySorter:
     # region Initializing
     _instance = None  # Class-level attribute to hold the singleton instance
@@ -74,8 +75,8 @@ class ProfitStopEntrySorter:
 
             # Return the top `x` entries
             return sorted_entries[:x]
-        except Exception as e:
-            logger.critical(f"An error occurred in Profit Stop Analyzer: {e}")
+        except Exception as ex:
+            logger.critical(f"An error occurred in Profit Stop Analyzer: {ex}")
 
     @staticmethod
     def analyze_risk_mode(entries: list[ProfitStopEntry], x: int, risk_mode: RiskMode) -> list:

@@ -1,9 +1,6 @@
-from typing import Optional
-
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.Structure import Structure
 from app.models.calculators.frameworks.time.Asia import Asia
 from app.models.calculators.frameworks.time.London import LondonOpen
@@ -84,9 +81,6 @@ class OTEFourH(Strategy):
         levels = self._strategy_facade.level_handler.return_levels()
         structures = self._strategy_facade.structure_handler.return_structure()
         if candles and pds and timeFrame == 240 and len(levels) > 3 and structures and len(candles) > 20:
-            last_candle: Candle = candles[-1]
-            time = last_candle.iso_time
-
             latest_structure:Structure = structures[-1]
 
             last_four_levels = levels[-4:]

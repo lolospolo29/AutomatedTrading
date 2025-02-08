@@ -10,9 +10,9 @@ class NewsEvent:
     daytime:str # AM or PM
 
     def to_dict(self) -> dict:
-        return {"NewsEvent": {
+        return {
             "time": self.time.strftime("%I:%M"),  # Formatting time to match the example
             "title": self.title,
             "currency": self.currency,
             "daytime": self.daytime
-        }}
+        }

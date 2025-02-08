@@ -1,10 +1,4 @@
 # region Start
-import asyncio
-import time
-from random import uniform
-from threading import Event
-
-from joblib.externals.loky.backend.synchronize import Condition
 
 
 async def test():
@@ -20,8 +14,6 @@ async def main():
 # endregion
 
 # region Await Async Task = create
-import asyncio
-import time
 
 async def say_after(delay, what):
     await asyncio.sleep(delay)
@@ -76,7 +68,6 @@ async def main4():
 # endregion
 
 # region Schedule Calls Gather
-import asyncio
 
 async def factorial(name, number):
     f = 1
@@ -131,7 +122,7 @@ class EagerTaskFactory:
         """Retrieve currently running tasks."""
         return {task for task in self._tasks if not task.done()}
 
-import random
+
 import asyncio
 
 # Example coroutine
@@ -140,6 +131,7 @@ async def example_task(task_id: int):
     print(f"Task {task_id} completed")
 
 # Main function
+# noinspection PyShadowingNames,PyUnboundLocalVariable
 async def main6():
     factory = EagerTaskFactory()
 
@@ -189,6 +181,8 @@ async def main8():
 # region Lock Acquire Release
 lock = asyncio.Lock()
 
+
+# noinspection PyRedeclaration,PyShadowingNames,PyUnboundLocalVariable
 async def main8():
     async with lock:
         await asyncio.sleep(1)
@@ -211,6 +205,8 @@ async def waiter(event):
     await event.wait()
     print('... got it!')
 
+
+# noinspection PyRedeclaration
 async def main():
     # Create an Event object.
     event = asyncio.Event()
@@ -238,6 +234,8 @@ async def cancel_me():
     finally:
         print('cancel_me(): after sleep')
 
+
+# noinspection PyRedeclaration
 async def main():
     # Create a "cancel_me" Task
     task = asyncio.create_task(cancel_me())
@@ -282,6 +280,7 @@ import random
 import time
 
 
+# noinspection PyRedeclaration
 async def worker(name, queue):
     while True:
         # Get a "work item" out of the queue.
@@ -296,6 +295,7 @@ async def worker(name, queue):
         print(f'{name} has slept for {sleep_for:.2f} seconds')
 
 
+# noinspection PyRedeclaration
 async def main():
     # Create a queue that we will use to store our "workload".
     queue = asyncio.Queue()

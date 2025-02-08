@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 
+# noinspection PyTypeChecker
 @dataclass(frozen=True)
 class ProfitStopEntry:
     profit: float

@@ -12,7 +12,17 @@ from app.models.calculators.frameworks.level.previous.PreviousWeekLevels import 
 from app.monitoring.logging.logging_startup import logger
 
 
+# noinspection PyTypeChecker
 class LevelMediator:
+    """
+    Initializes the instance with required submodules and ensures it is only initialized once.
+
+    This constructor instantiates the internal components necessary for the functionality
+    of the class. The submodules include `OTE`, `PD`, `STDV`, `CBDR`, and others that are
+    related to handling various operational components. To prevent re-initialization, it
+    checks for the presence of the `initialized` attribute and skips initialization if it
+    is already set.
+    """
     _instance = None  # Class-level attribute to hold the singleton instance
 
     def __new__(cls, *args, **kwargs):
@@ -22,29 +32,7 @@ class LevelMediator:
 
     # region Initializing
     def __init__(self):
-        """
-        Initializes the instance with required submodules and ensures it is only initialized once.
 
-        This constructor instantiates the internal components necessary for the functionality
-        of the class. The submodules include `OTE`, `PD`, `STDV`, `CBDR`, and others that are
-        related to handling various operational components. To prevent re-initialization, it
-        checks for the presence of the `initialized` attribute and skips initialization if it
-        is already set.
-
-        Attributes:
-            _ote (OTE): Internal reference to the OTE submodule.
-            _pd (PD): Internal reference to the PD submodule.
-            _stdv (STDV): Internal reference to the STDV submodule.
-            _cbdr (CBDR): Internal reference to the CBDR submodule.
-            _equal (equalHL): Internal reference to the equalHL submodule.
-            _ndog (NDOG): Internal reference to the NDOG submodule.
-            _nwog (NWOG): Internal reference to the NWOG submodule.
-            _previous_days_level (PreviousDaysLevels): Internal reference to the PreviousDaysLevels submodule.
-            _previous_session_level (PreviousSessionLevels): Internal reference to the PreviousSessionLevels submodule.
-            _previous_week_levels (PreviousWeekLevels): Internal reference to the PreviousWeekLevels submodule.
-            initialized (bool): A flag that indicates whether the object has already been
-                                initialized to prevent accidental reinitialization.
-        """
         if not hasattr(self, "initialized"):  # Prevent re-initialization
             self._ote: OTE = OTE()
             self._pd = PD()

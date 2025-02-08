@@ -1,9 +1,6 @@
-from typing import Optional
-
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.time.London import LondonOpen
 from app.models.calculators.frameworks.time.NYOpen import NYOpen
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
@@ -39,7 +36,7 @@ class FVGSession(Strategy):
             return True
         return False
 
-    def _analyzeData(self, candles: list, timeFrame: int):
+    def _analyzeData(self, candles: list[Candle], timeFrame: int):
             last_candle = candles[-1]
             time = last_candle.iso_time
             if timeFrame == 240:
@@ -50,14 +47,14 @@ class FVGSession(Strategy):
 
             if timeFrame == 1:
                 if self.is_in_time(time):
-                    fvgs = self._strategy_facade.PDMediator.calculate_pd_array("FVG", candles, lookback=3)
+                    fvgs = self._strategy_facade.PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
                     for fvg in fvgs:
                         self._strategy_facade.pd_array_handler.add_pd_array(fvg)
             self._strategy_facade.level_handler.remove_level(candles, timeFrame)
             self._strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
 
 
-    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         levels = self._strategy_facade.level_handler.return_levels()

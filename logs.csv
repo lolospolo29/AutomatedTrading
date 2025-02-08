@@ -19313,3 +19313,558 @@ _pydevd_bundle.pydevd_resolver.UnableToResolveVariableException
 
 ",2025-02-05 19:41:07
 INFO,"127.0.0.1 - - [05/Feb/2025 19:41:15] ""%s"" %s %s",2025-02-05 19:41:15
+INFO,TradingService initialized,2025-02-06 21:34:19
+INFO,TradingService initialized,2025-02-06 21:34:19
+INFO,Initializing ConfigManager,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:34:19
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-06 21:34:19
+INFO,Registered asset BTCUSDT,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:34:19
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-06 21:34:19
+INFO,Registered asset USDT.D,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:34:19
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-06 21:34:19
+INFO,Registered asset EURUSD,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:34:19
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:34:19
+INFO,Register Asset to Asset Manager:DXY,2025-02-06 21:34:19
+INFO,Registered asset DXY,2025-02-06 21:34:19
+INFO,Finished ConfigManager,2025-02-06 21:34:19
+INFO,Time taken by run_starting_setup: 0.1611 seconds,2025-02-06 21:34:19
+ERROR,"Traceback (most recent call last):
+",2025-02-06 21:34:19
+ERROR,"  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/50487024-9911-4A30-B0A4-B09FA352FB22/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd.py"", line 1570, in _exec
+",2025-02-06 21:34:19
+ERROR,"pydev_imports.execfile(file, globals, locals)  # execute the script",2025-02-06 21:34:19
+ERROR,"  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/50487024-9911-4A30-B0A4-B09FA352FB22/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/_pydev_imps/_pydev_execfile.py"", line 18, in execfile
+",2025-02-06 21:34:19
+ERROR,"exec(compile(contents+""\n"", file, 'exec'), glob, loc)",2025-02-06 21:34:19
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/Server.py"", line 55, in <module>
+",2025-02-06 21:34:19
+ERROR,def get_data():,2025-02-06 21:34:19
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/scaffold.py"", line 362, in decorator
+",2025-02-06 21:34:19
+ERROR,"self.add_url_rule(rule, endpoint, f, **options)",2025-02-06 21:34:19
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/scaffold.py"", line 47, in wrapper_func
+",2025-02-06 21:34:19
+ERROR,"return f(self, *args, **kwargs)",2025-02-06 21:34:19
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/app.py"", line 657, in add_url_rule
+",2025-02-06 21:34:19
+ERROR,raise AssertionError(,2025-02-06 21:34:19
+ERROR,AssertionError,2025-02-06 21:34:19
+ERROR,: ,2025-02-06 21:34:19
+ERROR,View function mapping is overwriting an existing endpoint function: get_data,2025-02-06 21:34:19
+ERROR,Exception ignored in: ,2025-02-06 21:36:37
+ERROR,<module 'threading' from '/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/threading.py'>,2025-02-06 21:36:37
+ERROR,"Traceback (most recent call last):
+",2025-02-06 21:36:37
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/threading.py"", line 1424, in _shutdown
+",2025-02-06 21:36:37
+ERROR,lock.acquire(),2025-02-06 21:36:37
+ERROR,KeyboardInterrupt,2025-02-06 21:36:37
+ERROR,: ,2025-02-06 21:36:37
+INFO,TradingService initialized,2025-02-06 21:36:43
+INFO,TradingService initialized,2025-02-06 21:36:43
+INFO,Initializing ConfigManager,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:36:43
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-06 21:36:43
+INFO,Registered asset BTCUSDT,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:36:43
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-06 21:36:43
+INFO,Registered asset USDT.D,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:36:43
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-06 21:36:43
+INFO,Registered asset EURUSD,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:36:43
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:36:43
+INFO,Register Asset to Asset Manager:DXY,2025-02-06 21:36:43
+INFO,Registered asset DXY,2025-02-06 21:36:43
+INFO,Finished ConfigManager,2025-02-06 21:36:43
+INFO,Time taken by run_starting_setup: 0.0182 seconds,2025-02-06 21:36:43
+ERROR,"Traceback (most recent call last):
+",2025-02-06 21:36:43
+ERROR,"  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/50487024-9911-4A30-B0A4-B09FA352FB22/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd.py"", line 1570, in _exec
+",2025-02-06 21:36:43
+ERROR,"pydev_imports.execfile(file, globals, locals)  # execute the script",2025-02-06 21:36:43
+ERROR,"  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/50487024-9911-4A30-B0A4-B09FA352FB22/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/_pydev_imps/_pydev_execfile.py"", line 18, in execfile
+",2025-02-06 21:36:43
+ERROR,"exec(compile(contents+""\n"", file, 'exec'), glob, loc)",2025-02-06 21:36:43
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/Server.py"", line 55, in <module>
+",2025-02-06 21:36:43
+ERROR,def get_data():,2025-02-06 21:36:43
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/scaffold.py"", line 362, in decorator
+",2025-02-06 21:36:43
+ERROR,"self.add_url_rule(rule, endpoint, f, **options)",2025-02-06 21:36:43
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/scaffold.py"", line 47, in wrapper_func
+",2025-02-06 21:36:43
+ERROR,"return f(self, *args, **kwargs)",2025-02-06 21:36:43
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/app.py"", line 657, in add_url_rule
+",2025-02-06 21:36:43
+ERROR,raise AssertionError(,2025-02-06 21:36:43
+ERROR,AssertionError,2025-02-06 21:36:43
+ERROR,: ,2025-02-06 21:36:43
+ERROR,View function mapping is overwriting an existing endpoint function: get_data,2025-02-06 21:36:43
+ERROR,Exception ignored in: ,2025-02-06 21:37:29
+ERROR,<module 'threading' from '/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/threading.py'>,2025-02-06 21:37:29
+ERROR,"Traceback (most recent call last):
+",2025-02-06 21:37:29
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/threading.py"", line 1424, in _shutdown
+",2025-02-06 21:37:29
+ERROR,lock.acquire(),2025-02-06 21:37:29
+ERROR,KeyboardInterrupt,2025-02-06 21:37:29
+ERROR,: ,2025-02-06 21:37:29
+INFO,TradingService initialized,2025-02-06 21:37:31
+INFO,TradingService initialized,2025-02-06 21:37:31
+INFO,Initializing ConfigManager,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:37:31
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-06 21:37:31
+INFO,Registered asset BTCUSDT,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:37:31
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-06 21:37:31
+INFO,Registered asset USDT.D,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:37:31
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-06 21:37:31
+INFO,Registered asset EURUSD,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:37:31
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:37:31
+INFO,Register Asset to Asset Manager:DXY,2025-02-06 21:37:31
+INFO,Registered asset DXY,2025-02-06 21:37:31
+INFO,Finished ConfigManager,2025-02-06 21:37:31
+INFO,Time taken by run_starting_setup: 0.1356 seconds,2025-02-06 21:37:31
+ERROR,"Traceback (most recent call last):
+",2025-02-06 21:37:31
+ERROR,"  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/50487024-9911-4A30-B0A4-B09FA352FB22/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/pydevd.py"", line 1570, in _exec
+",2025-02-06 21:37:31
+ERROR,"pydev_imports.execfile(file, globals, locals)  # execute the script",2025-02-06 21:37:31
+ERROR,"  File ""/private/var/folders/zn/g46xcqdd7ls3hf5jkxzzf4n00000gn/T/AppTranslocation/50487024-9911-4A30-B0A4-B09FA352FB22/d/PyCharm.app/Contents/plugins/python-ce/helpers/pydev/_pydev_imps/_pydev_execfile.py"", line 18, in execfile
+",2025-02-06 21:37:31
+ERROR,"exec(compile(contents+""\n"", file, 'exec'), glob, loc)",2025-02-06 21:37:31
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/Server.py"", line 55, in <module>
+",2025-02-06 21:37:31
+ERROR,def get_data():,2025-02-06 21:37:31
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/scaffold.py"", line 362, in decorator
+",2025-02-06 21:37:31
+ERROR,"self.add_url_rule(rule, endpoint, f, **options)",2025-02-06 21:37:31
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/scaffold.py"", line 47, in wrapper_func
+",2025-02-06 21:37:31
+ERROR,"return f(self, *args, **kwargs)",2025-02-06 21:37:31
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages/flask/sansio/app.py"", line 657, in add_url_rule
+",2025-02-06 21:37:31
+ERROR,raise AssertionError(,2025-02-06 21:37:31
+ERROR,AssertionError,2025-02-06 21:37:31
+ERROR,: ,2025-02-06 21:37:31
+ERROR,View function mapping is overwriting an existing endpoint function: get_data,2025-02-06 21:37:31
+ERROR,Exception ignored in: ,2025-02-06 21:40:53
+ERROR,<module 'threading' from '/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/threading.py'>,2025-02-06 21:40:53
+ERROR,"Traceback (most recent call last):
+",2025-02-06 21:40:53
+ERROR,"  File ""/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/threading.py"", line 1424, in _shutdown
+",2025-02-06 21:40:53
+ERROR,lock.acquire(),2025-02-06 21:40:53
+ERROR,KeyboardInterrupt,2025-02-06 21:40:53
+ERROR,: ,2025-02-06 21:40:53
+INFO,TradingService initialized,2025-02-06 21:41:00
+INFO,TradingService initialized,2025-02-06 21:41:00
+INFO,Initializing ConfigManager,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 21:41:00
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-06 21:41:00
+INFO,Registered asset BTCUSDT,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 21:41:00
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-06 21:41:00
+INFO,Registered asset USDT.D,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 21:41:00
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-06 21:41:00
+INFO,Registered asset EURUSD,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:41:00
+WARNING,Failed to register asset Strategy DXY,2025-02-06 21:41:00
+INFO,Register Asset to Asset Manager:DXY,2025-02-06 21:41:00
+INFO,Registered asset DXY,2025-02-06 21:41:00
+INFO,Finished ConfigManager,2025-02-06 21:41:00
+INFO,Time taken by run_starting_setup: 0.1408 seconds,2025-02-06 21:41:00
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-06 21:41:00
+INFO,b' * Debug mode: off\n',2025-02-06 21:41:00
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-06 21:41:02
+INFO,[33mPress CTRL+C to quit[0m,2025-02-06 21:41:02
+INFO,"127.0.0.1 - - [06/Feb/2025 21:41:05] ""%s"" %s %s",2025-02-06 21:41:05
+INFO,"127.0.0.1 - - [06/Feb/2025 21:41:05] ""%s"" %s %s",2025-02-06 21:41:05
+INFO,"127.0.0.1 - - [06/Feb/2025 21:41:06] ""%s"" %s %s",2025-02-06 21:41:06
+INFO,"127.0.0.1 - - [06/Feb/2025 21:41:06] ""%s"" %s %s",2025-02-06 21:41:06
+INFO,"Register Trade,TradeId: a096a1e0-8cd1-4163-8c9f-1eb67aed3b26",2025-02-06 21:49:37
+INFO,"127.0.0.1 - - [06/Feb/2025 21:49:44] ""%s"" %s %s",2025-02-06 21:49:44
+INFO,"Register Trade,TradeId: d606f7bb-d689-48c3-841d-de0ae7abf8ed",2025-02-06 21:50:20
+INFO,"127.0.0.1 - - [06/Feb/2025 21:50:20] ""%s"" %s %s",2025-02-06 21:50:20
+INFO,"Register Trade,TradeId: a11438fb-6df8-40b9-b89e-71582649aa4f",2025-02-06 21:52:23
+INFO,"127.0.0.1 - - [06/Feb/2025 21:52:23] ""%s"" %s %s",2025-02-06 21:52:23
+INFO,"Register Trade,TradeId: d37072be-88fa-405f-82c8-99ac2bdf8478",2025-02-06 21:52:40
+INFO,"127.0.0.1 - - [06/Feb/2025 21:52:40] ""%s"" %s %s",2025-02-06 21:52:40
+INFO,"Register Trade,TradeId: e8bd8298-8c37-467c-9a4f-76947feeb6e7",2025-02-06 21:53:12
+INFO,"127.0.0.1 - - [06/Feb/2025 21:53:12] ""%s"" %s %s",2025-02-06 21:53:12
+INFO,"Register Trade,TradeId: be339e62-4176-4e48-80ed-7a3098c718cb",2025-02-06 21:55:32
+INFO,"127.0.0.1 - - [06/Feb/2025 21:55:32] ""%s"" %s %s",2025-02-06 21:55:32
+INFO,"Register Trade,TradeId: e9540212-555d-48f8-a7ed-af4b411927c4",2025-02-06 21:59:04
+INFO,"127.0.0.1 - - [06/Feb/2025 21:59:04] ""%s"" %s %s",2025-02-06 21:59:04
+INFO,TradingService initialized,2025-02-06 22:01:28
+INFO,TradingService initialized,2025-02-06 22:01:28
+INFO,Initializing ConfigManager,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:01:28
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-06 22:01:28
+INFO,Registered asset BTCUSDT,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:01:28
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-06 22:01:28
+INFO,Registered asset USDT.D,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:01:28
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-06 22:01:28
+INFO,Registered asset EURUSD,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:01:28
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:01:28
+INFO,Register Asset to Asset Manager:DXY,2025-02-06 22:01:28
+INFO,Registered asset DXY,2025-02-06 22:01:28
+INFO,Finished ConfigManager,2025-02-06 22:01:28
+INFO,Time taken by run_starting_setup: 0.1343 seconds,2025-02-06 22:01:28
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-06 22:01:28
+INFO,b' * Debug mode: off\n',2025-02-06 22:01:28
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-06 22:01:28
+INFO,[33mPress CTRL+C to quit[0m,2025-02-06 22:01:28
+INFO,"127.0.0.1 - - [06/Feb/2025 22:01:28] ""%s"" %s %s",2025-02-06 22:01:28
+INFO,"Register Trade,TradeId: f1c67bcf-5993-4c7f-b9f8-69a08b74db52",2025-02-06 22:01:53
+INFO,"127.0.0.1 - - [06/Feb/2025 22:01:53] ""%s"" %s %s",2025-02-06 22:01:53
+INFO,"Register Trade,TradeId: 2c47c32e-cb8b-4186-b1b2-20d15f91c553",2025-02-06 22:02:10
+INFO,"127.0.0.1 - - [06/Feb/2025 22:02:10] ""%s"" %s %s",2025-02-06 22:02:10
+INFO,TradingService initialized,2025-02-06 22:03:51
+INFO,TradingService initialized,2025-02-06 22:03:51
+INFO,Initializing ConfigManager,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:03:51
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-06 22:03:51
+INFO,Registered asset BTCUSDT,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:03:51
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-06 22:03:51
+INFO,Registered asset USDT.D,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:03:51
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-06 22:03:51
+INFO,Registered asset EURUSD,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:03:51
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:03:51
+INFO,Register Asset to Asset Manager:DXY,2025-02-06 22:03:51
+INFO,Registered asset DXY,2025-02-06 22:03:51
+INFO,Finished ConfigManager,2025-02-06 22:03:51
+INFO,Time taken by run_starting_setup: 0.0187 seconds,2025-02-06 22:03:51
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-06 22:03:51
+INFO,b' * Debug mode: off\n',2025-02-06 22:03:51
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-06 22:03:51
+INFO,[33mPress CTRL+C to quit[0m,2025-02-06 22:03:51
+INFO,"127.0.0.1 - - [06/Feb/2025 22:03:52] ""%s"" %s %s",2025-02-06 22:03:52
+INFO,"Register Trade,TradeId: 643d6617-8b15-4f97-a371-be1ee21cd441",2025-02-06 22:09:37
+INFO,"127.0.0.1 - - [06/Feb/2025 22:09:37] ""%s"" %s %s",2025-02-06 22:09:37
+INFO,"Register Trade,TradeId: cbdfa020-d4c2-4f88-873d-4770cc460508",2025-02-06 22:12:26
+INFO,"127.0.0.1 - - [06/Feb/2025 22:12:26] ""%s"" %s %s",2025-02-06 22:12:26
+INFO,"Register Trade,TradeId: e1299098-2bfc-4c77-b2c2-3d6f517c7e01",2025-02-06 22:12:53
+INFO,"127.0.0.1 - - [06/Feb/2025 22:12:53] ""%s"" %s %s",2025-02-06 22:12:53
+INFO,"Register Trade,TradeId: f0b857cd-2f96-43d6-b98c-b671815d3d92",2025-02-06 22:13:34
+INFO,"127.0.0.1 - - [06/Feb/2025 22:13:34] ""%s"" %s %s",2025-02-06 22:13:34
+INFO,"Register Trade,TradeId: 15a51830-35cb-49cd-8c89-d8e3571b02ae",2025-02-06 22:14:42
+INFO,"127.0.0.1 - - [06/Feb/2025 22:14:42] ""%s"" %s %s",2025-02-06 22:14:42
+INFO,"Register Trade,TradeId: 7c46a061-981a-4db8-b995-a8f164ef25b5",2025-02-06 22:16:52
+INFO,"127.0.0.1 - - [06/Feb/2025 22:16:52] ""%s"" %s %s",2025-02-06 22:16:52
+INFO,"Register Trade,TradeId: 34724782-acaa-4605-b013-834f0e70d380",2025-02-06 22:19:48
+INFO,"127.0.0.1 - - [06/Feb/2025 22:19:48] ""%s"" %s %s",2025-02-06 22:19:48
+INFO,"Register Trade,TradeId: 639d8f49-121a-4bf9-b551-983fbfb179a5",2025-02-06 22:24:16
+INFO,"127.0.0.1 - - [06/Feb/2025 22:24:16] ""%s"" %s %s",2025-02-06 22:24:16
+INFO,"Register Trade,TradeId: e8e2afb0-a708-4d1c-8370-17b6fac5dd1e",2025-02-06 22:24:28
+INFO,"127.0.0.1 - - [06/Feb/2025 22:24:28] ""%s"" %s %s",2025-02-06 22:24:28
+INFO,"Register Trade,TradeId: 1393f878-dca5-4577-8f38-803f1c116581",2025-02-06 22:26:08
+INFO,TradingService initialized,2025-02-06 22:30:16
+INFO,TradingService initialized,2025-02-06 22:30:16
+INFO,Initializing ConfigManager,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-06 22:30:16
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-06 22:30:16
+INFO,Registered asset BTCUSDT,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy USDT.D,2025-02-06 22:30:16
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-06 22:30:16
+INFO,Registered asset USDT.D,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy EURUSD,2025-02-06 22:30:16
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-06 22:30:16
+INFO,Registered asset EURUSD,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:30:16
+WARNING,Failed to register asset Strategy DXY,2025-02-06 22:30:16
+INFO,Register Asset to Asset Manager:DXY,2025-02-06 22:30:16
+INFO,Registered asset DXY,2025-02-06 22:30:16
+INFO,Finished ConfigManager,2025-02-06 22:30:16
+INFO,Time taken by run_starting_setup: 0.0276 seconds,2025-02-06 22:30:16
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-06 22:30:16
+INFO,b' * Debug mode: off\n',2025-02-06 22:30:16
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-06 22:30:16
+INFO,[33mPress CTRL+C to quit[0m,2025-02-06 22:30:16
+INFO,"127.0.0.1 - - [06/Feb/2025 22:30:18] ""%s"" %s %s",2025-02-06 22:30:18
+INFO,"Register Trade,TradeId: 6b6501ad-13cb-420a-bd60-4a488a0296ca",2025-02-06 22:30:46
+INFO,"Register Trade,TradeId: 3653d689-22a0-48d7-87a8-3eeedbc42dd5",2025-02-06 22:31:18
+INFO,"127.0.0.1 - - [06/Feb/2025 22:31:18] ""%s"" %s %s",2025-02-06 22:31:18
+INFO,"Register Trade,TradeId: ae249319-cd45-4b9c-a6be-8b85b1ded117",2025-02-06 22:31:59
+INFO,"127.0.0.1 - - [06/Feb/2025 22:31:59] ""%s"" %s %s",2025-02-06 22:31:59
+INFO,TradingService initialized,2025-02-08 10:30:55
+INFO,TradingService initialized,2025-02-08 10:30:55
+INFO,Initializing ConfigManager,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 10:30:55
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-08 10:30:55
+INFO,Registered asset BTCUSDT,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 10:30:55
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-08 10:30:55
+INFO,Registered asset USDT.D,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 10:30:55
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-08 10:30:55
+INFO,Registered asset EURUSD,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy DXY,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy DXY,2025-02-08 10:30:55
+WARNING,Failed to register asset Strategy DXY,2025-02-08 10:30:55
+INFO,Register Asset to Asset Manager:DXY,2025-02-08 10:30:55
+INFO,Registered asset DXY,2025-02-08 10:30:55
+INFO,Finished ConfigManager,2025-02-08 10:30:55
+INFO,Time taken by run_starting_setup: 0.0400 seconds,2025-02-08 10:30:55
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-08 10:30:55
+INFO,b' * Debug mode: off\n',2025-02-08 10:30:55
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-08 10:30:55
+INFO,[33mPress CTRL+C to quit[0m,2025-02-08 10:30:55
+INFO,"127.0.0.1 - - [08/Feb/2025 10:30:57] ""%s"" %s %s",2025-02-08 10:30:57
+INFO,"Register Trade,TradeId: 43e696fe-c21d-4bda-8d94-d08b6f191129",2025-02-08 10:43:14
+INFO,"127.0.0.1 - - [08/Feb/2025 10:43:14] ""%s"" %s %s",2025-02-08 10:43:14
+INFO,TradingService initialized,2025-02-08 10:48:50
+INFO,TradingService initialized,2025-02-08 10:48:50
+INFO,Initializing ConfigManager,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 10:48:50
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-08 10:48:50
+INFO,Registered asset BTCUSDT,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 10:48:50
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-08 10:48:50
+INFO,Registered asset USDT.D,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 10:48:50
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-08 10:48:50
+INFO,Registered asset EURUSD,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy DXY,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy DXY,2025-02-08 10:48:50
+WARNING,Failed to register asset Strategy DXY,2025-02-08 10:48:50
+INFO,Register Asset to Asset Manager:DXY,2025-02-08 10:48:50
+INFO,Registered asset DXY,2025-02-08 10:48:50
+INFO,Finished ConfigManager,2025-02-08 10:48:50
+INFO,Time taken by run_starting_setup: 0.1482 seconds,2025-02-08 10:48:50
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-08 10:48:50
+INFO,b' * Debug mode: off\n',2025-02-08 10:48:50
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-08 10:48:50
+INFO,[33mPress CTRL+C to quit[0m,2025-02-08 10:48:50
+INFO,"127.0.0.1 - - [08/Feb/2025 10:48:51] ""%s"" %s %s",2025-02-08 10:48:51
+INFO,"Register Trade,TradeId: 7fa3e97d-038f-488b-86b6-0119ca23b04d",2025-02-08 10:49:03
+INFO,"127.0.0.1 - - [08/Feb/2025 10:49:03] ""%s"" %s %s",2025-02-08 10:49:03
+INFO,"Register Trade,TradeId: 101d185e-1ef9-4b76-a7b1-bb64e5d2264a",2025-02-08 10:49:58
+INFO,"127.0.0.1 - - [08/Feb/2025 10:49:58] ""%s"" %s %s",2025-02-08 10:49:58
+INFO,TradingService initialized,2025-02-08 12:18:07
+INFO,TradingService initialized,2025-02-08 12:18:07
+INFO,Initializing ConfigManager,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:18:07
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-08 12:18:07
+INFO,Registered asset BTCUSDT,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:18:07
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-08 12:18:07
+INFO,Registered asset USDT.D,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:18:07
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-08 12:18:07
+INFO,Registered asset EURUSD,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:18:07
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:18:07
+INFO,Register Asset to Asset Manager:DXY,2025-02-08 12:18:07
+INFO,Registered asset DXY,2025-02-08 12:18:07
+INFO,Finished ConfigManager,2025-02-08 12:18:07
+INFO,Time taken by run_starting_setup: 0.0625 seconds,2025-02-08 12:18:07
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-08 12:18:07
+INFO,b' * Debug mode: off\n',2025-02-08 12:18:07
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-08 12:18:07
+INFO,[33mPress CTRL+C to quit[0m,2025-02-08 12:18:07
+INFO,"127.0.0.1 - - [08/Feb/2025 12:18:08] ""%s"" %s %s",2025-02-08 12:18:08
+ERROR,Exception on /get-trades [GET],2025-02-08 12:18:19
+INFO,"127.0.0.1 - - [08/Feb/2025 12:18:19] ""%s"" %s %s",2025-02-08 12:18:19
+ERROR,Exception on /get-trades [GET],2025-02-08 12:19:02
+INFO,"127.0.0.1 - - [08/Feb/2025 12:19:02] ""%s"" %s %s",2025-02-08 12:19:02
+INFO,TradingService initialized,2025-02-08 12:20:35
+INFO,TradingService initialized,2025-02-08 12:20:35
+INFO,Initializing ConfigManager,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:20:35
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-08 12:20:35
+INFO,Registered asset BTCUSDT,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:20:35
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-08 12:20:35
+INFO,Registered asset USDT.D,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:20:35
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-08 12:20:35
+INFO,Registered asset EURUSD,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:20:35
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:20:35
+INFO,Register Asset to Asset Manager:DXY,2025-02-08 12:20:35
+INFO,Registered asset DXY,2025-02-08 12:20:35
+INFO,Finished ConfigManager,2025-02-08 12:20:35
+INFO,Time taken by run_starting_setup: 0.0157 seconds,2025-02-08 12:20:35
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-08 12:20:35
+INFO,b' * Debug mode: off\n',2025-02-08 12:20:35
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-08 12:20:35
+INFO,[33mPress CTRL+C to quit[0m,2025-02-08 12:20:35
+INFO,"127.0.0.1 - - [08/Feb/2025 12:20:35] ""%s"" %s %s",2025-02-08 12:20:35
+ERROR,"Traceback (most recent call last):
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/Server.py"", line 6, in <module>
+    from app.ClassInstances import signal_controller
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/app/ClassInstances.py"", line 7, in <module>
+    from app.controller.SignalController import SignalController
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/app/controller/SignalController.py"", line 4, in <module>
+    from app.helper.facade.TradingFacade import TradingFacade
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/app/helper/facade/TradingFacade.py"", line 3, in <module>
+    from app.manager.AssetManager import AssetManager
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/app/manager/AssetManager.py"", line 3, in <module>
+    from app.db.mongodb.mongoDBData import mongoDBData
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/app/db/mongodb/mongoDBData.py"", line 10, in <module>
+    from app.mappers.TradeMapper import TradeMapper
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/app/mappers/TradeMapper.py"", line 10, in <module>
+    from app.models.trade.Trade import Trade
+",2025-02-08 12:25:51
+ERROR,"  File ""/Users/lauris/PycharmProjects/AutomatedTrading/app/models/trade/Trade.py"", line 64, in <module>
+    tr = Trade()
+",2025-02-08 12:25:51
+ERROR,"KeyboardInterrupt
+",2025-02-08 12:25:51
+INFO,TradingService initialized,2025-02-08 12:25:57
+INFO,TradingService initialized,2025-02-08 12:25:57
+INFO,Initializing ConfigManager,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy BTCUSDT,2025-02-08 12:25:57
+INFO,Register Asset to Asset Manager:BTCUSDT,2025-02-08 12:25:57
+INFO,Registered asset BTCUSDT,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy USDT.D,2025-02-08 12:25:57
+INFO,Register Asset to Asset Manager:USDT.D,2025-02-08 12:25:57
+INFO,Registered asset USDT.D,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy EURUSD,2025-02-08 12:25:57
+INFO,Register Asset to Asset Manager:EURUSD,2025-02-08 12:25:57
+INFO,Registered asset EURUSD,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:25:57
+WARNING,Failed to register asset Strategy DXY,2025-02-08 12:25:57
+INFO,Register Asset to Asset Manager:DXY,2025-02-08 12:25:57
+INFO,Registered asset DXY,2025-02-08 12:25:57
+INFO,Finished ConfigManager,2025-02-08 12:25:57
+INFO,Time taken by run_starting_setup: 0.0172 seconds,2025-02-08 12:25:57
+INFO,"b"" * Serving Flask app 'Server'\n""",2025-02-08 12:25:57
+INFO,b' * Debug mode: off\n',2025-02-08 12:25:57
+INFO,"[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.178.94:5000",2025-02-08 12:25:57
+INFO,[33mPress CTRL+C to quit[0m,2025-02-08 12:25:57
+INFO,"127.0.0.1 - - [08/Feb/2025 12:25:58] ""%s"" %s %s",2025-02-08 12:25:58
+INFO,"Register Trade,TradeId: 5ff01385-a6c1-49c8-b965-c728d09ac6c4",2025-02-08 12:28:44
+INFO,"127.0.0.1 - - [08/Feb/2025 12:28:44] ""%s"" %s %s",2025-02-08 12:28:44
+INFO,"Register Trade,TradeId: d9f0260a-a4ec-4e80-a76a-deaab59ee1be",2025-02-08 12:28:45
+INFO,"127.0.0.1 - - [08/Feb/2025 12:28:45] ""%s"" %s %s",2025-02-08 12:28:45

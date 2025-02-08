@@ -57,7 +57,6 @@ class Choch(IConfirmation):
 
             upper_fractal = None
             lower_fractal = None
-            os = 0  # Keeps track of the order of structure (bullish or bearish)
 
             for i in range(self.lookback // 2, len(candles) - self.lookback // 2):
                 # Check for bullish fractal
@@ -71,7 +70,6 @@ class Choch(IConfirmation):
                 # Check crossover above the bullish fractal (ChoCH/BOS Bullish)
                 if upper_fractal and closes[i] > upper_fractal['value'] and not upper_fractal['crossed']:
                     upper_fractal['crossed'] = True
-                    os = 1  # Set structure to bullish
 
                     structure =  Structure(name=self.name, direction="Bullish", candle=candles[i])
                     structures.append(structure)
@@ -79,7 +77,6 @@ class Choch(IConfirmation):
                 # Check crossover below the bearish fractal (ChoCH/BOS Bearish)
                 if lower_fractal and closes[i] < lower_fractal['value'] and not lower_fractal['crossed']:
                     lower_fractal['crossed'] = True
-                    os = -1  # Set structure to bearish
                     structure =  Structure(name=self.name, direction="Bearish", candle=candles[i])
                     structures.append(structure)
         except Exception as e:

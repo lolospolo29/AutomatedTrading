@@ -1,7 +1,6 @@
 from abc import abstractmethod
 
 from app.interfaces.framework.ITimeWindow import ITimeWindow
-from app.models.calculators.ProfitStopEntryCalculator import ProfitStopEntryCalculator
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.StrategyResult import StrategyResult
@@ -19,11 +18,9 @@ class Strategy:
 
     def to_dict(self):
         return {
-            "Strategy": {
                 "name": self.name,
                 "timeframes": [timeframe.to_dict() for timeframe in self.timeframes],
                 "time_windows": [time_window.to_dict() for time_window in self.time_windows]
-            }
         }
 
     @abstractmethod

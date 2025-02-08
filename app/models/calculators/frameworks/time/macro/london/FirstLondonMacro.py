@@ -3,6 +3,9 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class FirstLondonMacro(ITimeWindow):
+    def to_dict(self):
+        pass
+
     def is_in_exit_window(self, time):
         return self.is_in_entry_window(time)
 

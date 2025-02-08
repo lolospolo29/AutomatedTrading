@@ -55,7 +55,7 @@ class SignalController:
                 asset_str:dict = asset.to_dict()
                 updated_assets.append(asset_str)
             except Exception as e:
-                logger.error("Error appending asset to list: {id},Error:{e}".format(id=asset.id,e=e))
+                logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=asset.name,e=e))
         return updated_assets
 
     def delete_asset(self):

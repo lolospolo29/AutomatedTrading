@@ -1,7 +1,3 @@
-import csv
-import json
-
-from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExceptionError
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
 
@@ -33,4 +29,4 @@ class AssetMapper:
             timeFrame = candle.get("timeframe")
             return Candle(asset, broker, open, high, low, close, iso_time, timeFrame)
         except Exception as e:
-            raise MappingFailedExceptionError("Candle")
+            ValueError("Mapping Tradingview Candle Error: {}".format(e))

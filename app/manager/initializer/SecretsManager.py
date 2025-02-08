@@ -28,7 +28,6 @@ class SecretsManager:
                 self._initialized = True  # Markiere als initialisiert
             except Exception as e:
                 logger.exception("Failed to load secrets file: {}".format(e))
-                os._exit(1)
 
     # endregion
 

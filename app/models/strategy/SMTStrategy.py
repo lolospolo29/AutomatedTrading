@@ -1,4 +1,5 @@
 from app.helper.handler.SMTHandler import SMTHandler
+from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.strategy.Strategy import Strategy
 from app.models.trade.Trade import Trade
 from app.models.strategy.StrategyResult import StrategyResult
@@ -23,13 +24,13 @@ class SMTStrategy(Strategy):
                                        asset_2=self.asset_2,
                                        correlation=self.correlation)
 
-    def get_exit(self, candles: list, timeFrame: int, trade: Trade) -> StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:
         """
         Placeholder method for calculating the exit strategy.
         """
         raise NotImplementedError("SMTStrategy.get_exit must be implemented.")
 
-    def get_entry(self, candles: list, timeFrame: int) -> StrategyResult:
+    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)-> StrategyResult:
         """
         Placeholder method for calculating the entry strategy.
         """

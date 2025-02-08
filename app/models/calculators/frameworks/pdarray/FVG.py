@@ -35,7 +35,7 @@ class FVG(IPDArray):
                 high = high
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("FVG Entry Error")
+            logger.error("FVG Entry Error with Exception"+str(e))
 
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
@@ -60,7 +60,7 @@ class FVG(IPDArray):
                 if risk_mode.AGGRESSIVE:
                     return max(close)
         except Exception as e:
-            raise CalculationExceptionError("FVG Stop Error")
+            logger.error("FVG Stop Error with Exception"+str(e))
 
     def checkForInverse(self, pd_array: PDArray, candles: list[Candle]) ->str:
         """
@@ -101,7 +101,7 @@ class FVG(IPDArray):
                             return "Bullish"
             return pd_array.direction
         except Exception as e:
-            raise CalculationExceptionError("FVG Inversion Error")
+            logger.error("FVG Inverse Error with Exception"+str(e))
 
     def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
@@ -121,7 +121,7 @@ class FVG(IPDArray):
             # Return the gap range
             return low, high
         except Exception as e:
-            raise CalculationExceptionError("FVG Candle Range Error")
+            logger.error("FVG return candle range error with Exception"+str(e))
 
     def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         """
@@ -167,7 +167,7 @@ class FVG(IPDArray):
                         pdArray.candles.append(candles[i - 2])
                         pd_arrays.append(pdArray)
         except Exception as e:
-            raise logger.error("FVG Error with Exception"+str(e))
+            logger.error("FVG Error with Exception"+str(e))
         finally:
             return pd_arrays
 

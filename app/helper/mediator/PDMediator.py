@@ -11,6 +11,7 @@ from app.models.calculators.frameworks.pdarray.VolumeImbalance import VolumeImba
 from app.monitoring.logging.logging_startup import logger
 
 
+# noinspection PyTypeChecker
 class PDMediator:
     """
     Handles price discovery computations using multiple analytical approaches,
@@ -100,7 +101,7 @@ class PDMediator:
             if pd_type == "VI":
                     return self._volume_imbalance.return_array_list(candles, lookback)
         except Exception as e:
-            logger.error("Calculate PD array with type {} failed.".format(pd_type))
+            logger.error("Error calculating PD array with lookback: {}".format(e))
 
     def calculate_pd_array(self, pd_type: str, candles: list[Candle]) -> list:
         """

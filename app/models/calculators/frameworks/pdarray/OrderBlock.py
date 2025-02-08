@@ -29,7 +29,7 @@ class Orderblock(IPDArray):
             if risk_mode.MODERAT:
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("Orderblock Entry Error")
+            logger.error("Orderblock Entry Error with Exception"+str(e))
 
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
@@ -54,7 +54,7 @@ class Orderblock(IPDArray):
                 if risk_mode.AGGRESSIVE:
                     return max(close)
         except Exception as e:
-            raise CalculationExceptionError("Orderblock Stop Error")
+            logger.error("Orderblock Stop Error with Exception"+str(e))
 
 
     def checkForInverse(self, pd_array: PDArray, candles: list[Candle]) -> str:
@@ -88,7 +88,7 @@ class Orderblock(IPDArray):
                             return "Bullish"
             return pd_array.direction
         except Exception as e:
-            raise CalculationExceptionError("Orderblock Inverse Error")
+            logger.error("Orderblock Inverse Error with Exception"+str(e))
 
     def return_candle_range(self, pdArray: PDArray) -> tuple[float, float]:
         """
@@ -107,7 +107,7 @@ class Orderblock(IPDArray):
 
             return low,high
         except Exception as e:
-            raise CalculationExceptionError("Orderblock return candle range error.")
+            logger.error("Orderblock return candle range error with Exception"+str(e))
 
     def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         """Calculate the OB. By one Candle sweeps the other and finishes in the opposite direction."""

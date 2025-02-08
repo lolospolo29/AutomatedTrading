@@ -16,6 +16,8 @@ httpClient=requests.Session()
 recv_window=str(5000)
 url= sm.return_secret("demoBybitUrl") # Testnet endpoint
 
+
+# noinspection PyShadowingNames,PyUnusedLocal
 def HTTP_Request(endPoint,method,payload,Info):
     global time_stamp
     time_stamp=str(int(time.time() * 10 ** 3))
@@ -29,12 +31,15 @@ def HTTP_Request(endPoint,method,payload,Info):
         'Content-Type': 'application/json'
     }
 
+    # noinspection PyRedundantParentheses
     if(method=="POST"):
         response = httpClient.request(method, url+endPoint, headers=headers, data=payload)
     else:
         response = httpClient.request(method, url+endPoint+"?"+payload, headers=headers)
     return response.json()
 
+
+# noinspection PyShadowingNames
 def genSignature(payload):
     param_str= str(time_stamp) + api_key + recv_window + payload
 

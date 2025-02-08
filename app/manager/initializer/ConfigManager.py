@@ -1,4 +1,3 @@
-import os
 import threading
 
 from app.db.mongodb.mongoDBConfig import mongoDBConfig
@@ -19,7 +18,6 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class ConfigManager:
-
     _instance = None
     _lock = threading.Lock()
 
@@ -53,36 +51,29 @@ class ConfigManager:
     # region Starting Setup
     @log_time
     def run_starting_setup(self):
-
         logger.info("Initializing ConfigManager")
-        try:
 
-            assets: list = self._mongo_db_config.load_data("Asset", None)
-            brokers: list = self._mongo_db_config.load_data("Broker", None)
-            strategies: list = self._mongo_db_config.load_data("Strategy", None)
-            relations: list = self._mongo_db_config.load_data("AssetBrokerStrategyRelation"
-                                                              , None)
-            smtPairs: list = self._mongo_db_config.load_data("SMTPairs", None)
-            asset_classes:list = self._mongo_db_config.load_data("AssetClasses", None)
+        assets: list = self._mongo_db_config.load_data("Asset", None)
+        brokers: list = self._mongo_db_config.load_data("Broker", None)
+        strategies: list = self._mongo_db_config.load_data("Strategy", None)
+        relations: list = self._mongo_db_config.load_data("AssetBrokerStrategyRelation"
+                                                          , None)
+        smtPairs: list = self._mongo_db_config.load_data("SMTPairs", None)
+        asset_classes: list = self._mongo_db_config.load_data("AssetClasses", None)
 
-            trades: list = self._mongo_db_trades.find_trade_or_trades_by_id()
+        trades: list = self._mongo_db_trades.find_trade_or_trades_by_id()
 
-            self._trades.extend(trades)
+        self._trades.extend(trades)
 
-            self._add_data_to_list("AssetClass", asset_classes)
-            self._add_data_to_list("Asset", assets)
-            self._add_data_to_list("Broker", brokers)
-            self._add_data_to_list("Strategy", strategies)
-            self._add_data_to_list("AssetBrokerStrategyRelation",
-                                   relations)
-            self._add_data_to_list("SMTPairs", smtPairs)
+        self._add_data_to_list("AssetClass", asset_classes)
+        self._add_data_to_list("Asset", assets)
+        self._add_data_to_list("Broker", brokers)
+        self._add_data_to_list("Strategy", strategies)
+        self._add_data_to_list("AssetBrokerStrategyRelation",
+                               relations)
+        self._add_data_to_list("SMTPairs", smtPairs)
 
-            self._initialize_managers()
-        except Exception as e:
-            logger.exception("Fatal Error in ConfigManager")
-            os._exit(1)
-        finally:
-            logger.info("Finished ConfigManager")
+        self._initialize_managers()
 
     def _initialize_managers(self):
         for asset in self._assets:
@@ -104,20 +95,24 @@ class ConfigManager:
                                 if smt_pair == relation.strategy:
                                     asset1 = smt_pair.smt_pairs[0]
                                     asset2 = smt_pair.smt_pairs[1]
-                                    strategy = self._strategy_factory.return_smt_strategy(relation.strategy,smt_pair.correlation,asset1,asset2)
+                                    strategy = self._strategy_factory.return_smt_strategy(relation.strategy,
+                                                                                          smt_pair.correlation, asset1,
+                                                                                          asset2)
                                     if isinstance(strategy, Strategy):
                                         if asset1 == asset.name:
-                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset2)
+                                            self._strategy_manager.register_smt_strategy(relation, strategy, asset2)
                                         if asset2 == asset.name:
-                                            self._strategy_manager.register_smt_strategy(relation, strategy,asset1)
+                                            self._strategy_manager.register_smt_strategy(relation, strategy, asset1)
                             except Exception as e:
-                                logger.warning("Failed to register asset SMT Pair Strategy{}".format(asset.name))
+                                logger.warning("Failed to register asset SMT Pair Strategy{asset}"
+                                               ",Error:{e}".format(asset=asset.name,e=e))
                         try:
                             strategy = self._strategy_factory.return_strategy(relation.strategy)
                             if isinstance(strategy, Strategy):
                                 self._strategy_manager.register_strategy(relation, strategy)
                         except  Exception as e:
-                            logger.warning("Failed to register asset Strategy {}".format(asset.name))
+                            logger.warning("Failed to register asset Strategy {asset}"
+                                           ",Error:{e}".format(asset=asset.name,e=e))
 
                         expectedTimeFrames: list = self._strategy_manager.return_expected_time_frame(relation)
 
@@ -126,7 +121,7 @@ class ConfigManager:
                                                     relation.broker)
 
                     except Exception as e:
-                        logger.warning("Failed to register asset {}".format(asset.name))
+                        logger.warning("Failed to register asset {asset},Error:{e}".format(asset=asset.name,e=e))
 
                 self._asset_manager.register_asset(asset)
             except Exception as e:
@@ -151,7 +146,7 @@ class ConfigManager:
                 self._is_typ_smt_pair_add_pair(typ, doc)
                 self._is_typ_asset_class(typ, doc)
             except Exception as e:
-                logger.warning("Failed within doc {}".format(doc.id))
+                logger.warning("Failed within doc {doc},Error:{e}".format(doc=doc.id,e=e))
             finally:
                 continue
 
@@ -163,20 +158,19 @@ class ConfigManager:
 
     def _is_typ_relation_add_relation(self, typ: str, doc: dict) -> None:
         if typ == "AssetBrokerStrategyRelation":
-
             asset: str = self._mongo_db_config.find_by_id("Asset", "assetId", (doc.get(typ)).get("assetId"),
-                                                      "name")
+                                                          "name")
 
             broker: str = self._mongo_db_config.find_by_id("Broker", "brokerId", (doc.get(typ)).get("brokerId"),
-                                                       "name")
+                                                           "name")
 
             strategy: str = self._mongo_db_config.find_by_id("Strategy", "strategyId",
-                                                             (doc.get(typ)).get("strategyId"),"name")
+                                                             (doc.get(typ)).get("strategyId"), "name")
             maxTrades = doc.get(typ)["maxTrades"]
-            self._relations.append(AssetBrokerStrategyRelation(asset, broker, strategy,maxTrades))
+            self._relations.append(AssetBrokerStrategyRelation(asset, broker, strategy, maxTrades))
             logger.debug("Relation from database {}".format(asset))
 
-    def _is_typ_smt_pair_add_pair(self, typ: str, doc: dict)->None:
+    def _is_typ_smt_pair_add_pair(self, typ: str, doc: dict) -> None:
         if typ == "SMTPairs":
             strategy: str = self._mongo_db_config.find_by_id("Strategy", "strategyId",
                                                              (doc.get(typ)).get("strategyId"), "name")
@@ -186,15 +180,14 @@ class ConfigManager:
 
             for pair in smtPairs:
                 smtPairList.append(self._mongo_db_config.find_by_id("Asset", "assetId", pair,
-                                             "name"))
+                                                                    "name"))
 
             self._smtPairs.append(SMTPair(strategy, smtPairList, doc.get(typ).get("correlation")))
             logger.debug("SMTPair {} from database".format(str(smtPairList)))
 
-    def _is_typ_asset_class(self, typ: str, doc: dict)->None:
+    def _is_typ_asset_class(self, typ: str, doc: dict) -> None:
         if typ == "AssetClass":
             self._asset_classes[doc.get(typ).get("assetClassId")] = doc.get(typ).get("name")
             logger.debug("Asset class {} from database".format(doc.get(typ).get("assetClass")))
 
     # endregion
-

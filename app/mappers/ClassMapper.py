@@ -1,9 +1,8 @@
 import dataclasses
 import typing
-from dataclasses import is_dataclass, fields
+from dataclasses import fields
 from typing import Type
 
-from app.mappers.exceptions.MappingFailedExceptionError import MappingFailedExceptionError
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -52,7 +51,7 @@ class ClassMapper:
 
                 return cls(**init_kwargs)
         except Exception as e:
-            raise MappingFailedExceptionError(type(data).__name__)
+            logger.exception("Class Mapper Error,{e}".format(e=e))
 
     @staticmethod
     def map_args_to_dataclass(cls, input_obj=None, obj_type=None, **kwargs):
@@ -81,8 +80,7 @@ class ClassMapper:
             # Create and return the new dataclass instance
             return cls(**field_values)
         except Exception as e:
-            raise MappingFailedExceptionError(type(input_obj).__name__)
-
+            logger.exception("Class Mapper Error,{e}".format(e=e))
     @staticmethod
     def map_class_to_class(source_instance, target_class, overwrite=True):
         """
@@ -113,4 +111,4 @@ class ClassMapper:
 
             return target_class
         except Exception as e:
-            raise MappingFailedExceptionError(type(source_instance).__name__) from e
+            raise ValueError(type(source_instance).__name__) from e

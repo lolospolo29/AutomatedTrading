@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timezone
+from datetime import datetime
 from zoneinfo import ZoneInfo
 import pytz
 from app.monitoring.logging.logging_startup import logger
@@ -25,6 +25,7 @@ class EconomicScrapper:
         self.__options = Options()
         self.__service = \
             (Service('/Users/lauris/PycharmProjects/AutomatedTrading/tools/EconomicScrapper/chromedriver-mac-x64/chromedriver'))
+        self.__driver = webdriver.Chrome(service=self.__service, options=self.__options)
 
 
     @staticmethod
@@ -60,6 +61,7 @@ class EconomicScrapper:
 
         return title.strip(), currency.strip()
 
+    # noinspection GrazieInspection
     @staticmethod
     def _extract_date_from_event(event_text):
         """
@@ -94,7 +96,6 @@ class EconomicScrapper:
         Each NewsDay contains news events with details like time, title, currency, and adjusted timezone information.
         """
 
-        self.__driver = webdriver.Chrome(service=self.__service, options=self.__options)
         news_days = []
         try:
             # Open the website
@@ -126,7 +127,7 @@ class EconomicScrapper:
             event_elements = self.__driver.find_elements(By.CSS_SELECTOR, "tr")
 
 
-            current_news_day:NewsDay = None
+            current_news_day:Optional[NewsDay] = None
             logger.debug(event_elements)
             # Process each event and check for timestamp
             for index, event in enumerate(event_elements):
@@ -170,8 +171,9 @@ class EconomicScrapper:
                             # Adjust for AM/PM
                             if news_event.daytime == "PM":
                                 # If PM, add 12 hours to the time (except for 12 PM which is already correct)
-                                if time_obj.hour != 12:
-                                    time_obj = time_obj.replace(hour=time_obj.hour + 12)
+                                if time_obj:
+                                    if time_obj.hour != 12:
+                                        time_obj = time_obj.replace(hour=time_obj.hour + 12)
 
                             logger.debug("Time obj: {}".format(time_obj))
                             # Combine the date from newsDay and time from newsEvent

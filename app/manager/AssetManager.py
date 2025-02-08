@@ -109,33 +109,33 @@ class AssetManager:
             if asset in self.assets:
                 return self.assets[asset].asset_class
         except Exception as e:
-            logger.exception("Failed to return asset class for asset {}".format(asset))
+            logger.exception("Failed to return asset class for asset {asset},Error:{e}".format(asset=asset, e=e))
 
     def return_relations(self, asset: str, broker: str) -> list[AssetBrokerStrategyRelation]:
         try:
             if asset in self.assets:
                 return self.assets[asset].return_relations_for_broker(broker)
         except Exception as e:
-            logger.exception("Failed to return relations for asset {}".format(asset))
+            logger.exception("Failed to return relations for asset:{asset},Error {e}".format(asset=asset, e=e))
 
     def return_smt_pair(self, asset: str) -> SMTPair:
         try:
             if asset in self.assets:
                 return self.assets[asset].return_smt_pair()
         except Exception as e:
-            logger.exception("Failed to return smt pair for asset {}".format(asset))
+            logger.exception("Failed to return smt pair for asset: {asset},Error {e}".format(asset=asset, e=e))
 
     def return_candles(self, asset: str, broker: str, timeFrame: int) -> list[Candle]:
         try:
             if asset in self.assets:
                 return self.assets[asset].return_candles(timeFrame, broker)
         except Exception as e:
-            logger.exception("Failed to return candles for asset {}".format(asset))
+            logger.exception("Failed to return candles for asset {asset},Error {e}".format(asset=asset, e=e))
 
     def return_all_relations(self, asset: str):
         try:
             if asset in self.assets:
                 return self.assets[asset].relations
         except Exception as e:
-            logger.exception("Failed to return relations for asset {}".format(asset))
+            logger.exception("Failed to return relations for asset{asset},Error {e}".format(asset=asset, e=e))
     # endregion

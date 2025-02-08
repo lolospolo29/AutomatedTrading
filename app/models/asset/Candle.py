@@ -31,7 +31,6 @@ class Candle:
     def to_dict(self) -> dict:
         """Gibt alle Datenpunkte als Dictionary zurück"""
         return {
-            "Candle": {
                 "asset": self.asset,
                 "broker": self.broker,
                 "open": self.open,
@@ -41,5 +40,4 @@ class Candle:
                 "close": self.close,
                 "iso_time": self.iso_time,  # In ISO 8601-String konvertieren
                 "timeframe": self.timeframe
-            }
         }

@@ -9,10 +9,6 @@ class GETParams(ABC):
     method and provides a utility to convert the parameters into a
     URL-encoded query string.
 
-    :ivar attribute1: Description of attribute1.
-    :type attribute1: type
-    :ivar attribute2: Description of attribute2.
-    :type attribute2: type
     """
     @abstractmethod
     def validate(self):

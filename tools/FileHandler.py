@@ -14,6 +14,7 @@ from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
 
 
+# noinspection PyUnusedLocal
 class FileHandler(FileSystemEventHandler):
     """
     A singleton class that handles file system events for processing incoming CSV files with TradingView alerts.
@@ -85,14 +86,15 @@ class FileHandler(FileSystemEventHandler):
             relations: list = self._asset_manager.return_relations(asset, broker)
             for relation in relations:
                 try:
+                    asset_class:str = self._asset_manager.return_asset_class(relation.asset)
                     logger.debug("Processing Entries for {}".format(relation))
-                    self._strategy_manager.get_entry(candles, relation, timeFrame)
+                    self._strategy_manager.get_entry(candles, relation, timeFrame,asset_class)
                 except Exception as e:
                     logger.debug("Failed to Analyze Strategy Manager: {}".format(e))
                 finally:
                     continue
         except Exception as e:
-            logger.error("Testing strategy failed for asset: {}".format(asset))
+            logger.error("Testing strategy failed for asset: {asset},Error:{e}".format(asset=asset,e=e))
 
     # endregion
 
@@ -109,7 +111,7 @@ class FileHandler(FileSystemEventHandler):
                     low = float(row.get("low"))
                     opens = float(row.get("open"))
                     close = float(row.get("close"))
-                    time = row.get("time")
+                    #time = row.get("time")
                     broker = "CAPITALCOM"
                     asset = "DXY"
                     candle = Candle(asset, broker, opens, high, low, close, datetime.now(), 240)
@@ -238,3 +240,5 @@ class FileHandler(FileSystemEventHandler):
         except Exception as e:
             logger.error(f"Error moving file {src_path} to _archive: {e}")
     # endregion
+
+# todo refactor clean

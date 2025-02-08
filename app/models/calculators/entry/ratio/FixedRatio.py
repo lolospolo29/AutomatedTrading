@@ -17,7 +17,7 @@ class FixedRatio(BaseRatio):
             if  self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop,entry),True
         except Exception as e:
-            logger.error("Fixed Ratio Exception thrown")
+            logger.error("Fixed Ratio Exception thrown,Error:{e}".format(e=e))
 
     def calculate_fixed_profit(self, entry: float, stop: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
         try:
@@ -27,7 +27,7 @@ class FixedRatio(BaseRatio):
             if self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop,entry),True
         except Exception as e:
-            logger.error("Fixed Profit Exception thrown")
+            logger.error("Fixed Profit Exception thrown,Error:{e}".format(e=e))
 
     def calculate_fixed_entry(self, stop: float, profit: float, ratio: float, direction: OrderDirectionEnum)-> Tuple[Any,bool]:
         try:
@@ -37,7 +37,7 @@ class FixedRatio(BaseRatio):
             if self.is_condition_full_filled(profit, stop, entry, direction):
                 return ProfitStopEntry(profit, stop, entry),True
         except Exception as e:
-            logger.error("Fixed Entry Exception thrown")
+            logger.error("Fixed Entry Exception thrown,Error:{e}".format(e=e))
     # endregion
 
     # region List Fixed Ratio Input
@@ -59,16 +59,16 @@ class FixedRatio(BaseRatio):
 
                             profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
                         except Exception as e:
-                            logger.warning("Profit Exception thrown")
+                            logger.warning("Profit Exception thrown,Error:{e}".format(e=e))
                         finally:
                             continue
                 except Exception as e:
-                    logger.warning("Profit Exception thrown")
+                    logger.warning("Profit Exception thrown,Error:{e}".format(e=e))
                 finally:
                     continue
 
         except Exception as e:
-            logger.exception("Profits Exception thrown")
+            logger.exception("Profits Exception thrown,Error:{e}".format(e=e))
         finally:
             return profitStopEntryList
 
@@ -92,16 +92,16 @@ class FixedRatio(BaseRatio):
 
                             profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
                         except Exception as e:
-                            logger.warning("Stops Exception thrown")
+                            logger.warning("Stops Exception thrown,Error:{e}".format(e=e))
                         finally:
                             continue
                 except Exception as e:
-                    logger.warning("Stops Exception thrown")
+                    logger.warning("Stops Exception thrown,Error:{e}".format(e=e))
                 finally:
                     continue
             return profitStopEntryList
         except Exception as e:
-            logger.exception("Stops Exception thrown")
+            logger.exception("Stops Exception thrown,Error:{e}".format(e=e))
         finally:
             return profitStopEntryList
 
@@ -124,16 +124,16 @@ class FixedRatio(BaseRatio):
 
                             profitStopEntryList.append(ProfitStopEntry(profit, stop, entry))
                         except Exception as e:
-                            logger.warning("Profit Exception thrown")
+                            logger.warning("Profit Exception thrown,Error:{e}".format(e=e))
                         finally:
                             continue
                 except Exception as e:
-                    logger.warning("Entries Exception thrown")
+                    logger.warning("Entries Exception throw,Error:{e}".format(e=e))
                 finally:
                     continue
             return profitStopEntryList
         except Exception as e:
-            logger.exception("Entries Exception thrown")
+            logger.exception("Entries Exception thrown,Error:{e}".format(e=e))
         finally:
             return profitStopEntryList
     # endregion

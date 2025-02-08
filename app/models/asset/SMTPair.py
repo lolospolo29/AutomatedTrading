@@ -6,9 +6,7 @@ class SMTPair:
 
     def to_dict(self) -> dict:
         return {
-            "SMTPair": {
                 "strategy": self.strategy,
                 "smt_pairs": self.smt_pairs,
                 "correlation": self.correlation
-            }
         }

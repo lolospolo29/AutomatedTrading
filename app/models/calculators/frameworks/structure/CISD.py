@@ -18,7 +18,6 @@ class CISD(IConfirmation):
             row_candles = 0
             direction = None
             tracked_structures = []  # List of structures to track their levels
-            last_traded_structure = None  # Store the last structure that was traded
 
             # Extract candle data
             opens = [candle.open for candle in candles]

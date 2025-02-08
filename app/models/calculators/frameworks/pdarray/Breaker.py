@@ -38,7 +38,7 @@ class Breaker(IPDArray):
                 high = high
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("Breaker Entry Error")
+            logger.exception("Breaker Entry Error with Exception"+str(e))
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
         return self.return_entry(pd_array, order_direction, risk_mode)
@@ -61,8 +61,7 @@ class Breaker(IPDArray):
 
             return low, high
         except Exception as e:
-            raise CalculationExceptionError("Breaker Candle Range Error")
-
+                logger.exception("Breaker Candle Range Error with Exception"+str(e))
     def _findSwingPoints(self, high: list, low: list):
         lookback = self.lookback
 
@@ -84,7 +83,6 @@ class Breaker(IPDArray):
             if len(candles) < self.lookback:
                 return []
 
-            opens = [candle.open for candle in candles]
             highs = [candle.high for candle in candles]
             lows = [candle.low for candle in candles]
             close = [candle.close for candle in candles]

@@ -6,10 +6,6 @@ from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
 from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
-from app.models.trade.enums.TPSLModeEnum import TPSLModeEnum
-from app.models.trade.enums.TimeInForceEnum import TimeInForceEnum
-from app.models.trade.enums.TriggerByEnum import TriggerByEnum
-from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -57,7 +53,7 @@ class OrderBuilder:
             order.closeOnTrigger = close_on_trigger
         return self
 
-    def set_spot(self, is_leverage:bool=None, market_unit:str=None, order_filter:str=None, orderlv:str=None):
+    def set_spot(self, is_leverage:bool=None, market_unit:str=None, orderlv:str=None):
         order = self.order
         if is_leverage is not None:
             order.isLeverage = is_leverage
@@ -69,7 +65,7 @@ class OrderBuilder:
 
     def set_conditional(self, trigger_price:str=None, trigger_by:str=None,
                         tp_trigger_by:str=None, sl_trigger_by:str=None,
-                        trigger_direction:str=None):
+                        trigger_direction:int=None):
         order = self.order
         if trigger_price is not None:
             order.triggerPrice = trigger_price

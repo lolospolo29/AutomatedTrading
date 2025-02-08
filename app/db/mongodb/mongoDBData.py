@@ -6,7 +6,6 @@ import pytz
 
 from app.db.mongodb.MongoDB import MongoDB
 from app.manager.initializer.SecretsManager import SecretsManager
-from app.mappers.AssetMapper import AssetMapper
 from app.mappers.TradeMapper import TradeMapper
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
@@ -43,7 +42,6 @@ class mongoDBData:
         date60_days_ago_ny = current_time_ny - datetime.timedelta(days=60)
 
         # Umwandlung beider Zeiten in UTC
-        currentTimeUtc = current_time_ny.astimezone(pytz.utc)
         date60_days_ago_utc = date60_days_ago_ny.astimezone(pytz.utc)
 
         query = 'AssetData.timeStamp'

@@ -4,6 +4,7 @@ from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.monitoring.logging.logging_startup import logger
 
 
+# noinspection PyUnusedLocal
 class Order:
 
     # Self Defined Parameters
@@ -81,11 +82,9 @@ class Order:
                 return value
 
             return {
-                "Order": {
                     key: transform_value(key, getattr(self, key))
                     if hasattr(self, key) else None
                     for key in self.__annotations__.keys()
-                }
             }
         except Exception as e:
             logger.exception(e)

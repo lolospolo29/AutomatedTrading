@@ -12,6 +12,7 @@ from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.monitoring.logging.logging_startup import logger
 
 
+# noinspection PyTypeChecker
 class PDStopEntryCalculator:
     """PD Risk Calculator for Profit Stop Entries of the PD Arrays"""
 

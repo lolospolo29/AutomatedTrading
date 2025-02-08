@@ -1,22 +1,15 @@
 from typing import Tuple, Any
 
-from app.helper.calculator.RiskCalculator import RiskCalculator
-from app.models.calculators.ProfitStopEntrySorter import ProfitStopEntrySorter
-from app.models.asset.Candle import Candle
-from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.calculators.PDStopEntryCalculator import PDStopEntryCalculator
-from app.models.calculators.entry.orderWeightage.OrderWeightage import OrderWeightage
 from app.models.calculators.ProfitStopEntry import ProfitStopEntry
+from app.models.calculators.RiskModeEnum import RiskMode
+from app.models.calculators.entry.orderWeightage.OrderWeightage import OrderWeightage
 from app.models.calculators.entry.ratio.BaseRatio import BaseRatio
 from app.models.calculators.entry.ratio.FixedRatio import FixedRatio
 from app.models.calculators.entry.ratio.RangeRatio import RangeRatio
-from app.models.calculators.exit.invalidation.InvalidationClose import InvalidationClose
-from app.models.calculators.exit.invalidation.InvalidationSteady import InvalidationSteady
-from app.models.calculators.exit.technicalStop.BreakEven import BreakEven
-from app.models.calculators.exit.technicalStop.TrailingStop import TrailingStop
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 
+# noinspection PyTypeChecker
 class ProfitStopEntryCalculator:
     """
     RiskCalculator is a singleton class designed to manage and calculate risk across various

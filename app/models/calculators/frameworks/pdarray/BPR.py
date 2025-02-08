@@ -36,7 +36,7 @@ class BPR(IPDArray):
             if risk_mode.MODERAT:
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("BPR Entry Calculation")
+            logger.error("BPR Entry Calculation Exception: {}".format(e))
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, riskMode: RiskMode) -> float:
         try:
@@ -60,7 +60,7 @@ class BPR(IPDArray):
                 if riskMode.AGGRESSIVE:
                     return max(close)
         except Exception as e:
-            raise CalculationExceptionError("BPR Stop Calculation")
+            logger.error("BPR Stop Calculation Exception: {}".format(e))
 
     def return_candle_range(self, pd_array: PDArray) -> tuple[float, float]:
         """
@@ -91,7 +91,7 @@ class BPR(IPDArray):
             # Return the gap range
             return gap_low, gap_high
         except Exception as e:
-            raise CalculationExceptionError("Balanced Price Range")
+            logger.error("BPR Return Candle Range Exception: {}".format(e))
 
     def return_array_list(self, candles: list[Candle]) -> list[PDArray]:
         """

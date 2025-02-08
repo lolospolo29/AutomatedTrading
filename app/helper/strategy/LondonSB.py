@@ -1,9 +1,6 @@
-from typing import Optional
-
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.FrameWork import FrameWork
 from app.models.calculators.frameworks.PDArray import PDArray
 from app.models.calculators.frameworks.time.macro.silverBullet.SilverBulletLondon import SilverBulletLondon
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
@@ -44,7 +41,7 @@ class LondonSB(Strategy):
             return True
         return False
 
-    def _analyzeData(self, candles: list, timeFrame: int):
+    def _analyzeData(self, candles: list[Candle], timeFrame: int):
 
         if timeFrame == 240:
             pds = self._strategy_facade.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
@@ -69,7 +66,7 @@ class LondonSB(Strategy):
         self._strategy_facade.pd_array_handler.remove_pd_array(candles,timeFrame)
         self._strategy_facade.structure_handler.remove_structure(candles,timeFrame)
 
-    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         structures = self._strategy_facade.structure_handler.return_structure()
@@ -85,7 +82,6 @@ class LondonSB(Strategy):
                 return StrategyResult()
 
             fvgs: list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
-            pds: list[PDArray] = [pd for pd in pds if pd.name == "PD"]
 
             for fvg in fvgs:
                 fvgLow, fvgHigh = self._strategy_facade.PDMediator.return_candle_range("FVG", fvg)

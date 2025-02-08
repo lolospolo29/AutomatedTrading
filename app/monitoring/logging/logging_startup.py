@@ -7,9 +7,9 @@ from app.monitoring.logging.CSVFileHandler import CSVFileHandler
 import logging
 
 class StreamToLogger(TextIOWrapper):
-    def __init__(self, logger, level=logging.INFO):
+    def __init__(self, logger_instance, level=logging.INFO):
         super().__init__(sys.stdout.buffer, write_through=True)
-        self.logger = logger
+        self.logger = logger_instance
         self.level = level
 
 

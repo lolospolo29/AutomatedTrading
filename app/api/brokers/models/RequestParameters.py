@@ -59,3 +59,4 @@ class RequestParameters:
 
 
 
+req = RequestParameters(broker="bybit")

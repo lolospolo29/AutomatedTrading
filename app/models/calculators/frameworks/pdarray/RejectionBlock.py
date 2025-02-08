@@ -27,7 +27,7 @@ class RejectionBlock(IPDArray):
             if risk_mode.MODERAT or risk_mode.SAFE:
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("Rejection Block Entry Error")
+            logger.error("Rejection Block Entry Error with Exception"+str(e))
 
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
@@ -44,7 +44,7 @@ class RejectionBlock(IPDArray):
             if risk_mode.MODERAT or risk_mode.AGGRESSIVE:
                 return (low + high) / 2
         except Exception as e:
-            raise CalculationExceptionError("Rejection Block Stop Error")
+            logger.error("Rejection Block Stop Error with Exception"+str(e))
 
     def return_candle_range(self, pd_array: PDArray) -> tuple[float, float]:
         """
@@ -62,14 +62,14 @@ class RejectionBlock(IPDArray):
 
             if pd_array.direction == "Bullish":
                 low = min(lows)
-                high = min(opens,closes)
+                high = float(min(opens,closes))
                 return low,high
             if pd_array.direction == "Bearish":
-                low = max(opens,closes)
-                high = max(highs)
+                low = float(max(opens,closes))
+                high = float(max(highs))
                 return low,high
         except Exception as e:
-            raise CalculationExceptionError("Rejection Block Candle Range Error")
+            logger.error("Rejection Block Candle Range Error with Exception"+str(e))
 
     def return_array_list(self, candles: list[Candle]) -> list:
         rejection_blocks = []

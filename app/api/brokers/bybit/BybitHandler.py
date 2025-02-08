@@ -28,6 +28,7 @@ from app.monitoring.retry_request import retry_request
 rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
 
+# noinspection PyTypeChecker
 class BybitHandler(IBrokerHandler):
     """
     Handles interaction with the Bybit API offering various methods to retrieve and manipulate

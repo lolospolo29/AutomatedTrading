@@ -30,7 +30,7 @@ class Bybit:
             'Content-Type': 'application/json'
         }
 
-        if (method=="post"):
+        if method == "post":
             response = self.__session.request(method, self.__baseUrl + end_point, headers=headers, data=payload)
         else:
             response = self.__session.request(method, self.__baseUrl + end_point + "?" + payload, headers=headers)

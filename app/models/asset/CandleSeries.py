@@ -37,4 +37,4 @@ class CandleSeries:
         """
         Convert the deque of Candle objects into a list.
         """
-        return list(self.candleSeries)
+        return list[Candle](list(self.candleSeries))
