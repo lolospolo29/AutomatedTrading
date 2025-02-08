@@ -1,9 +1,9 @@
 from numpy.distutils.fcompiler import none
 
-from app.models.calculators.PDStopEntryCalculator import PDStopEntryCalculator
+from app.helper.calculator.PDStopEntryCalculator import PDStopEntryCalculator
 from app.helper.calculator.RiskCalculator import RiskCalculator
-from app.models.calculators.ProfitStopEntrySorter import ProfitStopEntrySorter
-from app.models.calculators.ProfitStopEntryCalculator import ProfitStopEntryCalculator
+from app.helper.calculator.ProfitStopEntrySorter import ProfitStopEntrySorter
+from app.helper.calculator.ProfitStopEntryCalculator import ProfitStopEntryCalculator
 from app.helper.handler.LevelHandler import LevelHandler
 from app.helper.handler.PDArrayHandler import PDArrayHandler
 from app.helper.handler.SMTHandler import SMTHandler

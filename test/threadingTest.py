@@ -185,13 +185,6 @@ def client():
     b.wait()
     print("client done")
 
-def main6():
-    s = threading.Thread(target=server)
-    s.start()
-    c = threading.Thread(target=client)
-    c.start()
-    i = b.wait()
-#main6()
 # endregion
 
 # region Lock Basic

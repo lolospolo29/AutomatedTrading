@@ -1,7 +1,7 @@
 import threading
 
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.Structure import Structure
+from app.models.frameworks.Structure import Structure
 from app.monitoring.logging.logging_startup import logger
 
 

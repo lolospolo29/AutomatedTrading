@@ -1,7 +1,7 @@
 import threading
 
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.PDArray import PDArray
+from app.models.frameworks.PDArray import PDArray
 from app.monitoring.logging.logging_startup import logger
 
 

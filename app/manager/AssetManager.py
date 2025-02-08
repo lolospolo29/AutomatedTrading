@@ -1,9 +1,8 @@
 import threading
 
-from app.db.mongodb.mongoDBData import mongoDBData
-from app.mappers.AssetMapper import AssetMapper
+from app.db.mongodb.MongoDBData import MongoDBData
 from app.models.asset.Asset import Asset
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
 from app.models.asset.SMTPair import SMTPair
 from app.monitoring.logging.logging_startup import logger
@@ -22,10 +21,8 @@ class AssetManager:
         objects as values.
     :type assets: dict[str, Asset]
     :ivar _mongo_db_data: MongoDB data handler for interacting with the database.
-    :type _mongo_db_data: mongoDBData
-    :ivar _asset_mapper: AssetMapper object responsible for mapping data between external
+    :type _mongo_db_data: MongoDBData
         systems and internal representations.
-    :type _asset_mapper: AssetMapper
     """
     _instance = None
     _lock = threading.Lock()
@@ -41,9 +38,10 @@ class AssetManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.assets: dict = {}
-            self._mongo_db_data = mongoDBData()
-            self._asset_mapper = AssetMapper()
+            self.assets: dict[str,Asset] = {}
+            self.dto_mapper = None
+            #todo
+            self._mongo_db_data = MongoDBData()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
@@ -80,7 +78,7 @@ class AssetManager:
                 candles:list[Candle] = self._mongo_db_data.receive_asset_data(asset)
 
                 for candle in candles:
-                    self.assets[candle.asset].add_candle(candle)
+                    self.assets[candle.asset].candles_series.append(candle)
 
             except Exception as e:
                 logger.critical("Failed to add candle to db with exception {}".format(e))
@@ -90,7 +88,7 @@ class AssetManager:
     # region Add Functions
     def add_candle(self, json: dict) -> Candle:
         try:
-            candle: Candle = self._asset_mapper.map_candle_from_trading_view(json)
+            candle: Candle = Candle.model_validate(json)
             logger.debug(f"Add Candle to:{candle.asset}")
 
             if candle.asset in self.assets:
@@ -111,10 +109,10 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to return asset class for asset {asset},Error:{e}".format(asset=asset, e=e))
 
-    def return_relations(self, asset: str, broker: str) -> list[AssetBrokerStrategyRelation]:
+    def return_relations(self, asset: str, broker: str) -> list[Relation]:
         try:
             if asset in self.assets:
-                return self.assets[asset].return_relations_for_broker(broker)
+                return self.assets[asset]
         except Exception as e:
             logger.exception("Failed to return relations for asset:{asset},Error {e}".format(asset=asset, e=e))
 

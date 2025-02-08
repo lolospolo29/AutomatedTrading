@@ -1,11 +1,7 @@
 from app.helper.facade.StrategyFacade import StrategyFacade
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.Structure import Structure
-from app.models.calculators.frameworks.time.Asia import Asia
-from app.models.calculators.frameworks.time.London import LondonOpen
-from app.models.calculators.frameworks.time.NYOpen import NYOpen
-from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from app.models.frameworks.Structure import Structure
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
@@ -19,38 +15,8 @@ class OTEFourH(Strategy):
     alongside expected timeframes relevant for analysis and decision-making. The strategy leverages
     components such as level calculations, pattern detection, Fibonacci retracements, and confirmation
     structures to generate trading entries and exits.
-
-    :ivar _strategy_facade: Provides facade access to mediator patterns for level, pattern array,
-        and structure handling used in the strategy operations.
-    :type _strategy_facade: StrategyFacade
-    :ivar _TimeWindow: Defines the operational time window for the London session.
-    :type _TimeWindow: LondonOpen
-    :ivar _TimeWindow2: Defines the operational time window for the New York session.
-    :type _TimeWindow2: NYOpen
-    :ivar _TimeWindow3: Defines the operational time window for the Asia session.
-    :type _TimeWindow3: Asia
-    :ivar expectedTimeFrames: A list of expected timeframes utilized in this strategy for
-        analysis and validations.
-    :type expectedTimeFrames: list[ExpectedTimeFrame]
     """
-    def __init__(self):
-        name:str = "OTEFourH"
-
-        self._strategy_facade = StrategyFacade()
-
-        self._TimeWindow = LondonOpen()
-        self._TimeWindow2 = NYOpen()
-        self._TimeWindow3 = Asia()
-
-        self.expectedTimeFrames = []
-
-        timeFrame3 = ExpectedTimeFrame(15,90)
-        timeFrame4 = ExpectedTimeFrame(240,90)
-
-        self.expectedTimeFrames.append(timeFrame3)
-        self.expectedTimeFrames.append(timeFrame4)
-        super().__init__(name,self.expectedTimeFrames)
-
+    _strategy_facade:StrategyFacade = StrategyFacade()
 
     def is_in_time(self, time) -> bool:
         return True
@@ -75,7 +41,7 @@ class OTEFourH(Strategy):
                 self._strategy_facade.structure_handler.remove_structure(candles, timeFrame)
 
 
-    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         levels = self._strategy_facade.level_handler.return_levels()
@@ -99,5 +65,5 @@ class OTEFourH(Strategy):
             return StrategyResult()
 
 
-    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade,relation:AssetBrokerStrategyRelation) -> StrategyResult:
+    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade, relation:Relation) -> StrategyResult:
         pass

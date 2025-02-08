@@ -1,9 +1,9 @@
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.Structure import Structure
-from app.models.calculators.frameworks.structure.BOS import BOS
-from app.models.calculators.frameworks.structure.CISD import CISD
-from app.models.calculators.frameworks.structure.Choch import Choch
-from app.models.calculators.frameworks.structure.SMT import SMT
+from app.models.frameworks.Structure import Structure
+from app.helper.calculator.framework.structure.BOS import BOS
+from app.helper.calculator.framework.structure.CISD import CISD
+from app.helper.calculator.framework.structure.Choch import Choch
+from app.helper.calculator.framework.structure.SMT import SMT
 from app.monitoring.logging.logging_startup import logger
 
 

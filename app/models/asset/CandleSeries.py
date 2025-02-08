@@ -1,15 +1,19 @@
 import bisect
 from collections import deque
+from pydantic import BaseModel
 
-from app.models.asset import Candle
+from app.models.asset.Candle import Candle
 
 
-class CandleSeries:
-
-    def __init__(self, timeFrame: int, maxLen: int, broker: str):
-        self.candleSeries = deque(maxlen=maxLen)
-        self.timeFrame: int = timeFrame
-        self.broker: str = broker
+class CandleSeries(BaseModel):
+    candleSeries: deque
+    timeFrame: int
+    broker: str
+    #
+    # def __init__(self, timeFrame: int, maxLen: int, broker: str):
+    #     self.candleSeries = deque(maxlen=maxLen)
+    #     self.timeFrame: int = timeFrame
+    #     self.broker: str = broker
 
     def add_candle(self, candle: Candle) -> None:
         candleList = list(self.candleSeries)

@@ -1,11 +1,7 @@
 from app.helper.facade.StrategyFacade import StrategyFacade
-from app.helper.handler.LevelHandler import LevelHandler
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.PDArray import PDArray
-from app.models.calculators.frameworks.time.London import LondonOpen
-from app.models.calculators.frameworks.time.NYOpen import NYOpen
-from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from app.models.frameworks.PDArray import PDArray
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
@@ -14,29 +10,7 @@ from app.models.trade.Trade import Trade
 # Unicorn Entry with 4H PD Range Bias
 
 class Unicorn(Strategy):
-    def __init__(self):
-        name: str = "Unicorn"
-
-        self._strategy_handler = StrategyFacade()
-
-        self._TimeWindow = LondonOpen()
-        self._TimeWindow2 = NYOpen()
-        self._level_handler = LevelHandler()
-
-        self.expectedTimeFrames = []
-
-        timeFrame = ExpectedTimeFrame(1, 90)
-        timeFrame2 = ExpectedTimeFrame(5, 90)
-        timeFrame4 = ExpectedTimeFrame(240, 1)
-
-        self.expectedTimeFrames.append(timeFrame)
-        self.expectedTimeFrames.append(timeFrame2)
-        self.expectedTimeFrames.append(timeFrame4)
-
-        super().__init__(name, self.expectedTimeFrames)
-
-    def return_expected_time_frame(self) -> list:
-        return self.expectedTimeFrames
+    _strategy_facade:StrategyFacade = StrategyFacade()
 
     def is_in_time(self, time) -> bool:
         if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):
@@ -67,7 +41,7 @@ class Unicorn(Strategy):
         self._strategy_handler.pd_array_handler.remove_pd_array(candles,timeFrame)
         self._strategy_handler.level_handler.remove_level(candles,timeFrame)
 
-    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_handler.pd_array_handler.return_pd_arrays()
         if candles and pds and timeFrame == 5:
@@ -105,5 +79,5 @@ class Unicorn(Strategy):
             return StrategyResult()
 
 
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
         pass

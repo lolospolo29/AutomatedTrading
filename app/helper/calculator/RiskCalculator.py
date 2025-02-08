@@ -3,10 +3,10 @@ import math
 from app.manager.RiskManager import RiskManager
 from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.asset.Candle import Candle
-from app.models.calculators.exit.invalidation.InvalidationClose import InvalidationClose
-from app.models.calculators.exit.invalidation.InvalidationSteady import InvalidationSteady
-from app.models.calculators.exit.technicalStop.BreakEven import BreakEven
-from app.models.calculators.exit.technicalStop.TrailingStop import TrailingStop
+from app.helper.calculator.exit.invalidation.InvalidationClose import InvalidationClose
+from app.helper.calculator.exit.invalidation.InvalidationSteady import InvalidationSteady
+from app.helper.calculator.exit.technicalStop.BreakEven import BreakEven
+from app.helper.calculator.exit.technicalStop.TrailingStop import TrailingStop
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 

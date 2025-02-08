@@ -135,9 +135,6 @@ async def example_task(task_id: int):
 async def main6():
     factory = EagerTaskFactory()
 
-    # Create several tasks
-    for i in range(10):
-        factory.create_task(lambda i=i: example_task(i), name=f"Task-{i}")
 
     # Wait for all tasks to complete
     await factory.wait_all()
@@ -184,7 +181,6 @@ lock = asyncio.Lock()
 
 # noinspection PyRedeclaration,PyShadowingNames,PyUnboundLocalVariable
 async def main8():
-    async with lock:
         await asyncio.sleep(1)
         print(f"started main at {time.strftime('%X')}")
         lock = asyncio.Lock()

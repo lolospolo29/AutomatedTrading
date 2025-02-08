@@ -4,14 +4,14 @@ from typing import Any, Dict
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 from app.models.trade.Trade import Trade
 from app.monitoring.log_time import log_time
 from app.monitoring.logging.logging_startup import logger
-from app.services.NewsService import NewsService
+#from app.services.NewsService import NewsService
 
 
 class TradingService:
@@ -72,7 +72,7 @@ class TradingService:
 
         if True: # todo news check if not is news ahead
 
-            relations: list[AssetBrokerStrategyRelation] = self._asset_manager.return_relations(candle.asset, candle.broker)
+            relations: list[Relation] = self._asset_manager.return_relations(candle.asset, candle.broker)
 
             self._logger.debug("Processing: {candle}, {relations}".format(candle=candle, relations=relations))
             threads:list[threading.Thread] = []
@@ -84,7 +84,7 @@ class TradingService:
                 thread.start()
 
 
-    def _process_relation_strategy(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation):
+    def _process_relation_strategy(self, timeframe:int, candles:list[Candle], relation:Relation):
         """
         Processes the trading strategy for a specific relation, determining whether to enter new trades
         or manage existing trades concurrently.
@@ -92,7 +92,7 @@ class TradingService:
         Args:
             timeframe (int): The timeframe for the analysis (e.g., minutes, hours).
             candles (list[Candle]): A list of candle objects representing market data.
-            relation (AssetBrokerStrategyRelation): The relation object linking the asset and strategy.
+            relation (Relation): The relation object linking the asset and strategy.
 
         Behavior:
             - If there are no existing trades for the relation, analyzes the strategy for potential entry points.
@@ -119,7 +119,7 @@ class TradingService:
                 thread.join(240)
 
     @log_time
-    def _analyze_strategy_for_entry(self, timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation) -> None:
+    def _analyze_strategy_for_entry(self, timeframe:int, candles:list[Candle], relation:Relation) -> None:
         """
         Analyses Strategy Logic.
         If there is a Signal for Entry,the Strategy generates a Trade Object.
@@ -143,14 +143,14 @@ class TradingService:
             if exceptionOrders:
                 self._closing_trade(result.trade)
 
-    def _analyze_strategy_for_exit(self,timeframe:int, candles:list[Candle], relation:AssetBrokerStrategyRelation,trade:Trade)->None:
+    def _analyze_strategy_for_exit(self, timeframe:int, candles:list[Candle], relation:Relation, trade:Trade)->None:
         """
         Analyzes the trading strategy to determine if an exit condition is met for a given trade.
 
         Args:
             timeframe (int): The timeframe for the analysis (e.g., minutes, hours).
             candles (list[Candle]): A list of candle objects representing market data.
-            relation (AssetBrokerStrategyRelation): The relation object linking the asset and strategy.
+            relation (Relation): The relation object linking the asset and strategy.
             trade (Trade): The trade object to evaluate for exit conditions.
 
         Behavior:

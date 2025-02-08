@@ -1,18 +1,20 @@
 from dataclasses import dataclass
 
+from pydantic import BaseModel
+
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 
 @dataclass
-class NewsDay:
+class NewsDay(BaseModel):
+    """
+    Represents a specific day with associated news events.
+
+    This class is used to encapsulate date-specific information and a collection
+    of associated news events. It serves as the main structure for handling news
+    data categorized by individual dates. Typically used in contexts where
+    chronological organization of events is required.
+
+    """
     day_iso: str
     news_events : list[NewsEvent]
-
-    def to_dict(self) -> dict:
-        return {
-                "day_iso": self.day_iso,
-                "news_events": [event.to_dict() for event in self.news_events]
-        }
-
-
-

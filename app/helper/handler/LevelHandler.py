@@ -1,7 +1,7 @@
 import threading
 
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.Level import Level
+from app.models.frameworks.Level import Level
 from app.monitoring.logging.logging_startup import logger
 
 

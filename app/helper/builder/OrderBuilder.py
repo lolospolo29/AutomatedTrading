@@ -1,8 +1,8 @@
 import random
 import string
 
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
-from app.models.calculators.frameworks.FrameWork import FrameWork
+from app.models.asset.Relation import Relation
+from app.models.frameworks.FrameWork import FrameWork
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
 from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
@@ -13,9 +13,9 @@ class OrderBuilder:
     def __init__(self):
         self.order = Order()
 
-    def create_order(self,relation:AssetBrokerStrategyRelation,  symbol:str, confirmations:list[FrameWork], category:str, side:str,
-                     risk_percentage:float, order_number:int, trade_id:str,entry_frame_work:
-                     FrameWork=None,qty=None):
+    def create_order(self, relation:Relation, symbol:str, confirmations:list[FrameWork], category:str, side:str,
+                     risk_percentage:float, order_number:int, trade_id:str, entry_frame_work:
+                     FrameWork=None, qty=None):
         o = self.order
         o.trade_id = trade_id
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,

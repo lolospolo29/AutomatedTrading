@@ -1,34 +1,23 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 from app.interfaces.framework.ITimeWindow import ITimeWindow
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
-from app.models.strategy.StrategyResult import StrategyResult
-from app.models.trade.Trade import Trade
 
 
-class Strategy:
-    def __init__(self,name: str,timeFrames:list[ExpectedTimeFrame],time_windows:list[ITimeWindow]=None):
-        self.name: str = name
-        self.timeframes: list[ExpectedTimeFrame] = timeFrames
-        self.time_windows: list[ITimeWindow] = time_windows
+class Strategy(ABC):
+    name:str
+    timeframes:list[ExpectedTimeFrame]
+    time_windows:list[ITimeWindow]
 
-    def return_expected_time_frame(self)->list[ExpectedTimeFrame]:
-        return self.timeframes
-
-    def to_dict(self):
-        return {
-                "name": self.name,
-                "timeframes": [timeframe.to_dict() for timeframe in self.timeframes],
-                "time_windows": [time_window.to_dict() for time_window in self.time_windows]
-        }
+    def is_in_time(self, time) -> bool:
+        for time_window in self.time_windows:
+            if time_window.is_in_entry_window(time):
+                return True
 
     @abstractmethod
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade, relation):
         pass
     @abstractmethod
-    def get_entry(self, candles: list, timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)-> StrategyResult:
-        pass
-    @abstractmethod
-    def is_in_time(self, time)->bool:
+    def get_entry(self, candles: list, timeFrame: int, relation:Relation, asset_class:str):
         pass

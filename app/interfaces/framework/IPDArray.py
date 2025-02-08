@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models.calculators.frameworks.PDArray import PDArray
+from app.models.frameworks.PDArray import PDArray
 from app.models.calculators.RiskModeEnum import RiskMode
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 

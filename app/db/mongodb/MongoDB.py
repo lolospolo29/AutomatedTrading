@@ -38,13 +38,6 @@ class MongoDB:
         return collection.find_one({"_id": ObjectId(document_id)})
 
     def update(self, collection_name: str, document_id: Any, updates: Any) -> bool:
-        # """
-        # Update an existing document in a collection.
-        # param collection_name: The name of the collection.
-        # param document_id: The document's unique ID (as a string).
-        # param updates: A dictionary with the fields to update.
-        # return: True if the update was successful, False otherwise.
-        # """
         collection = self.db[collection_name]
         result = collection.update_one({"_id": ObjectId(document_id)}, {"$set": updates})
         return result.modified_count > 0

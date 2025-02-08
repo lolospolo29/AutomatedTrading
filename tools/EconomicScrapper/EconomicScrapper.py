@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+
 from zoneinfo import ZoneInfo
 import pytz
 from app.monitoring.logging.logging_startup import logger
@@ -127,7 +128,7 @@ class EconomicScrapper:
             event_elements = self.__driver.find_elements(By.CSS_SELECTOR, "tr")
 
 
-            current_news_day:Optional[NewsDay] = None
+            current_news_day:[NewsDay] = None
             logger.debug(event_elements)
             # Process each event and check for timestamp
             for index, event in enumerate(event_elements):
@@ -160,6 +161,7 @@ class EconomicScrapper:
                         # Convert newsDay.dayIso to a datetime object (without time)
                         day_date = datetime.fromisoformat(news_day.day_iso).date()
                         logger.debug("Day date: {}".format(day_date))
+                        time_obj = None
                         for news_event in news_day.news_events:
                             # Ensure newsEvent.time is a string and convert to a time object
                             logger.debug("News event: {}".format(news_event))

@@ -7,7 +7,7 @@ from app.models.asset.Asset import Asset
 from app.models.strategy.Strategy import Strategy
 from app.models.trade.Trade import Trade
 from app.monitoring.logging.logging_startup import logger
-from app.services.NewsService import NewsService
+#from app.services.NewsService import NewsService
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
 
 
@@ -31,13 +31,14 @@ class TradingFacade:
             self._asset_manager: AssetManager = AssetManager()
             self._trade_manager: TradeManager = TradeManager()
             self._strategy_manager: StrategyManager = StrategyManager()
-            self._news_service :NewsService = NewsService()
+            #self._news_service = NewsService()
             self._logger = logger
             self._logger.info("TradingService initialized")
             self._initialized = True  # Markiere als initialisiert
 
     def get_news_days(self)->list[NewsDay]:
-        return self._news_service.return_news_days()
+   #     return self._news_service.return_news_days()
+         pass
     def get_trades(self)->list[Trade]:
         return self._trade_manager.return_trades()
     def get_assets(self)->list[Asset]:

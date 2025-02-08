@@ -1,12 +1,7 @@
-class SMTPair:
-    def __init__(self, strategy: str, smtPair: list[str], correlation: str):
-        self.strategy: str = strategy
-        self.smt_pairs: list[str] = smtPair
-        self.correlation: str = correlation
+from pydantic import BaseModel
 
-    def to_dict(self) -> dict:
-        return {
-                "strategy": self.strategy,
-                "smt_pairs": self.smt_pairs,
-                "correlation": self.correlation
-        }
+
+class SMTPair(BaseModel):
+    strategy: str
+    smt_pairs: list[str]
+    correlation: str

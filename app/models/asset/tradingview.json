@@ -1,5 +1,4 @@
 {
-    "Candle": {
         "asset": "APPL",
         "broker": "APPL",
         "open": 175.30,
@@ -8,5 +7,4 @@
         "close": 170.50,
         "IsoTime": "2024-11-01T19:15:00Z",
         "timeFrame": "60"
-    }
 }

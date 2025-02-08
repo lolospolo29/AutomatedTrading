@@ -1,9 +1,6 @@
 from app.helper.facade.StrategyFacade import StrategyFacade
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.time.London import LondonOpen
-from app.models.calculators.frameworks.time.NYOpen import NYOpen
-from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from app.models.asset.Relation import Relation
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
@@ -11,30 +8,13 @@ from app.models.trade.Trade import Trade
 
 # FVG CRT 4H
 class FVGSession(Strategy):
-
-
-    def __init__(self):
-        name:str = "FVG"
-
-        self._strategy_facade = StrategyFacade()
-
-        self._TimeWindow = LondonOpen()
-        self._TimeWindow2 = NYOpen()
-
-        self.expectedTimeFrames = []
-
-        timeframe = ExpectedTimeFrame(1,90)
-        timeframe4 = ExpectedTimeFrame(240,1)
-
-        self.expectedTimeFrames.append(timeframe)
-        self.expectedTimeFrames.append(timeframe4)
-        super().__init__(name,self.expectedTimeFrames)
+    _strategy_facade:StrategyFacade = StrategyFacade()
 
 
     def is_in_time(self, time) -> bool:
-        if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):
-            return True
-        return False
+        for time_window in self.time_windows:
+            if time_window.is_in_entry_window(time):
+                return True
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
             last_candle = candles[-1]
@@ -54,7 +34,7 @@ class FVGSession(Strategy):
             self._strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
 
 
-    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str)->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         levels = self._strategy_facade.level_handler.return_levels()
@@ -99,5 +79,5 @@ class FVGSession(Strategy):
         else:
             return StrategyResult()
 
-    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade,relation:AssetBrokerStrategyRelation) -> StrategyResult:
+    def get_exit(self, candles: list[Candle], timeFrame: int, trade: Trade, relation:Relation) -> StrategyResult:
         pass

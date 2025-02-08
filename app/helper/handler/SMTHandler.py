@@ -1,5 +1,5 @@
 import threading
-from typing import List, Union
+from typing import List
 
 from app.models.asset.Candle import Candle
 

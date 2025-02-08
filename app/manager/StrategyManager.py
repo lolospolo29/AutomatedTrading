@@ -1,6 +1,6 @@
 import threading
 
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
@@ -19,7 +19,7 @@ class StrategyManager:
 
     :ivar strategies: Dictionary mapping AssetBrokerStrategyRelation instances
                       to their associated Strategy instances.
-    :type strategies: dict[AssetBrokerStrategyRelation, Strategy]
+    :type strategies: dict[Relation, Strategy]
     """
 
     _instance = None
@@ -36,11 +36,11 @@ class StrategyManager:
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.strategies: dict[AssetBrokerStrategyRelation,Strategy] = {}
+            self.strategies: dict[Relation,Strategy] = {}
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
-    def register_smt_strategy(self, relation_smt:AssetBrokerStrategyRelation, strategy_smt:Strategy, asset2:str) -> bool:
+    def register_smt_strategy(self, relation_smt:Relation, strategy_smt:Strategy, asset2:str) -> bool:
         if relation_smt not in self.strategies:
             for relation, strategy in self.strategies.items():  # Iteriere durch Relation-Struktur und Strategien
                 if relation.asset == asset2:  # Prüfe, ob die Relation das gewünschte Asset enthält
@@ -56,7 +56,7 @@ class StrategyManager:
     def return_strategies(self)->list[Strategy]:
         return [x for x in self.strategies.values()]
 
-    def register_strategy(self, relation:AssetBrokerStrategyRelation, strategy:Strategy) -> bool:
+    def register_strategy(self, relation:Relation, strategy:Strategy) -> bool:
         if relation not in self.strategies:
             self.strategies[relation] = strategy
             logger.info(f"Strategy {strategy.name} registered for relation {relation}")
@@ -65,16 +65,16 @@ class StrategyManager:
             logger.info(f"Strategy {strategy.name} already registered")
             return False
 
-    def return_expected_time_frame(self, relation: AssetBrokerStrategyRelation) -> list:
+    def return_expected_time_frame(self, relation: Relation) -> list:
         try:
             if relation in self.strategies:
-                return self.strategies[relation].return_expected_time_frame()
+                return self.strategies[relation].time_windows
             return []
         except Exception as e:
             logger.exception(f"Return Timeframe for {relation} failed: {e}")
 
-    def get_entry(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
-                  timeFrame: int,asset_class:str) -> StrategyResult:
+    def get_entry(self, candles: list[Candle], relation: Relation,
+                  timeFrame: int, asset_class:str) -> StrategyResult:
         try:
             if relation in self.strategies:
                 logger.info(f"Strategy {relation.asset} get Entry")
@@ -82,7 +82,7 @@ class StrategyManager:
         except Exception as e:
             logger.exception(f"Get Entry Failed for {relation.strategy}/{relation.asset}: {e}")
 
-    def get_exit(self, candles: list[Candle], relation: AssetBrokerStrategyRelation,
+    def get_exit(self, candles: list[Candle], relation: Relation,
                  timeFrame: int, trade:Trade) -> StrategyResult:
         try:
             if relation in self.strategies:

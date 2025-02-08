@@ -15,11 +15,11 @@ secret_key= sm.return_secret("demoBybitAPiSecret")
 httpClient=requests.Session()
 recv_window=str(5000)
 url= sm.return_secret("demoBybitUrl") # Testnet endpoint
+global time_stamp
 
 
 # noinspection PyShadowingNames,PyUnusedLocal
 def HTTP_Request(endPoint,method,payload,Info):
-    global time_stamp
     time_stamp=str(int(time.time() * 10 ** 3))
     signature=genSignature(payload)
     headers = {

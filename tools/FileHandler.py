@@ -114,7 +114,8 @@ class FileHandler(FileSystemEventHandler):
                     #time = row.get("time")
                     broker = "CAPITALCOM"
                     asset = "DXY"
-                    candle = Candle(asset, broker, opens, high, low, close, datetime.now(), 240)
+                    candle = Candle(asset=asset,broker=broker,high=high
+                                    ,low=low,open=opens,close=close,timeframe=15,iso_time=row.get("time"))
                     candles.append(candle.to_dict())
             return candles
         except Exception as e:

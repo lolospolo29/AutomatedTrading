@@ -4,14 +4,14 @@ from app.helper.facade.BrokerFacade import BrokerFacade
 from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.api.brokers.models.RequestParameters import RequestParameters
-from app.db.mongodb.mongoDBTrades import mongoDBTrades
+from app.db.mongodb.MongoDBTrades import MongoDBTrades
 from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.TradeSemaphoreRegistry import TradeSemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
@@ -30,29 +30,6 @@ class TradeManager:
     and orders in a secure, concurrent environment. Trades and orders are persisted to
     the database and handled with locking mechanisms to ensure consistency and
     prevent race conditions.
-
-    :ivar _instance: Singleton instance of the TradeManager.
-    :type _instance: TradeManager
-    :ivar _lock: Thread lock for concurrent-safe operations.
-    :type _lock: threading.Lock
-    :ivar _trade_registry: Registry for trade-related semaphore handling.
-    :type _trade_registry: TradeSemaphoreRegistry
-    :ivar _lock_registry: Registry for lock management associated with trades and orders.
-    :type _lock_registry: LockRegistry
-    :ivar _open_trades: Dictionary to track active trades by their ID.
-    :type _open_trades: dict[str, Trade]
-    :ivar _mongo_db_trades: Interface for interacting with the trades collection in MongoDB.
-    :type _mongo_db_trades: mongoDBTrades
-    :ivar _broker_facade: Facade to abstract broker-specific implementations.
-    :type _broker_facade: BrokerFacade
-    :ivar _risk_manager: Component to handle risk management logic.
-    :type _risk_manager: RiskManager
-    :ivar _class_mapper: Mapper utility for reflection-based class identification or matching.
-    :type _class_mapper: ClassMapper
-    :ivar _broker_mapper: Mapper utility tailored for broker-specific configurations or mappings.
-    :type _broker_mapper: BrokerMapper
-    :ivar _initialized: Flag to ensure one-time initialization of the instance.
-    :type _initialized: bool
     """
     # region Initializing
     _instance = None
@@ -70,7 +47,7 @@ class TradeManager:
             self._trade_registry = TradeSemaphoreRegistry()
             self._lock_registry = LockRegistry()
             self._open_trades: dict[str, Trade] = {}
-            self._mongo_db_trades: mongoDBTrades = mongoDBTrades()
+            self._mongo_db_trades: MongoDBTrades = MongoDBTrades()
             self._broker_facade = BrokerFacade()
             self._risk_manager = RiskManager()
             self._class_mapper = ClassMapper()
@@ -355,12 +332,12 @@ class TradeManager:
         self._risk_manager.set_current_pnl(pnl)
         return self._risk_manager.return_current_pnl()
 
-    def return_trades_for_relation(self, assetBrokerStrategyRelation: AssetBrokerStrategyRelation) -> list[Trade]:
+    def return_trades_for_relation(self, assetBrokerStrategyRelation: Relation) -> list[Trade]:
         return [x for x in self._open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
 
 
     def return_trades(self) -> list[Trade]:
-        t1 = Trade(AssetBrokerStrategyRelation("A","A","QA",1))
+        t1 = Trade(Relation(asset="A",broker="A",strategy= "QA",max_trades= 1))
         self.register_trade(t1)
         # todo remove after testing
         return [x for x in self._open_trades.values()]

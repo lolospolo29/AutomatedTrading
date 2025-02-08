@@ -1,9 +1,7 @@
 from app.helper.facade.StrategyFacade import StrategyFacade
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
 from app.models.asset.Candle import Candle
-from app.models.calculators.frameworks.PDArray import PDArray
-from app.models.calculators.frameworks.time.macro.silverBullet.SilverBulletLondon import SilverBulletLondon
-from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from app.models.asset.Relation import Relation
+from app.models.frameworks.PDArray import PDArray
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
@@ -12,26 +10,7 @@ from app.models.trade.Trade import Trade
 # Unicorn Entry with 4H PD Range Bias
 
 class LondonSB(Strategy):
-
-
-    def __init__(self):
-        name: str = "LondonSB"
-
-        self._strategy_facade = StrategyFacade()
-
-        self._silver_bullet_london = SilverBulletLondon()
-
-        self.expectedTimeFrames = []
-
-        timeFrame = ExpectedTimeFrame(1, 90)
-        timeFrame2 = ExpectedTimeFrame(5, 90)
-        timeFrame4 = ExpectedTimeFrame(240, 1)
-
-        self.expectedTimeFrames.append(timeFrame)
-        self.expectedTimeFrames.append(timeFrame2)
-        self.expectedTimeFrames.append(timeFrame4)
-
-        super().__init__(name, self.expectedTimeFrames)
+    _strategy_facade:StrategyFacade = StrategyFacade()
 
     def return_expected_time_frame(self) -> list:
         return self.expectedTimeFrames
@@ -66,7 +45,7 @@ class LondonSB(Strategy):
         self._strategy_facade.pd_array_handler.remove_pd_array(candles,timeFrame)
         self._strategy_facade.structure_handler.remove_structure(candles,timeFrame)
 
-    def get_entry(self, candles: list[Candle], timeFrame: int,relation:AssetBrokerStrategyRelation,asset_class:str) ->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
         pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
         structures = self._strategy_facade.structure_handler.return_structure()
@@ -93,5 +72,5 @@ class LondonSB(Strategy):
         else:
             return StrategyResult()
 
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade,relation:AssetBrokerStrategyRelation)->StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
         pass

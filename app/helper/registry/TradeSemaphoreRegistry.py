@@ -1,6 +1,6 @@
 import threading
 
-from app.models.asset.AssetBrokerStrategyRelation import AssetBrokerStrategyRelation
+from app.models.asset.Relation import Relation
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -21,7 +21,7 @@ class TradeSemaphoreRegistry:
     :type _lock: threading.Lock
     :ivar registry: A mapping of AssetBrokerStrategyRelation to their corresponding
         threading.Semaphore objects.
-    :type registry: dict[AssetBrokerStrategyRelation, threading.Semaphore]
+    :type registry: dict[Relation, threading.Semaphore]
     :ivar _initialized: A flag indicating whether the instance has been initialized.
     :type _initialized: bool
     """
@@ -37,17 +37,17 @@ class TradeSemaphoreRegistry:
 
     def __init__(self): # maxtradesperrelation fix
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.registry:dict[AssetBrokerStrategyRelation,threading.Semaphore] = {}  # Map: Relation -> Semaphore
+            self.registry:dict[Relation,threading.Semaphore] = {}  # Map: Relation -> Semaphore
             self._initialized = True
 
-    def register_relation(self, relation:AssetBrokerStrategyRelation):
+    def register_relation(self, relation:Relation):
         """Eine neue Relation registrieren."""
         with self._lock:
             if relation not in self.registry:
                 # Erstelle Semaphore mit der maximal erlaubten Anzahl von Trades
                 self.registry[relation] = threading.Semaphore(relation.max_trades)
 # todo refactor with str and int input instead of relation
-    def acquire_trade(self, relation:AssetBrokerStrategyRelation):
+    def acquire_trade(self, relation:Relation):
         """Einen Trade für die gegebene Relation starten."""
         with self._lock:
             if relation not in self.registry:
@@ -58,7 +58,7 @@ class TradeSemaphoreRegistry:
         if not acquired:
             logger.exception("Acquired semaphore was already acquired")
 
-    def release_trade(self, relation:AssetBrokerStrategyRelation):
+    def release_trade(self, relation:Relation):
         """Einen Trade für die gegebene Relation beenden."""
         with self._lock:
             if relation not in self.registry:
