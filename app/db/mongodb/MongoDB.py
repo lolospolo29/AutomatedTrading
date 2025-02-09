@@ -11,6 +11,7 @@ class MongoDB:
         """
         Initialize the DbService with a MongoDB URI and database name.
         """
+
         self.client: Any = MongoClient(uri)
         self.db: Any = self.client[dbName]
     # endregion
@@ -93,6 +94,12 @@ class MongoDB:
     def buildQuery(attribute: str, value: Any) -> Any:
         return {f"{attribute}": value}
 
+    @staticmethod
+    def buildQueryMultipleIds(self, **kwargs):
+        for field, value in kwargs.items():
+            if value is not None:
+                self.query[field] = value
+        return self.build()
     def deleteOldDocuments(self, collection_name: str, date_field: Any, iso_date: Any) -> Any:
         """
         Delete documents older than a specified ISO date from the specified collection.

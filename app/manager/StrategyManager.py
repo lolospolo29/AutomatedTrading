@@ -2,6 +2,7 @@ import threading
 
 from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
+from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.Strategy import Strategy
 from app.models.strategy.StrategyResult import StrategyResult
 from app.models.trade.Trade import Trade
@@ -53,9 +54,6 @@ class StrategyManager:
             logger.info(f"Strategy {strategy_smt.name} already registered")
             return False
 
-    def return_strategies(self)->list[Strategy]:
-        return [x for x in self.strategies.values()]
-
     def register_strategy(self, relation:Relation, strategy:Strategy) -> bool:
         if relation not in self.strategies:
             self.strategies[relation] = strategy
@@ -65,10 +63,13 @@ class StrategyManager:
             logger.info(f"Strategy {strategy.name} already registered")
             return False
 
-    def return_expected_time_frame(self, relation: Relation) -> list:
+    def return_strategies(self)->list[Strategy]:
+        return [x for x in self.strategies.values()]
+
+    def return_expected_time_frame(self, relation: Relation) -> list[ExpectedTimeFrame]:
         try:
             if relation in self.strategies:
-                return self.strategies[relation].time_windows
+                return self.strategies[relation].timeframes
             return []
         except Exception as e:
             logger.exception(f"Return Timeframe for {relation} failed: {e}")

@@ -79,7 +79,7 @@ class AssetManager:
                     candles.append(Candle.model_validate(candle_db))
 
                 for candle in candles:
-                    self.assets[candle.asset].candles_series.append(candle)
+                    self.assets[candle.asset].add_candle(candle)
 
             except Exception as e:
                 logger.critical("Failed to add candle to db with exception {}".format(e))
@@ -99,6 +99,20 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to add candle to db with exception {}".format(e))
 
+    def add_relation(self, relation: Relation):
+        try:
+            if relation.asset in self.assets:
+                self.assets[relation.asset].add_relation(relation)
+        except Exception as e:
+            logger.exception("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+
+    def add_smt_pair(self, asset: str, smt_pair: SMTPair):
+        try:
+            if asset in self.assets:
+                self.assets[asset].add_smt_pair(smt_pair)
+        except Exception as e:
+            logger.exception("Failed to add smt pair to asset {asset},Error:{e}".format(asset=asset, e=e))
+
     # endregion
 
     # region Return Functions
@@ -110,19 +124,12 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to return asset class for asset {asset},Error:{e}".format(asset=asset, e=e))
 
-    def return_relations(self, asset: str, broker: str) -> list[Relation]:
+    def return_relations(self, asset: str,broker:str) -> list[Relation]:
         try:
             if asset in self.assets:
-                return self.assets[asset]
+                return self.assets[asset].return_relations(broker)
         except Exception as e:
             logger.exception("Failed to return relations for asset:{asset},Error {e}".format(asset=asset, e=e))
-
-    def return_smt_pair(self, asset: str) -> SMTPair:
-        try:
-            if asset in self.assets:
-                return self.assets[asset].return_smt_pair()
-        except Exception as e:
-            logger.exception("Failed to return smt pair for asset: {asset},Error {e}".format(asset=asset, e=e))
 
     def return_candles(self, asset: str, broker: str, timeFrame: int) -> list[Candle]:
         try:

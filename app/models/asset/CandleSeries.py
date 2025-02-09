@@ -9,11 +9,6 @@ class CandleSeries(BaseModel):
     candleSeries: deque
     timeFrame: int
     broker: str
-    #
-    # def __init__(self, timeFrame: int, maxLen: int, broker: str):
-    #     self.candleSeries = deque(maxlen=maxLen)
-    #     self.timeFrame: int = timeFrame
-    #     self.broker: str = broker
 
     def add_candle(self, candle: Candle) -> None:
         candleList = list(self.candleSeries)
@@ -42,3 +37,6 @@ class CandleSeries(BaseModel):
         Convert the deque of Candle objects into a list.
         """
         return list[Candle](list(self.candleSeries))
+
+
+cs = CandleSeries(candleSeries=deque(maxlen=90),timeFrame=1,broker="test")

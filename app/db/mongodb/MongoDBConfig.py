@@ -1,9 +1,13 @@
 import threading
-from typing import Any
 
 from app.db.mongodb.MongoDB import MongoDB
+from app.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
+from app.db.mongodb.dtos.AssetDTO import AssetDTO
+from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
+from app.db.mongodb.dtos.RelationDTO import RelationDTO
+from app.db.mongodb.dtos.SMTPairDTO import SMTPairDTO
+from app.db.mongodb.dtos.StrategyDTO import StrategyDTO
 from app.manager.initializer.SecretsManager import SecretsManager
-from app.monitoring.logging.logging_startup import logger
 
 
 class MongoDBConfig(MongoDB):
@@ -23,12 +27,51 @@ class MongoDBConfig(MongoDB):
             super().__init__("TradingConfig", self._secret_manager.return_secret("mongodb"))
             self._initialized = True  # Markiere als initialisiert
 
-    def load_data(self, collectionName: str, query: Any):
-        return self.find(collectionName, query)
+    def find_assets(self)->list[AssetDTO]:
 
-    def find_by_id(self, typ: str, attribute: str, id: int, getAttribute: str) -> str:
-        logger.debug("Finding {typ} by id {id}".format(typ=typ, id=id))
-        query = self.buildQuery(attribute, id)
-        asset_dict = self.load_data(typ, query)
-        for doc in asset_dict:
-            return (doc.get(typ)).get(getAttribute)
+        assets_db: list = self.find("Asset", None)
+
+        assets:list[AssetDTO] = []
+
+        for asset in assets_db:
+            assets.append(AssetDTO(**asset))
+
+        return assets
+
+    def find_asset_by_id(self,asset_id:int)->AssetDTO:
+        query = self.buildQuery("assetId", asset_id)
+        return AssetDTO(**self.find("Asset",query)[0])
+
+    def find_relations_by_asset_id(self,asset_id:int)->list[RelationDTO]:
+        query = self.buildQuery("assetId", asset_id)
+
+        relations_db:list = self.find("Relation",query)
+
+        relations:list[RelationDTO] = []
+
+        for relation in relations_db:
+            relations.append(RelationDTO(**relation))
+        return relations
+
+    def find_asset_class_by_id(self,_id:int)->AssetClassDTO:
+        query = self.buildQuery("assetClassId", _id)
+        return AssetClassDTO(**self.find("AssetClasses",query)[0])
+
+    def find_broker_by_id(self,_id:int)->BrokerDTO:
+        query = self.buildQuery("brokerId", _id)
+        return BrokerDTO(**self.find("Broker",query)[0])
+
+    def find_strategy_by_id(self,_id:int)->StrategyDTO:
+        query = self.buildQuery("strategyId", _id)
+        return StrategyDTO(**self.find("Strategy",query)[0])
+
+    def find_smt_pair_by_id(self,strategyId:int=None,assetAId:int=None,assetBId:int=None)->list[SMTPairDTO]:
+        query = self.buildQueryMultipleIds(self, strategyId=strategyId, assetAId=assetAId, assetBId=assetBId)
+        smt_pairs_db: list = self.find("SMTPairs", query)
+
+        smt_pairs: list[SMTPairDTO] = []
+
+        for smt_pair in smt_pairs_db:
+            smt_pairs.append(SMTPairDTO(**smt_pair))
+
+        return smt_pairs
