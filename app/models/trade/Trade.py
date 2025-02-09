@@ -1,7 +1,10 @@
+from typing import Optional
+
 from pydantic import BaseModel
-from typing import Optional, List
-from app.models.trade.Order import Order  # Ensure correct import
+
 from app.models.asset.Relation import Relation  # Ensure correct import
+from app.models.trade.Order import Order  # Ensure correct import
+
 
 class Trade(BaseModel):
     orders: Optional[list[Order]] = None  #

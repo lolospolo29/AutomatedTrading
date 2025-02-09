@@ -38,7 +38,7 @@ class BrokerMapper:
     @staticmethod
     def map_broker_position_to_trade(broker_position:BrokerPosition, trade:Trade,check_time:bool=True) -> Trade:
         try:
-            if int(broker_position.updatedTime) > trade.updatedTime and check_time:
+            if int(broker_position.updatedTime) > int(trade.updatedTime) and check_time:
                 trade.createdTime = broker_position.createdTIme
                 trade.updatedTime = broker_position.updatedTime
                 trade.tradeMode = broker_position.tradeMode

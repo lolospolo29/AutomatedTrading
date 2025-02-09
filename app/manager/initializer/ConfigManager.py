@@ -8,8 +8,8 @@ from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from app.db.mongodb.dtos.RelationDTO import RelationDTO
 from app.db.mongodb.dtos.SMTPairDTO import SMTPairDTO
 from app.db.mongodb.dtos.StrategyDTO import StrategyDTO
+from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.helper.factories.StrategyFactory import StrategyFactory
-from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
@@ -78,7 +78,7 @@ class ConfigManager:
 
                 strategy_dto:StrategyDTO = self._mongo_db_config.find_strategy_by_id(relation_db.strategyId)
 
-                relation = Relation(asset=asset_dto.name,strategy=strategy_dto.name,broker=broker_dto.name,max_trades=relation_dto.maxTrades)
+                relation = Relation(asset=asset_dto.name,strategy=strategy_dto.name,broker=broker_dto.name,max_trades=relation_dto.maxTrades,id=relation_dto.relationId)
 
                 self._asset_manager.add_relation(relation)
 
@@ -96,7 +96,13 @@ class ConfigManager:
 
                 ###
 
-                trades: list = self._mongo_db_trades.find_trade_or_trades_by_id()
+                trades_db: list[TradeDTO] = self._mongo_db_trades.find_trades()
+
+                for trade_db in trades_db:
+                    trade_db:TradeDTO = trade_db
+                    if trade_db.relationId == relation_dto.relationId:
+                        pass
+
 
     def register_strategy(self, relation:Relation, asset_dto:AssetDTO
                           , smt_pair_dtos:list[SMTPairDTO]):
@@ -105,25 +111,11 @@ class ConfigManager:
             for smt_pair_dto in smt_pair_dtos:
                 smt_pair_dto: SMTPairDTO = smt_pair_dto
 
-                asset_b: AssetDTO = AssetDTO(name="", assetId=-1)
-
-                if smt_pair_dto.assetAId == asset_dto.assetId:
-                    asset_b: AssetDTO = self._mongo_db_config.find_asset_by_id(smt_pair_dto.assetBId)
-
-                if smt_pair_dto.assetBId == asset_dto.assetId:
-                    asset_b: AssetDTO = self._mongo_db_config.find_asset_by_id(smt_pair_dto.assetAId)
-
-                smt_strategy: Strategy = self._strategy_factory.return_smt_strategy(typ=relation.strategy
-                                                                                    ,
-                                                                                    correlation=smt_pair_dto.correlation,
-                                                                                    asset1=relation.asset
-                                                                                    , asset2=asset_b.name)
+                smt_strategy, smt_pair = self.create_smt(asset_dto=asset_dto, relation=relation, smt_pair_dto=smt_pair_dto)
 
                 self._strategy_manager.register_smt_strategy(relation_smt=relation, strategy_smt=smt_strategy,
-                                                             asset2=asset_b.name)
+                                                             asset2=smt_pair.asset_b)
 
-                smt_pair:SMTPair = SMTPair(strategy=relation.strategy,asset_a=asset_dto.name,asset_b=asset_b.name,
-                                           correlation=smt_pair_dto.correlation)
 
                 self._asset_manager.add_smt_pair(asset=relation.asset,smt_pair=smt_pair)
 
@@ -132,6 +124,24 @@ class ConfigManager:
 
             self._strategy_manager.register_strategy(relation=relation, strategy=strategy)
 
+    def create_smt(self, asset_dto:AssetDTO, relation:Relation, smt_pair_dto:SMTPairDTO)->tuple[Strategy,SMTPair]:
+        asset_b: AssetDTO = AssetDTO(name="", assetId=-1)
+
+        if smt_pair_dto.assetAId == asset_dto.assetId:
+            asset_b: AssetDTO = self._mongo_db_config.find_asset_by_id(smt_pair_dto.assetBId)
+
+        if smt_pair_dto.assetBId == asset_dto.assetId:
+            asset_b: AssetDTO = self._mongo_db_config.find_asset_by_id(smt_pair_dto.assetAId)
+
+        smt_strategy: Strategy = self._strategy_factory.return_smt_strategy(typ=relation.strategy
+                                                                             ,correlation=smt_pair_dto.correlation,
+                                                                             asset1=relation.asset
+                                                                             , asset2=smt_pair_dto.assetB)
+
+        smt_pair: SMTPair = SMTPair(strategy=relation.strategy, asset_a=asset_dto.name, asset_b=asset_b.name,
+                                    correlation=smt_pair_dto.correlation)
+
+        return smt_strategy,smt_pair
 
     def add_timeframes_to_asset(self,relation:Relation):
 
@@ -139,4 +149,7 @@ class ConfigManager:
 
         for timeframe in timeframes:
             timeframe:ExpectedTimeFrame = timeframe
+
+            self._asset_manager.add_candles_series(asset=relation.asset,timeframe=timeframe.timeframe
+                                                   ,maxlen=timeframe.maxlen,broker=relation.broker)
     # endregion

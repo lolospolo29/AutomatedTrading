@@ -337,8 +337,10 @@ class TradeManager:
 
 
     def return_trades(self) -> list[Trade]:
-        t1 = Trade(relation=Relation(asset="a",broker="a",strategy="a",max_trades=1))
+        t1 = Trade(relation=Relation(asset="a",broker="a",strategy="a",max_trades=1,id=1))
         self.register_trade(t1)
         # todo remove after testing
         return [x for x in self._open_trades.values()]
     # endregion
+
+

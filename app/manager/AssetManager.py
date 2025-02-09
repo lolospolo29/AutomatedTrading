@@ -106,6 +106,13 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 
+    def add_candles_series(self,asset:str,maxlen:int,timeframe:int,broker:str):
+        try:
+            if asset in self.assets:
+                self.assets[asset].add_candles_series(maxlen,timeframe,broker)
+        except Exception as e:
+            logger.exception("Failed to add candles series to asset {asset},Error:{e}".format(asset=asset, e=e))
+
     def add_smt_pair(self, asset: str, smt_pair: SMTPair):
         try:
             if asset in self.assets:

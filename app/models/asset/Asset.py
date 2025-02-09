@@ -44,3 +44,14 @@ class Asset(BaseModel):
         self.candles_series.append(CandleSeries(candleSeries=deque(maxlen=_maxlen)
                                                 ,timeFrame=_timeframe,broker=_broker))
 
+    def return_relations(self,broker:str)->list[Relation]:
+        relations = []
+        for relation in self.relations:
+            if relation.broker == broker:
+                relations.append(relation)
+        return relations
+
+    def return_candles(self,timeFrame:int, broker:str)->list[Candle]:
+        for candleSeries in self.candles_series:
+            if candleSeries.broker == broker and candleSeries.timeFrame == timeFrame:
+                return candleSeries.to_list()

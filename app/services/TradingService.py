@@ -88,12 +88,6 @@ class TradingService:
         """
         Processes the trading strategy for a specific relation, determining whether to enter new trades
         or manage existing trades concurrently.
-
-        Args:
-            timeframe (int): The timeframe for the analysis (e.g., minutes, hours).
-            candles (list[Candle]): A list of candle objects representing market data.
-            relation (Relation): The relation object linking the asset and strategy.
-
         Behavior:
             - If there are no existing trades for the relation, analyzes the strategy for potential entry points.
             - If there are existing trades, spawns separate threads to analyze each trade in the context of the strategy.
@@ -124,9 +118,6 @@ class TradingService:
         Analyses Strategy Logic.
         If there is a Signal for Entry,the Strategy generates a Trade Object.
         That Object is used to Execute Orders in the Trade Manager.
-
-        :param timeframe: Timeframe to analyse.
-        :param candles: Candles to analyse.
         """
         asset_class = self._asset_manager.return_asset_class(relation.asset)
 
@@ -147,29 +138,12 @@ class TradingService:
         """
         Analyzes the trading strategy to determine if an exit condition is met for a given trade.
 
-        Args:
-            timeframe (int): The timeframe for the analysis (e.g., minutes, hours).
-            candles (list[Candle]): A list of candle objects representing market data.
-            relation (Relation): The relation object linking the asset and strategy.
-            trade (Trade): The trade object to evaluate for exit conditions.
-
         Behavior:
             - Evaluates the exit conditions for the given trade using the strategy manager.
             - Handles two exit statuses:
                 1. **CLOSE**: Logs the close action and invokes the `_closing_trade` method to close the trade.
                 2. **CHANGED**: Logs the change action, attempts to amend the trade, and updates the trade if modifications are successful.
                    If there are issues with the orders (`exceptionOrders`), the trade is closed.
-
-        Notes:
-            - Uses `self._strategy_manager.get_exit` to retrieve the exit strategy result.
-            - The `_closing_trade` method is used to close the trade.
-            - The trade amendments are managed through the `self._trade_manager.amend_trade` method.
-
-        Logging:
-            - Logs information about detected "Close" or "Changed" exit conditions along with the related asset.
-
-        Returns:
-            None
         """
         result: StrategyResult = self._strategy_manager.get_exit(candles, relation, timeframe,trade)
 
