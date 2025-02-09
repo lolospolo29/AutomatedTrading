@@ -1,3 +1,7 @@
+from typing import Optional
+
+from pydantic import Field
+
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
@@ -8,8 +12,11 @@ from app.models.trade.Trade import Trade
 
 
 class NYMSS(Strategy):
-    _strategy_facade:StrategyFacade = StrategyFacade()
-
+    name:str =Field(default='FVGSession')
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+    strategy_facade: Optional['StrategyFacade'] = Field(default=None)
     def return_expected_time_frame(self) -> list:
         return self.expectedTimeFrames
 

@@ -66,10 +66,20 @@ class MongoDBConfig(MongoDB):
         return StrategyDTO(**self.find("Strategy",query)[0])
 
     def find_smt_pair_by_id(self,strategyId:int=None,assetAId:int=None,assetBId:int=None)->list[SMTPairDTO]:
-        query = self.buildQueryMultipleIds(self, strategyId=strategyId, assetAId=assetAId, assetBId=assetBId)
-        smt_pairs_db: list = self.find("SMTPairs", query)
+        query = {f"strategyId":{strategyId},"assetAId":{assetAId},"assetBId":{assetBId}}
+
+        if strategyId is None and assetAId is None and assetBId is None:
+            return []
+
+        # Build the query dynamically, excluding None values
+        query = {k: v for k, v in {
+            "strategyId": strategyId,
+            "assetAId": assetAId,
+            "assetBId": assetBId
+        }.items() if v is not None}
 
         smt_pairs: list[SMTPairDTO] = []
+        smt_pairs_db: list = self.find("SMTPairs", query)
 
         for smt_pair in smt_pairs_db:
             smt_pairs.append(SMTPairDTO(**smt_pair))

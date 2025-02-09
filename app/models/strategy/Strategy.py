@@ -9,7 +9,7 @@ from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 
 
 class Strategy(BaseModel):
-    name:str=None
+    name:Optional[str]=None
     timeframes:Optional[list[ExpectedTimeFrame]]=None
     time_windows:Optional[list[ITimeWindow]]=None
 

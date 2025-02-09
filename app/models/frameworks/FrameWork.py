@@ -8,3 +8,4 @@ class FrameWork(BaseModel):
     id: str = str(uuid.uuid4())
     timeframe:int = None
     direction:str=None
+    orderLinkId:str=None

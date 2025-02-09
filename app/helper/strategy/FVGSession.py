@@ -1,3 +1,7 @@
+from typing import Optional
+
+from pydantic import Field
+
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
@@ -8,8 +12,11 @@ from app.models.trade.Trade import Trade
 
 # FVG CRT 4H
 class FVGSession(Strategy):
-    name:str = "FVGSession"
-    _strategy_facade:StrategyFacade = StrategyFacade()
+    name:str =Field(default='FVGSession')
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+    strategy_facade: Optional['StrategyFacade'] = Field(default=None)
 
 
     def is_in_time(self, time) -> bool:
@@ -21,24 +28,24 @@ class FVGSession(Strategy):
             last_candle = candles[-1]
             time = last_candle.iso_time
             if timeFrame == 240:
-                range = self._strategy_facade.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
+                range = self.strategy_facade.LevelMediator.calculate_fibonacci("PD", candles, lookback=1)
                 for level in range:
-                    self._strategy_facade.level_handler.add_level(level)
+                    self.strategy_facade.level_handler.add_level(level)
 
 
             if timeFrame == 1:
                 if self.is_in_time(time):
-                    fvgs = self._strategy_facade.PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
+                    fvgs = self.strategy_facade.PDMediator.calculate_pd_array_with_lookback("FVG", candles, lookback=3)
                     for fvg in fvgs:
-                        self._strategy_facade.pd_array_handler.add_pd_array(fvg)
-            self._strategy_facade.level_handler.remove_level(candles, timeFrame)
-            self._strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
+                        self.strategy_facade.pd_array_handler.add_pd_array(fvg)
+            self.strategy_facade.level_handler.remove_level(candles, timeFrame)
+            self.strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
 
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
-        levels = self._strategy_facade.level_handler.return_levels()
+        pds = self.strategy_facade.pd_array_handler.return_pd_arrays()
+        levels = self.strategy_facade.level_handler.return_levels()
         if candles and pds and len(candles) > 5 and timeFrame == 1:
 
                 last_candle: Candle = candles[-1]
@@ -68,7 +75,7 @@ class FVGSession(Strategy):
 
                 if len(one_m_fvgs) > 0:
                     for fvg in one_m_fvgs:
-                        fvg_low,fvg_high = self._strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
+                        fvg_low,fvg_high = self.strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
                         if fvg.direction == "Bullish" and directionSweep == "Bearish":
                             if prelast_candle.close > fvg_low > last_candle.close:
                                 current_inversed.append(fvg)

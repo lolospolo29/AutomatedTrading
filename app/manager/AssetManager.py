@@ -48,7 +48,7 @@ class AssetManager:
     def register_asset(self, asset: Asset) -> bool:
         logger.info(f"Register Asset to Asset Manager:{asset.name}")
 
-        if not asset in self.assets:
+        if not asset.name in self.assets:
             self.assets[asset.name] = asset
             logger.info("Registered asset {}".format(asset.name))
             return True
@@ -87,9 +87,8 @@ class AssetManager:
     # endregion
 
     # region Add Functions
-    def add_candle(self, json: dict) -> Candle:
+    def add_candle(self,candle:Candle) -> Candle:
         try:
-            candle: Candle = Candle.model_validate(json)
             logger.debug(f"Add Candle to:{candle.asset}")
 
             if candle.asset in self.assets:

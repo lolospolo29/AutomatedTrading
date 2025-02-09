@@ -13,9 +13,9 @@ class Asset(BaseModel):
 
     name:str
     asset_class:str
-    smt_pairs:Optional[list[SMTPair]] = None
-    relations:Optional[list[Relation]] = None
-    candles_series:Optional[list[CandleSeries]] = None
+    smt_pairs:Optional[list[SMTPair]]
+    relations:Optional[list[Relation]]
+    candles_series:Optional[list[CandleSeries]]
 
 
     def add_relation(self, relation:Relation):
@@ -27,7 +27,7 @@ class Asset(BaseModel):
 
     def add_candle(self,candle:Candle):
         for candleSeries in self.candles_series:
-            if candleSeries.broker == candle.broker and candleSeries.timeFrame == candle.timeFrame:
+            if candleSeries.broker == candle.broker and candleSeries.timeFrame == candle.timeframe:
                 candleSeries.add_candle(candle)
 
     def add_smt_pair(self,smt_pair:SMTPair):

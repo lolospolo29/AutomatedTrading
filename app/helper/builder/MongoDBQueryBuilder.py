@@ -64,11 +64,4 @@ class MongoQueryBuilder:
             query_object["skip"] = self.skip_value
         return query_object
 
-
-# Example Usage
-query_builder = (MongoQueryBuilder()
-                 .and_filter({"brand": {"$eq": "Apple"}}, {"stock": {"$gt": 0}})
-                 )
-
-query = query_builder.build()
-print(query)
+# todo do better one self made

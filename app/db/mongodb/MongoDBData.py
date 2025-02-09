@@ -31,7 +31,7 @@ class MongoDBData(MongoDB):
             self._initialized = True  # Markiere als initialisiert
 
     def add_candle_to_db(self, asset: str, candle: Candle):
-        self.add(asset, candle.model_dump_json())
+        self.add(asset, candle.model_dump())
 
     def archive_data(self, asset: str) -> Any:
         logger.info(f"Arching data for {asset}")

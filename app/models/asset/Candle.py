@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel,Field
 
@@ -14,4 +15,4 @@ class Candle(BaseModel):
     close: float
     iso_time: datetime
     timeframe: int
-    id: str = Field(default=str(uuid.uuid4()))
+    id: Optional[str] = Field(default=str(uuid.uuid4()))

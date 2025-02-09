@@ -1,4 +1,12 @@
+from PIL.PdfParser import PdfArray
+
+from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
+from app.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
+from app.models.asset.Candle import Candle
+from app.models.frameworks.FrameWork import FrameWork
+from app.models.frameworks.Level import Level
+from app.models.frameworks.PDArray import PDArray
 from app.models.trade.Trade import Trade
 
 
@@ -22,3 +30,36 @@ class DTOMapper:
         trade_dto.createdTime = trade.createdTime
 
         return trade_dto
+
+    @staticmethod
+    def map_framework_to_dto(framework:FrameWork):
+        framework_dto = FrameWorkDTO()
+
+        framework_dto.frameWorkId = framework.id
+        framework_dto.name = framework.name
+        framework_dto.timeframe = framework.timeframe
+        framework_dto.direction = framework.direction
+        framework_dto.orderLinkId = framework.orderLinkId
+
+
+        if framework.__class__.__name__ == "PDArray":
+            pd :PDArray= framework
+            framework_dto.status = pd.status
+        if framework.__class__.__name__ == "Level":
+            level :Level= framework
+            framework_dto.level = level.level
+            framework_dto.fib_level = level.fib_level
+
+        framework_dto.type = framework.__class__.__name__
+
+        return framework_dto
+
+    @staticmethod
+    def map_candle_to_dto(candle:Candle, framework:FrameWork)->CandleFrameWorkDTO:
+        candle_dto = CandleFrameWorkDTO(asset=candle.asset,broker=candle.broker,open=candle.open
+                                        ,high=candle.high,low=candle.low,close=candle.close,iso_time=candle.iso_time
+                                        ,timeframe=candle.timeframe,candleId=candle.id)
+        candle_dto.frameWorkId = framework.id
+
+        return candle_dto
+

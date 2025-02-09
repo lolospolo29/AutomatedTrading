@@ -1,3 +1,7 @@
+from typing import Optional
+
+from pydantic import Field
+
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
@@ -16,36 +20,39 @@ class OTEFourH(Strategy):
     components such as level calculations, pattern detection, Fibonacci retracements, and confirmation
     structures to generate trading entries and exits.
     """
-    _strategy_facade:StrategyFacade = StrategyFacade()
-
+    name:str =Field(default='FVGSession')
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+    strategy_facade: Optional['StrategyFacade'] = Field(default=None)
     def is_in_time(self, time) -> bool:
         return True
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
             if timeFrame == 240 and len(candles) > 20 :
-                range = self._strategy_facade.LevelMediator.calculate_fibonacci("OTE", candles, lookback=20)
+                range = self.strategy_facade.LevelMediator.calculate_fibonacci("OTE", candles, lookback=20)
                 for level in range:
                     level.timeframe = 240
-                    self._strategy_facade.level_handler.add_level(level)
-                fvgs = self._strategy_facade.PDMediator.calculate_pd_array("FVG", candles)
+                    self.strategy_facade.level_handler.add_level(level)
+                fvgs = self.strategy_facade.PDMediator.calculate_pd_array("FVG", candles)
                 for fvg in fvgs:
                         fvg.timeframe = 240
-                        self._strategy_facade.pd_array_handler.add_pd_array(fvg)
-                structures = self._strategy_facade.StructureMediator.calculate_confirmation("BOS",candles)
+                        self.strategy_facade.pd_array_handler.add_pd_array(fvg)
+                structures = self.strategy_facade.StructureMediator.calculate_confirmation("BOS", candles)
                 for structure in structures:
                     structure.timeframe = 240
-                    self._strategy_facade.structure_handler.add_structure(structure)
+                    self.strategy_facade.structure_handler.add_structure(structure)
 
-                self._strategy_facade.level_handler.remove_level(candles, timeFrame)
-                self._strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
-                self._strategy_facade.structure_handler.remove_structure(candles, timeFrame)
+                self.strategy_facade.level_handler.remove_level(candles, timeFrame)
+                self.strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
+                self.strategy_facade.structure_handler.remove_structure(candles, timeFrame)
 
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self._strategy_facade.pd_array_handler.return_pd_arrays()
-        levels = self._strategy_facade.level_handler.return_levels()
-        structures = self._strategy_facade.structure_handler.return_structure()
+        pds = self.strategy_facade.pd_array_handler.return_pd_arrays()
+        levels = self.strategy_facade.level_handler.return_levels()
+        structures = self.strategy_facade.structure_handler.return_structure()
         if candles and pds and timeFrame == 240 and len(levels) > 3 and structures and len(candles) > 20:
             latest_structure:Structure = structures[-1]
 
@@ -57,7 +64,7 @@ class OTEFourH(Strategy):
             max_level = max(last_four_levels, key=lambda x: x.level and x.direction == latest_structure.direction)
 
             for fvg in fvgs:
-                fvg_low,fvg_high = self._strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
+                fvg_low,fvg_high = self.strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
                 if fvg.direction == latest_structure.direction:
                     if fvg_high >= min_level.level and fvg_low <= max_level.level:
                         return StrategyResult()

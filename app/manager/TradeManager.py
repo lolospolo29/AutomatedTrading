@@ -61,19 +61,25 @@ class TradeManager:
         tradeLock = self._lock_registry.get_lock(trade.id)
         with tradeLock:
             try:
-                self._trade_registry.register_relation(trade.relation.__str__())
-                self._trade_registry.acquire_trade(trade.relation.__str__())
                 if trade.id not in self._open_trades:
+                    self._trade_registry.register_relation(trade.relation.__str__())
+                    self._trade_registry.acquire_trade(trade.relation.__str__())
                     self._open_trades[trade.id] = trade
                     logger.info(f"Register Trade,TradeId: {trade.id}")
             except Exception as e:
                 logger.error(f"Register Trade Error,TradeId: {trade.id}: {e}")
 
     def __remove_trade(self, trade: Trade) -> None:
-        if trade.id in self._open_trades:
+        try:
+            if trade.id in self._open_trades:
+                self._trade_registry.release_trade(trade.relation)
+                self._open_trades.pop(trade.id)
+                logger.info(f"Remove Trade,TradeId: {trade.id}")
+        except AttributeError as e:
+            logger.error(f"Remove Trade Error,TradeId: {trade.id}: {e}")
             self._trade_registry.release_trade(trade.relation)
-            self._open_trades.pop(trade.id)
-            logger.info(f"Remove Trade,TradeId: {trade.id}")
+            self._open_trades.pop(trade)
+
 
     # endregion
 
@@ -333,7 +339,16 @@ class TradeManager:
         return self._risk_manager.return_current_pnl()
 
     def return_trades_for_relation(self, assetBrokerStrategyRelation: Relation) -> list[Trade]:
-        return [x for x in self._open_trades.values() if x.relation.compare(assetBrokerStrategyRelation)]
+        trades = []
+        for id,trade in self._open_trades:
+            try:
+                if trade.relation == assetBrokerStrategyRelation:
+                    trades.append(trade)
+            except AttributeError as e:
+                logger.error("Return Trades Error")
+                self.archive_trade(trade)
+        return trades
+
 
 
     def return_trades(self) -> list[Trade]:
@@ -343,4 +358,4 @@ class TradeManager:
         return [x for x in self._open_trades.values()]
     # endregion
 
-
+    # todo test pydantic

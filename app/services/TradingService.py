@@ -4,6 +4,7 @@ from typing import Any, Dict
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
+from app.mappers.AssetMapper import AssetMapper
 from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
 from app.models.strategy.StrategyResult import StrategyResult
@@ -48,6 +49,7 @@ class TradingService:
             self._asset_manager: AssetManager = AssetManager()
             self._trade_manager: TradeManager = TradeManager()
             self._strategy_manager: StrategyManager = StrategyManager()
+            self._asset_mapper = AssetMapper()
         #    self._news_service :NewsService = NewsService()
          #   self._news_service.receive_news()
             self._logger = logger
@@ -62,7 +64,8 @@ class TradingService:
 
         :param jsonData: JSON Object from Any Price Signal Services.
         """
-        candle: Candle = self._asset_manager.add_candle(jsonData)
+        candle:Candle = self._asset_mapper.map_tradingview_json_to_candle(jsonData)
+        self._asset_manager.add_candle(candle)
 
         logger.debug("Received candle for Asset:{asset},{timeframe}".format(asset=candle.asset, timeframe=candle.timeframe))
 
@@ -123,7 +126,8 @@ class TradingService:
 
 
         result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe,asset_class)
-
+        if result.status is None:
+            return
         if result.status == StrategyResultStatusEnum.NEWTRADE.value:
             self._logger.info(f"New Entry found: {relation.asset}")
 
@@ -147,7 +151,8 @@ class TradingService:
         """
         result: StrategyResult = self._strategy_manager.get_exit(candles, relation, timeframe,trade)
 
-
+        if result.status is None:
+            return
         if result.status == StrategyResultStatusEnum.CLOSE.value:
             self._logger.info(f"Close Exit found: {relation.asset}")
             self._trade_manager.update_trade(result.trade)

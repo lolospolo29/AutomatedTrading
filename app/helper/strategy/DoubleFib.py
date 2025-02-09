@@ -1,38 +1,41 @@
+from typing import Optional
+
+from pydantic import Field
+
 from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.facade.StrategyFacade import StrategyFacade
-from app.helper.handler.LevelHandler import LevelHandler
 from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
 from app.models.frameworks.Level import Level
 from app.models.strategy.Strategy import Strategy
-from app.models.strategy.StrategyResult import StrategyResult
-from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 from app.models.trade.Trade import Trade
-from app.models.trade.enums.CategoryEnum import CategoryEnum
-from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
-from app.models.trade.enums.TriggerByEnum import TriggerByEnum
-from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
+from app.models.strategy.StrategyResult import StrategyResult
 
 
 # Double Fib
 
 class DoubleFib(Strategy):
-    name:str = "DoubleFib"
-    _strategy_handler:StrategyFacade = StrategyFacade()
-    _level_handler:LevelHandler = LevelHandler()
-
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+    strategy_facade: Optional['StrategyFacade'] = Field(default=None)
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
         if timeFrame == 1 and len(candles) > 60:
-            ote = self._strategy_handler.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=60)
+            ote = self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=60)
             for level in ote:
-                self._strategy_handler.level_handler.add_level(level)
-            self._strategy_handler.level_handler.remove_level(candles,timeFrame)
+                self.strategy_facade.level_handler.add_level(level)
+            self.strategy_facade.level_handler.remove_level(candles, timeFrame)
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
+
         self._analyzeData(candles, timeFrame)
-        levels:list[Level] = self._strategy_handler.level_handler.return_levels()
+        levels:list[Level] = self.strategy_facade.level_handler.return_levels()
         if candles and levels and timeFrame == 1:
+            from app.models.trade.enums.CategoryEnum import CategoryEnum
+            from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
+            from app.models.trade.enums.TriggerByEnum import TriggerByEnum
+            from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
             last_candle: Candle = candles[-1]
             time = last_candle.iso_time
@@ -111,9 +114,9 @@ class DoubleFib(Strategy):
                                                           ,trigger_price=take_profit,trigger_by=
                                                           TriggerByEnum.MARKPRICE.value).build()
 
-                qty = str(self._strategy_handler.risk_calculator.calculate_order_qty(asset_class=asset_class
-                                                                                     ,entry_price=float(last_candle.close)
-                                                                                     ,exit_price=float(stop_order.price)))
+                qty = str(self.strategy_facade.risk_calculator.calculate_order_qty(asset_class=asset_class
+                                                                                    , entry_price=float(last_candle.close)
+                                                                                    , exit_price=float(stop_order.price)))
 
                 entry_order.qty = qty
                 take_profit_order.qty = qty
@@ -122,6 +125,7 @@ class DoubleFib(Strategy):
                 trade.add_order(entry_order)
                 trade.add_order(stop_order)
                 trade.add_order(take_profit_order)
+                from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 
                 return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NEWTRADE.value)
             else:
@@ -130,6 +134,8 @@ class DoubleFib(Strategy):
             return StrategyResult()
 
     def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
+
         # todo trail stop
         #todo implement more assets to this strategy
+        from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)

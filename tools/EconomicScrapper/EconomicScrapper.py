@@ -14,7 +14,7 @@ from tools.EconomicScrapper.Models.NewsDay import NewsDay
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 local_tz = pytz.timezone('America/New_York')
-
+# todo test pydantic
 class EconomicScrapper:
     """
     Scrapes economic calendar data from TradingEconomics.com to extract information on news events and dates.

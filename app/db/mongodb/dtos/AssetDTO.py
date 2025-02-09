@@ -8,7 +8,7 @@ from app.db.mongodb.dtos.PyObjectId import PyObjectId
 
 class AssetDTO(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)  # MongoDB _id
-    name: str
+    name: str=None
     assetId: int
     assetClass: Optional[int] = None
 

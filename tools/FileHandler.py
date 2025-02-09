@@ -13,7 +13,7 @@ from app.manager.StrategyManager import StrategyManager
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
 
-
+# todo test pydantic
 # noinspection PyUnusedLocal
 class FileHandler(FileSystemEventHandler):
     """

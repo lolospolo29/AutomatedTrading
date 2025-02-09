@@ -1,3 +1,7 @@
+from typing import Optional
+
+from pydantic import Field
+
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
@@ -10,8 +14,11 @@ from app.models.trade.Trade import Trade
 # Unicorn Entry with 4H PD Range Bias
 
 class Unicorn(Strategy):
-    _strategy_facade:StrategyFacade = StrategyFacade()
-
+    name:str =Field(default='FVGSession')
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+    strategy_facade: Optional['StrategyFacade'] = Field(default=None)
     def is_in_time(self, time) -> bool:
         if self._TimeWindow.is_in_entry_window(time) or self._TimeWindow2.is_in_entry_window(time):
             return True

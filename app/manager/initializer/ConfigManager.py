@@ -18,6 +18,7 @@ from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.Strategy import Strategy
+from app.models.trade.Trade import Trade
 from app.monitoring.log_time import log_time
 from app.monitoring.logging.logging_startup import logger
 
@@ -60,7 +61,7 @@ class ConfigManager:
 
             asset_class_dto :AssetClassDTO= self._mongo_db_config.find_asset_class_by_id(asset_dto.assetClass)
 
-            asset:Asset =  Asset(name=asset_dto.name,asset_class=asset_class_dto.name)
+            asset:Asset =  Asset(name=asset_dto.name,asset_class=asset_class_dto.name,smt_pairs=[],relations=[],candles_series=[])
 
             self._asset_manager.register_asset(asset)
 
@@ -94,15 +95,27 @@ class ConfigManager:
                 self.register_strategy(relation=relation, asset_dto=asset_dto
                                        , smt_pair_dtos=smt_pair_dtos)
 
+                self.add_timeframes_to_asset(relation=relation)
+
                 ###
 
                 trades_db: list[TradeDTO] = self._mongo_db_trades.find_trades()
 
                 for trade_db in trades_db:
                     trade_db:TradeDTO = trade_db
+                    orders = []
                     if trade_db.relationId == relation_dto.relationId:
-                        pass
+                        orders.extend(self._mongo_db_trades.find_orders_by_trade_id(trade_db.tradeId))
 
+                        trade = Trade(orders=orders, id=trade_db.tradeId, relation=relation, category=trade_db.category
+                                      , side=trade_db.side, tpslMode=trade_db.tpslMode,
+                                      unrealisedPnl=trade_db.unrealisedPnl
+                                      , leverage=trade_db.leverage, size=trade_db.size, tradeMode=trade_db.tradeMode
+                                      , updatedTime=trade_db.updatedTime, createdTime=trade_db.createdTime)
+
+                        self._trade_manager.register_trade(trade)
+                    continue
+        logger.info("ConfigManager initialized")
 
     def register_strategy(self, relation:Relation, asset_dto:AssetDTO
                           , smt_pair_dtos:list[SMTPairDTO]):
@@ -143,13 +156,14 @@ class ConfigManager:
 
         return smt_strategy,smt_pair
 
+    #todo export to asset manager
     def add_timeframes_to_asset(self,relation:Relation):
 
-        timeframes:list[ExpectedTimeFrame] = self._strategy_manager.return_expected_time_frame(relation=relation)
+        exp_timeframes:list[ExpectedTimeFrame] = self._strategy_manager.return_expected_time_frame(relation=relation)
 
-        for timeframe in timeframes:
-            timeframe:ExpectedTimeFrame = timeframe
+        for exp_timeframe in exp_timeframes:
+            exp_timeframe:ExpectedTimeFrame = exp_timeframe
 
-            self._asset_manager.add_candles_series(asset=relation.asset,timeframe=timeframe.timeframe
-                                                   ,maxlen=timeframe.maxlen,broker=relation.broker)
+            self._asset_manager.add_candles_series(asset=relation.asset,timeframe=exp_timeframe.timeframe
+                                                   ,maxlen=exp_timeframe.max_Len,broker=relation.broker)
     # endregion

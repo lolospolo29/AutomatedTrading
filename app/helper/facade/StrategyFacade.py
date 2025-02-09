@@ -1,4 +1,5 @@
 from numpy.distutils.fcompiler import none
+from pydantic import BaseModel
 
 from app.helper.calculator.entry.PDStopEntryCalculator import PDStopEntryCalculator
 from app.helper.calculator.RiskCalculator import RiskCalculator
@@ -26,7 +27,7 @@ class StrategyFacade:
     are provided, an SMTHandler will also be initialized for further operations.
 
     """
-    def __init__(self,asset1:str=none,asset2:str=none,correlation:str=none):
+    def __init__(self,asset1:str=None,asset2:str=None,correlation:str=None):
 
         self.PDMediator = PDMediator()
         self.StructureMediator:StructureMediator = StructureMediator()

@@ -6,3 +6,5 @@ class MongoEndPointEnum(Enum):
     CLOSEDTRADES = 'ClosedTrades'
     OPENORDERS = 'OpenOrders'
     CLOSEDORDERS = 'ClosedOrders'
+    FRAMEWORKS = 'FrameWorks'
+    FRAMEWORKCANDLES = 'FrameWorkCandles'
