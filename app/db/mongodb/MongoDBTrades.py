@@ -1,5 +1,4 @@
 import threading
-from datetime import datetime
 
 from app.db.mongodb.MongoDB import MongoDB
 from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
@@ -8,10 +7,7 @@ from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.db.mongodb.enum.MongoEndPointEnum import MongoEndPointEnum
 from app.manager.initializer.SecretsManager import SecretsManager
 from app.mappers.DTOMapper import DTOMapper
-from app.models.asset.Candle import Candle
-from app.models.asset.Relation import Relation
 from app.models.frameworks.FrameWork import FrameWork
-from app.models.frameworks.PDArray import PDArray
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 from app.monitoring.logging.logging_startup import logger

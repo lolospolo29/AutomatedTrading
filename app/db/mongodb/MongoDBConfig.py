@@ -66,8 +66,6 @@ class MongoDBConfig(MongoDB):
         return StrategyDTO(**self.find("Strategy",query)[0])
 
     def find_smt_pair_by_id(self,strategyId:int=None,assetAId:int=None,assetBId:int=None)->list[SMTPairDTO]:
-        query = {f"strategyId":{strategyId},"assetAId":{assetAId},"assetBId":{assetBId}}
-
         if strategyId is None and assetAId is None and assetBId is None:
             return []
 

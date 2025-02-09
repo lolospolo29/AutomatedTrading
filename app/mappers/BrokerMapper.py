@@ -9,6 +9,7 @@ from app.monitoring.logging.logging_startup import logger
 
 class BrokerMapper:
 
+    # noinspection PyArgumentList
     @staticmethod
     def map_broker_order_to_order(broker_order:BrokerOrder, order:Order,check_time:bool=False) -> Order:
         try:

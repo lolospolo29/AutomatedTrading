@@ -1,6 +1,9 @@
+from typing import Optional
+
 from pydantic import BaseModel
-from typing import Optional, List
+
 from app.models.frameworks.FrameWork import FrameWork
+
 
 class Order(BaseModel):
     # Self Defined Parameters

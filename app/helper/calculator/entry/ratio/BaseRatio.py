@@ -18,8 +18,10 @@ class BaseRatio(ABC):
                 return entry - profit if entry - profit > 0 else entry
             if stop == entry:
                 return entry
-        except Exception:
-            logger.error(f"Calculate Profit:{entry}:{stop}:{ratio}")
+        except ValueError as e:
+            logger.error(f"Calculate Profit:{entry}:{stop}:{ratio},Error: {e}")
+        except Exception as e:
+            logger.error(f"Calculate Profit:{entry}:{stop}:{ratio},Error: {e}")
 
     @staticmethod
     def calculate_stop(entry:float, profit: float, ratio: float):

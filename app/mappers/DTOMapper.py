@@ -1,5 +1,3 @@
-from PIL.PdfParser import PdfArray
-
 from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
 from app.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
@@ -31,6 +29,7 @@ class DTOMapper:
 
         return trade_dto
 
+    # noinspection PyTypeChecker
     @staticmethod
     def map_framework_to_dto(framework:FrameWork):
         framework_dto = FrameWorkDTO()

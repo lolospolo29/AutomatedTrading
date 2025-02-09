@@ -345,7 +345,7 @@ class TradeManager:
                 if trade.relation == assetBrokerStrategyRelation:
                     trades.append(trade)
             except AttributeError as e:
-                logger.error("Return Trades Error")
+                logger.error("Return Trades Error,Error:{e}".format(e=e))
                 self.archive_trade(trade)
         return trades
 
