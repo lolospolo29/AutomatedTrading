@@ -9,7 +9,7 @@ class Relation(BaseModel):
     id: int
 
     model_config = {
-        "frozen": True  # ✅ Makes the model immutable & hashable
+        "frozen": True
     }
 
     def __str__(self):

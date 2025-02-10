@@ -1,3 +1,4 @@
+import datetime
 import threading
 import uuid
 
@@ -12,6 +13,7 @@ from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
+from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
 from app.models.frameworks.PDArray import PDArray
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
@@ -349,13 +351,16 @@ class TradeManager:
         return trades
 
     def return_trades(self) -> list[Trade]:
-        t1 = Trade(relation=Relation(asset="a", broker="a", strategy="a", max_trades=1, id=1))
+        c = Candle(asset="a",broker="a",open=13,high=13,low=123,close=131,timeframe=1,iso_time=datetime.datetime.utcnow())
+        pd = PDArray(candles=[c],direction="Bullish")
+        o = Order(confirmations=[pd],entry_frame_work=pd)
+        t1 = Trade(relation=Relation(asset="a", broker="a", strategy="a", max_trades=1, id=1),createdTime="131",orders=[o],id="131",category="linear"
+                   )
         self.register_trade(t1)
-        # todo remove after testing
         return [x for x in self._open_trades.values()]
     # endregion
 
-# todo framework add to db from order
+# todo framework add to db from order, factory pattern for db model building
 
 # trade_manager = TradeManager()
 #
