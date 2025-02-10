@@ -1,11 +1,10 @@
-from dataclasses import dataclass
+from typing import Optional
 
 from pydantic import BaseModel
 
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 
-@dataclass
 class NewsDay(BaseModel):
     """
     Represents a specific day with associated news events.
@@ -17,4 +16,4 @@ class NewsDay(BaseModel):
 
     """
     day_iso: str
-    news_events : list[NewsEvent]
+    news_events : Optional[list[NewsEvent]] = None

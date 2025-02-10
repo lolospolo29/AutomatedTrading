@@ -14,7 +14,6 @@ from tools.EconomicScrapper.Models.NewsDay import NewsDay
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 local_tz = pytz.timezone('America/New_York')
-# todo test pydantic
 class EconomicScrapper:
     """
     Scrapes economic calendar data from TradingEconomics.com to extract information on news events and dates.
@@ -26,7 +25,6 @@ class EconomicScrapper:
         self.__options = Options()
         self.__service = \
             (Service('/Users/lauris/PycharmProjects/AutomatedTrading/tools/EconomicScrapper/chromedriver-mac-x64/chromedriver'))
-        self.__driver = webdriver.Chrome(service=self.__service, options=self.__options)
 
 
     @staticmethod
@@ -100,6 +98,7 @@ class EconomicScrapper:
         news_days = []
         try:
             # Open the website
+            self.__driver = webdriver.Chrome(service=self.__service, options=self.__options)
             url = "https://tradingeconomics.com/calendar"  # Replace with the target website URL
             self.__driver.get(url)
             WebDriverWait(self.__driver, 10)
@@ -138,7 +137,7 @@ class EconomicScrapper:
                     date = self._extract_date_from_event(event_text)
                     logger.debug("Event text: {} and formatted Date {}".format(event_text, date))
                     if not date is None:
-                        news_day = NewsDay(date,[])
+                        news_day = NewsDay(day_iso=date,news_events=[])
                         news_days.append(news_day)
                         current_news_day = news_day
 
@@ -149,7 +148,7 @@ class EconomicScrapper:
                         title, currency = self._extract_title_and_currency(event_text)
 
                         # Create NewsEvent dataclass and append to list
-                        news_event = NewsEvent(time=time_obj, title=title, currency=currency, daytime=daytime)
+                        news_event = NewsEvent(time=time_obj, title=str(title), currency=str(currency), daytime=daytime)
                         current_news_day.news_events.append(news_event)
                 except Exception as e:
                     logger.critical("NewsDay exception: {}".format(e))
@@ -197,3 +196,7 @@ class EconomicScrapper:
             self.__driver.quit()
             logger.info("Finished scraping Economic Scraper,Found {} news days.".format(len(news_days)))
             return news_days
+
+
+ec = EconomicScrapper()
+ec.return_calendar()

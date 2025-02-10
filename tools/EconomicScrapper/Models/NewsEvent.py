@@ -1,10 +1,8 @@
-from dataclasses import dataclass
 from datetime import datetime
 
 from pydantic import BaseModel
 
 
-@dataclass
 class NewsEvent(BaseModel):
     """
     Represents a news event with its details, typically used in financial or economic contexts.

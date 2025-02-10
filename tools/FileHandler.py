@@ -10,10 +10,11 @@ from watchdog.events import FileSystemEventHandler
 
 from app.manager.AssetManager import AssetManager
 from app.manager.StrategyManager import StrategyManager
+from app.mappers.AssetMapper import AssetMapper
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
 
-# todo test pydantic
+
 # noinspection PyUnusedLocal
 class FileHandler(FileSystemEventHandler):
     """
@@ -68,7 +69,8 @@ class FileHandler(FileSystemEventHandler):
 
                 for candle_dict in candles_dict_list:
                     try:
-                        candle: Candle = self._asset_manager.add_candle(candle_dict)
+                        candle:Candle = AssetMapper().map_tradingview_json_to_candle(candle_dict)
+                        candle: Candle = self._asset_manager.add_candle(candle)
                         #self._testing_strategy(candle.asset, candle.broker, candle.timeframe)
                     except Exception as e:
                         logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
@@ -241,3 +243,5 @@ class FileHandler(FileSystemEventHandler):
         except Exception as e:
             logger.error(f"Error moving file {src_path} to _archive: {e}")
     # endregion
+
+# todo fix logic to extractable

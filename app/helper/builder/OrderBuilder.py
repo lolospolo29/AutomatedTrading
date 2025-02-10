@@ -20,14 +20,13 @@ class OrderBuilder:
         o.trade_id = trade_id
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
                                                    relation.strategy, order_number)
-        o.orderlinkId = orderlinkId
+        o.orderLinkId = orderlinkId
         o.confirmations = confirmations
         o.entry_frame_work = entry_frame_work
         o.symbol = symbol
         o.category = category
         o.side = side
         o.money_at_risk = 0.0
-        o.unrealizedProfit = 0.0
         o.risk_percentage = risk_percentage
         o.order_result_status = OrderResultStatusEnum.NEW.value
         o.orderType = OrderTypeEnum.MARKET.value # set Default
