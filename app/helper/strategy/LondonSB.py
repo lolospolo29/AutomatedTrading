@@ -14,11 +14,12 @@ from app.models.trade.Trade import Trade
 # Unicorn Entry with 4H PD Range Bias
 
 class LondonSB(Strategy):
-    name:str =Field(default='FVGSession')
     model_config = {
         "arbitrary_types_allowed": True
     }
     strategy_facade: Optional['StrategyFacade'] = Field(default=None)
+
+
 
     def return_expected_time_frame(self) -> list:
         return self.expectedTimeFrames

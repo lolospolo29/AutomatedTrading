@@ -20,11 +20,11 @@ class OTEFourH(Strategy):
     components such as level calculations, pattern detection, Fibonacci retracements, and confirmation
     structures to generate trading entries and exits.
     """
-    name:str =Field(default='FVGSession')
     model_config = {
         "arbitrary_types_allowed": True
     }
     strategy_facade: Optional['StrategyFacade'] = Field(default=None)
+
     def is_in_time(self, time) -> bool:
         return True
 

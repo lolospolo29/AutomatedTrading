@@ -10,12 +10,12 @@ from app.models.asset.SMTPair import SMTPair
 
 
 class Asset(BaseModel):
-
-    name:str
-    asset_class:str
-    smt_pairs:Optional[list[SMTPair]]
-    relations:Optional[list[Relation]]
-    candles_series:Optional[list[CandleSeries]]
+    asset_id: int
+    name: str
+    asset_class: str
+    smt_pairs: Optional[list['SMTPair']] = None  # Can be None
+    relations: Optional[list['Relation']] = None  # Can be None
+    candles_series: Optional[list['CandleSeries']] = None  # Can be None
 
 
     def add_relation(self, relation:Relation):

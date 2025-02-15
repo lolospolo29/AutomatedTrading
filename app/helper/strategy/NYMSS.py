@@ -12,11 +12,11 @@ from app.models.trade.Trade import Trade
 
 
 class NYMSS(Strategy):
-    name:str =Field(default='FVGSession')
     model_config = {
         "arbitrary_types_allowed": True
     }
     strategy_facade: Optional['StrategyFacade'] = Field(default=None)
+
     def return_expected_time_frame(self) -> list:
         return self.expectedTimeFrames
 

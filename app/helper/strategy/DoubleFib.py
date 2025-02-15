@@ -18,6 +18,7 @@ class DoubleFib(Strategy):
     model_config = {
         "arbitrary_types_allowed": True
     }
+
     strategy_facade: Optional['StrategyFacade'] = Field(default=None)
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):

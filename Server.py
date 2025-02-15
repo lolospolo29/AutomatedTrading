@@ -19,15 +19,58 @@ def receive_signal():
 
     return f'Received Analyse data: {json_data}'
 
-@app.route('/post-data', methods=['POST'])
-def post_data():
-    data = request.get_json()  # Get the JSON data sent with the POST request
-    name = data.get('name')
-    message = data.get('message')
-    return jsonify({"status": "success", "received_name": name, "received_message": message})
+@app.route('/delete-asset', methods=['POST'])
+def delete_asset():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
 
+    thread = Thread(target=signal_controller.delete_asset, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
+@app.route('/create-asset', methods=['POST'])
+def create_asset():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.add_asset, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
+@app.route('/update-asset', methods=['POST'])
+def update_asset():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.update_asset, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
 # endregion
 
+# todo crud strategy / add relation
+# todo smt pair add
+# todo close trade amend trade
+# todo dashboard trade
+# todo strategy testing
+
+# region GET APP Route
+@app.route('/get-trades', methods=['GET'])
+def get_trades():
+    return jsonify(signal_controller.get_trades())
+
+@app.route('/get-assets', methods=['GET'])
+def get_assets():
+    return jsonify(signal_controller.get_assets())
+
+@app.route('/get-strategies', methods=['GET'])
+def get_strategies():
+    return jsonify(signal_controller.get_strategies())
+# endregion
+
+# region Loging
 @app.route('/')
 def show_logs():
      return render_template('showLogs.html')
@@ -45,25 +88,6 @@ def stream_logs():
                 continue  # No logs to send, continue waiting
 
     return Response(generate(), mimetype='text/event-stream')
-
-# region GET APP Route
-@app.route('/get-trades', methods=['GET'])
-def get_trades():
-    return jsonify(signal_controller.get_trades())
-
-@app.route('/get-news-days', methods=['GET'])
-def get_news():
-    return jsonify(signal_controller.get_news_days())
-
-@app.route('/get-news-assets', methods=['GET'])
-def get_assets():
-    return jsonify(signal_controller.get_assets())
-
-@app.route('/get-strategies', methods=['GET'])
-def get_strategies():
-    return jsonify(signal_controller.get_strategies())
 # endregion
-
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

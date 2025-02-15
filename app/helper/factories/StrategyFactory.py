@@ -20,7 +20,7 @@ from app.monitoring.logging.logging_startup import logger
 class StrategyFactory:
     def return_strategy(self, typ: str) -> Strategy:
         if typ == "FVGSession":
-            fvg =  FVGSession(name="FVGSession", timeframes=[ExpectedTimeFrame(timeframe=1, max_Len=90)]
+            fvg =  FVGSession(name=typ, timeframes=[ExpectedTimeFrame(timeframe=1, max_Len=90)]
                               ,strategy_facade=StrategyFacade())
             return fvg
         if typ == "Unicorn":
@@ -30,18 +30,18 @@ class StrategyFactory:
             return unicorn
         if typ == "OTEFourH":
             gen_timeframes = self.generate_timeframes([240], [60])
-            otefourh = OTEFourH(name="OTEFourH", timeframes=gen_timeframes, time_windows=[LondonOpen(), NYOpen()]
+            otefourh = OTEFourH(name=typ, timeframes=gen_timeframes, time_windows=[LondonOpen(), NYOpen()]
                                 ,strategy_facade=StrategyFacade())
             return otefourh
         if typ == "LondonSB":
             gen_timeframes = self.generate_timeframes([240, 1], [60, 90])
-            londonsb =  LondonSB(name="LondonSB", timeframes=gen_timeframes, time_windows=[SilverBulletLondon()]
+            londonsb =  LondonSB(name=typ, timeframes=gen_timeframes, time_windows=[SilverBulletLondon()]
                                  ,strategy_facade=StrategyFacade())
             return londonsb
         if typ == "DoubleFib":
             gen_timeframes = self.generate_timeframes([1], [90])
             time_windows:list[ITimeWindow] = [FirstQuarterWindow(), LastQuarterWindow()]
-            doublefib =  DoubleFib(timeframes=gen_timeframes, time_windows=time_windows,strategy_facade=StrategyFacade())
+            doublefib =  DoubleFib(name=typ,timeframes=gen_timeframes, time_windows=time_windows,strategy_facade=StrategyFacade())
             return doublefib
         logger.warning(f"No strategy found for {typ}")
 

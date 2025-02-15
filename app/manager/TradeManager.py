@@ -351,16 +351,17 @@ class TradeManager:
         return trades
 
     def return_trades(self) -> list[Trade]:
-        c = Candle(asset="a",broker="a",open=13,high=13,low=123,close=131,timeframe=1,iso_time=datetime.datetime.utcnow())
-        pd = PDArray(candles=[c],direction="Bullish")
-        o = Order(confirmations=[pd],entry_frame_work=pd)
-        t1 = Trade(relation=Relation(asset="a", broker="a", strategy="a", max_trades=1, id=1),createdTime="131",orders=[o],id="131",category="linear"
-                   )
-        self.register_trade(t1)
+        # c = Candle(asset="a",broker="a",open=13,high=13,low=123,close=131,timeframe=1,iso_time=datetime.datetime.utcnow())
+        # pd = PDArray(candles=[c],direction="Bullish")
+        # o = Order(confirmations=[pd],entry_frame_work=pd)
+        # t1 = Trade(relation=Relation(asset="a", broker="a", strategy="a", max_trades=1, id=1),createdTime="131",orders=[o],id="131",category="linear"
+        #            )
+        # self.register_trade(t1)
         return [x for x in self._open_trades.values()]
     # endregion
 
-# todo framework add to db from order, factory pattern for db model building
+# todo framework add to db from order
+# todo factory pattern for db model building
 
 # trade_manager = TradeManager()
 #

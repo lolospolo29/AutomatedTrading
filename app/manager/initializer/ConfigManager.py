@@ -61,7 +61,7 @@ class ConfigManager:
 
             asset_class_dto :AssetClassDTO= self._mongo_db_config.find_asset_class_by_id(asset_dto.assetClass)
 
-            asset:Asset =  Asset(name=asset_dto.name,asset_class=asset_class_dto.name,smt_pairs=[],relations=[],candles_series=[])
+            asset:Asset =  Asset(name=asset_dto.name,asset_class=asset_class_dto.name,smt_pairs=[],relations=[],candles_series=[],asset_id=asset_dto.assetId)
 
             self._asset_manager.register_asset(asset)
 

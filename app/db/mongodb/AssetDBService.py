@@ -9,9 +9,9 @@ from app.manager.initializer.SecretsManager import SecretsManager
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
 
+# todo change to flexible mongo db without inheritance
 
-
-class MongoDBData(MongoDB):
+class AssetDBService(MongoDB):
     _instance = None
     _lock = threading.Lock()
 
@@ -19,7 +19,7 @@ class MongoDBData(MongoDB):
         if not cls._instance:
             with cls._lock:
                 if not cls._instance:
-                    cls._instance = super(MongoDBData, cls).__new__(cls, *args, **kwargs)
+                    cls._instance = super(AssetDBService, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     def __init__(self):

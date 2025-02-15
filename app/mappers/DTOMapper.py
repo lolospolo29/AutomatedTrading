@@ -1,11 +1,17 @@
+import uuid
+from sqlite3 import Binary
+
+from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
 from app.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
+from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
 from app.models.frameworks.FrameWork import FrameWork
 from app.models.frameworks.Level import Level
 from app.models.frameworks.PDArray import PDArray
 from app.models.trade.Trade import Trade
+from app.monitoring.logging.logging_startup import logger
 
 
 class DTOMapper:
@@ -61,4 +67,12 @@ class DTOMapper:
         candle_dto.frameWorkId = framework.id
 
         return candle_dto
+
+    @staticmethod
+    def map_asset_to_dto(asset:Asset,asset_class_id:id,asset_id:int)->AssetDTO:
+        dto = AssetDTO(name=asset.name,assetClass=asset_class_id,assetId=asset_id)
+
+        return dto
+
+
 

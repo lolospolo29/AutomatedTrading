@@ -12,7 +12,6 @@ from app.models.trade.Trade import Trade
 
 # FVG CRT 4H
 class FVGSession(Strategy):
-    name:str =Field(default='FVGSession')
     model_config = {
         "arbitrary_types_allowed": True
     }
