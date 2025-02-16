@@ -1,6 +1,7 @@
 import threading
 
 from app.db.mongodb.AssetRepository import AssetRepository
+from app.db.mongodb.RelationRepository import RelationRepository
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
@@ -120,10 +121,12 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to add candle to db with exception {}".format(e))
 
-    def add_relation(self, relation: Relation):
+    def add_relation(self, relation: Relation)->bool:
         try:
             if relation.asset in self.assets:
                 self.assets[relation.asset].add_relation(relation)
+                return True
+            return False
         except Exception as e:
             logger.exception("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 

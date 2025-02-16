@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -6,7 +8,7 @@ class Relation(BaseModel):
     broker: str
     strategy: str
     max_trades: int
-    id: int
+    id: Optional[int]
 
     model_config = {
         "frozen": True

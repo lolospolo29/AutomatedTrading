@@ -12,12 +12,12 @@ from app.db.mongodb.dtos.StrategyDTO import StrategyDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.helper.factories.StrategyFactory import StrategyFactory
 from app.manager.AssetManager import AssetManager
+from app.manager.RelationManager import RelationManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
 from app.models.asset.Asset import Asset
 from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
-from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.Strategy import Strategy
 from app.models.trade.Trade import Trade
 from app.monitoring.log_time import log_time
@@ -44,6 +44,7 @@ class ConfigManager:
         self._relation_repository: RelationRepository = RelationRepository()
         self._trade_manager: TradeManager = TradeManager()
         self._asset_manager: AssetManager = AssetManager()
+        self._relation_manager: RelationManager = RelationManager()
         self._strategy_manager: StrategyManager = StrategyManager()
         self._strategy_factory: StrategyFactory = StrategyFactory()
 
@@ -97,7 +98,7 @@ class ConfigManager:
                 self.register_strategy(relation=relation, asset_dto=asset_dto
                                        , smt_pair_dtos=smt_pair_dtos)
 
-                self.add_timeframes_to_asset(relation=relation)
+                self._relation_manager.add_timeframes_to_asset(relation=relation)
 
                 ###
 
@@ -158,14 +159,4 @@ class ConfigManager:
 
         return smt_strategy,smt_pair
 
-    #todo export to asset manager
-    def add_timeframes_to_asset(self,relation:Relation):
-
-        exp_timeframes:list[ExpectedTimeFrame] = self._strategy_manager.return_expected_time_frame(relation=relation)
-
-        for exp_timeframe in exp_timeframes:
-            exp_timeframe:ExpectedTimeFrame = exp_timeframe
-
-            self._asset_manager.add_candles_series(asset=relation.asset,timeframe=exp_timeframe.timeframe
-                                                   ,maxlen=exp_timeframe.max_Len,broker=relation.broker)
     # endregion

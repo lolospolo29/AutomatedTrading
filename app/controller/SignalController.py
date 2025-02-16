@@ -1,8 +1,12 @@
 from typing import Dict, Any
+
+from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from app.manager.AssetManager import AssetManager
+from app.manager.RelationManager import RelationManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
 from app.models.asset.Asset import Asset
+from app.models.asset.Relation import Relation
 from app.monitoring.logging.logging_startup import logger
 from app.services.TradingService import TradingService
 
@@ -14,6 +18,7 @@ class SignalController:
         self._TradingService: TradingService = TradingService()
         self._TradeManager = TradeManager()
         self._AssetManager = AssetManager()
+        self._relation_manager = RelationManager()
         self._StrategyManager = StrategyManager()
     # endregion
 
@@ -52,8 +57,12 @@ class SignalController:
     def get_relations(self)->list[dict]:
         pass
 
-    def add_relation(self):
-        pass
+    def add_relation(self,json_data:Dict[str,Any] = None):
+        try:
+            relation = Relation.model_validate(json_data)
+            self._relation_manager.create_relation(relation=relation)
+        except Exception as e:
+            logger.warning("Delete Asset failed,Error: {e}".format(e=e))
 
     def update_relation(self):
         pass
@@ -101,6 +110,17 @@ class SignalController:
             except Exception as e:
                 logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=strategy.name, e=e))
         return dict_strategies
+
+    def get_brokers(self):
+        brokers:list[BrokerDTO] = self._TradeManager.get_brokers()
+        dict_brokers = []
+        for broker in brokers:
+            try:
+                broker_dict:dict = broker.dict(exclude={"id"})
+                dict_brokers.append(broker_dict)
+            except Exception as e:
+                logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=broker.name,e=e))
+        return dict_brokers
 
     # region TradingView Handling
     def trading_view_signal(self, json_data: Dict[str, Any]) -> None:

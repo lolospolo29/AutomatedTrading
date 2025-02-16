@@ -59,7 +59,25 @@ def update_asset():
 # todo dashboard trade
 # todo strategy testing
 
+# region Relation CRD
+
+@app.route('/create-relation', methods=['POST'])
+def create_relation():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.add_relation, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+# endregion
+
 # region GET APP Route
+
+@app.route('/get-brokers', methods=['GET'])
+def get_brokers():
+    return jsonify(signal_controller.get_brokers())
+
 @app.route('/get-trades', methods=['GET'])
 def get_trades():
     return jsonify(signal_controller.get_trades())
@@ -92,5 +110,6 @@ def stream_logs():
 
     return Response(generate(), mimetype='text/event-stream')
 # endregion
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

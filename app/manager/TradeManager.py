@@ -4,6 +4,7 @@ from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.api.brokers.models.RequestParameters import RequestParameters
 from app.db.mongodb.TradeRepository import TradeRepository
+from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.facade.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
@@ -81,6 +82,9 @@ class TradeManager:
     # endregion
 
     # region CRUD DB
+
+    def get_brokers(self)->list[BrokerDTO]:
+        return self._trade_repository.find_brokers()
 
     def __write_trade_to_db(self, trade: Trade):
         if trade.id in self._open_trades:
@@ -356,7 +360,6 @@ class TradeManager:
     # endregion
 
 # todo framework add to db from order
-# todo factory pattern for db model building
 
 # trade_manager = TradeManager()
 #

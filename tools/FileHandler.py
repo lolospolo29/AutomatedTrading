@@ -2,7 +2,6 @@ import csv
 import json
 import os
 import shutil
-import threading
 from datetime import datetime
 
 import pandas as pd
@@ -15,7 +14,6 @@ from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
 
 
-# noinspection PyUnusedLocal
 class FileHandler(FileSystemEventHandler):
     """
     A singleton class that handles file system events for processing incoming CSV files with TradingView alerts.
@@ -26,22 +24,9 @@ class FileHandler(FileSystemEventHandler):
     """
     # region Initializing
 
-    _instance = None
-    _lock = threading.Lock()
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(FileHandler, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-
     def __init__(self):
-        if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-
-            self._asset_manager: AssetManager = AssetManager()
-            self._strategy_manager: StrategyManager = StrategyManager()
-            self._initialized = True  # Markiere als initialisiert
+        self._asset_manager: AssetManager = AssetManager()
+        self._strategy_manager: StrategyManager = StrategyManager()
 
     # endregion
 
@@ -243,5 +228,3 @@ class FileHandler(FileSystemEventHandler):
         except Exception as e:
             logger.error(f"Error moving file {src_path} to _archive: {e}")
     # endregion
-
-# todo fix logic to extractable
