@@ -1,7 +1,8 @@
 import threading
 
-from app.db.mongodb.MongoDBConfig import MongoDBConfig
-from app.db.mongodb.MongoDBTrades import MongoDBTrades
+from app.db.mongodb.AssetRepository import AssetRepository
+from app.db.mongodb.RelationRepository import RelationRepository
+from app.db.mongodb.TradeRepository import TradeRepository
 from app.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
@@ -38,8 +39,9 @@ class ConfigManager:
 
     def __init__(self):
 
-        self._mongo_db_config: MongoDBConfig = MongoDBConfig()
-        self._mongo_db_trades: MongoDBTrades = MongoDBTrades()
+        self._asset_repository: AssetRepository = AssetRepository()
+        self._trade_repository: TradeRepository = TradeRepository()
+        self._relation_repository: RelationRepository = RelationRepository()
         self._trade_manager: TradeManager = TradeManager()
         self._asset_manager: AssetManager = AssetManager()
         self._strategy_manager: StrategyManager = StrategyManager()
@@ -52,14 +54,14 @@ class ConfigManager:
     def run_starting_setup(self):
         logger.info("Initializing ConfigManager")
 
-        assets_dtos = self._mongo_db_config.find_assets()
+        assets_dtos = self._asset_repository.find_assets()
 
         for asset_dto in assets_dtos:
             asset_dto:AssetDTO = asset_dto
 
             ### Register Asset
 
-            asset_class_dto :AssetClassDTO= self._mongo_db_config.find_asset_class_by_id(asset_dto.assetClass)
+            asset_class_dto :AssetClassDTO= self._asset_repository.find_asset_class_by_id(asset_dto.assetClass)
 
             asset:Asset =  Asset(name=asset_dto.name,asset_class=asset_class_dto.name,smt_pairs=[],relations=[],candles_series=[],asset_id=asset_dto.assetId)
 
@@ -67,7 +69,7 @@ class ConfigManager:
 
             ####
 
-            relations_db: list = self._mongo_db_config.find_relations_by_asset_id(asset_dto.assetId)
+            relations_db: list = self._relation_repository.find_relations_by_asset_id(asset_dto.assetId)
 
             for relation_db in relations_db:
 
@@ -75,9 +77,9 @@ class ConfigManager:
 
                 relation_dto:RelationDTO = relation_db
 
-                broker_dto:BrokerDTO = self._mongo_db_config.find_broker_by_id(relation_db.brokerId)
+                broker_dto:BrokerDTO = self._relation_repository.find_broker_by_id(relation_db.brokerId)
 
-                strategy_dto:StrategyDTO = self._mongo_db_config.find_strategy_by_id(relation_db.strategyId)
+                strategy_dto:StrategyDTO = self._relation_repository.find_strategy_by_id(relation_db.strategyId)
 
                 relation = Relation(asset=asset_dto.name,strategy=strategy_dto.name,broker=broker_dto.name,max_trades=relation_dto.maxTrades,id=relation_dto.relationId)
 
@@ -85,10 +87,10 @@ class ConfigManager:
 
                 ###
 
-                smt_pair_dtos:list[SMTPairDTO] = self._mongo_db_config.find_smt_pair_by_id(assetAId=relation_dto.assetId
+                smt_pair_dtos:list[SMTPairDTO] = self._asset_repository.find_smt_pair_by_id(assetAId=relation_dto.assetId
                                                                          ,strategyId=relation_dto.strategyId,assetBId=None)
 
-                smt_pair_dtos.extend(self._mongo_db_config.find_smt_pair_by_id(assetAId=None
+                smt_pair_dtos.extend(self._asset_repository.find_smt_pair_by_id(assetAId=None
                                                                                ,assetBId=relation_dto.assetId
                                                                                ,strategyId=None))
 
@@ -99,13 +101,13 @@ class ConfigManager:
 
                 ###
 
-                trades_db: list[TradeDTO] = self._mongo_db_trades.find_trades()
+                trades_db: list[TradeDTO] = self._trade_repository.find_trades()
 
                 for trade_db in trades_db:
                     trade_db:TradeDTO = trade_db
                     orders = []
                     if trade_db.relationId == relation_dto.relationId:
-                        orders.extend(self._mongo_db_trades.find_orders_by_trade_id(trade_db.tradeId))
+                        orders.extend(self._trade_repository.find_orders_by_trade_id(trade_db.tradeId))
 
                         trade = Trade(orders=orders, id=trade_db.tradeId, relation=relation, category=trade_db.category
                                       , side=trade_db.side, tpslMode=trade_db.tpslMode,
@@ -141,10 +143,10 @@ class ConfigManager:
         asset_b: AssetDTO = AssetDTO(name="", assetId=-1)
 
         if smt_pair_dto.assetAId == asset_dto.assetId:
-            asset_b: AssetDTO = self._mongo_db_config.find_asset_by_id(smt_pair_dto.assetBId)
+            asset_b: AssetDTO = self._asset_repository.find_asset_by_id(smt_pair_dto.assetBId)
 
         if smt_pair_dto.assetBId == asset_dto.assetId:
-            asset_b: AssetDTO = self._mongo_db_config.find_asset_by_id(smt_pair_dto.assetAId)
+            asset_b: AssetDTO = self._asset_repository.find_asset_by_id(smt_pair_dto.assetAId)
 
         smt_strategy: Strategy = self._strategy_factory.return_smt_strategy(typ=relation.strategy
                                                                              ,correlation=smt_pair_dto.correlation,

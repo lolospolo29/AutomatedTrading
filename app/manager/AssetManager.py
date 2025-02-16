@@ -1,11 +1,10 @@
 import threading
 
-from app.db.mongodb.MongoDBConfig import MongoDBConfig
-from app.db.mongodb.AssetDBService import AssetDBService
+from app.db.mongodb.AssetRepository import AssetRepository
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.models.asset.Asset import Asset
-from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle
+from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
 from app.monitoring.logging.logging_startup import logger
 
@@ -22,10 +21,12 @@ class AssetManager:
     :ivar assets: A dictionary holding the registered assets, with asset names as keys and Asset
         objects as values.
     :type assets: dict[str, Asset]
-    :ivar _mongo_db_data: MongoDB data handler for interacting with the database.
-    :type _mongo_db_data: MongoDBData
+    :ivar _asset_respository: MongoDB data handler for interacting with the database.
+    :type _asset_respository: MongoDBData
         systems and internal representations.
     """
+    # region Initializing
+
     _instance = None
     _lock = threading.Lock()
 
@@ -36,13 +37,11 @@ class AssetManager:
                     cls._instance = super(AssetManager, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    # region Initializing
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.assets: dict[str,Asset] = {}
-            self._mongo_db_data = AssetDBService()
-            self._mongo_db_config = MongoDBConfig()
+            self._asset_respository = AssetRepository()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
@@ -65,41 +64,19 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to delete asset {asset},Error:{e}".format(asset=asset, e=e))
 
-    def return_all_assets(self)->list[Asset]:
-        return [x for x in self.assets.values()]
-
     # endregion
 
     # region CRUD
 
-    def _add_candle_to_db(self, candle: Candle):
-        logger.debug(f"Adding candle to db:{candle.asset}")
-        try:
-            self._mongo_db_data.add_candle_to_db(candle.asset, candle)
-        except Exception as e:
-            logger.critical("Failed to add candle to db with exception {}".format(e))
-
-    def received_candles(self, asset: str):
-        if asset in self.assets:
-            logger.debug(f"Adding candle to db:{asset}")
-            try:
-                candles_db = self._mongo_db_data.receive_asset_data(asset)
-                candles = []
-                for candle_db in candles_db:
-                    candles.append(Candle.model_validate(candle_db))
-
-                for candle in candles:
-                    self.assets[candle.asset].add_candle(candle)
-
-            except Exception as e:
-                logger.critical("Failed to add candle to db with exception {}".format(e))
+    def return_all_assets(self)->list[Asset]:
+        return [x for x in self.assets.values()]
 
     def create_asset(self,asset:Asset):
         try:
             if not asset.name in self.assets:
                 self.register_asset(asset)
                 logger.debug(f"Adding Asset to db:{asset}")
-                self._mongo_db_config.add_asset(asset)
+                self._asset_respository.add_asset(asset)
         except Exception as e:
             logger.critical("Failed to add Asset to db with exception {}".format(e))
 
@@ -108,22 +85,29 @@ class AssetManager:
             if asset.name in self.assets:
                 self.remove_asset(asset)
                 logger.debug(f"Delete Asset from db:{asset}")
-                self._mongo_db_config.delete_asset(asset)
+                self._asset_respository.delete_asset(asset)
         except Exception as e:
             logger.critical("Failed to delete Asset from db with exception {}".format(e))
 
     def update_asset(self,asset:Asset):
         try:
-            dto:AssetDTO = self._mongo_db_config.find_asset_by_id(asset.id)
+            dto:AssetDTO = self._asset_respository.find_asset_by_id(asset.asset_id)
             if dto.name in self.assets:
                 self.assets[asset.name] = asset
-                self._mongo_db_config.update_asset(asset)
+                self._asset_respository.update_asset(asset)
         except Exception as e:
             logger.critical("Failed to update Asset with exception {}".format(e))
 
     # endregion
 
     # region Add Functions
+
+    def _add_candle_to_db(self, candle: Candle):
+        logger.debug(f"Adding candle to db:{candle.asset}")
+        try:
+            self._asset_respository.add_candle(candle.asset, candle)
+        except Exception as e:
+            logger.critical("Failed to add candle to db with exception {}".format(e))
 
     def add_candle(self,candle:Candle) -> Candle:
         try:

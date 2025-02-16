@@ -1,27 +1,22 @@
-import datetime
 import threading
-import uuid
 
-from app.helper.facade.BrokerFacade import BrokerFacade
 from app.api.brokers.models.BrokerOrder import BrokerOrder
 from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.api.brokers.models.RequestParameters import RequestParameters
-from app.db.mongodb.MongoDBTrades import MongoDBTrades
+from app.db.mongodb.TradeRepository import TradeRepository
 from app.helper.builder.OrderBuilder import OrderBuilder
+from app.helper.facade.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
-from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
-from app.models.frameworks.PDArray import PDArray
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.models.trade.enums.OrderStatusEnum import OrderStatusEnum
-from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -52,7 +47,7 @@ class TradeManager:
             self._trade_registry = SemaphoreRegistry()
             self._lock_registry = LockRegistry()
             self._open_trades: dict[str, Trade] = {}
-            self._mongo_db_trades: MongoDBTrades = MongoDBTrades()
+            self._trade_repository: TradeRepository = TradeRepository()
             self._broker_facade = BrokerFacade()
             self._risk_manager = RiskManager()
             self._class_mapper = ClassMapper()
@@ -90,24 +85,24 @@ class TradeManager:
     def __write_trade_to_db(self, trade: Trade):
         if trade.id in self._open_trades:
             logger.info(f"Write Trade To DB,TradeId: {trade.id}")
-            self._mongo_db_trades.add_trade_to_db(trade)
+            self._trade_repository.add_trade_to_db(trade)
 
     def __write_order_to_db(self, order: Order) -> None:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
             logger.info(f"Write Order To DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
-            self._mongo_db_trades.add_order_to_db(order)
+            self._trade_repository.add_order_to_db(order)
 
     def __update_trade_in_db(self, trade: Trade) -> None:
         if trade.id in self._open_trades:
             logger.info(f"Update To DB,TradeId: {trade.id}")
-            self._mongo_db_trades.update_trade(trade)
+            self._trade_repository.update_trade(trade)
 
     def __update_order_in_db(self, order: Order) -> None:
         logger.info(f"Update Order in DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-            self._mongo_db_trades.update_order(order)
+            self._trade_repository.update_order(order)
 
     # endregion
 
@@ -238,10 +233,10 @@ class TradeManager:
                         if pi.symbol == trade.relation.asset and pi.category == trade.category:
                             self._broker_mapper.map_broker_position_to_trade(pi, trade)
                     try:
-                        self._mongo_db_trades.update_trade(trade)
+                        self._trade_repository.update_trade(trade)
                     except Exception:
                         try:
-                            self._mongo_db_trades.add_trade_to_db(trade)
+                            self._trade_repository.add_trade_to_db(trade)
                         except Exception as e:
                             logger.warning(
                                 "Write Trade to DB Error,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
@@ -274,12 +269,12 @@ class TradeManager:
         with tradeLock:
             if trade.id in self._open_trades:
                 trade = self._open_trades[trade.id]
-                self._mongo_db_trades.archive_trade(trade)
+                self._trade_repository.archive_trade(trade)
                 self.__remove_trade(trade)
                 try:
                     for order in trade.orders:
                         try:
-                            self._mongo_db_trades.archive_order(order)
+                            self._trade_repository.archive_order(order)
                         except Exception as e:
                             logger.warning("Archive Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(
                                 orderLinkId=order.orderLinkId, e=e))

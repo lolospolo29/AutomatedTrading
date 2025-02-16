@@ -1,6 +1,3 @@
-import uuid
-from sqlite3 import Binary
-
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
 from app.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
@@ -11,7 +8,6 @@ from app.models.frameworks.FrameWork import FrameWork
 from app.models.frameworks.Level import Level
 from app.models.frameworks.PDArray import PDArray
 from app.models.trade.Trade import Trade
-from app.monitoring.logging.logging_startup import logger
 
 
 class DTOMapper:

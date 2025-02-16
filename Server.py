@@ -19,6 +19,8 @@ def receive_signal():
 
     return f'Received Analyse data: {json_data}'
 
+# region Asset Endpoints
+
 @app.route('/delete-asset', methods=['POST'])
 def delete_asset():
     json_data = request.get_json()  # Get the JSON data sent with the POST request
@@ -48,6 +50,7 @@ def update_asset():
     thread.start()
 
     return jsonify({"status": "success"})
+# endregion
 # endregion
 
 # todo crud strategy / add relation

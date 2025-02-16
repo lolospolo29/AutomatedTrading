@@ -13,7 +13,7 @@ from app.models.trade.Trade import Trade
 from app.monitoring.logging.logging_startup import logger
 
 
-class MongoDBTrades(MongoDB):
+class TradeRepository:
     # region Initializing
     _instance = None
     _lock = threading.Lock()
@@ -22,20 +22,21 @@ class MongoDBTrades(MongoDB):
         if not cls._instance:
             with cls._lock:
                 if not cls._instance:
-                    cls._instance = super(MongoDBTrades, cls).__new__(cls, *args, **kwargs)
+                    cls._instance = super(TradeRepository, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._secret_manager: SecretsManager = SecretsManager()
-            super().__init__("Trades", self._secret_manager.return_secret("mongodb"))
-            self._mapper:DTOMapper = DTOMapper()
+            self.__secret = self._secret_manager.return_secret("mongodb")
+            self._dto_mapper:DTOMapper = DTOMapper()
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
 
     def find_trades(self)->list[TradeDTO]:
-        trades_db:list =  self.find(MongoEndPointEnum.OPENTRADES.value, None)
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        trades_db:list =  db.find(MongoEndPointEnum.OPENTRADES.value, None)
 
         trades:list[TradeDTO] = []
 
@@ -45,7 +46,9 @@ class MongoDBTrades(MongoDB):
         return trades
 
     def find_orders(self)->list[Order]:
-        orders_db:list =  self.find(MongoEndPointEnum.OPENORDERS.value, None)
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+
+        orders_db:list =  db.find(MongoEndPointEnum.OPENORDERS.value, None)
         orders:list[Order] = []
         for order_db in orders_db:
             order = Order(**order_db)
@@ -53,8 +56,10 @@ class MongoDBTrades(MongoDB):
         return orders
 
     def find_frameworks_by_orderLinkId(self,orderLinkId:str)->list[FrameWorkDTO]:
-        query = self.buildQuery("orderLinkId", orderLinkId)
-        frameworks_db =  self.find(MongoEndPointEnum.FRAMEWORKS.value, query)
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+
+        query = db.buildQuery("orderLinkId", orderLinkId)
+        frameworks_db =  db.find(MongoEndPointEnum.FRAMEWORKS.value, query)
 
         frameworks:list[FrameWorkDTO] = []
 
@@ -64,12 +69,16 @@ class MongoDBTrades(MongoDB):
         return frameworks
 
     def find_trade_by_id(self,trade_id:str)->TradeDTO:
-        query = self.buildQuery("tradeId", trade_id)
-        return TradeDTO(**self.find(MongoEndPointEnum.OPENTRADES.value, query)[0])
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+
+        query = db.buildQuery("tradeId", trade_id)
+        return TradeDTO(**db.find(MongoEndPointEnum.OPENTRADES.value, query)[0])
 
     def find_orders_by_trade_id(self,trade_id:str)->list[Order]:
-        query = self.buildQuery("tradeId", trade_id)
-        orders_db =  self.find(MongoEndPointEnum.OPENORDERS.value, query)
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+
+        query = db.buildQuery("tradeId", trade_id)
+        orders_db =  db.find(MongoEndPointEnum.OPENORDERS.value, query)
         orders:list[Order] = []
         for order_db in orders_db:
             order = Order(**order_db)
@@ -77,12 +86,16 @@ class MongoDBTrades(MongoDB):
         return orders
 
     def find_order_by_id(self,order_id:str)->Order:
-        query = self.buildQuery("orderLinkId", order_id)
-        return Order(**self.find(MongoEndPointEnum.OPENORDERS.value, query)[0])
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+
+        query = db.buildQuery("orderLinkId", order_id)
+        return Order(**db.find(MongoEndPointEnum.OPENORDERS.value, query)[0])
 
     def find_candles_by_framework_id(self,framework_id:str)->list[CandleFrameWorkDTO]:
-        query = self.buildQuery("frameWorkId", framework_id)
-        candles_db =  self.find(MongoEndPointEnum.FRAMEWORKCANDLES.value, query)
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+
+        query = db.buildQuery("frameWorkId", framework_id)
+        candles_db =  db.find(MongoEndPointEnum.FRAMEWORKCANDLES.value, query)
         candles:list[CandleFrameWorkDTO] = []
         for candle_db in candles_db:
             candle = CandleFrameWorkDTO(**candle_db)
@@ -92,62 +105,76 @@ class MongoDBTrades(MongoDB):
     # region Add / Update / Archive
     def add_trade_to_db(self, trade: Trade):
         logger.info(f"Adding Trade to DB: {trade.id}")
-        trade_dto:TradeDTO = self._mapper.map_trade_to_dto(trade=trade)
-        self.add(MongoEndPointEnum.OPENTRADES.value,trade_dto.model_dump())
+
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
+        db.add(MongoEndPointEnum.OPENTRADES.value,trade_dto.model_dump())
 
     def add_order_to_db(self, order: Order):
         logger.info(f"Adding Order To DB,OrderLinkId: {order.orderLinkId}")
-        self.add(MongoEndPointEnum.OPENORDERS.value, order.model_dump(exclude={'entry_frame_work','confirmations'}))
+
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        db.add(MongoEndPointEnum.OPENORDERS.value, order.model_dump(exclude={'entry_frame_work','confirmations'}))
 
     def add_framework_to_db(self,framework:FrameWork):
         logger.info(f"Adding Framework To DB,Name: {framework.name}")
-        framework_dto:FrameWorkDTO = self._mapper.map_framework_to_dto(framework=framework)
-        self.add(MongoEndPointEnum.FRAMEWORKS.value, framework_dto.model_dump())
+
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        framework_dto:FrameWorkDTO = self._dto_mapper.map_framework_to_dto(framework=framework)
+        db.add(MongoEndPointEnum.FRAMEWORKS.value, framework_dto.model_dump())
 
     def add_framework_candles_to_db(self,framework:FrameWork):
         logger.info(f"Adding Framework Candles To DB,Name: {framework.name}")
+
+        db = MongoDB(dbName="Trades",uri=self.__secret)
         for candle in framework.candles:
-            candle_dto = self._mapper.map_candle_to_dto(candle=candle,framework=framework)
-            self.add(MongoEndPointEnum.FRAMEWORKCANDLES.value,
+            candle_dto = self._dto_mapper.map_candle_to_dto(candle=candle, framework=framework)
+            db.add(MongoEndPointEnum.FRAMEWORKCANDLES.value,
                 candle_dto.model_dump())
 
     def update_trade(self, trade: Trade):
         logger.info(f"Updating Trade,OrderLinkId:{trade.id}")
-        query = self.buildQuery( "tradeId", str(trade.id))
-        res = self.find(MongoEndPointEnum.OPENTRADES.value, query)
 
-        trade_dto:TradeDTO = self._mapper.map_trade_to_dto(trade=trade)
-
-        self.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade_dto.model_dump())
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        query = db.buildQuery( "tradeId", str(trade.id))
+        res = db.find(MongoEndPointEnum.OPENTRADES.value, query)
+        trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
+        db.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade_dto.model_dump())
 
     def update_order(self, order: Order):
         logger.info(f"Update Order To DB,OrderLinkId: {order.orderLinkId},Symbol: {order.symbol}")
 
-        query = self.buildQuery( "orderLinkId", str(order.orderLinkId))
-        res = self.find(MongoEndPointEnum.OPENORDERS.value, query)
-        self.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.model_dump(exclude={'entry_frame_work','confirmations'}))
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        query = db.buildQuery( "orderLinkId", str(order.orderLinkId))
+        res = db.find(MongoEndPointEnum.OPENORDERS.value, query)
+        db.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.model_dump(exclude={'entry_frame_work'
+                                                                                          ,'confirmations'}))
 
     def update_framework(self, framework:FrameWork):
         logger.info(f"Update Framework To DB,Name: {framework.name}")
-        query = self.buildQuery( "frameWorkId", framework.id)
-        res = self.find(MongoEndPointEnum.FRAMEWORKS.value, query)
-        framework_dto:FrameWorkDTO = self._mapper.map_framework_to_dto(framework=framework)
-        self.update(MongoEndPointEnum.FRAMEWORKS.value, res[0].get("_id"), framework_dto.model_dump())
+
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        query = db.buildQuery( "frameWorkId", framework.id)
+        res = db.find(MongoEndPointEnum.FRAMEWORKS.value, query)
+        framework_dto:FrameWorkDTO = self._dto_mapper.map_framework_to_dto(framework=framework)
+        db.update(MongoEndPointEnum.FRAMEWORKS.value, res[0].get("_id"), framework_dto.model_dump())
 
     def archive_trade(self, trade: Trade):
         logger.info(f"Arching Trade,OrderLinkId:{trade.id}")
 
-        trade_dto:TradeDTO = self._mapper.map_trade_to_dto(trade=trade)
-
-        self.add(MongoEndPointEnum.CLOSEDTRADES.value, trade_dto.model_dump())
-        query = self.buildQuery( "tradeId", str(trade.id))
-        self.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
+        db.add(MongoEndPointEnum.CLOSEDTRADES.value, trade_dto.model_dump())
+        query = db.buildQuery( "tradeId", str(trade.id))
+        db.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
 
     def archive_order(self, order: Order):
         logger.info(f"Arching Order To DB,OrderLinkId: {order.orderLinkId}, Symbol: {order.symbol}")
-        self.add(MongoEndPointEnum.CLOSEDORDERS.value, order.model_dump(exclude={'entry_frame_work','confirmations'}))
-        query = self.buildQuery( "orderLinkId", str(order.orderLinkId))
-        self.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
+
+        db = MongoDB(dbName="Trades",uri=self.__secret)
+        db.add(MongoEndPointEnum.CLOSEDORDERS.value, order.model_dump(exclude={'entry_frame_work','confirmations'}))
+        query = db.buildQuery( "orderLinkId", str(order.orderLinkId))
+        db.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
     # endregion
 
 

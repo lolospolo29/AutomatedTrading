@@ -59,7 +59,6 @@ class MongoDB:
     def deleteByQuery(self, collection_name: str, query: Any) -> None:
         documents = self.find(collection_name, query)
         deletedIds = []
-
         for document in documents:
             documentId = str(document['_id'])
             if self.delete(collection_name, documentId):
