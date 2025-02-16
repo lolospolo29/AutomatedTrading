@@ -1,6 +1,7 @@
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
 from app.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
+from app.db.mongodb.dtos.RelationDTO import RelationDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
@@ -69,6 +70,3 @@ class DTOMapper:
         dto = AssetDTO(name=asset.name,assetClass=asset_class_id,assetId=asset_id)
 
         return dto
-
-
-

@@ -8,6 +8,7 @@ from app.manager.initializer.SecretsManager import SecretsManager
 from app.mappers.DTOMapper import DTOMapper
 from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
+from app.models.asset.SMTPair import SMTPair
 
 
 class AssetRepository:
@@ -96,9 +97,13 @@ class AssetRepository:
     def update_asset(self,asset:Asset):
         db = MongoDB(dbName="TradingConfig",uri=self.__secret)
 
-        dto:AssetDTO = self.find_asset_by_id(asset.asset_id)
+        assetClass:AssetClassDTO = self.find_asset_class_by_name(asset.asset_class)
 
-        db.update("Asset",dto.id,dto.model_dump())
+        asset_dto = self.find_asset_by_id(asset.asset_id)
+
+        dto = self._dto_mapper.map_asset_to_dto(asset=asset,asset_id=asset.asset_id,asset_class_id=assetClass.assetClassId)
+
+        db.update("Asset",asset_dto.id,dto.model_dump())
     # endregion
 
     def find_smt_pair_by_id(self,strategyId:int=None,assetAId:int=None,assetBId:int=None)->list[SMTPairDTO]:
@@ -120,4 +125,3 @@ class AssetRepository:
             smt_pairs.append(SMTPairDTO(**smt_pair))
 
         return smt_pairs
-

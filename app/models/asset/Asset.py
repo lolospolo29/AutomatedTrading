@@ -17,6 +17,34 @@ class Asset(BaseModel):
     relations: Optional[list['Relation']] = None  # Can be None
     candles_series: Optional[list['CandleSeries']] = None  # Can be None
 
+    def update_asset(self,asset:'Asset'):
+        if asset.smt_pairs is not None:
+            self.smt_pairs = asset.smt_pairs
+        if asset.relations is not None:
+            self.relations = asset.relations
+
+    def remove_relation(self, relation:Relation):
+        if self.relations is None:
+            return
+        self.relations.remove(relation)
+
+        candles_series = self.candles_series.copy()
+
+        for candleSeries in candles_series:
+            if candleSeries.broker == relation.broker:
+                self.candles_series.remove(candleSeries)
+        smt_pairs = self.smt_pairs
+        for smt_pair in smt_pairs:
+            if smt_pair.broker == relation.broker and (smt_pair.asset_1 == relation.asset_1 or smt_pair.asset_2 == relation.asset_1):
+                self.smt_pairs.remove(smt_pair)
+
+    def update_relation(self,relation:Relation):
+        relations = self.relations.copy()
+        for relation_ in relations:
+            if relation_.id == relation.id:
+                self.relations.remove(relation_)
+                self.relations.append(relation)
+                return
 
     def add_relation(self, relation:Relation):
         if self.relations is None:

@@ -63,6 +63,23 @@ class StrategyManager:
             logger.info(f"Strategy {strategy.name} already registered")
             return False
 
+    def update_relation(self,relation:Relation):
+            for relation_, strategy in self.strategies.items():
+                if relation_.id == relation.id:
+                    self.delete_strategy(relation_)
+                    self.register_strategy(relation,strategy)
+                    logger.info(f"Strategy {relation_.asset} updated")
+                    return
+                    # update the relation not strategy with the input relation
+
+    def delete_strategy(self,relation:Relation):
+        try:
+            if relation in self.strategies:
+                del self.strategies[relation]
+                logger.info(f"Strategy {relation.asset} deleted")
+        except Exception as e:
+            logger.exception("Failed to delete strategy {strategy},Error:{e}".format(strategy=relation, e=e))
+
     def return_strategies(self)->list[Strategy]:
         return [x for x in self.strategies.values()]
 

@@ -1,7 +1,6 @@
 import threading
 
 from app.db.mongodb.AssetRepository import AssetRepository
-from app.db.mongodb.RelationRepository import RelationRepository
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
@@ -62,6 +61,7 @@ class AssetManager:
         try:
             if asset.name in self.assets:
                 del self.assets[asset.name]
+                logger.info(f"Asset {asset.name} deleted")
         except Exception as e:
             logger.exception("Failed to delete asset {asset},Error:{e}".format(asset=asset, e=e))
 
@@ -76,8 +76,9 @@ class AssetManager:
         try:
             if not asset.name in self.assets:
                 self.register_asset(asset)
-                logger.debug(f"Adding Asset to db:{asset}")
+                logger.debug(f"Adding Asset to Asset Manager:{asset}")
                 self._asset_respository.add_asset(asset)
+                logger.debug(f"Adding Asset to db:{asset}")
         except Exception as e:
             logger.critical("Failed to add Asset to db with exception {}".format(e))
 
@@ -85,8 +86,9 @@ class AssetManager:
         try:
             if asset.name in self.assets:
                 self.remove_asset(asset)
-                logger.debug(f"Delete Asset from db:{asset}")
+                logger.debug(f"Delete Asset:{asset}")
                 self._asset_respository.delete_asset(asset)
+                logger.debug(f"Delete Asset from db:{asset}")
         except Exception as e:
             logger.critical("Failed to delete Asset from db with exception {}".format(e))
 
@@ -94,8 +96,10 @@ class AssetManager:
         try:
             dto:AssetDTO = self._asset_respository.find_asset_by_id(asset.asset_id)
             if dto.name in self.assets:
-                self.assets[asset.name] = asset
+                self.assets[asset.name].update_asset(asset)
+                logger.debug(f"Update Asset in Asset Manager:{asset}")
                 self._asset_respository.update_asset(asset)
+                logger.debug(f"Update Asset in db:{asset}")
         except Exception as e:
             logger.critical("Failed to update Asset with exception {}".format(e))
 
@@ -129,6 +133,20 @@ class AssetManager:
             return False
         except Exception as e:
             logger.exception("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+
+    def update_relation(self,relation:Relation):
+        try:
+            if relation.asset in self.assets:
+                self.assets[relation.asset].update_relation(relation)
+        except Exception as e:
+            logger.exception("Failed to update relation for asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+
+    def remove_relation(self,relation:Relation):
+        try:
+            if relation.asset in self.assets:
+                self.assets[relation.asset].remove_relation(relation)
+        except Exception as e:
+            logger.exception("Failed to remove relation from asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 
     def add_candles_series(self,asset:str,maxlen:int,timeframe:int,broker:str):
         try:
@@ -169,7 +187,7 @@ class AssetManager:
         except Exception as e:
             logger.exception("Failed to return candles for asset {asset},Error {e}".format(asset=asset, e=e))
 
-    def return_all_relations(self, asset: str):
+    def return_all_relations(self, asset: str)->list[Relation]:
         try:
             if asset in self.assets:
                 return self.assets[asset].relations

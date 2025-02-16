@@ -58,66 +58,79 @@ class ConfigManager:
         assets_dtos = self._asset_repository.find_assets()
 
         for asset_dto in assets_dtos:
-            asset_dto:AssetDTO = asset_dto
+            try:
+                asset_dto:AssetDTO = asset_dto
 
-            ### Register Asset
+                ### Register Asset
 
-            asset_class_dto :AssetClassDTO= self._asset_repository.find_asset_class_by_id(asset_dto.assetClass)
+                asset_class_dto :AssetClassDTO= self._asset_repository.find_asset_class_by_id(asset_dto.assetClass)
 
-            asset:Asset =  Asset(name=asset_dto.name,asset_class=asset_class_dto.name,smt_pairs=[],relations=[],candles_series=[],asset_id=asset_dto.assetId)
+                asset:Asset =  Asset(name=asset_dto.name,asset_class=asset_class_dto.name,smt_pairs=[],relations=[],candles_series=[],asset_id=asset_dto.assetId)
 
-            self._asset_manager.register_asset(asset)
+                self._asset_manager.register_asset(asset)
 
-            ####
+                ####
 
-            relations_db: list = self._relation_repository.find_relations_by_asset_id(asset_dto.assetId)
+                relations_db: list = self._relation_repository.find_relations_by_asset_id(asset_dto.assetId)
 
-            for relation_db in relations_db:
+                for relation_db in relations_db:
 
-                ## Add Relation
+                    ## Add Relation
 
-                relation_dto:RelationDTO = relation_db
+                    try:
 
-                broker_dto:BrokerDTO = self._relation_repository.find_broker_by_id(relation_db.brokerId)
+                        relation_dto:RelationDTO = relation_db
 
-                strategy_dto:StrategyDTO = self._relation_repository.find_strategy_by_id(relation_db.strategyId)
+                        broker_dto:BrokerDTO = self._relation_repository.find_broker_by_id(relation_db.brokerId)
 
-                relation = Relation(asset=asset_dto.name,strategy=strategy_dto.name,broker=broker_dto.name,max_trades=relation_dto.maxTrades,id=relation_dto.relationId)
+                        strategy_dto:StrategyDTO = self._relation_repository.find_strategy_by_id(relation_db.strategyId)
 
-                self._asset_manager.add_relation(relation)
+                        relation = Relation(asset=asset_dto.name,strategy=strategy_dto.name,broker=broker_dto.name,max_trades=relation_dto.maxTrades,id=relation_dto.relationId)
 
-                ###
+                        self._asset_manager.add_relation(relation)
 
-                smt_pair_dtos:list[SMTPairDTO] = self._asset_repository.find_smt_pair_by_id(assetAId=relation_dto.assetId
-                                                                         ,strategyId=relation_dto.strategyId,assetBId=None)
+                        ###
 
-                smt_pair_dtos.extend(self._asset_repository.find_smt_pair_by_id(assetAId=None
-                                                                               ,assetBId=relation_dto.assetId
-                                                                               ,strategyId=None))
+                        smt_pair_dtos:list[SMTPairDTO] = self._asset_repository.find_smt_pair_by_id(assetAId=relation_dto.assetId
+                                                                                 ,strategyId=relation_dto.strategyId,assetBId=None)
 
-                self.register_strategy(relation=relation, asset_dto=asset_dto
-                                       , smt_pair_dtos=smt_pair_dtos)
+                        smt_pair_dtos.extend(self._asset_repository.find_smt_pair_by_id(assetAId=None
+                                                                                       ,assetBId=relation_dto.assetId
+                                                                                       ,strategyId=None))
 
-                self._relation_manager.add_timeframes_to_asset(relation=relation)
+                        self.register_strategy(relation=relation, asset_dto=asset_dto
+                                               , smt_pair_dtos=smt_pair_dtos)
 
-                ###
+                        self._relation_manager.add_timeframes_to_asset(relation=relation)
 
-                trades_db: list[TradeDTO] = self._trade_repository.find_trades()
+                        ###
 
-                for trade_db in trades_db:
-                    trade_db:TradeDTO = trade_db
-                    orders = []
-                    if trade_db.relationId == relation_dto.relationId:
-                        orders.extend(self._trade_repository.find_orders_by_trade_id(trade_db.tradeId))
+                        trades_db: list[TradeDTO] = self._trade_repository.find_trades()
 
-                        trade = Trade(orders=orders, id=trade_db.tradeId, relation=relation, category=trade_db.category
-                                      , side=trade_db.side, tpslMode=trade_db.tpslMode,
-                                      unrealisedPnl=trade_db.unrealisedPnl
-                                      , leverage=trade_db.leverage, size=trade_db.size, tradeMode=trade_db.tradeMode
-                                      , updatedTime=trade_db.updatedTime, createdTime=trade_db.createdTime)
+                        for trade_db in trades_db:
+                            trade_db:TradeDTO = trade_db
+                            orders = []
+                            if trade_db.relationId == relation_dto.relationId:
+                                try:
+                                    orders.extend(self._trade_repository.find_orders_by_trade_id(trade_db.tradeId))
 
-                        self._trade_manager.register_trade(trade)
-                    continue
+                                    trade = Trade(orders=orders, id=trade_db.tradeId, relation=relation, category=trade_db.category
+                                                  , side=trade_db.side, tpslMode=trade_db.tpslMode,
+                                                  unrealisedPnl=trade_db.unrealisedPnl
+                                                  , leverage=trade_db.leverage, size=trade_db.size, tradeMode=trade_db.tradeMode
+                                                  , updatedTime=trade_db.updatedTime, createdTime=trade_db.createdTime)
+
+                                    self._trade_manager.register_trade(trade)
+                                except Exception as e:
+                                    logger.info("Error in Config Manager while registering trades: {e}".format(e=e))
+                                finally:
+                                    continue
+                    except Exception as e:
+                        logger.info("Error in Config Manager while registering relations: {e}".format(e=e))
+            except Exception as e:
+                logger.info("Error in Config Manager while registering assets: {e}".format(e=e))
+            finally:
+                continue
         logger.info("ConfigManager initialized")
 
     def register_strategy(self, relation:Relation, asset_dto:AssetDTO
@@ -128,12 +141,14 @@ class ConfigManager:
                 smt_pair_dto: SMTPairDTO = smt_pair_dto
 
                 smt_strategy, smt_pair = self.create_smt(asset_dto=asset_dto, relation=relation, smt_pair_dto=smt_pair_dto)
-
+                if smt_strategy is None:
+                    logger.error("SMT Strategy has None Type. Skipping.")
+                    return
                 self._strategy_manager.register_smt_strategy(relation_smt=relation, strategy_smt=smt_strategy,
                                                              asset2=smt_pair.asset_b)
 
-
                 self._asset_manager.add_smt_pair(asset=relation.asset,smt_pair=smt_pair)
+
 
         elif len(smt_pair_dtos) == 0:
             strategy = self._strategy_factory.return_strategy(typ=relation.strategy)
@@ -152,11 +167,10 @@ class ConfigManager:
         smt_strategy: Strategy = self._strategy_factory.return_smt_strategy(typ=relation.strategy
                                                                              ,correlation=smt_pair_dto.correlation,
                                                                              asset1=relation.asset
-                                                                             , asset2=smt_pair_dto.assetB)
+                                                                             , asset2=asset_b.name)
 
         smt_pair: SMTPair = SMTPair(strategy=relation.strategy, asset_a=asset_dto.name, asset_b=asset_b.name,
                                     correlation=smt_pair_dto.correlation)
 
         return smt_strategy,smt_pair
-
     # endregion

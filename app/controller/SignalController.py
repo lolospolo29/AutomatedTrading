@@ -7,6 +7,7 @@ from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
 from app.models.asset.Asset import Asset
 from app.models.asset.Relation import Relation
+from app.models.asset.SMTPair import SMTPair
 from app.monitoring.logging.logging_startup import logger
 from app.services.TradingService import TradingService
 
@@ -18,7 +19,7 @@ class SignalController:
         self._TradingService: TradingService = TradingService()
         self._TradeManager = TradeManager()
         self._AssetManager = AssetManager()
-        self._relation_manager = RelationManager()
+        self._Relation_manager = RelationManager()
         self._StrategyManager = StrategyManager()
     # endregion
 
@@ -43,32 +44,59 @@ class SignalController:
         pass
 
     def get_smt_pairs(self)->list[dict]:
-        pass
+        smt_pairs:list[SMTPair] = self._Relation_manager.return_smt_pairs()
+        dict_smt_pairs = []
+        for smt_pair in smt_pairs:
+            try:
+                relation_dict:dict = smt_pair.dict()
+                dict_smt_pairs.append(relation_dict)
+            except Exception as e:
+                logger.error("Error appending relation to list: {id},Error:{e}".format(id=smt_pair.strategy,e=e))
+        return dict_smt_pairs
 
-    def add_smt_pair(self):
-        pass
+    def add_smt_pair(self,json_data:Dict[str,Any] = None):
+        try:
+            smt_pair = SMTPair.model_validate(json_data)
+            self._Relation_manager.create_smt(smt_pair)
+        except Exception as e:
+            logger.warning("Delete Asset failed,Error: {e}".format(e=e))
 
-    def update_smt_pair(self):
-        pass
-
-    def delete_smt_pair(self):
-        pass
+    def delete_smt_pair(self,json_data:Dict[str,Any] = None):
+        try:
+            smt_pair = SMTPair.model_validate(json_data)
+            self._Relation_manager.delete_smt_pair(smt_pair)
+        except Exception as e:
+            logger.warning("Delete Asset failed,Error: {e}".format(e=e))
 
     def get_relations(self)->list[dict]:
-        pass
+        relations:list[Relation] = self._Relation_manager.return_relations()
+        dict_relations = []
+        for relation in relations:
+            try:
+                relation_dict:dict = relation.dict()
+                dict_relations.append(relation_dict)
+            except Exception as e:
+                logger.error("Error appending relation to list: {id},Error:{e}".format(id=relation.id,e=e))
+        return dict_relations
 
     def add_relation(self,json_data:Dict[str,Any] = None):
         try:
             relation = Relation.model_validate(json_data)
-            self._relation_manager.create_relation(relation=relation)
+            self._Relation_manager.create_relation(relation=relation)
         except Exception as e:
             logger.warning("Delete Asset failed,Error: {e}".format(e=e))
 
-    def update_relation(self):
-        pass
+    def update_relation(self,json_data:Dict[str,Any] = None):
+        try:
+            self._Relation_manager.update_relation(Relation.model_validate(json_data))
+        except Exception as e:
+            logger.warning("Update Relation failed,Error: {e}".format(e=e))
 
-    def delete_relation(self):
-        pass
+    def delete_relation(self,json_data:Dict[str,Any] = None):
+        try:
+            self._Relation_manager.delete_relation(Relation.model_validate(json_data))
+        except Exception as e:
+            logger.warning("Delete Relation failed,Error: {e}".format(e=e))
 
     def get_assets(self)->list[dict]:
         assets = self._AssetManager.return_all_assets()
@@ -85,13 +113,13 @@ class SignalController:
         try:
             self._AssetManager.create_asset(Asset.model_validate(json_data))
         except Exception as e:
-            logger.warning("Price Action Signal failed,Error: {e}".format(e=e))
+            logger.warning("Add Asset failed,Error: {e}".format(e=e))
 
     def update_asset(self, json_data: Dict[str, Any]):
         try:
             self._AssetManager.update_asset(Asset.model_validate(json_data))
         except Exception as e:
-            logger.warning("Price Action Signal failed,Error: {e}".format(e=e))
+            logger.warning("Update Asset failed,Error: {e}".format(e=e))
 
     def delete_asset(self,json_data:Dict[str,Any] = None):
         try:

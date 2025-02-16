@@ -7,7 +7,8 @@ from app.ClassInstances import signal_controller
 from app.monitoring.logging.logging_startup import logger, log_queue
 
 app = Flask(__name__)
-# region POST APP Route
+# region API APP Route
+
 @app.route('/tradingview', methods=['post'])
 def receive_signal():
     json_data = request.get_json()
@@ -19,17 +20,13 @@ def receive_signal():
 
     return f'Received Analyse data: {json_data}'
 
-# region Asset Endpoints
+# endregion
 
-@app.route('/delete-asset', methods=['POST'])
-def delete_asset():
-    json_data = request.get_json()  # Get the JSON data sent with the POST request
-    logger.debug(f"Received signal data: {json_data}")
+# todo close trade amend trade
+# todo dashboard trade
+# todo strategy testing
 
-    thread = Thread(target=signal_controller.delete_asset, args=(json_data,))
-    thread.start()
-
-    return jsonify({"status": "success"})
+# region CREATE APP Route
 
 @app.route('/create-asset', methods=['POST'])
 def create_asset():
@@ -41,26 +38,6 @@ def create_asset():
 
     return jsonify({"status": "success"})
 
-@app.route('/update-asset', methods=['POST'])
-def update_asset():
-    json_data = request.get_json()  # Get the JSON data sent with the POST request
-    logger.debug(f"Received signal data: {json_data}")
-
-    thread = Thread(target=signal_controller.update_asset, args=(json_data,))
-    thread.start()
-
-    return jsonify({"status": "success"})
-# endregion
-# endregion
-
-# todo crud strategy / add relation
-# todo smt pair add
-# todo close trade amend trade
-# todo dashboard trade
-# todo strategy testing
-
-# region Relation CRD
-
 @app.route('/create-relation', methods=['POST'])
 def create_relation():
     json_data = request.get_json()  # Get the JSON data sent with the POST request
@@ -70,9 +47,27 @@ def create_relation():
     thread.start()
 
     return jsonify({"status": "success"})
+
+@app.route('/create-smt-pair', methods=['POST'])
+def create_smt_pair():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.add_smt_pair, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
 # endregion
 
 # region GET APP Route
+
+@app.route('/get-smt-pairs', methods=['GET'])
+def get_smt_pairs():
+    return jsonify(signal_controller.get_smt_pairs())
+
+@app.route('/get-relations', methods=['GET'])
+def get_relations():
+    return jsonify(signal_controller.get_relations())
 
 @app.route('/get-brokers', methods=['GET'])
 def get_brokers():
@@ -89,6 +84,64 @@ def get_assets():
 @app.route('/get-strategies', methods=['GET'])
 def get_strategies():
     return jsonify(signal_controller.get_strategies())
+# endregion
+
+# region UPDATE APP Route
+
+@app.route('/update-asset', methods=['POST'])
+def update_asset():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.update_asset, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
+@app.route('/update-relation', methods=['POST'])
+def update_relation():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.update_relation, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
+# endregion
+
+# region DELETE APP Route
+
+@app.route('/delete-asset', methods=['POST'])
+def delete_asset():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.delete_asset, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
+@app.route('/delete-relation', methods=['POST'])
+def delete_relation():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.delete_relation, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
+@app.route('/delete-smt-pair', methods=['POST'])
+def delete_smt_pair():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.delete_smt_pair, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
 # endregion
 
 # region Loging
