@@ -9,7 +9,7 @@ from app.models.trade.Order import Order  # Ensure correct import
 class Trade(BaseModel):
     orders: Optional[list[Order]] = None  #
     relation: Optional[Relation] = None
-    id: Optional[str] = None
+    tradeId: Optional[str] = None
     category: Optional[str] = None
     side: Optional[str] = None
     tpslMode: Optional[str] = None

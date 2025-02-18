@@ -12,7 +12,7 @@ from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnu
 from app.models.trade.Trade import Trade
 from app.monitoring.log_time import log_time
 from app.monitoring.logging.logging_startup import logger
-#from app.services.NewsService import NewsService
+from app.services.NewsService import NewsService
 
 
 class TradingService:
@@ -50,8 +50,7 @@ class TradingService:
             self._trade_manager: TradeManager = TradeManager()
             self._strategy_manager: StrategyManager = StrategyManager()
             self._asset_mapper = AssetMapper()
-        #    self._news_service :NewsService = NewsService()
-         #   self._news_service.receive_news()
+            self._news_service :NewsService = NewsService()
             self._logger = logger
             self._logger.info("TradingService initialized")
             self._initialized = True  # Markiere als initialisiert
@@ -71,9 +70,11 @@ class TradingService:
 
         candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
 
-      #  is_news_ahead,message = self._news_service.receive_news()
+        is_news_ahead = True
 
-        if True: # todo news check if not is news ahead
+      #  is_news_ahead,message = self._news_service.is_news_ahead()
+
+        if is_news_ahead:
 
             relations: list[Relation] = self._asset_manager.return_relations(candle.asset, candle.broker)
 
@@ -173,5 +174,5 @@ class TradingService:
         exceptionOrders, trade = self._trade_manager.cancel_trade(trade)
         trade = self._trade_manager.update_trade(trade)
         self._trade_manager.archive_trade(trade)
-        self._logger.info(f"Canceled Trade: TradeId:{trade.id},"
+        self._logger.info(f"Canceled Trade: TradeId:{trade.tradeId},"
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")

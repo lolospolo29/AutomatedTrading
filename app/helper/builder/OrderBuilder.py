@@ -14,10 +14,10 @@ class OrderBuilder:
         self.order = Order()
 
     def create_order(self, relation:Relation, symbol:str, confirmations:list[FrameWork], category:str, side:str,
-                     risk_percentage:float, order_number:int, trade_id:str, entry_frame_work:
+                     risk_percentage:float, order_number:int, tradeId:str, entry_frame_work:
                      FrameWork=None, qty=None):
         o = self.order
-        o.trade_id = trade_id
+        o.tradeId = tradeId
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
                                                    relation.strategy, order_number)
         o.orderLinkId = orderlinkId
@@ -32,7 +32,7 @@ class OrderBuilder:
         o.orderType = OrderTypeEnum.MARKET.value # set Default
         if qty is not None:
             o.qty = qty
-        logger.debug(f"Building Order, OrderLinkId:{o.orderLinkId}, Symbol:{o.symbol},TradeId:{o.trade_id}")
+        logger.debug(f"Building Order, OrderLinkId:{o.orderLinkId}, Symbol:{o.symbol},TradeId:{o.tradeId}")
         return self
 
     def set_defaults(self,price:str=None, time_in_force:str=None, take_profit:str=None,
@@ -52,7 +52,7 @@ class OrderBuilder:
             order.closeOnTrigger = close_on_trigger
         return self
 
-    def set_spot(self, is_leverage:bool=None, market_unit:str=None, orderlv:str=None):
+    def set_spot(self, is_leverage:str=None, market_unit:str=None, orderlv:str=None):
         order = self.order
         if is_leverage is not None:
             order.isLeverage = is_leverage
@@ -97,7 +97,7 @@ class OrderBuilder:
         return self
 
     def build(self):
-        logger.info(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},Symbol: {self.order.symbol},TradeId: {self.order.trade_id}")
+        logger.info(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},Symbol: {self.order.symbol},TradeId: {self.order.tradeId}")
         return self.order
 
     @staticmethod

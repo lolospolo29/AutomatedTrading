@@ -63,5 +63,3 @@ class MongoQueryBuilder:
         if self.skip_value is not None:
             query_object["skip"] = self.skip_value
         return query_object
-
-# todo do better one self made

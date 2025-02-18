@@ -1,7 +1,6 @@
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
 from app.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
-from app.db.mongodb.dtos.RelationDTO import RelationDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
@@ -17,7 +16,7 @@ class DTOMapper:
     def map_trade_to_dto(trade:Trade)->TradeDTO:
 
         trade_dto = TradeDTO()
-        trade_dto.tradeId = trade.id
+        trade_dto.tradeId = trade.tradeId
         trade_dto.tradeMode = trade.tradeMode
         trade_dto.relationId = trade.relation.id
         trade_dto.category = trade.category

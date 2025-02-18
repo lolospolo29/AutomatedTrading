@@ -9,7 +9,9 @@ from app.models.asset.Asset import Asset
 from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
 from app.monitoring.logging.logging_startup import logger
+from app.services.NewsService import NewsService
 from app.services.TradingService import TradingService
+from tools.EconomicScrapper.Models.NewsDay import NewsDay
 
 
 class SignalController:
@@ -17,6 +19,7 @@ class SignalController:
     # region Initializing
     def __init__(self):
         self._TradingService: TradingService = TradingService()
+        self._NewsService = NewsService()
         self._TradeManager = TradeManager()
         self._AssetManager = AssetManager()
         self._Relation_manager = RelationManager()
@@ -33,6 +36,17 @@ class SignalController:
             except Exception as e:
                 logger.error("Error appending trade to list: {id},Error:{e}".format(id=trade.id,e=e))
         return updated_trades
+
+    def get_news(self):
+        news_days:list [NewsDay]= self._NewsService.return_news_days()
+        updated_news = []
+        for news_day in news_days:
+            try:
+                trade_str:dict = news_day.dict()
+                updated_news.append(trade_str)
+            except Exception as e:
+                logger.error("Error appending trade to list: {id},Error:{e}".format(id=news_day,e=e))
+        return updated_news
 
     def update_trade(self):
         pass

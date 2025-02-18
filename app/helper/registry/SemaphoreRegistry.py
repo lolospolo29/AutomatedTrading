@@ -40,24 +40,24 @@ class SemaphoreRegistry:
             self.registry:dict[str,threading.Semaphore] = {}  # Map: Relation -> Semaphore
             self._initialized = True
 
-    def register_relation(self, key:str,max_semaphores:int=1):
+    def register_semaphore(self, key:str, max_semaphores:int=1):
         """Eine neue Relation registrieren."""
         with self._lock:
             if key not in self.registry:
                 # Erstelle Semaphore mit der maximal erlaubten Anzahl von Trades
                 self.registry[key] = threading.Semaphore(max_semaphores)
-    def acquire_trade(self,  key:str):
+    def acquire_semaphore(self, key:str):
         """Einen Trade für die gegebene Relation starten."""
         with self._lock:
             if key not in self.registry:
-                self.register_relation(key)  # Automatische Registrierung
+                self.register_semaphore(key)  # Automatische Registrierung
             semaphore:threading.Semaphore = self.registry[key]
         # Versuche, einen Platz für die Relation zu belegen
         acquired = semaphore.acquire() # put in queue
         if not acquired:
             logger.exception("Acquired semaphore was already acquired")
 
-    def release_trade(self, relation:Relation):
+    def release_semaphore(self, relation:Relation):
         """Einen Trade für die gegebene Relation beenden."""
         with self._lock:
             if relation not in self.registry:

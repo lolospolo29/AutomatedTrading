@@ -123,7 +123,7 @@ class RelationManager:
             except Exception as e:
                 logger.critical("Failed to add SMT pair to db and manager. Error:{e}".format(e=e))
                 continue
-
+    # todo test smt
     def return_smt_pairs(self)->list[SMTPair]:
         smt_pair_dtos:list[SMTPairDTO] = self._relation_repository.find_smt_pairs()
 

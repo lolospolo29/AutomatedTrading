@@ -114,7 +114,7 @@ class ConfigManager:
                                 try:
                                     orders.extend(self._trade_repository.find_orders_by_trade_id(trade_db.tradeId))
 
-                                    trade = Trade(orders=orders, id=trade_db.tradeId, relation=relation, category=trade_db.category
+                                    trade = Trade(orders=orders, tradeId=trade_db.tradeId, relation=relation, category=trade_db.category
                                                   , side=trade_db.side, tpslMode=trade_db.tpslMode,
                                                   unrealisedPnl=trade_db.unrealisedPnl
                                                   , leverage=trade_db.leverage, size=trade_db.size, tradeMode=trade_db.tradeMode

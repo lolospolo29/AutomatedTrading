@@ -22,10 +22,7 @@ class EconomicScrapper:
     """
 
     def __init__(self):
-        self.__options = Options()
-        self.__service = \
-            (Service('/Users/lauris/PycharmProjects/AutomatedTrading/tools/EconomicScrapper/chromedriver-mac-x64/chromedriver'))
-
+        self.__driver = None
 
     @staticmethod
     def _extract_time_and_daytime(event_text):
@@ -97,8 +94,8 @@ class EconomicScrapper:
 
         news_days = []
         try:
+            self.__driver = webdriver.Chrome()
             # Open the website
-            self.__driver = webdriver.Chrome(service=self.__service, options=self.__options)
             url = "https://tradingeconomics.com/calendar"  # Replace with the target website URL
             self.__driver.get(url)
             WebDriverWait(self.__driver, 10)
@@ -196,7 +193,3 @@ class EconomicScrapper:
             self.__driver.quit()
             logger.info("Finished scraping Economic Scraper,Found {} news days.".format(len(news_days)))
             return news_days
-
-
-ec = EconomicScrapper()
-ec.return_calendar()

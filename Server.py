@@ -21,11 +21,21 @@ def receive_signal():
     return f'Received Analyse data: {json_data}'
 
 # endregion
-
+# todo strategy testing / Modul
 # todo close trade amend trade
+#
+# todo system testing
+#
 # todo dashboard trade
-# todo strategy testing
-
+# todo write down ideas for dashboard + figma + css
+###
+# todo tools / telegram / steuern
+# todo candle data as chart
+# todo journal
+#
+# todo server / security
+# todo docker
+###
 # region CREATE APP Route
 
 @app.route('/create-asset', methods=['POST'])
@@ -60,6 +70,10 @@ def create_smt_pair():
 # endregion
 
 # region GET APP Route
+
+@app.route('/get-news', methods=['GET'])
+def get_news():
+    return jsonify(signal_controller.get_news())
 
 @app.route('/get-smt-pairs', methods=['GET'])
 def get_smt_pairs():

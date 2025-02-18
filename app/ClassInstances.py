@@ -5,6 +5,7 @@ from threading import Thread
 from watchdog.observers import Observer
 
 from app.controller.SignalController import SignalController
+from app.services.ScheduleService import ScheduleService
 from tools.FileHandler import FileHandler
 from app.manager.initializer.ConfigManager import ConfigManager
 
@@ -20,6 +21,10 @@ signal_controller = SignalController()
 # Logic
 
 config_manager.run_starting_setup()
+
+schedule_manager = ScheduleService()
+
+thread = Thread(target=schedule_manager.start())
 
 
 def MonitorFolder(handler, folderPath):

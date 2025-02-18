@@ -95,13 +95,13 @@ class DoubleFib(Strategy):
                                                     ,category=CategoryEnum.LINEAR.value, side=order_dir
                                                     ,risk_percentage=1
                                                     ,order_number=1
-                                                    ,trade_id=trade.id).build()
+                                                    ,tradeId=trade.tradeId).build()
 
                 stop_order =  OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
                                                           ,category=CategoryEnum.LINEAR.value, side=exit_dir
                                                           ,risk_percentage=1
                                                           ,order_number=2
-                                                          ,trade_id=trade.id).set_conditional(
+                                                          ,tradeId=trade.tradeId).set_conditional(
                                                           trigger_direction=stop_dir
                                                           ,trigger_price=stop,trigger_by=
                                                           TriggerByEnum.MARKPRICE.value).set_limit(price=stop).build()
@@ -110,7 +110,7 @@ class DoubleFib(Strategy):
                                                           ,category=CategoryEnum.LINEAR.value, side=exit_dir
                                                           ,risk_percentage=1
                                                           ,order_number=3
-                                                          ,trade_id=trade.id).set_conditional(
+                                                          ,tradeId=trade.tradeId).set_conditional(
                                                           trigger_direction=profit_dir
                                                           ,trigger_price=take_profit,trigger_by=
                                                           TriggerByEnum.MARKPRICE.value).build()

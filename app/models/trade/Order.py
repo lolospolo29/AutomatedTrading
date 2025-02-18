@@ -7,7 +7,7 @@ from app.models.frameworks.FrameWork import FrameWork
 
 class Order(BaseModel):
     # Self Defined Parameters
-    trade_id: str = ""
+    tradeId: str = ""
     entry_frame_work: Optional[FrameWork] = None
     confirmations: Optional[list[FrameWork]] = None
     order_result_status: Optional[str] = None
@@ -29,7 +29,7 @@ class Order(BaseModel):
     orderId: Optional[str] = None
 
     # Spot Logic
-    isLeverage: Optional[int] = None
+    isLeverage: Optional[str] = None
     marketUnit: Optional[str] = None
     orderIv: Optional[str] = None
 

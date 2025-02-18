@@ -1,3 +1,4 @@
+import datetime
 import threading
 
 from app.api.brokers.models.BrokerOrder import BrokerOrder
@@ -12,7 +13,9 @@ from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
+from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
+from app.models.frameworks.PDArray import PDArray
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
@@ -59,25 +62,25 @@ class TradeManager:
 
     # region Register Remove Dict
     def register_trade(self, trade: Trade) -> None:
-        tradeLock = self._lock_registry.get_lock(trade.id)
+        tradeLock = self._lock_registry.get_lock(trade.tradeId)
         with tradeLock:
             try:
-                if trade.id not in self._open_trades:
-                    self._trade_registry.register_relation(trade.relation.__str__())
-                    self._trade_registry.acquire_trade(trade.relation.__str__())
-                    self._open_trades[trade.id] = trade
-                    logger.info(f"Register Trade,TradeId: {trade.id}")
+                if trade.tradeId not in self._open_trades:
+                    self._trade_registry.register_semaphore(trade.relation.__str__())
+                    self._trade_registry.acquire_semaphore(trade.relation.__str__())
+                    self._open_trades[trade.tradeId] = trade
+                    logger.info(f"Register Trade,TradeId: {trade.tradeId}")
             except Exception as e:
-                logger.error(f"Register Trade Error,TradeId: {trade.id}: {e}")
+                logger.error(f"Register Trade Error,TradeId: {trade.tradeId}: {e}")
 
     def __remove_trade(self, trade: Trade) -> None:
         try:
-            if trade.id in self._open_trades:
-                self._trade_registry.release_trade(trade.relation)
-                self._open_trades.pop(trade.id)
-                logger.info(f"Remove Trade,TradeId: {trade.id}")
+            if trade.tradeId in self._open_trades:
+                self._trade_registry.release_semaphore(trade.relation)
+                self._open_trades.pop(trade.tradeId)
+                logger.info(f"Remove Trade,TradeId: {trade.tradeId}")
         except AttributeError as e:
-            logger.fatal(f"Remove Trade Error,TradeId: {trade.id}: {e}")
+            logger.fatal(f"Remove Trade Error,TradeId: {trade.tradeId}: {e}")
 
     # endregion
 
@@ -87,23 +90,23 @@ class TradeManager:
         return self._trade_repository.find_brokers()
 
     def __write_trade_to_db(self, trade: Trade):
-        if trade.id in self._open_trades:
-            logger.info(f"Write Trade To DB,TradeId: {trade.id}")
+        if trade.tradeId in self._open_trades:
+            logger.info(f"Write Trade To DB,TradeId: {trade.tradeId}")
             self._trade_repository.add_trade_to_db(trade)
 
     def __write_order_to_db(self, order: Order) -> None:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
-            logger.info(f"Write Order To DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
+            logger.info(f"Write Order To DB,OrderLinkId: {order.orderLinkId},TradeId:{order.tradeId},Symbol:{order.symbol}")
             self._trade_repository.add_order_to_db(order)
 
     def __update_trade_in_db(self, trade: Trade) -> None:
-        if trade.id in self._open_trades:
-            logger.info(f"Update To DB,TradeId: {trade.id}")
+        if trade.tradeId in self._open_trades:
+            logger.info(f"Update To DB,TradeId: {trade.tradeId}")
             self._trade_repository.update_trade(trade)
 
     def __update_order_in_db(self, order: Order) -> None:
-        logger.info(f"Update Order in DB,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol}")
+        logger.info(f"Update Order in DB,OrderLinkId: {order.orderLinkId},TradeId:{order.tradeId},Symbol:{order.symbol}")
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
             self._trade_repository.update_order(order)
@@ -112,10 +115,10 @@ class TradeManager:
 
     # region API Requests
     def place_trade(self, trade: Trade) -> tuple[list[Order], Trade]:
-        tradeLock = self._lock_registry.get_lock(trade.id)
+        tradeLock = self._lock_registry.get_lock(trade.tradeId)
         with tradeLock:
-            if trade.id in self._open_trades:
-                trade = self._open_trades[trade.id]
+            if trade.tradeId in self._open_trades:
+                trade = self._open_trades[trade.tradeId]
 
                 exceptionOrders: list[Order] = []
 
@@ -125,17 +128,17 @@ class TradeManager:
                     except Exception as e:
                         logger.exception(f"Place Order Error,"
                                        f"OrderLinkId: {order.orderLinkId},"
-                                       f"TradeId:{order.trade_id},Symbol:{order.symbol},OrderType:{order.orderType},error:{e}")
+                                       f"TradeId:{order.tradeId},Symbol:{order.symbol},OrderType:{order.orderType},error:{e}")
                         exceptionOrders.append(order)
                         break
 
                 return exceptionOrders, trade
 
     def amend_trade(self, trade: Trade) -> tuple[list[Order], Trade]:
-        tradeLock = self._lock_registry.get_lock(trade.id)
+        tradeLock = self._lock_registry.get_lock(trade.tradeId)
         with tradeLock:
-            if trade.id in self._open_trades:
-                trade: Trade = self._open_trades[trade.id]
+            if trade.tradeId in self._open_trades:
+                trade: Trade = self._open_trades[trade.tradeId]
 
                 exception_orders: list[Order] = []
 
@@ -155,10 +158,10 @@ class TradeManager:
             return exception_orders, trade
 
     def cancel_trade(self, trade: Trade) -> tuple[list[Order], Trade]:
-        tradeLock = self._lock_registry.get_lock(trade.id)
+        tradeLock = self._lock_registry.get_lock(trade.tradeId)
         with tradeLock:
-            if trade.id in self._open_trades:
-                trade = self._open_trades[trade.id]
+            if trade.tradeId in self._open_trades:
+                trade = self._open_trades[trade.tradeId]
                 exceptionOrders: list[Order] = []
 
                 for order in trade.orders:
@@ -168,7 +171,7 @@ class TradeManager:
                         if order.orderStatus == OrderStatusEnum.NEW.value or order.orderStatus == OrderStatusEnum.PARTIALLYFILLED.value or order.orderStatus == OrderStatusEnum.UNTRIGGERED.value:
                             exceptionOrders.append(order)
                             logger.error(f"Failed To Cancel Order,Error:{e},OrderLinkId: "
-                                         f"{order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol},OrderType:{order.orderType}")
+                                         f"{order.orderLinkId},TradeId:{order.tradeId},Symbol:{order.symbol},OrderType:{order.orderType}")
 
                 # close position order
 
@@ -176,7 +179,7 @@ class TradeManager:
                                                                 , symbol=trade.relation.asset, confirmations=[]
                                                                 , category=trade.category, side=trade.side
                                                                 , risk_percentage=0, order_number=1
-                                                                , trade_id=trade.id).set_defaults(
+                                                                , tradeId=trade.tradeId).set_defaults(
                     reduce_only=True).build()
                 if trade.side == OrderDirectionEnum.BUY.value:
                     cancel_size_order.side = OrderDirectionEnum.SELL.value
@@ -190,16 +193,16 @@ class TradeManager:
                 except Exception as e:
                     exceptionOrders.append(cancel_size_order)
                     logger.warning(f"Failed To Cancel Order,OrderLinkId: {cancel_size_order.orderLinkId}"
-                                   f",TradeId:{cancel_size_order.trade_id},Symbol:{cancel_size_order.symbol},Error:{e}")
+                                   f",TradeId:{cancel_size_order.tradeId},Symbol:{cancel_size_order.symbol},Error:{e}")
 
                 return exceptionOrders, trade
 
     def update_trade(self, trade: Trade) -> Trade:
-        tradeLock = self._lock_registry.get_lock(trade.id)
+        tradeLock = self._lock_registry.get_lock(trade.tradeId)
         try:
             with tradeLock:
-                if trade.id in self._open_trades:
-                    trade = self._open_trades[trade.id]
+                if trade.tradeId in self._open_trades:
+                    trade = self._open_trades[trade.tradeId]
                     request: RequestParameters = RequestParameters(broker=trade.relation.broker,
                                                                    symbol=trade.relation.asset, category=trade.category)
 
@@ -213,7 +216,7 @@ class TradeManager:
                     if len(trade.orders) == 0:
                         logger.error("Trade has no Orders"
                                      ",TradeId{id}"
-                                     ",Symbol:{symbol}".format(id=trade.id, symbol=trade.relation.asset), "")
+                                     ",Symbol:{symbol}".format(id=trade.tradeId, symbol=trade.relation.asset), "")
 
                         raise ValueError("Trade has no Orders")
 
@@ -243,11 +246,11 @@ class TradeManager:
                             self._trade_repository.add_trade_to_db(trade)
                         except Exception as e:
                             logger.warning(
-                                "Write Trade to DB Error,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
+                                "Write Trade to DB Error,TradeId: {tradeId}: {e}".format(tradeId=trade.tradeId, e=e))
 
                     if len(trade.orders) == 0:
                         logger.error(
-                            "Trade has no Orders,TradeId{id},Symbol:{symbol}".format(id=trade.id,
+                            "Trade has no Orders,TradeId{id},Symbol:{symbol}".format(id=trade.tradeId,
                                                                                      symbol=trade.relation.asset)
                             , "")
                         raise ValueError("Trade has no Orders")
@@ -264,15 +267,15 @@ class TradeManager:
                                 logger.warning("Write Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(
                                     orderLinkId=order.orderLinkId, e=e))
         except Exception as e:
-            logger.fatal("Something went Wrong with Updating,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
+            logger.fatal("Something went Wrong with Updating,TradeId: {tradeId}: {e}".format(tradeId=trade.tradeId, e=e))
             self.archive_trade(trade)
             return trade
 
     def archive_trade(self, trade: Trade) -> None:
-        tradeLock = self._lock_registry.get_lock(trade.id)
+        tradeLock = self._lock_registry.get_lock(trade.tradeId)
         with tradeLock:
-            if trade.id in self._open_trades:
-                trade = self._open_trades[trade.id]
+            if trade.tradeId in self._open_trades:
+                trade = self._open_trades[trade.tradeId]
                 self._trade_repository.archive_trade(trade)
                 self.__remove_trade(trade)
                 try:
@@ -284,7 +287,7 @@ class TradeManager:
                                 orderLinkId=order.orderLinkId, e=e))
                 except  Exception as e:
                     logger.warning(
-                        "Something went Wrong with Archiving,TradeId: {tradeId}: {e}".format(tradeId=trade.id, e=e))
+                        "Something went Wrong with Archiving,TradeId: {tradeId}: {e}".format(tradeId=trade.tradeId, e=e))
 
     #region API
     def __place_order(self, broker: str, order: Order) -> Order:
@@ -350,13 +353,17 @@ class TradeManager:
         return trades
 
     def return_trades(self) -> list[Trade]:
-        # c = Candle(asset="a",broker="a",open=13,high=13,low=123,close=131,timeframe=1,iso_time=datetime.datetime.utcnow())
-        # pd = PDArray(candles=[c],direction="Bullish")
-        # o = Order(confirmations=[pd],entry_frame_work=pd)
-        # t1 = Trade(relation=Relation(asset="a", broker="a", strategy="a", max_trades=1, id=1),createdTime="131",orders=[o],id="131",category="linear"
-        #            )
-        # self.register_trade(t1)
-        return [x for x in self._open_trades.values()]
+        c = Candle(asset="a",broker="a",open=13,high=13,low=123,close=131,timeframe=1,iso_time=datetime.datetime.utcnow())
+        pd = PDArray(candles=[c],direction="Bullish")
+        o = Order(confirmations=[pd],entry_frame_work=pd)
+        t1 = Trade(relation=Relation(asset="a", broker="a", strategy="a", max_trades=1, id=1),createdTime="131",orders=[o],tradeId="131",category="linear")
+        self.register_trade(t1)
+        trades = []
+
+        for id, trade in self._open_trades.items():
+            trades.append(trade)
+        return trades
+
     # endregion
 
 # todo framework add to db from order
@@ -393,7 +400,7 @@ class TradeManager:
 # order2.side = "Sell"
 # order2.order_result_status = OrderResultStatusEnum.NEW.value
 #
-# trade1 = Trade(relation=relation, orders=[order1, order2], id="131", category="linear")
+# trade1 = Trade(relation=relation, orders=[order1, order2], tradeId="131", category="linear")
 #
 # trade_manager.register_trade(trade1)
 #
