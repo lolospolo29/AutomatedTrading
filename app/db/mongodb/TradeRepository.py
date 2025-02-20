@@ -35,6 +35,8 @@ class TradeRepository:
 
     # endregion
 
+    # todo mongodb to interface db to swap, delete singleton and pass db name and uri db type
+
     # region CRUD Trade
 
     def find_trades(self)->list[TradeDTO]:

@@ -8,7 +8,6 @@ from app.manager.initializer.SecretsManager import SecretsManager
 from app.mappers.DTOMapper import DTOMapper
 from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
-from app.models.asset.SMTPair import SMTPair
 
 
 class AssetRepository:
