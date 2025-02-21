@@ -1,12 +1,8 @@
-import threading
-
 from app.db.mongodb.MongoDB import MongoDB
 from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from app.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
 from app.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
-from app.db.mongodb.enum.MongoEndPointEnum import MongoEndPointEnum
-from app.manager.initializer.SecretsManager import SecretsManager
 from app.mappers.DTOMapper import DTOMapper
 from app.models.frameworks.FrameWork import FrameWork
 from app.models.trade.Order import Order
@@ -15,33 +11,17 @@ from app.monitoring.logging.logging_startup import logger
 
 
 class TradeRepository:
-    # region Initializing
-    _instance = None
-    _lock = threading.Lock()
 
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(TradeRepository, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-
-    def __init__(self):
-        if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._secret_manager: SecretsManager = SecretsManager()
-            self.__secret = self._secret_manager.return_secret("mongodb")
-            self._dto_mapper:DTOMapper = DTOMapper()
-            self._initialized = True  # Markiere als initialisiert
+    def __init__(self, db_name:str,uri:str):
+        self._db = MongoDB(db_name=db_name, uri=uri)
+        self._dto_mapper = DTOMapper()
 
     # endregion
-
-    # todo mongodb to interface db to swap, delete singleton and pass db name and uri db type
 
     # region CRUD Trade
 
     def find_trades(self)->list[TradeDTO]:
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-        trades_db:list =  db.find(MongoEndPointEnum.OPENTRADES.value, None)
+        trades_db:list =  self._db.find("OpenTrades", None)
 
         trades:list[TradeDTO] = []
 
@@ -51,44 +31,37 @@ class TradeRepository:
         return trades
 
     def find_trade_by_id(self,trade_id:str)->TradeDTO:
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-
-        query = db.buildQuery("tradeId", trade_id)
-        return TradeDTO(**db.find(MongoEndPointEnum.OPENTRADES.value, query)[0])
+        query = self._db.buildQuery("tradeId", trade_id)
+        return TradeDTO(**self._db.find("OpenTrades", query)[0])
 
     def add_trade_to_db(self, trade: Trade):
         logger.info(f"Adding Trade to DB: {trade.id}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
         trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
-        db.add(MongoEndPointEnum.OPENTRADES.value,trade_dto.model_dump())
+        self._db.add("OpenTrades",trade_dto.model_dump())
 
     def update_trade(self, trade: Trade):
         logger.info(f"Updating Trade,OrderLinkId:{trade.id}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-        query = db.buildQuery( "tradeId", str(trade.id))
-        res = db.find(MongoEndPointEnum.OPENTRADES.value, query)
+        query = self._db.buildQuery( "tradeId", str(trade.id))
+        res = self._db.find("OpenTrades", query)
         trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
-        db.update(MongoEndPointEnum.OPENTRADES.value, res[0].get("_id"), trade_dto.model_dump())
+        self._db.update("OpenTrades", res[0].get("_id"), trade_dto.model_dump())
 
     def archive_trade(self, trade: Trade):
         logger.info(f"Arching Trade,OrderLinkId:{trade.id}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
         trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
-        db.add(MongoEndPointEnum.CLOSEDTRADES.value, trade_dto.model_dump())
-        query = db.buildQuery( "tradeId", str(trade.id))
-        db.deleteByQuery(MongoEndPointEnum.OPENTRADES.value, query)
+        self._db.add("ClosedTrades", trade_dto.model_dump())
+        query = self._db.buildQuery( "tradeId", str(trade.id))
+        self._db.deleteByQuery("OpenTrades", query)
 
     # endregion
 
     # region CRUD Orders
     def find_orders_by_trade_id(self,trade_id:str)->list[Order]:
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-
-        query = db.buildQuery("tradeId", trade_id)
-        orders_db =  db.find(MongoEndPointEnum.OPENORDERS.value, query)
+        query = self._db.buildQuery("tradeId", trade_id)
+        orders_db =  self._db.find("OpenOrders", query)
         orders:list[Order] = []
         for order_db in orders_db:
             order = Order(**order_db)
@@ -96,9 +69,7 @@ class TradeRepository:
         return orders
 
     def find_orders(self)->list[Order]:
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-
-        orders_db:list =  db.find(MongoEndPointEnum.OPENORDERS.value, None)
+        orders_db:list =  self._db.find("OpenOrders", None)
         orders:list[Order] = []
         for order_db in orders_db:
             order = Order(**order_db)
@@ -108,41 +79,34 @@ class TradeRepository:
     def update_order(self, order: Order):
         logger.info(f"Update Order To DB,OrderLinkId: {order.orderLinkId},Symbol: {order.symbol}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-        query = db.buildQuery( "orderLinkId", str(order.orderLinkId))
-        res = db.find(MongoEndPointEnum.OPENORDERS.value, query)
-        db.update(MongoEndPointEnum.OPENORDERS.value, res[0].get("_id"), order.model_dump(exclude={'entry_frame_work'
+        query = self._db.buildQuery( "orderLinkId", str(order.orderLinkId))
+        res = self._db.find("OpenOrders", query)
+        self._db.update("OpenOrders", res[0].get("_id"), order.model_dump(exclude={'entry_frame_work'
                                                                                           ,'confirmations'}))
 
     def archive_order(self, order: Order):
         logger.info(f"Arching Order To DB,OrderLinkId: {order.orderLinkId}, Symbol: {order.symbol}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-        db.add(MongoEndPointEnum.CLOSEDORDERS.value, order.model_dump(exclude={'entry_frame_work','confirmations'}))
-        query = db.buildQuery( "orderLinkId", str(order.orderLinkId))
-        db.deleteByQuery(MongoEndPointEnum.OPENORDERS.value, query)
+        self._db.add("ClosedOrders", order.model_dump(exclude={'entry_frame_work','confirmations'}))
+        query = self._db.buildQuery( "orderLinkId", str(order.orderLinkId))
+        self._db.deleteByQuery("OpenOrders", query)
 
     def find_order_by_id(self,order_id:str)->Order:
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-
-        query = db.buildQuery("orderLinkId", order_id)
-        return Order(**db.find(MongoEndPointEnum.OPENORDERS.value, query)[0])
+        query = self._db.buildQuery("orderLinkId", order_id)
+        return Order(**self._db.find("OpenOrders", query)[0])
 
     def add_order_to_db(self, order: Order):
         logger.info(f"Adding Order To DB,OrderLinkId: {order.orderLinkId}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-        db.add(MongoEndPointEnum.OPENORDERS.value, order.model_dump(exclude={'entry_frame_work','confirmations'}))
+        self._db.add("OpenOrders", order.model_dump(exclude={'entry_frame_work','confirmations'}))
 
     # endregion
 
     # region FrameWork CRUD
 
     def find_frameworks_by_orderLinkId(self,orderLinkId:str)->list[FrameWorkDTO]:
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-
-        query = db.buildQuery("orderLinkId", orderLinkId)
-        frameworks_db =  db.find(MongoEndPointEnum.FRAMEWORKS.value, query)
+        query = self._db.buildQuery("orderLinkId", orderLinkId)
+        frameworks_db =  self._db.find("FrameWorks", query)
 
         frameworks:list[FrameWorkDTO] = []
 
@@ -152,10 +116,8 @@ class TradeRepository:
         return frameworks
 
     def find_candles_by_framework_id(self,framework_id:str)->list[CandleFrameWorkDTO]:
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-
-        query = db.buildQuery("frameWorkId", framework_id)
-        candles_db =  db.find(MongoEndPointEnum.FRAMEWORKCANDLES.value, query)
+        query = self._db.buildQuery("frameWorkId", framework_id)
+        candles_db =  self._db.find("FrameWorkCandles", query)
         candles:list[CandleFrameWorkDTO] = []
         for candle_db in candles_db:
             candle = CandleFrameWorkDTO(**candle_db)
@@ -165,36 +127,31 @@ class TradeRepository:
     def add_framework_to_db(self,framework:FrameWork):
         logger.info(f"Adding Framework To DB,Name: {framework.name}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
         framework_dto:FrameWorkDTO = self._dto_mapper.map_framework_to_dto(framework=framework)
-        db.add(MongoEndPointEnum.FRAMEWORKS.value, framework_dto.model_dump())
+        self._db.add("FrameWorks", framework_dto.model_dump())
 
     def add_framework_candles_to_db(self,framework:FrameWork):
         logger.info(f"Adding Framework Candles To DB,Name: {framework.name}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
         for candle in framework.candles:
             candle_dto = self._dto_mapper.map_candle_to_dto(candle=candle, framework=framework)
-            db.add(MongoEndPointEnum.FRAMEWORKCANDLES.value,
+            self._db.add("FrameWorkCandles",
                 candle_dto.model_dump())
 
     def update_framework(self, framework:FrameWork):
         logger.info(f"Update Framework To DB,Name: {framework.name}")
 
-        db = MongoDB(dbName="Trades",uri=self.__secret)
-        query = db.buildQuery( "frameWorkId", framework.id)
-        res = db.find(MongoEndPointEnum.FRAMEWORKS.value, query)
+        query = self._db.buildQuery( "frameWorkId", framework.id)
+        res = self._db.find("FrameWorks", query)
         framework_dto:FrameWorkDTO = self._dto_mapper.map_framework_to_dto(framework=framework)
-        db.update(MongoEndPointEnum.FRAMEWORKS.value, res[0].get("_id"), framework_dto.model_dump())
+        self._db.update("FrameWorks", res[0].get("_id"), framework_dto.model_dump())
 
     # endregion
 
     # region Brokers R
 
     def find_brokers(self)->list[BrokerDTO]:
-        db = MongoDB(dbName="TradingConfig",uri=self.__secret)
-
-        brokers_db:list =  db.find("Broker", None)
+        brokers_db:list =  self._db.find("Broker", None)
 
         brokers_dtos:list[BrokerDTO] = []
 

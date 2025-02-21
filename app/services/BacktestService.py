@@ -1,12 +1,27 @@
+import threading
+
 from app.db.mongodb.AssetRepository import AssetRepository
 from app.helper.factories.StrategyFactory import StrategyFactory
 from app.models.asset.Candle import Candle
 
 
 class BacktestService:
-    def __init__(self):
-        self.__factory = StrategyFactory()
-        self._asset_repository = AssetRepository()
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            with cls._lock:
+                if not cls._instance:
+                    cls._instance = super(BacktestService, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def __init__(self,asset_repository:AssetRepository):
+        if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
+            self.__factory = StrategyFactory()
+            self._asset_repository = asset_repository
+            self._initialized = True  # Markiere als initialisiert
+
 
     def get_test_results(self,strategy:str=None):
         pass

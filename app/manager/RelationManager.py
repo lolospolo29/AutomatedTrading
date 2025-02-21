@@ -37,11 +37,10 @@ class RelationManager:
         return cls._instance
 
 
-    def __init__(self):
+    def __init__(self,relation_repository:RelationRepository,asset_manager:AssetManager):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._relation_repository = RelationRepository()
-            self._asset_repository = AssetRepository()
-            self._asset_manager = AssetManager()
+            self._relation_repository = relation_repository
+            self._asset_manager = asset_manager
             self._strategy_manager = StrategyManager()
             self._strategy_factory = StrategyFactory()
             self._initialized = True  # Markiere als initialisiert

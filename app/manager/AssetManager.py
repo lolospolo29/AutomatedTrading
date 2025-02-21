@@ -38,10 +38,10 @@ class AssetManager:
         return cls._instance
 
 
-    def __init__(self):
+    def __init__(self,asset_respository:AssetRepository):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.assets: dict[str,Asset] = {}
-            self._asset_respository = AssetRepository()
+            self._asset_respository = asset_respository
             self._initialized = True  # Markiere als initialisiert
 
     # endregion

@@ -1,3 +1,5 @@
+import threading
+
 import schedule
 
 from app.monitoring.logging.logging_startup import logger
@@ -5,17 +7,29 @@ from app.services.NewsService import NewsService
 
 
 class ScheduleService:
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            with cls._lock:
+                if not cls._instance:
+                    cls._instance = super(ScheduleService, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
 
     def __init__(self):
-        self._jobs:dict = {}
-        self._news_service = NewsService()
-
-        job =  schedule.every().saturday.at("12:00").do(self._news_service.run_news_scheduler)
-
-        self._jobs["News"] = job
-
-        for name, seconds in self._jobs.items():
-            logger.info("Adding schedule for {}".format(name))
+        if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
+            self._jobs:dict = {}
+            self._initialized = True  # Markiere als initialisiert
+        # self._news_service = NewsService()
+        #
+        # job =  schedule.every().saturday.at("12:00").do(self._news_service.run_news_scheduler)
+        #
+        # self._jobs["News"] = job
+        #
+        # for name, seconds in self._jobs.items():
+        #     logger.info("Adding schedule for {}".format(name))
+        # todo add task
 
     @staticmethod
     def _add_tag(job, tag1:str=None, tag2:str=None):

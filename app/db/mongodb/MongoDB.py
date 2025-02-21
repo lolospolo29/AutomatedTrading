@@ -7,13 +7,13 @@ from pymongo import MongoClient
 class MongoDB:
 
     # region Initializing
-    def __init__(self, dbName: str, uri: str):
+    def __init__(self, db_name: str, uri: str):
         """
         Initialize the DbService with a MongoDB URI and database name.
         """
 
-        self.client: Any = MongoClient(uri)
-        self.db: Any = self.client[dbName]
+        self.client: Any = MongoClient(uri) # localhost
+        self.db: Any = self.client[db_name] # Trades
     # endregion
 
     # region CRUD Standard

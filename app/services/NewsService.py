@@ -31,11 +31,11 @@ class NewsService:
                     cls._instance = super(NewsService, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self,news_repository:NewsRepository):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._economic_scrapper = EconomicScrapper()
             self._news_days: list[NewsDay] = []
-            self._news_repository = NewsRepository()
+            self._news_repository = news_repository
             self._initialized = True  # Markiere als initialisiert
 
     def run_news_scheduler(self):

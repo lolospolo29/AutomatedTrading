@@ -37,14 +37,11 @@ class ConfigManager:
                     cls._instance = super(ConfigManager, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self,trade_manager:TradeManager,asset_manager:AssetManager,relation_manager:RelationManager):
 
-        self._asset_repository: AssetRepository = AssetRepository()
-        self._trade_repository: TradeRepository = TradeRepository()
-        self._relation_repository: RelationRepository = RelationRepository()
-        self._trade_manager: TradeManager = TradeManager()
-        self._asset_manager: AssetManager = AssetManager()
-        self._relation_manager: RelationManager = RelationManager()
+        self._trade_manager: TradeManager = trade_manager
+        self._asset_manager: AssetManager = asset_manager
+        self._relation_manager: RelationManager = relation_manager
         self._strategy_manager: StrategyManager = StrategyManager()
         self._strategy_factory: StrategyFactory = StrategyFactory()
 

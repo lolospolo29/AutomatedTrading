@@ -57,7 +57,7 @@ class RiskManager:
     def return_current_pnl(self) -> float:
         return self.__current_pnl
 
-    def set_current_pnl(self, pnl: float) -> None:
+    def add_to_current_pnl(self, pnl: float) -> None:
         self.__current_pnl += pnl
 
     def calculate_money_at_risk(self):

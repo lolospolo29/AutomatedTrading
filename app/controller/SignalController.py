@@ -17,12 +17,13 @@ from tools.EconomicScrapper.Models.NewsDay import NewsDay
 class SignalController:
 
     # region Initializing
-    def __init__(self):
-        self._TradingService: TradingService = TradingService()
-        self._NewsService = NewsService()
-        self._TradeManager = TradeManager()
-        self._AssetManager = AssetManager()
-        self._Relation_manager = RelationManager()
+    def __init__(self,trading_service:TradingService, news_service:NewsService,asset_manager:AssetManager, trade_manager:TradeManager
+                 ,relation_manager:RelationManager):
+        self._TradingService: TradingService = trading_service
+        self._NewsService = news_service
+        self._TradeManager = trade_manager
+        self._AssetManager = asset_manager
+        self._Relation_manager = relation_manager
         self._StrategyManager = StrategyManager()
     # endregion
 

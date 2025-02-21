@@ -13,9 +13,7 @@ from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
-from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
-from app.models.frameworks.PDArray import PDArray
 from app.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from app.models.trade.Order import Order
 from app.models.trade.Trade import Trade
@@ -46,14 +44,14 @@ class TradeManager:
                     cls._instance = super(TradeManager, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self,trade_repository:TradeRepository,broker_facade:BrokerFacade,risk_manager:RiskManager,):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._trade_registry = SemaphoreRegistry()
             self._lock_registry = LockRegistry()
             self._open_trades: dict[str, Trade] = {}
-            self._trade_repository: TradeRepository = TradeRepository()
-            self._broker_facade = BrokerFacade()
-            self._risk_manager = RiskManager()
+            self._trade_repository: TradeRepository = trade_repository
+            self._broker_facade = broker_facade
+            self._risk_manager = risk_manager
             self._class_mapper = ClassMapper()
             self._broker_mapper = BrokerMapper()
             self._initialized = True  # Markiere als initialisiert
@@ -338,7 +336,7 @@ class TradeManager:
         pnl = 0
         for id, trade in self._open_trades.items():
             pnl += trade.unrealisedPnl
-        self._risk_manager.set_current_pnl(pnl)
+        self._risk_manager.add_to_current_pnl(pnl)
         return self._risk_manager.return_current_pnl()
 
     def return_trades_for_relation(self, assetBrokerStrategyRelation: Relation) -> list[Trade]:
@@ -353,11 +351,6 @@ class TradeManager:
         return trades
 
     def return_trades(self) -> list[Trade]:
-        c = Candle(asset="a",broker="a",open=13,high=13,low=123,close=131,timeframe=1,iso_time=datetime.datetime.utcnow())
-        pd = PDArray(candles=[c],direction="Bullish")
-        o = Order(confirmations=[pd],entry_frame_work=pd)
-        t1 = Trade(relation=Relation(asset="a", broker="a", strategy="a", max_trades=1, id=1),createdTime="131",orders=[o],tradeId="131",category="linear")
-        self.register_trade(t1)
         trades = []
 
         for id, trade in self._open_trades.items():

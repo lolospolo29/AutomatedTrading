@@ -4,27 +4,78 @@ from threading import Thread
 
 from watchdog.observers import Observer
 
+from app.api.brokers.bybit.Bybit import Bybit
 from app.controller.SignalController import SignalController
+from app.db.mongodb.AssetRepository import AssetRepository
+from app.db.mongodb.NewsRepository import NewsRepository
+from app.db.mongodb.RelationRepository import RelationRepository
+from app.db.mongodb.TradeRepository import TradeRepository
+from app.helper.facade.BrokerFacade import BrokerFacade
+from app.manager.AssetManager import AssetManager
+from app.manager.RelationManager import RelationManager
+from app.manager.RiskManager import RiskManager
+from app.manager.StrategyManager import StrategyManager
+from app.manager.TradeManager import TradeManager
+from app.manager.initializer.SecretsManager import SecretsManager
+from app.services.NewsService import NewsService
 from app.services.ScheduleService import ScheduleService
+from app.services.TradingService import TradingService
 from tools.FileHandler import FileHandler
 from app.manager.initializer.ConfigManager import ConfigManager
 
-config_manager = ConfigManager()
+# Broker
 
-# FileHandler
+secret_manager = SecretsManager()
+
+bybit = Bybit("Bybit")
+
+broker_facade = BrokerFacade()
+broker_facade.register_handler("Bybit", bybit)
+
+risk_manager = RiskManager()
+
+# DB
+
+mongo_server = secret_manager.return_secret("mongodb")
+
+trade_repository = TradeRepository(db_name="Trades",uri=mongo_server)
+
+asset_repository = AssetRepository(db_name="TradingConfig",uri=mongo_server)
+
+relation_repository = RelationRepository(db_name="TradingConfig",uri=mongo_server)
+
+news_repository = NewsRepository("News",mongo_server)
+
+# Manager
+
+asset_manager = AssetManager(asset_respository=asset_repository)
+
+trade_manager = TradeManager(trade_repository=trade_repository,broker_facade=broker_facade,risk_manager=risk_manager)
+
+relation_manager = RelationManager(relation_repository=relation_repository,asset_manager=asset_manager)
+
+config_manager = ConfigManager(trade_manager=trade_manager,asset_manager=asset_manager,relation_manager=relation_manager)
+
+strategy_manager = StrategyManager()
+
+# Handler
 new_file_handler = FileHandler()
+
+# services
+
+news_service = NewsService(news_repository=news_repository)
+
+trading_service = TradingService(asset_manager=asset_manager,trade_manager=trade_manager,strategy_manager=strategy_manager,news_service=news_service)
 
 # controller
 
-signal_controller = SignalController()
+signal_controller = SignalController(trading_service=trading_service, news_service=news_service,asset_manager=asset_manager, trade_manager=trade_manager,relation_manager=relation_manager)
 
 # Logic
 
 config_manager.run_starting_setup()
 
 schedule_manager = ScheduleService()
-
-thread = Thread(target=schedule_manager.start())
 
 
 def MonitorFolder(handler, folderPath):

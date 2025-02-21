@@ -24,29 +24,29 @@ class StrategyFactory:
                               ,strategy_facade=StrategyFacade())
             return fvg
         if typ == "Unicorn":
-            gen_timeframes = self.generate_timeframes([240, 5], [1, 90])
+            gen_timeframes = self._generate_timeframes([240, 5], [1, 90])
             unicorn =  Unicorn(name="Unicorn", timeframes=gen_timeframes, time_windows=[LondonOpen(), NYOpen()]
                                ,strategy_facade=StrategyFacade())
             return unicorn
         if typ == "OTEFourH":
-            gen_timeframes = self.generate_timeframes([240], [60])
+            gen_timeframes = self._generate_timeframes([240], [60])
             otefourh = OTEFourH(name=typ, timeframes=gen_timeframes, time_windows=[LondonOpen(), NYOpen()]
                                 ,strategy_facade=StrategyFacade())
             return otefourh
         if typ == "LondonSB":
-            gen_timeframes = self.generate_timeframes([240, 1], [60, 90])
+            gen_timeframes = self._generate_timeframes([240, 1], [60, 90])
             londonsb =  LondonSB(name=typ, timeframes=gen_timeframes, time_windows=[SilverBulletLondon()]
                                  ,strategy_facade=StrategyFacade())
             return londonsb
         if typ == "DoubleFib":
-            gen_timeframes = self.generate_timeframes([1], [90])
+            gen_timeframes = self._generate_timeframes([1], [90])
             time_windows:list[ITimeWindow] = [FirstQuarterWindow(), LastQuarterWindow()]
             doublefib =  DoubleFib(name=typ,timeframes=gen_timeframes, time_windows=time_windows,strategy_facade=StrategyFacade())
             return doublefib
         logger.warning(f"No strategy found for {typ}")
 
     @staticmethod
-    def generate_timeframes(timeframes: list[int], max_lens: list[int]) -> list[ExpectedTimeFrame]:
+    def _generate_timeframes(timeframes: list[int], max_lens: list[int]) -> list[ExpectedTimeFrame]:
         gen_timeframes: list[ExpectedTimeFrame] = []
         for i in range(len(timeframes)):
             gen_timeframes.append(ExpectedTimeFrame(timeframe=timeframes[i], max_Len=max_lens[i]))

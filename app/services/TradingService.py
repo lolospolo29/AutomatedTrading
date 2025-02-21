@@ -44,13 +44,14 @@ class TradingService:
 
     # region Initializing
 
-    def __init__(self):
+    def __init__(self,asset_manager:AssetManager,trade_manager:TradeManager
+                 ,strategy_manager:StrategyManager,news_service:NewsService):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._asset_manager: AssetManager = AssetManager()
-            self._trade_manager: TradeManager = TradeManager()
-            self._strategy_manager: StrategyManager = StrategyManager()
+            self._asset_manager: AssetManager = asset_manager
+            self._trade_manager: TradeManager = trade_manager
+            self._strategy_manager: StrategyManager = strategy_manager
             self._asset_mapper = AssetMapper()
-            self._news_service :NewsService = NewsService()
+            self._news_service :NewsService = news_service
             self._logger = logger
             self._logger.info("TradingService initialized")
             self._initialized = True  # Markiere als initialisiert
