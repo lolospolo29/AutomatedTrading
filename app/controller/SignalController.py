@@ -28,7 +28,7 @@ class SignalController:
     # endregion
 
     def get_trades(self)->list[dict]:
-        trades = self._TradeManager.return_trades()
+        trades = self._TradeManager.return_storage_trades()
         updated_trades = []
         for trade in trades:
             try:
@@ -114,7 +114,7 @@ class SignalController:
             logger.warning("Delete Relation failed,Error: {e}".format(e=e))
 
     def get_assets(self)->list[dict]:
-        assets = self._AssetManager.return_all_assets()
+        assets = self._AssetManager.return_stored_assets()
         dict_assets = []
         for asset in assets:
             try:

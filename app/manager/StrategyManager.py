@@ -27,10 +27,10 @@ class StrategyManager:
     _lock = threading.Lock()
 
     def __new__(cls, *args, **kwargs):
-        if not cls._instance:
+        if cls._instance is None:
             with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(StrategyManager, cls).__new__(cls, *args, **kwargs)
+                if cls._instance is None:  # Double-checked locking
+                    cls._instance = super(StrategyManager, cls).__new__(cls)
         return cls._instance
 
     # region Initializing

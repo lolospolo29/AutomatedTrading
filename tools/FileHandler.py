@@ -24,9 +24,9 @@ class FileHandler(FileSystemEventHandler):
     """
     # region Initializing
 
-    def __init__(self):
-        self._asset_manager: AssetManager = AssetManager()
-        self._strategy_manager: StrategyManager = StrategyManager()
+    def __init__(self,asset_manager:AssetManager,strategy_manager:StrategyManager):
+        self._asset_manager: AssetManager = asset_manager
+        self._strategy_manager: StrategyManager = strategy_manager
 
     # endregion
 

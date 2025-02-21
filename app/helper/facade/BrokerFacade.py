@@ -19,8 +19,6 @@ class BrokerFacade:
     def __init__(self):
         self.__registry:dict[str,IBrokerHandler]= {}
 
-        # todo add bybit
-
     def register_handler(self, broker:str, handler):
         self.__registry[broker] = handler
 

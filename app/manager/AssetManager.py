@@ -1,6 +1,7 @@
 import threading
 
 from app.db.mongodb.AssetRepository import AssetRepository
+from app.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
 from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.models.asset.Asset import Asset
 from app.models.asset.Candle import Candle
@@ -27,14 +28,15 @@ class AssetManager:
     """
     # region Initializing
 
+
     _instance = None
     _lock = threading.Lock()
 
     def __new__(cls, *args, **kwargs):
-        if not cls._instance:
+        if cls._instance is None:
             with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(AssetManager, cls).__new__(cls, *args, **kwargs)
+                if cls._instance is None:  # Double-checked locking
+                    cls._instance = super(AssetManager, cls).__new__(cls)
         return cls._instance
 
 
@@ -69,7 +71,19 @@ class AssetManager:
 
     # region CRUD
 
-    def return_all_assets(self)->list[Asset]:
+    def return_assets(self)->list[Asset]:
+        dtos:list[AssetDTO] = self._asset_respository.find_assets()
+        assets = []
+        for dto in dtos:
+            dto:AssetDTO = dto
+            asset_class_dto: AssetClassDTO = self._asset_respository.find_asset_class_by_id(dto.assetClass)
+            asset: Asset = Asset(name=dto.name, asset_class=asset_class_dto.name, smt_pairs=[], relations=[],
+                                 candles_series=[], asset_id=dto.assetId)
+
+            assets.append(asset)
+        return assets
+
+    def return_stored_assets(self)->list[Asset]:
         return [x for x in self.assets.values()]
 
     def create_asset(self,asset:Asset):

@@ -11,25 +11,17 @@ class ScheduleService:
     _lock = threading.Lock()
 
     def __new__(cls, *args, **kwargs):
-        if not cls._instance:
+        if cls._instance is None:
             with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(ScheduleService, cls).__new__(cls, *args, **kwargs)
+                if cls._instance is None:  # Double-checked locking
+                    cls._instance = super(ScheduleService, cls).__new__(cls)
         return cls._instance
 
     def __init__(self):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._jobs:dict = {}
             self._initialized = True  # Markiere als initialisiert
-        # self._news_service = NewsService()
-        #
-        # job =  schedule.every().saturday.at("12:00").do(self._news_service.run_news_scheduler)
-        #
-        # self._jobs["News"] = job
-        #
-        # for name, seconds in self._jobs.items():
-        #     logger.info("Adding schedule for {}".format(name))
-        # todo add task
+
 
     @staticmethod
     def _add_tag(job, tag1:str=None, tag2:str=None):

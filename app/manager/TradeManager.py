@@ -6,10 +6,12 @@ from app.api.brokers.models.BrokerPosition import BrokerPosition
 from app.api.brokers.models.RequestParameters import RequestParameters
 from app.db.mongodb.TradeRepository import TradeRepository
 from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
+from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.facade.BrokerFacade import BrokerFacade
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
+from app.manager.RelationManager import RelationManager
 from app.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
@@ -38,22 +40,23 @@ class TradeManager:
     _lock = threading.Lock()
 
     def __new__(cls, *args, **kwargs):
-        if not cls._instance:
+        if cls._instance is None:
             with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(TradeManager, cls).__new__(cls, *args, **kwargs)
+                if cls._instance is None:  # Double-checked locking
+                    cls._instance = super(TradeManager, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self,trade_repository:TradeRepository,broker_facade:BrokerFacade,risk_manager:RiskManager,):
+    def __init__(self,trade_repository:TradeRepository,broker_facade:BrokerFacade,risk_manager:RiskManager,relation_manager:RelationManager):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._trade_registry = SemaphoreRegistry()
             self._lock_registry = LockRegistry()
             self._open_trades: dict[str, Trade] = {}
             self._trade_repository: TradeRepository = trade_repository
-            self._broker_facade = broker_facade
             self._risk_manager = risk_manager
-            self._class_mapper = ClassMapper()
+            self._broker_facade = broker_facade
             self._broker_mapper = BrokerMapper()
+            self._class_mapper = ClassMapper()
+            self._relation_manager = relation_manager
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
@@ -83,6 +86,30 @@ class TradeManager:
     # endregion
 
     # region CRUD DB
+
+    def get_trades(self)->list[Trade]:
+        trade_dtos = self._trade_repository.find_trades()
+
+        trades = []
+
+        for trade_db in trade_dtos:
+
+            trade_db:TradeDTO = trade_db
+            orders = []
+
+            orders.extend(self._trade_repository.find_orders_by_trade_id(trade_db.tradeId))
+
+            relation = self._relation_manager.return_relation_for_id(trade_db.relationId)
+
+            trade = Trade(orders=orders, tradeId=trade_db.tradeId, relation=relation, category=trade_db.category
+                          , side=trade_db.side, tpslMode=trade_db.tpslMode,
+                          unrealisedPnl=trade_db.unrealisedPnl
+                          , leverage=trade_db.leverage, size=trade_db.size, tradeMode=trade_db.tradeMode
+                          , updatedTime=trade_db.updatedTime, createdTime=trade_db.createdTime)
+
+            trades.append(trade)
+
+        return trades
 
     def get_brokers(self)->list[BrokerDTO]:
         return self._trade_repository.find_brokers()
@@ -261,6 +288,9 @@ class TradeManager:
                                 orderLinkId=order.orderLinkId, e=e))
                             try:
                                 self.__write_order_to_db(order)
+                                self._trade_repository.add_framework_to_db(order.entry_frame_work)
+                                self._trade_repository.add_framework_candles_to_db(framework=order.entry_frame_work)
+
                             except Exception as e:
                                 logger.warning("Write Order To DB Error,OrderLinkId: {orderLinkId}: {e}".format(
                                     orderLinkId=order.orderLinkId, e=e))
@@ -350,7 +380,7 @@ class TradeManager:
                 self.archive_trade(trade)
         return trades
 
-    def return_trades(self) -> list[Trade]:
+    def return_storage_trades(self) -> list[Trade]:
         trades = []
 
         for id, trade in self._open_trades.items():
@@ -358,8 +388,6 @@ class TradeManager:
         return trades
 
     # endregion
-
-# todo framework add to db from order
 
 # trade_manager = TradeManager()
 #

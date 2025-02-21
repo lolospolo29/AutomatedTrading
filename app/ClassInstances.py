@@ -50,16 +50,18 @@ news_repository = NewsRepository("News",mongo_server)
 
 asset_manager = AssetManager(asset_respository=asset_repository)
 
-trade_manager = TradeManager(trade_repository=trade_repository,broker_facade=broker_facade,risk_manager=risk_manager)
+relation_manager = RelationManager(relation_repository=relation_repository,asset_manager=asset_manager,asset_repository=asset_repository)
 
-relation_manager = RelationManager(relation_repository=relation_repository,asset_manager=asset_manager)
+trade_manager = TradeManager(trade_repository=trade_repository,broker_facade=broker_facade,risk_manager=risk_manager,relation_manager=relation_manager)
 
-config_manager = ConfigManager(trade_manager=trade_manager,asset_manager=asset_manager,relation_manager=relation_manager)
+strategy_manager = StrategyManager()
+
+config_manager = ConfigManager(trade_manager=trade_manager,asset_manager=asset_manager,relation_manager=relation_manager,strategy_manager=strategy_manager)
 
 strategy_manager = StrategyManager()
 
 # Handler
-new_file_handler = FileHandler()
+new_file_handler = FileHandler(asset_manager=asset_manager,strategy_manager=strategy_manager)
 
 # services
 
@@ -73,9 +75,11 @@ signal_controller = SignalController(trading_service=trading_service, news_servi
 
 # Logic
 
-config_manager.run_starting_setup()
+config_manager.initialize_managers()
 
 schedule_manager = ScheduleService()
+
+schedule_manager.every_day_add_schedule("News","12:00",news_service.run_news_scheduler)
 
 
 def MonitorFolder(handler, folderPath):

@@ -30,36 +30,40 @@ class RelationManager:
     _lock = threading.Lock()
 
     def __new__(cls, *args, **kwargs):
-        if not cls._instance:
+        if cls._instance is None:
             with cls._lock:
-                if not cls._instance:
-                    cls._instance = super(RelationManager, cls).__new__(cls, *args, **kwargs)
+                if cls._instance is None:  # Double-checked locking
+                    cls._instance = super(RelationManager, cls).__new__(cls)
         return cls._instance
 
 
-    def __init__(self,relation_repository:RelationRepository,asset_manager:AssetManager):
+    def __init__(self,relation_repository:RelationRepository,asset_manager:AssetManager,asset_repository:AssetRepository):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._relation_repository = relation_repository
+            self._asset_repository = asset_repository
             self._asset_manager = asset_manager
             self._strategy_manager = StrategyManager()
             self._strategy_factory = StrategyFactory()
             self._initialized = True  # Markiere als initialisiert
+
+    def return_relation_for_id(self,relation_id:int)->Relation:
+        relation_dto:RelationDTO = self._relation_repository.find_relation_by_id(relation_id)
+
+        asset_dto = self._relation_repository.find_asset_by_id(relation_dto.assetId)
+        broker_dto = self._relation_repository.find_broker_by_id(relation_dto.brokerId)
+        strategy_dto = self._relation_repository.find_strategy_by_id(relation_dto.strategyId)
+
+        relation = Relation(asset=asset_dto.name, broker=broker_dto.name, strategy=strategy_dto.name
+                            , max_trades=relation_dto.maxTrades, id=relation_dto.relationId)
+        return relation
+
 
     def return_relations(self)->list[Relation]:
         relation_dtos:list[RelationDTO] = self._relation_repository.find_relations()
 
         relations:list[Relation] = []
         for relation_dto in relation_dtos:
-            relation_dto:RelationDTO = relation_dto
-
-            asset_dto = self._relation_repository.find_asset_by_id(relation_dto.assetId)
-            broker_dto = self._relation_repository.find_broker_by_id(relation_dto.brokerId)
-            strategy_dto = self._relation_repository.find_strategy_by_id(relation_dto.strategyId)
-
-            relation = Relation(asset=asset_dto.name,broker=broker_dto.name,strategy=strategy_dto.name
-                                ,max_trades=relation_dto.maxTrades,id=relation_dto.relationId)
-
-            relations.append(relation)
+            relations.append(self.return_relation_for_id(relation_dto.relationId))
         return relations
 
     def delete_relation(self,relation:Relation):
@@ -119,9 +123,11 @@ class RelationManager:
                         return
                     asset_b = smt_pair.asset_b if relation.asset == smt_pair.asset_a else smt_pair.asset_a
                     self._strategy_manager.register_smt_strategy(relation_smt=relation, strategy_smt=strategy,asset2=asset_b)
+                    self.add_timeframes_to_asset(relation=relation)
             except Exception as e:
                 logger.critical("Failed to add SMT pair to db and manager. Error:{e}".format(e=e))
                 continue
+
     # todo test smt
     def return_smt_pairs(self)->list[SMTPair]:
         smt_pair_dtos:list[SMTPairDTO] = self._relation_repository.find_smt_pairs()
