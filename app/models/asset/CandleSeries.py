@@ -36,7 +36,4 @@ class CandleSeries(BaseModel):
         """
         Convert the deque of Candle objects into a list.
         """
-        return list[Candle](list(self.candleSeries))
-
-
-cs = CandleSeries(candleSeries=deque(maxlen=90),timeFrame=1,broker="test")
+        return list(self.candleSeries)

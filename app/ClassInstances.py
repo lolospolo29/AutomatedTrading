@@ -67,6 +67,8 @@ new_file_handler = FileHandler(asset_manager=asset_manager,strategy_manager=stra
 
 news_service = NewsService(news_repository=news_repository)
 
+news_service.receive_news()
+
 trading_service = TradingService(asset_manager=asset_manager,trade_manager=trade_manager,strategy_manager=strategy_manager,news_service=news_service)
 
 # controller

@@ -73,7 +73,7 @@ class TradingService:
 
         is_news_ahead = True
 
-      #  is_news_ahead,message = self._news_service.is_news_ahead()
+        is_news_ahead,message = self._news_service.is_news_ahead()
 
         if is_news_ahead:
 

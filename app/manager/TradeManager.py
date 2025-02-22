@@ -61,7 +61,8 @@ class TradeManager:
 
     # endregion
 
-    # region Register Remove Dict
+    # region In Memory Functions
+
     def register_trade(self, trade: Trade) -> None:
         tradeLock = self._lock_registry.get_lock(trade.tradeId)
         with tradeLock:
@@ -135,6 +136,77 @@ class TradeManager:
         orderLock = self._lock_registry.get_lock(order.orderLinkId)
         with orderLock:
             self._trade_repository.update_order(order)
+
+    # endregion
+
+    #region API
+    def __place_order(self, broker: str, order: Order) -> Order:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
+        with orderLock:
+            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
+                                                    (RequestParameters, order, Order, broker=broker))
+            newOrder: BrokerOrder = self._broker_facade.place_order(requestParameters)
+            return self._broker_mapper.map_broker_order_to_order(newOrder, order)
+
+    def __amend_order(self, broker: str, order: Order) -> Order:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
+        with orderLock:
+            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
+                                                    (RequestParameters, order, Order, broker=broker))
+            newOrder: BrokerOrder = self._broker_facade.amend_order(requestParameters)
+            return self._broker_mapper.map_broker_order_to_order(newOrder, order)
+
+    def __cancel_order(self, broker: str, order: Order) -> Order:
+        orderLock = self._lock_registry.get_lock(order.orderLinkId)
+        with orderLock:
+            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
+                                                    (RequestParameters, order, Order, broker=broker))
+            newOrder: BrokerOrder = self._broker_facade.cancel_order(requestParameters)
+            return self._broker_mapper.map_broker_order_to_order(newOrder, order)
+
+    def __set_leverage(self, request_parameters: RequestParameters) -> bool:
+        return self._broker_facade.set_leverage(request_parameters)
+
+    def __cancel_all_orders(self, request_parameters: RequestParameters) -> list[BrokerOrder]:
+        return self._broker_facade.cancel_all_orders(request_parameters)
+
+    def __return_open_and_closed_orders(self, request_parameters: RequestParameters) -> list[BrokerOrder]:
+        return self._broker_facade.return_open_and_closed_orders(request_parameters)
+
+    def __return_position_info(self, request_parameters: RequestParameters) -> list[BrokerPosition]:
+        return self._broker_facade.return_position_info(request_parameters)
+
+    def __return_order_history(self, request_parameters: RequestParameters) -> list[BrokerOrder]:
+        return self._broker_facade.return_order_history(request_parameters)
+
+    # endregion
+
+    # region Functions
+
+    def get_current_pnl(self):
+        pnl = 0
+        for id, trade in self._open_trades.items():
+            pnl += trade.unrealisedPnl
+        self._risk_manager.add_to_current_pnl(pnl)
+        return self._risk_manager.return_current_pnl()
+
+    def return_trades_for_relation(self, assetBrokerStrategyRelation: Relation) -> list[Trade]:
+        trades = []
+        for id, trade in self._open_trades.items():
+            try:
+                if trade.relation == assetBrokerStrategyRelation:
+                    trades.append(trade)
+            except AttributeError as e:
+                logger.error("Return Trades Error,Error:{e}".format(e=e))
+                self.archive_trade(trade)
+        return trades
+
+    def return_storage_trades(self) -> list[Trade]:
+        trades = []
+
+        for id, trade in self._open_trades.items():
+            trades.append(trade)
+        return trades
 
     # endregion
 
@@ -317,78 +389,7 @@ class TradeManager:
                     logger.warning(
                         "Something went Wrong with Archiving,TradeId: {tradeId}: {e}".format(tradeId=trade.tradeId, e=e))
 
-    #region API
-    def __place_order(self, broker: str, order: Order) -> Order:
-        orderLock = self._lock_registry.get_lock(order.orderLinkId)
-        with orderLock:
-            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
-                                                    (RequestParameters, order, Order, broker=broker))
-            newOrder: BrokerOrder = self._broker_facade.place_order(requestParameters)
-            return self._broker_mapper.map_broker_order_to_order(newOrder, order)
-
-    def __amend_order(self, broker: str, order: Order) -> Order:
-        orderLock = self._lock_registry.get_lock(order.orderLinkId)
-        with orderLock:
-            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
-                                                    (RequestParameters, order, Order, broker=broker))
-            newOrder: BrokerOrder = self._broker_facade.amend_order(requestParameters)
-            return self._broker_mapper.map_broker_order_to_order(newOrder, order)
-
-    def __cancel_order(self, broker: str, order: Order) -> Order:
-        orderLock = self._lock_registry.get_lock(order.orderLinkId)
-        with orderLock:
-            requestParameters: RequestParameters = (self._class_mapper.map_args_to_dataclass
-                                                    (RequestParameters, order, Order, broker=broker))
-            newOrder: BrokerOrder = self._broker_facade.cancel_order(requestParameters)
-            return self._broker_mapper.map_broker_order_to_order(newOrder, order)
-
-    def __set_leverage(self, request_parameters: RequestParameters) -> bool:
-        return self._broker_facade.set_leverage(request_parameters)
-
-    def __cancel_all_orders(self, request_parameters: RequestParameters) -> list[BrokerOrder]:
-        return self._broker_facade.cancel_all_orders(request_parameters)
-
-    def __return_open_and_closed_orders(self, request_parameters: RequestParameters) -> list[BrokerOrder]:
-        return self._broker_facade.return_open_and_closed_orders(request_parameters)
-
-    def __return_position_info(self, request_parameters: RequestParameters) -> list[BrokerPosition]:
-        return self._broker_facade.return_position_info(request_parameters)
-
-    def __return_order_history(self, request_parameters: RequestParameters) -> list[BrokerOrder]:
-        return self._broker_facade.return_order_history(request_parameters)
-
     # endregion
-    # endregion
-
-    # region Functions
-
-    def get_current_pnl(self):
-        pnl = 0
-        for id, trade in self._open_trades.items():
-            pnl += trade.unrealisedPnl
-        self._risk_manager.add_to_current_pnl(pnl)
-        return self._risk_manager.return_current_pnl()
-
-    def return_trades_for_relation(self, assetBrokerStrategyRelation: Relation) -> list[Trade]:
-        trades = []
-        for id, trade in self._open_trades.items():
-            try:
-                if trade.relation == assetBrokerStrategyRelation:
-                    trades.append(trade)
-            except AttributeError as e:
-                logger.error("Return Trades Error,Error:{e}".format(e=e))
-                self.archive_trade(trade)
-        return trades
-
-    def return_storage_trades(self) -> list[Trade]:
-        trades = []
-
-        for id, trade in self._open_trades.items():
-            trades.append(trade)
-        return trades
-
-    # endregion
-
 # trade_manager = TradeManager()
 #
 # relation = Relation(asset="XRPUSDT", broker="BYBIT", strategy="AC", max_trades=1, id=1)

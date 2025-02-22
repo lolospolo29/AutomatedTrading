@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from app.interfaces.framework.ITimeWindow import ITimeWindow
 from app.models.asset.Relation import Relation
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from app.models.strategy.StrategyResult import StrategyResult
 
 
 class Strategy(BaseModel):
@@ -19,8 +20,8 @@ class Strategy(BaseModel):
                 return True
 
     @abstractmethod
-    def get_exit(self, candles: list, timeFrame: int, trade, relation):
+    def get_exit(self, candles: list, timeFrame: int, trade, relation)->StrategyResult:
         pass
     @abstractmethod
-    def get_entry(self, candles: list, timeFrame: int, relation:Relation, asset_class:str):
+    def get_entry(self, candles: list, timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
         pass
