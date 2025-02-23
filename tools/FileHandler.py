@@ -49,14 +49,12 @@ class FileHandler(FileSystemEventHandler):
 
                 candles_dict_list = self._parse_candle_data(event.src_path)
 
-                # candles_dict_list = self._parse_candle_data_from_file(event.src_path)
                 logger.debug("Candles list {}".format(len(candles_dict_list)))
 
                 for candle_dict in candles_dict_list:
                     try:
                         candle:Candle = AssetMapper().map_tradingview_json_to_candle(candle_dict)
                         candle: Candle = self._asset_manager.add_candle(candle)
-                        #self._testing_strategy(candle.asset, candle.broker, candle.timeframe)
                     except Exception as e:
                         logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
                     finally:
@@ -66,47 +64,9 @@ class FileHandler(FileSystemEventHandler):
                 self._archive()
         except Exception as e:
             logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
-
-    def _testing_strategy(self, asset, broker, timeFrame):
-        try:
-            candles: list[Candle] = self._asset_manager.return_candles(asset, broker, timeFrame)
-            relations: list = self._asset_manager.return_relations(asset, broker)
-            for relation in relations:
-                try:
-                    asset_class:str = self._asset_manager.return_asset_class(relation.asset)
-                    logger.debug("Processing Entries for {}".format(relation))
-                    self._strategy_manager.get_entry(candles, relation, timeFrame,asset_class)
-                except Exception as e:
-                    logger.debug("Failed to Analyze Strategy Manager: {}".format(e))
-                finally:
-                    continue
-        except Exception as e:
-            logger.error("Testing strategy failed for asset: {asset},Error:{e}".format(asset=asset,e=e))
-
     # endregion
 
     # region CSV Parsing
-    @staticmethod
-    def _parse_candle_data_from_file(csv_filename) -> list[dict]:
-        candles = []
-        try:
-            with open(csv_filename, mode='r', newline='') as file:
-                reader = list(csv.DictReader(file))
-
-                for row in reversed(reader):
-                    high = float(row.get("high"))
-                    low = float(row.get("low"))
-                    opens = float(row.get("open"))
-                    close = float(row.get("close"))
-                    #time = row.get("time")
-                    broker = "CAPITALCOM"
-                    asset = "DXY"
-                    candle = Candle(asset=asset,broker=broker,high=high
-                                    ,low=low,open=opens,close=close,timeframe=15,iso_time=row.get("time"))
-                    candles.append(candle.to_dict())
-            return candles
-        except Exception as e:
-            logger.error("Failed to Parse Candle Data from CSV: {e}".format(e=e))
 
     @staticmethod
     def _parse_candle_data(csv_filename) -> list[dict]:

@@ -3,7 +3,6 @@ import threading
 import schedule
 
 from app.monitoring.logging.logging_startup import logger
-from app.services.NewsService import NewsService
 
 
 class ScheduleService:
