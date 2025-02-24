@@ -6,8 +6,6 @@ class Result(BaseModel):
     result_id: str
     strategy:str
 
-    equity_curve: list
-
     no_of_trades: int = 0
     winrate:float = 0.0
     risk_ratio:float = 0.0

@@ -8,7 +8,9 @@ from app.manager.TradeManager import TradeManager
 from app.models.asset.Asset import Asset
 from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
+from app.models.backtest.BacktestInput import BacktestInput
 from app.monitoring.logging.logging_startup import logger
+from app.services.BacktestService import BacktestService
 from app.services.NewsService import NewsService
 from app.services.TradingService import TradingService
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
@@ -18,14 +20,44 @@ class SignalController:
 
     # region Initializing
     def __init__(self,trading_service:TradingService, news_service:NewsService,asset_manager:AssetManager, trade_manager:TradeManager
-                 ,relation_manager:RelationManager):
+                 ,relation_manager:RelationManager,backtest_service:BacktestService):
         self._TradingService: TradingService = trading_service
         self._NewsService = news_service
         self._TradeManager = trade_manager
         self._AssetManager = asset_manager
         self._Relation_manager = relation_manager
         self._StrategyManager = StrategyManager()
+        self._BacktestService = backtest_service
     # endregion
+
+    def run_backtest(self,json_data:Dict[str,Any] = None):
+        result = ""
+        try:
+            result = self._BacktestService.start_backtesting_strategy(BacktestInput.model_validate(json_data))
+            result = result.dict()
+        except Exception as e:
+            logger.warning("Add Asset failed,Error: {e}".format(e=e))
+        return result
+
+    def get_asset_selection(self)->list[str]:
+        return self._BacktestService.get_asset_selection()
+
+    def get_test_results(self,json_data:Dict[str,Any] = None)->list[dict]:
+        strategy_name = None
+        try:
+            strategy_name = json_data["strategy"]
+        except Exception:
+            pass
+
+        results = self._BacktestService.get_test_results(strategy_name)
+        updated_results = []
+        for result in results:
+            try:
+                trade_str:dict = result.dict()
+                updated_results.append(trade_str)
+            except Exception as e:
+                logger.error("Error appending trade to list: {id},Error:{e}".format(id=result.result_id,e=e))
+        return updated_results
 
     def get_trades(self)->list[dict]:
         trades = self._TradeManager.return_storage_trades()
@@ -50,7 +82,9 @@ class SignalController:
         return updated_news
 
     def update_trade(self):
+        # todo close trade amend trade
         pass
+
 
     def add_trade(self):
         pass

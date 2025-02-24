@@ -21,22 +21,34 @@ def receive_signal():
     return f'Received Analyse data: {json_data}'
 
 # endregion
-# todo strategy testing / Modul
-# todo close trade amend trade
-#
 # todo system testing
 #
-# todo dashboard trade
-# todo write down ideas for dashboard + figma + css
+# todo dashboard  figma + css
 ###
 # todo tools / telegram / steuern
 # todo candle data as chart
 # todo journal
 #
-# todo server / security
-# todo docker
 ###
 # region CREATE APP Route
+
+@app.route('/run-backtest', methods=['POST'])
+def run_backtest():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.run_backtest, args=(json_data,))
+    thread.start()
+
+    return jsonify({"status": "success"})
+
+@app.route('/get-test-results', methods=['POST'])
+def get_test_results():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")#
+    result = signal_controller.get_test_results(json_data)
+
+    return jsonify(result)
 
 @app.route('/create-asset', methods=['POST'])
 def create_asset():
@@ -70,6 +82,10 @@ def create_smt_pair():
 # endregion
 
 # region GET APP Route
+
+@app.route('/get-asset-selection', methods=['GET'])
+def get_asset_selection():
+    return jsonify(signal_controller.get_asset_selection())
 
 @app.route('/get-news', methods=['GET'])
 def get_news():

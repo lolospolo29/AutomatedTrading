@@ -5,6 +5,7 @@ from datetime import datetime
 from app.db.mongodb.BacktestRepository import BacktestRepository
 from app.helper.factories.StrategyFactory import StrategyFactory
 from app.models.asset.Candle import Candle
+from app.models.backtest.BacktestInput import BacktestInput
 from app.models.backtest.Result import Result
 from app.models.backtest.TestModule import TestModule
 from app.monitoring.logging.logging_startup import logger
@@ -29,11 +30,11 @@ class BacktestService:
             self._fetch_test_assets()
             self._initialized = True  # Markiere als initialisiert
 
-    def start_backtesting_strategy(self,strategy:str,test_assets:list[str])->Result:
+    def start_backtesting_strategy(self,backtest_input:BacktestInput)->Result:
 
-        test_data:dict[str,list[Candle]] = self._prepare_test_data(test_assets)
+        test_data:dict[str,list[Candle]] = self._prepare_test_data(backtest_input.test_assets)
 
-        strategy = self.__factory.return_strategy(strategy)
+        strategy = self.__factory.return_strategy(backtest_input.strategy)
 
         result = Result(strategy=strategy.name,result_id=str(uuid.uuid4()),equity_curve=[])
 
@@ -45,7 +46,7 @@ class BacktestService:
             logger.error(f"Strategy {strategy} not found in Backtest Service")
             return result
 
-        for asset in test_assets:
+        for asset in backtest_input.test_assets:
             logger.info(f"Starting backtest for {asset}")
 
             module = TestModule(strategy.model_copy(),asset
