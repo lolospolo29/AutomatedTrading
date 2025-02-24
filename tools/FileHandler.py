@@ -12,6 +12,7 @@ from app.manager.StrategyManager import StrategyManager
 from app.mappers.AssetMapper import AssetMapper
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger
+from app.services.BacktestService import BacktestService
 
 
 class FileHandler(FileSystemEventHandler):
@@ -24,9 +25,10 @@ class FileHandler(FileSystemEventHandler):
     """
     # region Initializing
 
-    def __init__(self,asset_manager:AssetManager,strategy_manager:StrategyManager):
+    def __init__(self,asset_manager:AssetManager,strategy_manager:StrategyManager,backtest_service:BacktestService):
         self._asset_manager: AssetManager = asset_manager
         self._strategy_manager: StrategyManager = strategy_manager
+        self._backtest_service:BacktestService = backtest_service
 
     # endregion
 
@@ -62,6 +64,16 @@ class FileHandler(FileSystemEventHandler):
 
                 self._move_to_archive(event.src_path)
                 self._archive()
+            if filename.startswith("Testdata") and filename.endswith(".csv"):
+                candles_dict_list = self._parse_candle_data(event.src_path)
+                candles = []
+                for candle_dict in candles_dict_list:
+                    try:
+                        candle:Candle = AssetMapper().map_tradingview_json_to_candle(candle_dict)
+                        candles.append(candle)
+                    except Exception as e:
+                        logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
+                self._backtest_service.add_test_data(candles)
         except Exception as e:
             logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
     # endregion
@@ -75,10 +87,24 @@ class FileHandler(FileSystemEventHandler):
         try:
             with open(csv_filename, mode='r', newline='') as file:
                 reader = list(csv.DictReader(file))
+                description_keys = ["Beschreibung", "Description", "Descripción", "Descrizione", "Описание", "描述"]
 
                 for row in reversed(reader):
                     # change back to normal after debug reversed
-                    description_json = json.loads(row["Beschreibung"])
+                    beschreibung_text = None
+                    for key in description_keys:
+                        if key in row:  # Prüfe, ob die Spalte existiert
+                            beschreibung_text = row[key]
+                            break  # Erste gefundene Beschreibung verwenden
+
+                    if beschreibung_text is None:
+                        print("Keine passende Spalte für die Beschreibung gefunden.")
+                        continue  # Überspringen, wenn keine Beschreibung gefunden wurde
+
+                    # JSON parsen
+                    description_json = json.loads(beschreibung_text)
+
+
                     # candle_data = description_json["Candle"]
                     candle_data = description_json.get("Candle", {})
 

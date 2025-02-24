@@ -7,6 +7,7 @@ from watchdog.observers import Observer
 from app.api.brokers.bybit.Bybit import Bybit
 from app.controller.SignalController import SignalController
 from app.db.mongodb.AssetRepository import AssetRepository
+from app.db.mongodb.BacktestRepository import BacktestRepository
 from app.db.mongodb.NewsRepository import NewsRepository
 from app.db.mongodb.RelationRepository import RelationRepository
 from app.db.mongodb.TradeRepository import TradeRepository
@@ -17,6 +18,7 @@ from app.manager.RiskManager import RiskManager
 from app.manager.StrategyManager import StrategyManager
 from app.manager.TradeManager import TradeManager
 from app.manager.initializer.SecretsManager import SecretsManager
+from app.services.BacktestService import BacktestService
 from app.services.NewsService import NewsService
 from app.services.ScheduleService import ScheduleService
 from app.services.TradingService import TradingService
@@ -46,7 +48,10 @@ relation_repository = RelationRepository(db_name="TradingConfig",uri=mongo_serve
 
 news_repository = NewsRepository("News",mongo_server)
 
+backtest_repository = BacktestRepository(db_name="Backtest",uri=mongo_server)
+
 # Manager
+
 
 asset_manager = AssetManager(asset_respository=asset_repository)
 
@@ -61,13 +66,15 @@ config_manager = ConfigManager(trade_manager=trade_manager,asset_manager=asset_m
 strategy_manager = StrategyManager()
 
 # Handler
-new_file_handler = FileHandler(asset_manager=asset_manager,strategy_manager=strategy_manager)
+
+backtest_service = BacktestService(backtest_repository=backtest_repository)
+
+new_file_handler = FileHandler(asset_manager=asset_manager,strategy_manager=strategy_manager,backtest_service=backtest_service)
 
 # services
 
 news_service = NewsService(news_repository=news_repository)
 
-news_service.receive_news()
 
 trading_service = TradingService(asset_manager=asset_manager,trade_manager=trade_manager,strategy_manager=strategy_manager,news_service=news_service)
 
@@ -83,6 +90,7 @@ schedule_manager = ScheduleService()
 
 schedule_manager.every_day_add_schedule("News","12:00",news_service.run_news_scheduler)
 
+#news_service.receive_news()
 
 def MonitorFolder(handler, folderPath):
     observer = Observer()

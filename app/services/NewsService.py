@@ -57,7 +57,7 @@ class NewsService:
         """
         self._news_days = self._economic_scrapper.return_calendar()
         logger.info("Receiving News from Scrapper.")
-        logger.info("News Days received : {count}".format(count=self._news_days))
+        logger.debug("News Days received : {count}".format(count=self._news_days))
 
     def is_news_ahead(self, hour: int = 1) -> tuple[bool, str]:
         """

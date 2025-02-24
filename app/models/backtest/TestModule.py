@@ -17,8 +17,9 @@ from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
 
 class TestModule:
-    def __init__(self, strategy:Strategy, candles:list[Candle], timeframes:list[ExpectedTimeFrame],result_id:str):
+    def __init__(self, strategy:Strategy, asset:str,candles:list[Candle], timeframes:list[ExpectedTimeFrame],result_id:str):
         self.strategy = strategy
+        self.asset = asset
         self.candles = candles
         self.timeframes = timeframes
         self.result_id = result_id
@@ -78,8 +79,83 @@ class TestModule:
 
     def calculate_trade_results(self):
         for trade_result in self.trade_results.values():
-            trade_result: TradeResult = trade_result
-            pass
+            trade_result : TradeResult = trade_result
+            if not trade_result.filled_orders:
+                continue  # Kein gefüllter Trade -> Überspringen
+
+            # Initiale Variablen
+            total_qty = 0.0
+            weighted_entry_price = 0.0
+            stop_loss = None
+            take_profit = None
+            max_drawdown = 0.0
+            highest_price = float('-inf')  # Für Buy-Trades
+            lowest_price = float('inf')  # Für Sell-Trades
+
+            # Sortiere Orders nach Zeit
+            trade_result.filled_orders.sort(key=lambda x: x.createdTime)
+
+            # Entry & Exit Zeiten setzen
+            trade_result.entry_time = trade_result.filled_orders[0].createdTime
+            trade_result.exit_time = trade_result.filled_orders[-1].createdTime
+
+            # Iteriere über alle gefüllten Orders
+            for order in trade_result.filled_orders:
+                order_qty = float(order.qty)
+                order_price = float(order.price) if order.price else 0.0
+
+                # Berechne Gesamtmenge (positiv für BUY, negativ für SELL)
+                if order.side == OrderDirectionEnum.BUY.value:
+                    total_qty += order_qty
+                else:
+                    total_qty -= order_qty
+
+                # Berechne gewichteten Entry-Preis
+                weighted_entry_price += order_price * order_qty
+
+                # Tracke höchste und niedrigste Preise
+                highest_price = max(highest_price, order_price)
+                lowest_price = min(lowest_price, order_price)
+
+                # Stop-Loss & Take-Profit aus Orders extrahieren
+                if order.stopLoss:
+                    stop_loss = float(order.stopLoss)
+                if order.takeProfit:
+                    take_profit = float(order.takeProfit)
+
+            # Bestimme die Handelsrichtung (Buy oder Sell)
+            if total_qty > 0:
+                trade_result.side = OrderDirectionEnum.BUY.value
+                if trade_result.last_candle.low > trade_result.entry_price:
+                    trade_result.is_win = True
+            if total_qty < 0:
+                trade_result.side = OrderDirectionEnum.SELL.value
+                if trade_result.last_candle.high < trade_result.entry_price:
+                    trade_result.is_win = True
+            if total_qty == 0:
+                trade_result.is_win = True
+
+            # Berechne finalen Entry-Preis
+            if abs(total_qty) > 0:
+                trade_result.entry_price = weighted_entry_price / abs(total_qty)
+
+            # Exit-Preis ist der Preis der letzten Order
+            exit_price = float(trade_result.filled_orders[-1].price) if trade_result.filled_orders[-1].price else trade_result.last_candle.close
+
+            # PnL Berechnung
+            if trade_result.side == OrderDirectionEnum.BUY.value:
+                trade_result.pnl_percentage = ((exit_price - trade_result.entry_price) / trade_result.entry_price) * 100
+                max_drawdown = ((highest_price - lowest_price) / highest_price) * 100
+            else:
+                trade_result.pnl_percentage = ((trade_result.entry_price - exit_price) / trade_result.entry_price) * 100
+                max_drawdown = ((highest_price - lowest_price) / lowest_price) * 100
+
+            trade_result.max_drawdown = max_drawdown
+            trade_result.stop = stop_loss if stop_loss else 0.0
+            trade_result.take_profit = take_profit if take_profit else 0.0
+
+            print(
+                f"Trade {trade_result.tradeId}: Side: {trade_result.side}, PnL: {trade_result.pnl_percentage:.2f}%, Max Drawdown: {trade_result.max_drawdown:.2f}%")
 
     @staticmethod
     def _prepare_candle_series(timeframes: list[ExpectedTimeFrame]) -> list[CandleSeries]:
@@ -218,6 +294,7 @@ class TestModule:
 
     def _update_trade_results(self, strategy_result: StrategyResult, last_candle: Candle)->StrategyResult:
         trade_result:TradeResult = self.trade_results[strategy_result.trade.tradeId]
+        trade_result.last_candle = last_candle
 
         if trade_result.is_closed or strategy_result.status == StrategyResultStatusEnum.CLOSE.value:
             trade_result.is_closed = True

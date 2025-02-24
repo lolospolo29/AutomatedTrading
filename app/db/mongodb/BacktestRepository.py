@@ -27,8 +27,26 @@ class BacktestRepository:
     def add_result(self,result:Result):
         self._db.add("Results",result.model_dump())
 
+    def find_results(self)->list[Result]:
+        results_db:list = self._db.find("Results",None)
+
+        results:list[Result] = []
+        for result in results_db:
+            results.append(Result(**result))
+        return results
+
     def find_result_by_result_id(self,result_id:int)->list[Result]:
         query = self._db.buildQuery("result_id", result_id)
+
+        results_db:list = self._db.find("Results",query)
+
+        results:list[Result] = []
+        for result in results_db:
+            results.append(Result(**result))
+        return results
+
+    def find_result_by_strategy(self,strategy:str)->list[Result]:
+        query = self._db.buildQuery("strategy", strategy)
 
         results_db:list = self._db.find("Results",query)
 
