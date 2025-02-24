@@ -4,7 +4,6 @@ from app.mappers.DTOMapper import DTOMapper
 from app.models.asset.Candle import Candle
 from app.models.backtest.Result import Result
 from app.models.trade.Trade import Trade
-from app.monitoring.logging.logging_startup import logger
 
 
 class BacktestRepository:
@@ -12,8 +11,8 @@ class BacktestRepository:
         self._db = MongoDB(db_name=db_name, uri=uri)
         self._dto_mapper = DTOMapper()
 
-    def add_candle(self, asset: str, candle: Candle):
-        self._db.add(asset, candle.model_dump())
+    def add_candle(self, candle: Candle):
+        self._db.add("Testdata", candle.model_dump())
 
     def find_candles_by_asset(self, asset:str)->list[Candle]:
         query = self._db.buildQuery("asset", asset)
@@ -23,6 +22,15 @@ class BacktestRepository:
         for candle in candles_db:
             candles.append(Candle(**candle))
         return candles
+
+    def find_assets_in_testdata(self)->list[str]:
+        candles_db: list = self._db.find(collectionName="Testdata", query=None)
+
+        # Nutze ein Set für eindeutige Assets
+        assets = {Candle(**candle).asset for candle in candles_db}
+
+        # Konvertiere das Set zurück in eine Liste
+        return list(assets)
 
     def add_result(self,result:Result):
         self._db.add("Results",result.model_dump())

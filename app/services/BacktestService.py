@@ -25,6 +25,8 @@ class BacktestService:
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.__factory = StrategyFactory()
             self._backtest_repository = backtest_repository
+            self._asset_selection:list[str] = []
+            self._fetch_test_assets()
             self._initialized = True  # Markiere als initialisiert
 
     def start_backtesting_strategy(self,strategy:str,test_assets:list[str])->Result:
@@ -64,8 +66,8 @@ class BacktestService:
 
         return result
 
-    def get_asset_selection(self):
-        pass
+    def get_asset_selection(self)->list[str]:
+        return self._asset_selection
 
     def get_test_results(self,strategy:str=None)->list[Result]:
         if strategy:
@@ -75,7 +77,7 @@ class BacktestService:
 
     def add_test_data(self,candles:list[Candle]):
         for candle in candles:
-            self._backtest_repository.add_candle(candle.asset,candle)
+            self._backtest_repository.add_candle(candle)
 
     @staticmethod
     def _add_module_statistic_to_result(module: TestModule, result: Result) -> Result:
@@ -147,6 +149,9 @@ class BacktestService:
                     break
             if not alive:  # If no threads are alive, exit the loop
                 break
+
+    def _fetch_test_assets(self):
+        self._asset_selection = self._backtest_repository.find_assets_in_testdata()
 
     def _prepare_test_data(self, test_assets: list[str]) -> dict[str, list[Candle]]:
         test_data: dict[str, list[Candle]] = {}
