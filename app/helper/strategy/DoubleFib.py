@@ -28,8 +28,8 @@ class DoubleFib(Strategy):
     strategy_facade: Optional['StrategyFacade'] = Field(default=None)
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
-        if timeFrame == 1 and len(candles) > 60:
-            ote = self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=60)
+        if timeFrame == 1 and len(candles) > 30:
+            ote = self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=30)
             for level in ote:
                 self.strategy_facade.level_handler.add_level(level)
             self.strategy_facade.level_handler.remove_level(candles, timeFrame)
