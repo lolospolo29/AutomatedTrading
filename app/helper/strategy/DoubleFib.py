@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 
 from pydantic import Field
@@ -10,6 +11,11 @@ from app.models.frameworks.Level import Level
 from app.models.strategy.Strategy import Strategy
 from app.models.trade.Trade import Trade
 from app.models.strategy.StrategyResult import StrategyResult
+from app.models.trade.enums.CategoryEnum import CategoryEnum
+from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
+from app.models.trade.enums.TriggerByEnum import TriggerByEnum
+from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
+from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 
 
 # Double Fib
@@ -33,10 +39,7 @@ class DoubleFib(Strategy):
         self._analyzeData(candles, timeFrame)
         levels:list[Level] = self.strategy_facade.level_handler.return_levels()
         if candles and levels and timeFrame == 1:
-            from app.models.trade.enums.CategoryEnum import CategoryEnum
-            from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
-            from app.models.trade.enums.TriggerByEnum import TriggerByEnum
-            from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
+
 
             last_candle: Candle = candles[-1]
             time = last_candle.iso_time
@@ -88,7 +91,7 @@ class DoubleFib(Strategy):
                 stop_dir = TriggerDirection.RISE.value
 
             if order_dir:
-                trade = Trade(relation=relation,category=CategoryEnum.LINEAR.value)
+                trade = Trade(relation=relation,category=CategoryEnum.LINEAR.value,orders=[],tradeId=str(uuid.uuid4()))
                 trade.side = order_dir
 
                 entry_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
@@ -104,7 +107,7 @@ class DoubleFib(Strategy):
                                                           ,tradeId=trade.tradeId).set_conditional(
                                                           trigger_direction=stop_dir
                                                           ,trigger_price=stop,trigger_by=
-                                                          TriggerByEnum.MARKPRICE.value).set_limit(price=stop).build()
+                                                          TriggerByEnum.MARKPRICE.value).set_defaults(price=stop).build()
 
                 take_profit_order =  OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
                                                           ,category=CategoryEnum.LINEAR.value, side=exit_dir
@@ -113,7 +116,7 @@ class DoubleFib(Strategy):
                                                           ,tradeId=trade.tradeId).set_conditional(
                                                           trigger_direction=profit_dir
                                                           ,trigger_price=take_profit,trigger_by=
-                                                          TriggerByEnum.MARKPRICE.value).build()
+                                                          TriggerByEnum.MARKPRICE.value).set_defaults(price=take_profit).build()
 
                 qty = str(self.strategy_facade.risk_calculator.calculate_order_qty(asset_class=asset_class
                                                                                     , entry_price=float(last_candle.close)
@@ -123,10 +126,9 @@ class DoubleFib(Strategy):
                 take_profit_order.qty = qty
                 stop_order.qty = qty
 
-                trade.add_order(entry_order)
-                trade.add_order(stop_order)
-                trade.add_order(take_profit_order)
-                from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+                trade.orders.append(entry_order)
+                trade.orders.append(stop_order)
+                trade.orders.append(take_profit_order)
 
                 return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NEWTRADE.value)
             else:
@@ -137,6 +139,4 @@ class DoubleFib(Strategy):
     def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
 
         # todo trail stop
-        #todo implement more assets to this strategy
-        from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)

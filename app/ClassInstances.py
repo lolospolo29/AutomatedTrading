@@ -80,7 +80,7 @@ trading_service = TradingService(asset_manager=asset_manager,trade_manager=trade
 
 # controller
 
-signal_controller = SignalController(trading_service=trading_service, news_service=news_service,asset_manager=asset_manager, trade_manager=trade_manager,relation_manager=relation_manager)
+signal_controller = SignalController(trading_service=trading_service, news_service=news_service,asset_manager=asset_manager, trade_manager=trade_manager,relation_manager=relation_manager,backtest_service=backtest_service)
 
 # Logic
 

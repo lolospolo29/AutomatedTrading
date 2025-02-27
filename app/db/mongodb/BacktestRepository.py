@@ -1,4 +1,6 @@
 from app.db.mongodb.MongoDB import MongoDB
+from app.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
+from app.db.mongodb.dtos.AssetDTO import AssetDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.mappers.DTOMapper import DTOMapper
 from app.models.asset.Candle import Candle
@@ -17,11 +19,20 @@ class BacktestRepository:
     def find_candles_by_asset(self, asset:str)->list[Candle]:
         query = self._db.buildQuery("asset", asset)
 
-        candles_db:list = self._db.find(collectionName=asset,query=query)
+        candles_db:list = self._db.find(collectionName="Testdata",query=query)
         candles:list[Candle] = []
         for candle in candles_db:
             candles.append(Candle(**candle))
         return candles
+
+    def find_asset_class_name_by_asset(self, asset:str)->str:
+        query = self._db.buildQuery("name", asset)
+
+        asset_dto:AssetDTO = AssetDTO(**self._db.find("Asset", query)[0])
+
+        query = self._db.buildQuery("assetClassId", asset_dto.assetClass)
+
+        return AssetClassDTO(**self._db.find("AssetClasses", query)[0]).name
 
     def find_assets_in_testdata(self)->list[str]:
         candles_db: list = self._db.find(collectionName="Testdata", query=None)

@@ -46,6 +46,7 @@ class SignalController:
         strategy_name = None
         try:
             strategy_name = json_data["strategy"]
+            self._BacktestService.get_test_results(strategy_name)
         except Exception:
             pass
 

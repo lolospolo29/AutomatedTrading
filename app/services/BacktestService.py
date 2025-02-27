@@ -22,23 +22,25 @@ class BacktestService:
                     cls._instance = super(BacktestService, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self,backtest_repository:BacktestRepository):
+    def __init__(self, backtest_repository: BacktestRepository):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.__factory = StrategyFactory()
             self._backtest_repository = backtest_repository
-            self._asset_selection:list[str] = []
+            self._asset_selection: list[str] = []
             self._fetch_test_assets()
             self._initialized = True  # Markiere als initialisiert
 
-    def start_backtesting_strategy(self,backtest_input:BacktestInput)->Result:
+    def start_backtesting_strategy(self, backtest_input: BacktestInput) -> Result:
 
-        test_data:dict[str,list[Candle]] = self._prepare_test_data(backtest_input.test_assets)
+        test_data: dict[str, list[Candle]] = self._prepare_test_data(backtest_input.test_assets)
+
+        asset_classes: dict[str, str] = self._get_asset_classes(backtest_input.test_assets)
 
         strategy = self.__factory.return_strategy(backtest_input.strategy)
 
-        result = Result(strategy=strategy.name,result_id=str(uuid.uuid4()),equity_curve=[])
+        result = Result(strategy=strategy.name, result_id=str(uuid.uuid4()))
 
-        modules:list[TestModule] = []
+        modules: list[TestModule] = []
 
         threads = []
 
@@ -49,8 +51,8 @@ class BacktestService:
         for asset in backtest_input.test_assets:
             logger.info(f"Starting backtest for {asset}")
 
-            module = TestModule(strategy.model_copy(),asset
-                                      ,test_data[asset], strategy.timeframes,result.result_id)
+            module = TestModule(asset_classes[asset], strategy.model_copy(), asset
+                                , test_data[asset], strategy.timeframes, result.result_id)
             modules.append(module)
             thread = threading.Thread(target=module.start_module())
             threads.append(thread)
@@ -67,16 +69,16 @@ class BacktestService:
 
         return result
 
-    def get_asset_selection(self)->list[str]:
+    def get_asset_selection(self) -> list[str]:
         return self._asset_selection
 
-    def get_test_results(self,strategy:str=None)->list[Result]:
+    def get_test_results(self, strategy: str = None) -> list[Result]:
         if strategy:
             return self._backtest_repository.find_result_by_strategy(strategy)
         else:
             return self._backtest_repository.find_results()
 
-    def add_test_data(self,candles:list[Candle]):
+    def add_test_data(self, candles: list[Candle]):
         for candle in candles:
             self._backtest_repository.add_candle(candle)
 
@@ -153,6 +155,12 @@ class BacktestService:
 
     def _fetch_test_assets(self):
         self._asset_selection = self._backtest_repository.find_assets_in_testdata()
+
+    def _get_asset_classes(self, test_assets: list[str]) -> dict[str, str]:
+        asset_classes: dict[str, str] = {}
+        for asset in test_assets:
+            asset_classes[asset] = self._backtest_repository.find_asset_class_name_by_asset(asset)
+        return asset_classes
 
     def _prepare_test_data(self, test_assets: list[str]) -> dict[str, list[Candle]]:
         test_data: dict[str, list[Candle]] = {}

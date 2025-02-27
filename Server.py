@@ -26,8 +26,8 @@ def receive_signal():
 # todo dashboard  figma + css
 ###
 # todo tools / telegram / steuern
-# todo candle data as chart
 # todo journal
+# todo candle data as chart
 #
 ###
 # region CREATE APP Route
