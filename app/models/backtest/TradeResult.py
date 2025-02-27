@@ -16,6 +16,8 @@ class TradeResult(BaseModel):
     last_candle:Candle = None
     side:str = ""
     qty:float = 0.0
+    highest_price:float = float('-inf')
+    lowest_price:float = float('inf')
 
     # after process
     pnl_percentage:float = 0.0 # aftermath
@@ -25,3 +27,4 @@ class TradeResult(BaseModel):
     entry_price:float = 0.0
     stop:float = 0.0
     take_profit:float = 0.0
+    risk_reward_ratio: float = 0.0

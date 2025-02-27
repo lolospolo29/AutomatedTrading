@@ -18,7 +18,3 @@ class SMTStrategy(Strategy):
     @abstractmethod
     def get_exit(self, candles: list, timeFrame: int, trade: Trade, relation: Relation) -> StrategyResult:
         pass
-
-    _smt_handler:SMTHandler
-
-

@@ -52,7 +52,7 @@ class BacktestService:
             logger.info(f"Starting backtest for {asset}")
 
             module = TestModule(asset_classes[asset], strategy.model_copy(), asset
-                                , test_data[asset], strategy.timeframes, result.result_id)
+                                , test_data[asset], strategy.timeframes, result.result_id,trade_limit=backtest_input.trade_limit)
             modules.append(module)
             thread = threading.Thread(target=module.start_module())
             threads.append(thread)
@@ -85,7 +85,7 @@ class BacktestService:
     @staticmethod
     def _add_module_statistic_to_result(module: TestModule, result: Result) -> Result:
         """Fügt die Statistiken eines TestModules zum übergeordneten Result hinzu."""
-
+        # todo
         total_pnl = 0.0
         total_win_pnl = 0.0
         total_loss_pnl = 0.0
