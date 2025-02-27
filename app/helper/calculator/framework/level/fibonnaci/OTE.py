@@ -20,7 +20,7 @@ class OTE(ILevel):
 
         """
         # Fibonacci retracement levels to calculate
-        self.retracement_levels: list[float] = [0.75, 0.62,1.5]
+        self.retracement_levels: list[float] = [0.79, 0.62,1.5]
         self.name = "OTE"
 
     def return_levels(self, candles: list[Candle], lookback: int = None) -> list[Level]:

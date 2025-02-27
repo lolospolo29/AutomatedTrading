@@ -49,7 +49,7 @@ class PD(ILevel):
 
             # Step 4: Create Level objects with names "0.0", "0.5", and "1.0"
             level0_obj = Level(name=self.name, level=level0,direction="Bullish",fib_level=0.0,candles=candles)
-            level05_obj = Level(name=self.name, level=level05,direction="",fib_level=0.5,candles=candles)
+            level05_obj = Level(name=self.name, level=level05,direction="EQ",fib_level=0.5,candles=candles)
             level1_obj = Level(name=self.name, level=level1,direction="Bearish",fib_level=1.0,candles=candles)
 
             all_level.append(level0_obj)

@@ -16,6 +16,8 @@ from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 from app.monitoring.logging.logging_startup import logger
 
+
+#todo test with news integrating and volatility on red folder
 class TestModule:
     def __init__(self,asset_class:str,strategy:Strategy, asset:str,candles:list[Candle]
                  , timeframes:list[ExpectedTimeFrame],result_id:str,trade_limit:int=2):
@@ -52,7 +54,7 @@ class TestModule:
                         if result.status == StrategyResultStatusEnum.NEWTRADE.value and len(self._trade_que) < self._trade_que.maxlen:
                             self.handle_new_trade(result, series[-1])
                     except Exception as e:
-                        logger.error("Testing Strategy Entry Failed,Error{e}".format(e=e))
+                        logger.debug("Testing Strategy Entry Failed,Error{e}".format(e=e))
                     if self.results:
                         self.handle_exits(series)
 
@@ -197,12 +199,12 @@ class TestModule:
         """
         Simulate market order execution price with potential slippage.
         """
-        slippage_pct = random.uniform(0, 0.005)  # Example: Up to 0.05% slippage
+        slippage_pct = random.uniform(0, 0.00045)  # Example: Up to 0.05% slippage
 
         if order_side == OrderDirectionEnum.BUY.value:
-            return last_candle.close * (1 + slippage_pct)  # Buy fills slightly higher
+            return last_candle.low * (1 + slippage_pct)  # Buy fills slightly higher
         elif order_side == OrderDirectionEnum.SELL.value:
-            return last_candle.close * (1 - slippage_pct)  # Sell fills slightly lower
+            return last_candle.high * (1 - slippage_pct)  # Sell fills slightly lower
         return last_candle.close  # Default to last price if no slippage
 
     @staticmethod

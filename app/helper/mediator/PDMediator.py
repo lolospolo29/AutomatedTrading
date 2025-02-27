@@ -208,5 +208,4 @@ class PDMediator:
             logger.error(f"PD Inverse check failed{e}")
     # endregion
 
-
-
+# todo refactor some enum

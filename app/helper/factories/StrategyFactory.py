@@ -55,4 +55,4 @@ class StrategyFactory:
     @staticmethod
     def return_smt_strategy(typ: str, correlation: str, asset1: str, asset2: str) -> Strategy:
         if typ == "TestSMT":
-            return TestSMTStrategy(_smt_handler=SMTHandler(asset_1=asset1, asset_2=asset2, correlation=correlation))
+            return TestSMTStrategy()

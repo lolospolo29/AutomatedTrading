@@ -7,7 +7,10 @@ from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
+from app.models.frameworks.FrameWork import FrameWork
 from app.models.frameworks.Level import Level
+from app.models.frameworks.PDArray import PDArray
+from app.models.frameworks.Structure import Structure
 from app.models.strategy.Strategy import Strategy
 from app.models.trade.Trade import Trade
 from app.models.strategy.StrategyResult import StrategyResult
@@ -28,18 +31,44 @@ class DoubleFib(Strategy):
     strategy_facade: Optional['StrategyFacade'] = Field(default=None)
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
-        if timeFrame == 1 and len(candles) > 30:
-            ote = self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=30)
-            for level in ote:
-                self.strategy_facade.level_handler.add_level(level)
+        if timeFrame == 1 and len(candles) >= 90:
+            fibs = []
+            fibs.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=90))
+            fibs.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="PD", candles= candles, lookback=90))
+            for fib in fibs:
+                self.strategy_facade.level_handler.add_level(fib)
+
+            bosS = self.strategy_facade.StructureMediator.calculate_confirmation("BOS", candles= candles)
+
+            for bos in bosS:
+                self.strategy_facade.structure_handler.add_structure(bos)
+
+            pds = []
+
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type="BPR", candles= candles))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type="BRK", candles= candles))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="FVG", candles= candles,lookback=3))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="OB", candles= candles,lookback=2))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type="Swings", candles= candles))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="Void", candles= candles,lookback=3))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="VI", candles= candles,lookback=3))
+
+            for pd in pds:
+                self.strategy_facade.pd_array_handler.add_pd_array(pd)
+
             self.strategy_facade.level_handler.remove_level(candles, timeFrame)
+            self.strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
+            self.strategy_facade.structure_handler.remove_structure(candles, timeFrame)
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
 
         self._analyzeData(candles, timeFrame)
-        levels:list[Level] = self.strategy_facade.level_handler.return_levels()
-        if candles and levels and timeFrame == 1:
 
+        levels:list[Level] = self.strategy_facade.level_handler.return_levels()
+        structures:list[Structure] = self.strategy_facade.structure_handler.return_structure()
+        pds:list[PDArray] = self.strategy_facade.pd_array_handler.return_pd_arrays()
+
+        if candles and levels and pds and structures and timeFrame == 1:
 
             last_candle: Candle = candles[-1]
             time = last_candle.iso_time
@@ -47,25 +76,65 @@ class DoubleFib(Strategy):
             if not self.is_in_time(time):
                 return StrategyResult()
 
-            levels:list[Level] = levels[-6:]
+            last_structure:FrameWork = structures[-1]
 
-            bullish_ote_level_min = None
-            bullish_ote_level_max = None
-            bearish_ote_level_min = None
-            bearish_ote_level_max = None
+            # current_structure_direction = 0
+            # other_direction = 0
+
+            # for pd in pds:
+            #     pd:FrameWork = pd
+            #     if pd.name != "High" and pd.name != "Low":
+            #         if pd.direction == last_structure.direction:
+            #             current_structure_direction += 1
+            #         else:
+            #             other_direction += 1
+            #
+            # if current_structure_direction < other_direction:
+            #     return StrategyResult()
+
+            levels = levels[-9:]
+
+            fib_high = None
+            fib_low = None
+            fib_eq = None
+            bullish_low_ote = None
+            bearish_high_ote = None
 
             profit_stop_entry = []
 
             for level in levels:
-                if level.fib_level == 0.75 and level.direction == "Bullish":
-                    bullish_ote_level_min = level.level
-                if level.fib_level == 0.62 and level.direction == "Bullish":
-                    bullish_ote_level_max = level.level
-                if level.fib_level == 0.75 and level.direction == "Bearish":
-                    bearish_ote_level_max = level.level
-                if level.fib_level == 0.62 and level.direction == "Bearish":
-                    bearish_ote_level_min = level.level
+                if level.fib_level == 0.79 and level.direction == "Bullish":
+                    bullish_low_ote = level.level
+                if level.fib_level == 0.0 and level.direction == "Bullish":
+                    fib_low = level.level
+                if level.fib_level == 0.5 and level.direction == "EQ":
+                    fib_eq = level.level
+                if level.fib_level == 0.79 and level.direction == "Bearish":
+                    bearish_high_ote = level.level
+                if level.fib_level == 1.0 and level.direction == "Bearish":
+                    fib_high = level.level
                 profit_stop_entry.extend([candle.close for candle in level.candles])
+
+            if last_structure.direction == "Bullish" and last_candle.close > fib_eq or last_candle.low < fib_low:
+                return StrategyResult()
+            if last_structure.direction == "Bearish" and last_candle.close < fib_eq or last_candle.high > fib_high:
+                return StrategyResult()
+
+            entry = []
+
+            for pd in pds:
+                pd:PDArray = pd
+                if pd.name == "FVG" or pd.name == "OB" or pd.name == "BRK" or pd.name == "BPR":
+                    for candle in pd.candles:
+                        if last_structure.direction == "Bullish":
+                            if candle.close <= fib_eq:
+                                entry.append(candle.close)
+                        if last_structure.direction == "Bearish":
+                            if candle.close >= fib_eq:
+                                entry.append(candle.close)
+
+            high = max(entry)
+            low = min(entry)
 
             stop = None
             take_profit = None
@@ -74,17 +143,17 @@ class DoubleFib(Strategy):
             profit_dir = None
             stop_dir = None
 
-            if bullish_ote_level_min <= last_candle.close <= bullish_ote_level_max:
-                stop = min(profit_stop_entry)
-                take_profit = max(profit_stop_entry)
+            if low < last_candle.close <= high and last_structure.direction == "Bullish" and last_candle.close > bullish_low_ote:
+                stop = fib_low
+                take_profit = fib_high
                 order_dir = OrderDirectionEnum.BUY.value
                 exit_dir = OrderDirectionEnum.SELL.value
                 profit_dir = TriggerDirection.RISE.value
                 stop_dir = TriggerDirection.FALL.value
 
-            if bearish_ote_level_min <= last_candle.close <= bearish_ote_level_max:
-                stop = max(profit_stop_entry)
-                take_profit = min(profit_stop_entry)
+            if low <= last_candle.close < high and last_structure.direction == "Bearish" and last_candle.close < bearish_high_ote:
+                stop = fib_high
+                take_profit = fib_low
                 order_dir = OrderDirectionEnum.SELL.value
                 exit_dir = OrderDirectionEnum.BUY.value
                 profit_dir = TriggerDirection.FALL.value

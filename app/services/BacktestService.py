@@ -63,9 +63,10 @@ class BacktestService:
         for module in modules:
             result = self._add_module_statistic_to_result(module, result)
 
-        logger.info(f"Backtest for {strategy.name} finished,Result: {result},ResultId: {result.result_id}")
+        logger.info(f"Backtest for {strategy.name} finished")
         logger.info(f"Writing Result to DB...,ResultId: {result.result_id}")
-        self._backtest_repository.add_result(result)
+        if result.no_of_trades > 0:
+            self._backtest_repository.add_result(result)
 
         return result
 
