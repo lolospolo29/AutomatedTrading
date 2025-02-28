@@ -36,7 +36,7 @@ class LevelHandler:
                     level:Level = level
                     if level.timeframe == timeframe:
                         ids  = [candle.id for candle in level.candles]
-                        if any(id in _ids for id in ids):  # Check if at least one ID from `ids` is missing in `_ids`
+                        if not all(id in _ids for id in ids):  # Ensures every `id` in `ids` exists in `_ids`
                             self.levels.remove(level)
             except Exception as e:
                 logger.error("Remove Level Exception: {}".format(e))

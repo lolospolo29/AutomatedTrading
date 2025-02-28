@@ -33,8 +33,7 @@ class StructureHandler:
                 for structure in pdArrays:
                     structure:Structure = structure
                     if structure.timeframe == timeframe:
-                        id_ = structure.candle.id
-                        if any(id in _ids for id in id_):  # Check if at least one ID from `ids` is missing in `_ids`
+                        if not  structure.candle.id in _ids:  # Ensures every `id` in `ids` exists in `_ids`
                             self.structures.remove(structure)
             except Exception as e:
                 logger.error("Remove Structure Error", e)

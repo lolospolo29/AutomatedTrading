@@ -66,7 +66,6 @@ class BacktestService:
             result = self._create_result(module)
             results.append(result)
 
-        logger.info(f"Backtest for {strategy.name} finished")
         for result in results:
             if result.no_of_trades > 0:
                 logger.info(f"Writing Result to DB...,ResultId: {result.result_id}")

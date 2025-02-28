@@ -36,7 +36,7 @@ class PDArrayHandler:
                     pd:PDArray = pd
                     if pd.timeframe == timeframe:
                         ids  = [candle.id for candle in pd.candles]
-                        if any(id in _ids for id in ids):  # Check if at least one ID from `ids` is missing in `_ids`
+                        if not all(id in _ids for id in ids):  # Ensures every `id` in `ids` exists in `_ids`
                             self.pdArray.remove(pd)
             except Exception as e:
                 logger.error("Remove PD Array Exception: {}".format(e))
