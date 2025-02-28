@@ -31,10 +31,12 @@ class LevelHandler:
         with self._lock:
             try:
                 _ids = [candle.id for candle in candles]
-                levels = self.levels
-                for level in levels:
+                pdArrays = self.levels.copy()
+                for level in pdArrays:
+                    level:Level = level
                     if level.timeframe == timeframe:
-                        if not level.is_id_present(_ids):
+                        ids  = [candle.id for candle in level.candles]
+                        if any(id in _ids for id in ids):  # Check if at least one ID from `ids` is missing in `_ids`
                             self.levels.remove(level)
             except Exception as e:
                 logger.error("Remove Level Exception: {}".format(e))

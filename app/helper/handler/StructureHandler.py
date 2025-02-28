@@ -25,14 +25,16 @@ class StructureHandler:
         with self._lock:
             return self.structures
 
-    def remove_structure(self, candles: list[Candle], timeFrame: int) -> None:
+    def remove_structure(self, candles: list[Candle], timeframe: int) -> None:
         with self._lock:
             try:
                 _ids = [candle.id for candle in candles]
-                structures = self.structures
-                for structure in structures:
-                    if structure.timeframe == timeFrame:
-                        if not structure.is_id_present(_ids):
+                pdArrays = self.structures.copy()
+                for structure in pdArrays:
+                    structure:Structure = structure
+                    if structure.timeframe == timeframe:
+                        id_ = structure.candle.id
+                        if any(id in _ids for id in id_):  # Check if at least one ID from `ids` is missing in `_ids`
                             self.structures.remove(structure)
             except Exception as e:
                 logger.error("Remove Structure Error", e)

@@ -27,14 +27,16 @@ class PDArrayHandler:
         with self._lock:
             return self.pdArray
 
-    def remove_pd_array(self, candles: list[Candle], timeFrame: int) -> None:
+    def remove_pd_array(self, candles: list[Candle], timeframe: int) -> None:
         with self._lock:
             try:
                 _ids = [candle.id for candle in candles]
                 pdArrays = self.pdArray.copy()
                 for pd in pdArrays:
-                    if pd.timeframe == timeFrame:
-                        if not pd.is_id_present(_ids):
+                    pd:PDArray = pd
+                    if pd.timeframe == timeframe:
+                        ids  = [candle.id for candle in pd.candles]
+                        if any(id in _ids for id in ids):  # Check if at least one ID from `ids` is missing in `_ids`
                             self.pdArray.remove(pd)
             except Exception as e:
                 logger.error("Remove PD Array Exception: {}".format(e))
