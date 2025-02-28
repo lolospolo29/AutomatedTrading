@@ -2,9 +2,6 @@ import csv
 import json
 import os
 import shutil
-from datetime import datetime
-
-import pandas as pd
 from watchdog.events import FileSystemEventHandler
 
 from app.manager.AssetManager import AssetManager

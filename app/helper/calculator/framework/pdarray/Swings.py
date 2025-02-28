@@ -58,6 +58,7 @@ class Swings(IPDArray):
         swing_list = []  # List to store PDArray objects
 
         try:
+            last_candle:Candle = candles[-1]
             if lookback is not None and len(candles) > lookback:
                 candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
 
@@ -81,10 +82,10 @@ class Swings(IPDArray):
                     open3, high3, low3, close3 = opens[i], highs[i], lows[i], close[i]
 
                     if high3 < high2 and high1 < high2:
-                        pd_array =PDArray(name="High", direction="Bullish",candles=[candles[i],candles[i-1],candles[i-2]])
+                        pd_array =PDArray(name="High", direction="Bullish",candles=[candles[i],candles[i-1],candles[i-2]],timeframe=last_candle.timeframe)
                         swing_list.append(pd_array)
                     if low3 > low2 and low1 > low2:
-                        pd_array = PDArray(name="Low", direction="Bearish",candles=[candles[i],candles[i-1],candles[i-2]])
+                        pd_array = PDArray(name="Low", direction="Bearish",candles=[candles[i],candles[i-1],candles[i-2]],timeframe=last_candle.timeframe)
                         swing_list.append(pd_array)
         except Exception as e:
             logger.error("Swings Calculation failed with exception {}".format(e))

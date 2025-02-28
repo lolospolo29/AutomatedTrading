@@ -12,12 +12,14 @@ class NDOG:
     def return_levels(self, candles: list[Candle]) -> list[Level]:
         all_levels = []
         try:
+            last_candle:Candle = candles[-1]
             logger.info("Calculating NDOG levels...")
             for candle in candles:
                 # Check if the candle time is at UTC-5 midnight
                 if candle.iso_time.hour == 0 and candle.iso_time.minute == 0:
 
-                    ndog = Level(name=self.name, level=candle.close - candle.open,direction="",fib_level=candle.open,candles =[candle])
+                    ndog = Level(name=self.name, level=candle.close - candle.open,direction="",fib_level=candle.open
+                                 ,candles =[candle],timeframe=last_candle.timeframe)
                     ndog.set_fib_level(0.0, "NDOG", candles=[candle])
 
                     all_levels.append(ndog)

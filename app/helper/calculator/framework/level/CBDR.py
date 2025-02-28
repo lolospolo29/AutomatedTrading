@@ -22,6 +22,7 @@ class CBDR(ILevel):
     def return_levels(self, candles: list[Candle]) -> list:
         """Use the Fibonnaci to define the Range"""
         try:
+            last_candle:Candle = candles[-1]
             all_level = []
 
             high = -1
@@ -43,7 +44,8 @@ class CBDR(ILevel):
 
             cbdr_range = high - low
 
-            cbdr_range_obj = Level(name=self.name, level=low - cbdr_range,fib_level=cbdr_range, candles=candles,direction="")
+            cbdr_range_obj = Level(name=self.name, level=low - cbdr_range,fib_level=cbdr_range, candles=[last_candle]
+                                   ,direction="",timeframe=last_candle.timeframe)
             all_level.append(cbdr_range_obj)
 
             return all_level

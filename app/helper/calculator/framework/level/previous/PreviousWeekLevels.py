@@ -8,6 +8,7 @@ class PreviousWeekLevels(ILevel):
     """Previous Week Levels"""
     def return_levels(self, candles: list[Candle]) -> list[Level]:
         try:
+            last_candle:Candle = candles[-1]
             logger.info("Previous Week Levels returning")
             weekly_levels = {}
 
@@ -20,8 +21,10 @@ class PreviousWeekLevels(ILevel):
                 if week_key not in weekly_levels:
                     # Create Level objects for high and low
                     weekly_levels[week_key] = {
-                        "high": Level(name="PWH", level=candle.high,direction="Bullish",fib_level=candle.high,candles =[candle]),
-                        "low": Level(name="PWL", level=candle.low,direction="Bearish",fib_level=candle.low,candles =[candle]),
+                        "high": Level(name="PWH", level=candle.high,direction="Bullish",fib_level=candle.high
+                                      ,candles =[candle],timeframe=last_candle.timeframe),
+                        "low": Level(name="PWL", level=candle.low,direction="Bearish",fib_level=candle.low
+                                     ,candles =[candle],timeframe=last_candle.timeframe),
                     }
                 else:
                     # Update high and low Level objects

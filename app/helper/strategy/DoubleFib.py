@@ -34,7 +34,7 @@ class DoubleFib(Strategy):
     strategy_facade: Optional['StrategyFacade'] = Field(default=None)
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
-        if timeFrame == 1 and len(candles) >= 90:
+        if timeFrame == 1 and len(candles) >= 240:
             bosS = self.strategy_facade.StructureMediator.calculate_confirmation(StructureEnum.BREAKOFSTRUCTURE.value, candles= candles)
 
             for bos in bosS:
@@ -46,7 +46,6 @@ class DoubleFib(Strategy):
             pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type=PDEnum.BREAKER.value, candles= candles))
             pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type=PDEnum.FVG.value, candles= candles,lookback=3))
             pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type=PDEnum.OrderBlock.value, candles= candles,lookback=2))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type=PDEnum.SWINGS.value, candles= candles))
 
             for pd in pds:
                 self.strategy_facade.pd_array_handler.add_pd_array(pd)
@@ -63,9 +62,9 @@ class DoubleFib(Strategy):
 
         levels:list[Level] = []
         levels.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type=LevelEnum.OPTIMALTRADEENTRY.value,
-                                                                           candles=candles, lookback=90))
+                                                                           candles=candles, lookback=240))
         levels.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type=LevelEnum.PREMIUMDISCOUNT.value,
-                                                                           candles=candles, lookback=90))
+                                                                           candles=candles, lookback=240))
 
         if candles and levels and pds and structures and timeFrame == 1:
 

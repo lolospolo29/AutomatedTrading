@@ -9,7 +9,7 @@ from app.helper.calculator.exit.technicalStop.BreakEven import BreakEven
 from app.helper.calculator.exit.technicalStop.TrailingStop import TrailingStop
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
-
+# todo tick size fetch from api
 class RiskCalculator:
     def __init__(self):
         self._risk_manager = RiskManager()
@@ -102,8 +102,8 @@ class RiskCalculator:
         return position_size
 
 
-    def _calculate_qty_based_on_asset_class(self, asset_class:str, entry_price:float, stop_loss:float, pip_value:int=None,
-                                            lot_size:int=None, point_value:int=None) -> float:
+    def _calculate_qty_based_on_asset_class(self, asset_class:str, entry_price:float, stop_loss:float, pip_value:int=10,
+                                            lot_size:int=100000, point_value:int=50,tick_size:float=0.10,contract_size:int=100) -> float:
         """
         Calculates the trade quantity based on the provided asset class and associated financial parameters.
         The method handles specific asset classes such as cryptocurrency, forex (with or without JPY pairing),
@@ -131,7 +131,7 @@ class RiskCalculator:
         if asset_class == AssetClassEnum.FXJPY.value:
             qty = self._calculate_forex_trade_size_jpy(float(entry_price), float(stop_loss),lot_size=lot_size)
         if asset_class == AssetClassEnum.COMMODITY.value:
-            qty = self._calculate_indices_trade_size(float(entry_price), float(stop_loss),point_value=point_value)
+            qty = self._calculate_commodity_position_size(float(entry_price), float(stop_loss),tick_size=tick_size,contract_size=contract_size)
         if asset_class == AssetClassEnum.INDICE.value:
             qty = self._calculate_indices_trade_size(float(entry_price), float(stop_loss),point_value=point_value)
 
@@ -244,4 +244,3 @@ class RiskCalculator:
                                                        , stop_loss=exit_price
                                                        , pip_value=pip_value, lot_size=lot_size, point_value=point_value)
         return self._round_down(abs(qty*risk_percentage))
-

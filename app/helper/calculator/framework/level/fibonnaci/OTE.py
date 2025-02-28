@@ -67,16 +67,18 @@ class OTE(ILevel):
 
     def _generate_fib_levels_bullish(self, candles: list[Candle],high:float,low:float) -> list[Level]:
         levels = []
+        last_candle:Candle = candles[-1]
         for fib_level in self.retracement_levels:
             bullish_level = high - fib_level * (high - low)
             levels.append(Level(name=self.name, level=bullish_level,fib_level=fib_level,
-                                candles=candles,direction="Bullish"))
+                                candles=[candles[-1],candles[0]],direction="Bullish",timeframe=last_candle.timeframe))
         return levels
 
     def _generate_fib_levels_bearish(self, candles: list[Candle],high:float,low:float) -> list[Level]:
         levels = []
+        last_candle:Candle = candles[-1]
         for fib_level in self.retracement_levels:
             bearish_level = low + fib_level  * (high - low)
             levels.append(Level(name=self.name, level=bearish_level,fib_level=fib_level,
-                                candles=candles,direction="Bearish"))
+                                candles=[candles[-1],candles[0]],direction="Bearish",timeframe=last_candle.timeframe))
         return levels

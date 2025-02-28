@@ -16,5 +16,3 @@ class LondonOpen(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("London Open Error", e)
-        finally:
-            return False

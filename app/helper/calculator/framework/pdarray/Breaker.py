@@ -79,6 +79,9 @@ class Breaker(IPDArray):
         Calculates Breakers inside a specific Range,which is Calculated by Breaking the Current Structure
         """
         pd_array_list = []
+
+        last_candle:Candle  = candles[-1]
+
         try:
             if len(candles) < self.lookback:
                 return []
@@ -97,7 +100,7 @@ class Breaker(IPDArray):
                 swingIdx, swingHigh = swing
                 for i in range(swingIdx + 1, len(close)):
                     if close[i] > swingHigh:  # Bullish breaker condition
-                        pdArray = PDArray(name=self.name, direction="Bullish",candles=[candles[swingIdx]])
+                        pdArray = PDArray(name=self.name, direction="Bullish",candles=[candles[swingIdx]],timeframe=last_candle.timeframe)
                         pdArray.candles.append(candles[swingIdx])  # Add ID of last candle in the swing (not the one breaking it)
                         pd_array_list.append(pdArray)
                         # Store breaker details if needed
@@ -107,7 +110,7 @@ class Breaker(IPDArray):
                 swingIdx, swingLow = swing
                 for i in range(swingIdx + 1, len(close)):
                     if close[i] < swingLow:  # Bearish breaker condition
-                        pdArray = PDArray(name=self.name, direction="Bearish",candles=[candles[swingIdx]])
+                        pdArray = PDArray(name=self.name, direction="Bearish",candles=[candles[swingIdx]],timeframe=last_candle.timeframe)
                         pdArray.candles.append(candles[swingIdx])  # Add ID of last candle in the swing (not the one breaking it)
                         pd_array_list.append(pdArray)
                         # Store breaker details if needed

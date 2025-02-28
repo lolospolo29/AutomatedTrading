@@ -16,5 +16,3 @@ class Asia(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Asia Session Error", e)
-        finally:
-            return False

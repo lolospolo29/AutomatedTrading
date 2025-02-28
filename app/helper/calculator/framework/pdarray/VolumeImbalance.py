@@ -79,6 +79,7 @@ class VolumeImbalance(IPDArray):
     def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         pd_arrays = []
         try:
+            last_candle:Candle = candles[-1]
             # Step 1: Apply lookback to limit the range of candles
             if lookback is not None and len(candles) > lookback:
                 candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
@@ -95,7 +96,7 @@ class VolumeImbalance(IPDArray):
                 if min(opens[i], close[i]) > highs[i - 1] and \
                         lows[i] > max(opens[i - 1], close[-1]) and \
                         (lows[i] <= highs[i - 1]):
-                    pd_array = PDArray(name=self.name, direction="Bullish",candles=[candles[i],candles[i-1]])
+                    pd_array = PDArray(name=self.name, direction="Bullish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pd_array.candles.append(candles[i])
                     pd_array.candles.append(candles[i - 1])
                     pd_arrays.append(pd_array)
@@ -104,7 +105,7 @@ class VolumeImbalance(IPDArray):
                 elif max(opens[i], close[i]) < lows[i - 1] and \
                         highs[i] < min(opens[i - 1], close[-1]) and \
                         (highs[i] >= lows[i - 1]):
-                    pd_array = PDArray(name=self.name, direction="Bearish",candles=[candles[i],candles[i-1]])
+                    pd_array = PDArray(name=self.name, direction="Bearish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pd_array.candles.append(candles[i])
                     pd_array.candles.append(candles[i - 1])
                     pd_arrays.append(pd_array)

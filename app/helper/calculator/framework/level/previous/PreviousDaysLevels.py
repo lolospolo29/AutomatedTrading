@@ -19,6 +19,7 @@ class PreviousDaysLevels(ILevel):
         """
         daily_levels = {}
         try:
+            last_candle:Candle = candles[-1]
             logger.info("Calculating previous days levels")
             for candle in candles:
                 # Extract the date from isoTime (ignore time part)
@@ -28,8 +29,8 @@ class PreviousDaysLevels(ILevel):
                 if day not in daily_levels:
                     # Create Level objects for high and low
                     daily_levels[day] = {
-                        "high": Level(name="PDH", level=candle.high,direction="",fib_level=candle.high,candles =[candle]),
-                        "low": Level(name="PDL", level=candle.low,direction="",fib_level=candle.low,candles =[candle]),
+                        "high": Level(name="PDH", level=candle.high,direction="",fib_level=candle.high,candles =[candle],timeframe=last_candle.timeframe),
+                        "low": Level(name="PDL", level=candle.low,direction="",fib_level=candle.low,candles =[candle],timeframe=last_candle.timeframe),
                     }
                 else:
                     # Update high and low Level objects

@@ -20,4 +20,3 @@ class SecondNYMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Silver Bullet NY Exception {}".format(e))
-            pass

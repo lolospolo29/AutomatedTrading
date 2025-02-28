@@ -37,19 +37,21 @@ class BacktestService:
 
         asset_classes: dict[str, str] = self._get_asset_classes(backtest_input.test_assets)
 
-        strategy = self.__factory.return_strategy(backtest_input.strategy)
 
         modules: list[TestModule] = []
 
         threads = []
 
-        if strategy is None:
-            logger.error(f"Strategy {strategy} not found in Backtest Service")
 
         for asset in backtest_input.test_assets:
+            strategy = self.__factory.return_strategy(backtest_input.strategy)
+
+            if strategy is None:
+                continue
+
             logger.info(f"Starting Backtest: {strategy.name} with Asset {asset}")
 
-            module = TestModule(asset_class=asset_classes[asset], strategy=strategy.model_copy(), asset=asset
+            module = TestModule(asset_class=asset_classes[asset], strategy=strategy, asset=asset
                                 , candles=test_data[asset], timeframes=strategy.timeframes, trade_limit=backtest_input.trade_limit)
             modules.append(module)
             thread = threading.Thread(target=module.start_module())
@@ -62,6 +64,7 @@ class BacktestService:
 
         for module in modules:
             result = self._create_result(module)
+            results.append(result)
 
         logger.info(f"Backtest for {strategy.name} finished")
         for result in results:

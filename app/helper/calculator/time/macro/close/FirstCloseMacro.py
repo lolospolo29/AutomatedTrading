@@ -21,6 +21,3 @@ class FirstCloseMacro(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Time Window Exception {}".format(e))
-        finally:
-            return False
-

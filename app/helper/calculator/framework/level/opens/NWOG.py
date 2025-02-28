@@ -17,12 +17,13 @@ class NWOG:
     def return_levels(self, candles:list[Candle]) -> list[Level]:
         all_levels = []
         try:
+            last_candle:Candle = candles[-1]
             logger.info("Calculating levels for NWOG")
             for candle in candles:
                 # Check if the candle time is at UTC-5 midnight
                 if candle.iso_time.hour == 0 and candle.iso_time.minute == 0 and candle.iso_time.weekday() == 0:
 
-                    nwog = Level(name=self.name, level=candle.open, direction="", fib_level=candle.close, candles=[candle])
+                    nwog = Level(name=self.name, level=candle.open, direction="", fib_level=candle.close, candles=[candle],timeframe=last_candle.timeframe)
                     nwog.set_fib_level(0.0, "NWOG", candles=[candle])
 
                     all_levels.append(nwog)

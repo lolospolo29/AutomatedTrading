@@ -15,5 +15,3 @@ class NYOpen(ITimeWindow):
             return False
         except Exception as e:
             logger.critical("Ny Open Error: {}".format(e))
-        finally:
-            return False

@@ -20,13 +20,18 @@ class PreviousSessionLevels:
             List[Level]: List of Level objects with names matching the session name.
         """
         try:
+            last_candle:Candle = candles[-1]
             logger.info("Previous Session Levels Calculator")
             session_levels = []
 
             for window in time_windows:
                 session_name = window.__class__.__name__  # Use class name as session identifier
-                high_level = Level(name=f"{session_name} High", level=float('-inf'),direction="Bearish",fib_level=0.0,candles=[])
-                low_level = Level(name=f"{session_name} Low", level=float('inf'),direction="Bullish",fib_level=0.0,candles=[])
+
+                high_level = Level(name=f"{session_name} High", level=float('-inf'),direction="Bearish",fib_level=0.0
+                                   ,candles=[],timeframe=last_candle.timeframe)
+
+                low_level = Level(name=f"{session_name} Low", level=float('inf'),direction="Bullish",fib_level=0.0
+                                  ,candles=[],timeframe=last_candle.timeframe)
 
                 for candle in candles:
                     if window.is_in_entry_window(candle.iso_time):

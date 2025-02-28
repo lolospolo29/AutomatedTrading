@@ -45,6 +45,9 @@ class Choch(IConfirmation):
         try:
             if len(candles) < self.lookback:
                 return []
+
+            last_candle:Candle = candles[-1]
+
             highs = []
             lows = []
             closes = []
@@ -72,13 +75,13 @@ class Choch(IConfirmation):
                 if upper_fractal and closes[i] > upper_fractal['value'] and not upper_fractal['crossed']:
                     upper_fractal['crossed'] = True
 
-                    structure =  Structure(name=self.name, direction="Bullish", candle=candles[i])
+                    structure =  Structure(name=self.name, direction="Bullish", candle=candles[i],timeframe=last_candle.timeframe)
                     structures.append(structure)
 
                 # Check crossover below the bearish fractal (ChoCH/BOS Bearish)
                 if lower_fractal and closes[i] < lower_fractal['value'] and not lower_fractal['crossed']:
                     lower_fractal['crossed'] = True
-                    structure =  Structure(name=self.name, direction="Bearish", candle=candles[i])
+                    structure =  Structure(name=self.name, direction="Bearish", candle=candles[i],timeframe=last_candle.timeframe)
                     structures.append(structure)
         except Exception as e:
             logger.error("CHOCH Confirmation Exception: {}".format(e))

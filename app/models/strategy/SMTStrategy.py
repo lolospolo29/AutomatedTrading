@@ -1,6 +1,5 @@
 from abc import abstractmethod
 
-from app.helper.handler.SMTHandler import SMTHandler
 from app.models.asset.Relation import Relation
 from app.models.strategy.Strategy import Strategy
 from app.models.trade.Trade import Trade

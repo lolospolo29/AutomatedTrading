@@ -74,6 +74,7 @@ class equalHL:
     def _detect_equal_lows(self, candles: list[Candle], timeframe) -> list[Level]:
         equalLows = []
         lows = []
+        last_candle:Candle = candles[-1]
         # Collecting high and low values from each data point
         for candle in candles:
             lows.append(candle.low)

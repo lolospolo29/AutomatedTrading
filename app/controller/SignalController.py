@@ -31,13 +31,10 @@ class SignalController:
     # endregion
 
     def run_backtest(self,json_data:Dict[str,Any] = None):
-        result = ""
         try:
-            result = self._BacktestService.start_backtesting_strategy(BacktestInput.model_validate(json_data))
-            result = result.dict()
+            self._BacktestService.start_backtesting_strategy(BacktestInput.model_validate(json_data))
         except Exception as e:
-            logger.warning("Add Asset failed,Error: {e}".format(e=e))
-        return result
+            logger.warning("Backtest failed,Error: {e}".format(e=e))
 
     def get_asset_selection(self)->list[str]:
         return self._BacktestService.get_asset_selection()

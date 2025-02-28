@@ -16,8 +16,8 @@ class SMT:
 
         """
 
-        last_candle_asset1 = candlesAsset1[-1]
-        last_candle_asset2 = candlesAsset2[-1]
+        last_candle_asset1:Candle = candlesAsset1[-1]
+        last_candle_asset2:Candle = candlesAsset2[-1]
 
         # Compare isoTime values
         if last_candle_asset1.iso_time != last_candle_asset2.iso_time:
@@ -45,8 +45,8 @@ class SMT:
 
             # Check for divergence in swing highs
             if high1 > highs1[i-1] and high1 > highs1[i+1] and high2 < highs2[i-1] and high2 < highs2[i+1]:
-                return Structure(name=self.name, direction="Bearish", candle=candlesAsset1[i])  # Bearish divergence detected
+                return Structure(name=self.name, direction="Bearish", candle=candlesAsset1[i],timeframe=last_candle_asset1.timeframe)  # Bearish divergence detected
 
             # Check for divergence in swing lows
             if low1 < lows1[i-1] and low1 < lows1[i+1] and low2 > lows2[i-1] and low2 > lows2[i+1]:
-                return Structure(name=self.name, direction="Bullish", candle=candlesAsset1[i])  # Bullish divergence detected
+                return Structure(name=self.name, direction="Bullish", candle=candlesAsset1[i],timeframe=last_candle_asset2.timeframe)  # Bullish divergence detected

@@ -16,6 +16,8 @@ class CISD(IConfirmation):
             if len(candles) < self.lookback:
                 return []
 
+            last_candle:Candle = candles[-1]
+
             row_candles = 0
             direction = None
             tracked_structures = []  # List of structures to track their levels
@@ -60,7 +62,7 @@ class CISD(IConfirmation):
                 # Check if any tracked structure is traded through
                 for struct in tracked_structures:
                     if (struct["type"] == "Bearish" and close[i] > struct["level"]) or (struct["type"] == "Bullish" and close[i] < struct["level"]) :
-                        last_traded_structure = Structure(name=self.name, direction=struct["type"] , candle=candles[i])
+                        last_traded_structure = Structure(name=self.name, direction=struct["type"] , candle=candles[i],timeframe=last_candle.timeframe)
                         current_structure.clear()
                         current_structure.append(last_traded_structure)
                         tracked_structures.remove(struct)  # Remove structure after it is traded through

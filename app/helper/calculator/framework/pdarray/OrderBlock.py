@@ -115,6 +115,7 @@ class Orderblock(IPDArray):
         pd_arrays = []
 
         try:
+            last_candle:Candle = candles[-1]
             if lookback is not None and len(candles) > lookback:
                 candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
 
@@ -139,12 +140,12 @@ class Orderblock(IPDArray):
                 open2, high2, low2, close2 = opens[i], highs[i], lows[i], close[i]
 
                 if close1 < open1 and close2 > open2 and low1 > low2:
-                    pdArray = PDArray(name="OB",direction="Bullish",candles=[candles[i],candles[i-1]])
+                    pdArray = PDArray(name="OB",direction="Bullish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pdArray.candles.append(candles[i])
                     pdArray.candles.append(candles[i-1])
                     pd_arrays.append(pdArray)
                 if close1 > open1 and close2 < open2 and high1 < high2:
-                    pdArray = PDArray(name="OB",direction="Bearish",candles=[candles[i],candles[i-1]])
+                    pdArray = PDArray(name="OB",direction="Bearish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pdArray.candles.append(candles[i])
                     pdArray.candles.append(candles[i-1])
                     pd_arrays.append(pdArray)

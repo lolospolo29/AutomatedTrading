@@ -77,6 +77,8 @@ class RejectionBlock(IPDArray):
         try:
             if len(candles) < self.lookback:
                 return []
+            last_candle: Candle = candles[-1]
+
             # We assume 'data_points_asset' contains the asset data (high, low, open, close, ids)
             opens = [candle.open for candle in candles]
             highs = [candle.high for candle in candles]
@@ -102,11 +104,11 @@ class RejectionBlock(IPDArray):
 
                 # Bullish rejection: Large lower wick compared to average range
                 if  lower_wick > avg_range:
-                    rejection_blocks = PDArray(name=self.name,direction= "Bullish",candles=candles[i-9:i+1])
+                    rejection_blocks = PDArray(name=self.name,direction= "Bullish",candles=candles[i-9:i+1],timeframe=last_candle.timeframe)
                     rejection_blocks.candles.append(rejection_blocks)
                 # Bearish rejection: Large upper wick compared to average range
                 elif upper_wick > avg_range:
-                    rejection_blocks = PDArray(name=self.name, direction="Bearish",candles=candles[i-9:i+1])
+                    rejection_blocks = PDArray(name=self.name, direction="Bearish",candles=candles[i-9:i+1],timeframe=last_candle.timeframe)
                     rejection_blocks.candles.append(rejection_blocks)
         except Exception as e:
             logger.error("Rejection Block Exception {}".format(e))

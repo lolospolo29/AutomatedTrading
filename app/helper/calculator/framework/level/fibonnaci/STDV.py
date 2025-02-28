@@ -54,16 +54,18 @@ class STDV(ILevel):
 
     def _generate_fib_levels_bullish(self, candles: list[Candle], high: float, low: float) -> list[Level]:
         levels = []
+        last_candle:Candle = candles[-1]
         for fib_level in self.extension_levels:
             bullish_level = high - fib_level * (high - low)
             levels.append(Level(name=self.name, level=bullish_level, fib_level=fib_level,
-                                candles=candles, direction="Bullish"))
+                                candles=candles, direction="Bullish",timeframe=last_candle.timeframe))
         return levels
 
     def _generate_fib_levels_bearish(self, candles: list[Candle], high: float, low: float) -> list[Level]:
         levels = []
+        last_candle:Candle = candles[-1]
         for fib_level in self.extension_levels:
             bearish_level = low + fib_level * (high - low)
             levels.append(Level(name=self.name, level=bearish_level, fib_level=fib_level,
-                                candles=candles, direction="Bearish"))
+                                candles=candles, direction="Bearish",timeframe=last_candle.timeframe))
         return levels

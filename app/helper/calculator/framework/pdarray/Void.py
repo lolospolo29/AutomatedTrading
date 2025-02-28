@@ -81,7 +81,7 @@ class Void(IPDArray):
 
         pd_arrays = []
         try:
-
+            last_candle:Candle = candles[-1]
             # Step 1: Apply lookback to limit the range of candles
             if lookback is not None and len(candles) > lookback:
                 candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
@@ -95,14 +95,14 @@ class Void(IPDArray):
             for i in range(1, len(close)):
                 # Check for a bullish void (upward gap)
                 if lows[i] > highs[i - 1]:
-                    pd_array = PDArray(name=self.name, direction="Bullish",candles=[candles[i],candles[i-1]])
+                    pd_array = PDArray(name=self.name, direction="Bullish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pd_array.candles.append(candles[i])
                     pd_array.candles.append(candles[i - 1])
                     pd_arrays.append(pd_array)
 
                 # Check for a bearish void (downward gap)
                 elif highs[i] < lows[i - 1]:
-                    pd_array = PDArray(name=self.name, direction="Bearish",candles=[candles[i],candles[i-1]])
+                    pd_array = PDArray(name=self.name, direction="Bearish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pd_array.candles.append(candles[i])
                     pd_array.candles.append(candles[i - 1])
                     pd_arrays.append(pd_array)

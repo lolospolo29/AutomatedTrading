@@ -102,6 +102,8 @@ class BPR(IPDArray):
         if len(candles) < 6:
             return []
 
+        last_candle = candles[-1]
+
         pd_arrays = []
         try:
             # Lists to store identified FVGs
@@ -162,7 +164,7 @@ class BPR(IPDArray):
                         fvgs_candles = sell_fvg['candles']
                         fvgs_candles.extend(buy_fvg['candles'])
 
-                        pdArray = PDArray(name=self.name, direction=direction,candles=fvgs_candles)
+                        pdArray = PDArray(name=self.name, direction=direction,candles=fvgs_candles,timeframe=last_candle.timeframe)
 
                         pd_arrays.append(pdArray)
         except Exception as e:

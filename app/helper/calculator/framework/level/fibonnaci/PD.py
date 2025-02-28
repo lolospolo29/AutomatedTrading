@@ -20,6 +20,7 @@ class PD(ILevel):
         all_level = []
 
         try:
+            last_candle:Candle = candles[-1]
             # Step 1: Apply lookback to limit the range of candles
             if lookback is not None and len(candles) > lookback:
                 candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
@@ -49,9 +50,9 @@ class PD(ILevel):
             level05 = (high + low) / 2  # 0.5 is the midpoint between high and low
 
             # Step 4: Create Level objects with names "0.0", "0.5", and "1.0"
-            level0_obj = Level(name=self.name, level=level0,direction="Bullish",fib_level=0.0,candles=candles)
-            level05_obj = Level(name=self.name, level=level05,direction="EQ",fib_level=0.5,candles=candles)
-            level1_obj = Level(name=self.name, level=level1,direction="Bearish",fib_level=1.0,candles=candles)
+            level0_obj = Level(name=self.name, level=level0,direction="Bullish",fib_level=0.0,candles=candles,timeframe=last_candle.timeframe)
+            level05_obj = Level(name=self.name, level=level05,direction="EQ",fib_level=0.5,candles=candles,timeframe=last_candle.timeframe)
+            level1_obj = Level(name=self.name, level=level1,direction="Bearish",fib_level=1.0,candles=candles,timeframe=last_candle.timeframe)
 
             all_level.append(level0_obj)
             all_level.append(level05_obj)

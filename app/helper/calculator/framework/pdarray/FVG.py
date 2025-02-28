@@ -132,6 +132,8 @@ class FVG(IPDArray):
         """
         pd_arrays = []
         try:
+            last_candle: Candle = candles[-1]
+
             # Step 1: Apply lookback to limit the range of candles
             if lookback is not None and len(candles) > lookback:
                 candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
@@ -153,12 +155,14 @@ class FVG(IPDArray):
 
                     # Überprüfung auf Bearish FVG
                     if low1 > high3 and close2 < low1:
-                        pdArray = PDArray(name=self.name, direction='Bearish',candles=[candles[i],candles[i-1],candles[i-2]])
-                        pd_arrays.append(pdArray)
+                        pdArray = PDArray(name=self.name, direction='Bearish',candles=[candles[i],candles[i-1],candles[i-2]],timeframe=last_candle.timeframe)
+                        pdArray.candles.append(candles[i])
+                        pdArray.candles.append(candles[i - 1])
+                        pdArray.candles.append(candles[i - 2])
 
                     # Überprüfung auf Bullish FVG
                     elif high1 < low3 and close2 > high1:
-                        pdArray = PDArray(name=self.name, direction='Bullish',candles=[candles[i],candles[i-1],candles[i-2]])
+                        pdArray = PDArray(name=self.name, direction='Bullish',candles=[candles[i],candles[i-1],candles[i-2]],timeframe=last_candle.timeframe)
                         pdArray.candles.append(candles[i])
                         pdArray.candles.append(candles[i - 1])
                         pdArray.candles.append(candles[i - 2])

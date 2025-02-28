@@ -1,17 +1,13 @@
 from app.helper.calculator.time.London import LondonOpen
 from app.helper.calculator.time.NYOpen import NYOpen
-from app.helper.calculator.time.macro.quarter.FirstQuarterWindow import FirstQuarterWindow
-from app.helper.calculator.time.macro.quarter.LastQuarterWindow import LastQuarterWindow
 from app.helper.calculator.time.macro.silverBullet.SilverBulletLondon import SilverBulletLondon
 from app.helper.facade.StrategyFacade import StrategyFacade
-from app.helper.handler.SMTHandler import SMTHandler
 from app.helper.strategy.DoubleFib import DoubleFib
 from app.helper.strategy.FVGSession import FVGSession
 from app.helper.strategy.LondonSB import LondonSB
 from app.helper.strategy.OTEFourH import OTEFourH
 from app.helper.strategy.TestSMT import TestSMTStrategy
 from app.helper.strategy.Unicorn import Unicorn
-from app.interfaces.framework.ITimeWindow import ITimeWindow
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.Strategy import Strategy
 from app.monitoring.logging.logging_startup import logger
@@ -39,9 +35,8 @@ class StrategyFactory:
                                  ,strategy_facade=StrategyFacade())
             return londonsb
         if typ == "DoubleFib":
-            gen_timeframes = self._generate_timeframes([1], [90])
-            time_windows:list[ITimeWindow] = [FirstQuarterWindow(), LastQuarterWindow()]
-            doublefib =  DoubleFib(name=typ,timeframes=gen_timeframes, time_windows=time_windows,strategy_facade=StrategyFacade())
+            gen_timeframes = self._generate_timeframes([1], [240])
+            doublefib =  DoubleFib(name=typ,timeframes=gen_timeframes, time_windows=[NYOpen()],strategy_facade=StrategyFacade())
             return doublefib
         logger.warning(f"No strategy found for {typ}")
 
