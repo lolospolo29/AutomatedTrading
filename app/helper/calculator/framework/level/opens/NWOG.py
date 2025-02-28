@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.level.LevelEnum import LevelEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
 from app.monitoring.logging.logging_startup import logger
@@ -11,7 +12,7 @@ class NWOG:
      """
 
     def __init__(self):
-        self.name = 'NWOG'
+        self.name = LevelEnum.NEWYORKWEEKLYOPENGAP.value
 
     def return_levels(self, candles:list[Candle]) -> list[Level]:
         all_levels = []

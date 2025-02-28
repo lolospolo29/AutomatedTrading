@@ -1,5 +1,5 @@
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytz
 
@@ -7,6 +7,7 @@ from app.db.mongodb.NewsRepository import NewsRepository
 from tools.EconomicScrapper.EconomicScrapper import EconomicScrapper
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
 from app.monitoring.logging.logging_startup import logger
+from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 
 class NewsService:
@@ -39,7 +40,7 @@ class NewsService:
             self._initialized = True  # Markiere als initialisiert
 
     def run_news_scheduler(self):
-        self.receive_news()
+        self._news_days = self._economic_scrapper.return_calendar()
         for newsDay in self._news_days:
             self._news_repository.add_news_day(newsDay)
             for news in newsDay.news_events:
@@ -48,15 +49,35 @@ class NewsService:
     def return_news_days(self)->list[NewsDay]:
         return self._news_days
 
-    def receive_news(self):
+    def fetch_news(self):
         """
         Receiving the News from Scrapper.
 
         Returns:
             Safe News on the Day to the List.
         """
-        self._news_days = self._economic_scrapper.return_calendar()
-        logger.info("Receiving News from Scrapper.")
+
+        now = datetime.utcnow().isoformat() + "Z"
+
+        # Calculate the date 7 days from now
+        future_date = (datetime.utcnow() + timedelta(days=7)).isoformat() + "Z"
+
+        from_date_iso = datetime.fromisoformat(now.replace("Z", "+00:00"))
+        to_date_iso = datetime.fromisoformat(future_date.replace("Z", "+00:00"))
+
+        news_events_db:list[NewsEvent] = self._news_repository.get_news_events(from_date_iso, to_date_iso)
+        news_days:list[NewsDay] = self._news_repository.get_news_days(now, future_date)
+
+        for news_day in news_days:
+
+            news_events = []
+
+            for news in news_events_db:
+                day = datetime.fromisoformat(news_day.day_iso).date().day
+                if day == news.time.day:
+                    news_events.append(news)
+            news_day.news_events = news_events
+
         logger.debug("News Days received : {count}".format(count=self._news_days))
 
     def is_news_ahead(self, hour: int = 1) -> tuple[bool, str]:
@@ -80,8 +101,7 @@ class NewsService:
                     if day == utc_minus_5.day:
                         for news in newsDay.news_events:
                             logger.debug(news.__str__())
-                            if (
-                                    news.time.hour - hour == utc_minus_5.hour or news.time.hour + hour == utc_minus_5.hour or
+                            if ( news.time.hour - hour == utc_minus_5.hour or news.time.hour + hour == utc_minus_5.hour or
                                     news.time.hour == utc_minus_5.hour):
                                 logger.info(f"News Day {newsDay.day_iso} ahead")
                                 return True,"News {title}: At {news_hour}".format(title=news.title,news_hour=news.time.hour)

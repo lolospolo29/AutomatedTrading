@@ -50,8 +50,6 @@ class DoubleFib(Strategy):
             pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="FVG", candles= candles,lookback=3))
             pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="OB", candles= candles,lookback=2))
             pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type="Swings", candles= candles))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="Void", candles= candles,lookback=3))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="VI", candles= candles,lookback=3))
 
             for pd in pds:
                 self.strategy_facade.pd_array_handler.add_pd_array(pd)
@@ -77,20 +75,6 @@ class DoubleFib(Strategy):
                 return StrategyResult()
 
             last_structure:FrameWork = structures[-1]
-
-            # current_structure_direction = 0
-            # other_direction = 0
-
-            # for pd in pds:
-            #     pd:FrameWork = pd
-            #     if pd.name != "High" and pd.name != "Low":
-            #         if pd.direction == last_structure.direction:
-            #             current_structure_direction += 1
-            #         else:
-            #             other_direction += 1
-            #
-            # if current_structure_direction < other_direction:
-            #     return StrategyResult()
 
             levels = levels[-9:]
 

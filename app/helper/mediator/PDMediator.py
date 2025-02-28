@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
 from app.helper.calculator.framework.pdarray.BPR import BPR
@@ -90,15 +91,15 @@ class PDMediator:
             it logs the error and raises an Exception.
         """
         try:
-            if pd_type == "FVG":
+            if pd_type == PDEnum.FVG.value:
                     return self._fvg.return_array_list(candles, lookback)
-            if pd_type == "OB":
+            if pd_type == PDEnum.OrderBlock.value:
                     return self._orderBlock.return_array_list(candles, lookback)
-            if pd_type == "Swings":
+            if pd_type == PDEnum.SWINGS.value:
                     return self._swings.return_array_list(candles, lookback)
-            if pd_type == "Void":
+            if pd_type == PDEnum.VOID.value:
                     return self._void.return_array_list(candles, lookback)
-            if pd_type == "VI":
+            if pd_type == PDEnum.VOLUMEIMBALANCE.value:
                     return self._volume_imbalance.return_array_list(candles, lookback)
         except Exception as e:
             logger.error("Error calculating PD array with lookback: {}".format(e))
@@ -123,21 +124,21 @@ class PDMediator:
         :rtype: list
         """
         try:
-            if pd_type == "BPR":
+            if pd_type == PDEnum.BPR.value:
                 return self._bpr.return_array_list(candles)
-            if pd_type == "FVG":
+            if pd_type == PDEnum.FVG.value:
                 return self._fvg.return_array_list(candles)
-            if pd_type == "BRK":
+            if pd_type == PDEnum.BREAKER.value:
                 return self._breaker.return_array_list(candles)
-            if pd_type == "OB":
+            if pd_type == PDEnum.OrderBlock.value:
                 return self._orderBlock.return_array_list(candles)
-            if pd_type == "RB":
+            if pd_type == PDEnum.RejectionBlock.value:
                 return self._rejection_block.return_array_list(candles)
-            if pd_type == "Swings":
+            if pd_type == PDEnum.SWINGS.value:
                 return self._swings.return_array_list(candles)
-            if pd_type == "Void":
+            if pd_type == PDEnum.VOID.value:
                 return self._void.return_array_list(candles)
-            if pd_type == "VI":
+            if pd_type == PDEnum.VOLUMEIMBALANCE.value:
                 return self._volume_imbalance.return_array_list(candles)
         except Exception as e:
             logger.error("Error calculating PD array: {}".format(e))
@@ -154,21 +155,21 @@ class PDMediator:
         :return: A tuple containing two floating-point numbers representing the computed range for the input PD type.
         """
         try:
-            if pd_type == "BPR":
+            if pd_type == PDEnum.BPR.value:
                 return self._bpr.return_candle_range(pdArray)
-            if pd_type == "FVG":
+            if pd_type == PDEnum.FVG.value:
                 return self._fvg.return_candle_range(pdArray)
-            if pd_type == "BRK":
+            if pd_type == PDEnum.BREAKER.value:
                 return self._breaker.return_candle_range(pdArray)
-            if pd_type == "OB":
+            if pd_type == PDEnum.OrderBlock.value:
                 return self._orderBlock.return_candle_range(pdArray)
-            if pd_type == "RB":
+            if pd_type == PDEnum.RejectionBlock.value:
                 return self._rejection_block.return_candle_range(pdArray)
-            if pd_type == "Swings":
+            if pd_type == PDEnum.SWINGS.value:
                 return self._swings.return_candle_range(pdArray)
-            if pd_type == "Void":
+            if pd_type == PDEnum.VOID.value:
                 return self._void.return_candle_range(pdArray)
-            if pd_type == "VI":
+            if pd_type == PDEnum.VOLUMEIMBALANCE.value:
                 return self._volume_imbalance.return_candle_range(pdArray)
         except Exception as e:
             logger.error(f"PD Candle Range Return Error{e}")
@@ -199,13 +200,11 @@ class PDMediator:
                            inversion check process.
         """
         try:
-            if pd_type == "FVG":
+            if pd_type == PDEnum.FVG.value:
                 return self._fvg.checkForInverse(pdArray, candles)
-            if pd_type == "OB":
+            if pd_type == PDEnum.OrderBlock.value:
                 return self._orderBlock.checkForInverse(pdArray, candles)
             return pdArray.direction
         except Exception as e:
             logger.error(f"PD Inverse check failed{e}")
     # endregion
-
-# todo refactor some enum

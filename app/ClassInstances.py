@@ -90,7 +90,7 @@ schedule_manager = ScheduleService()
 
 schedule_manager.every_day_add_schedule("News","12:00",news_service.run_news_scheduler)
 
-#news_service.receive_news()
+news_service.fetch_news()
 
 def MonitorFolder(handler, folderPath):
     observer = Observer()

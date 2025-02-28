@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
@@ -15,7 +16,7 @@ class Breaker(IPDArray):
 
     def __init__(self, lookback: int):
         self.lookback: int = lookback
-        self.name = "Breaker"
+        self.name = PDEnum.BREAKER.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
         try:

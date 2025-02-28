@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -11,7 +12,7 @@ class Swings(IPDArray):
 
 
     def __init__(self):
-        self.name = "Swing"
+        self.name = PDEnum.SWINGS.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
         pass

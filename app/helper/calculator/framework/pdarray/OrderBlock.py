@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -8,7 +9,7 @@ from app.monitoring.logging.logging_startup import logger
 
 class Orderblock(IPDArray):
     def __init__(self):
-        self.name: str = "OB"
+        self.name: str = PDEnum.OrderBlock.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:

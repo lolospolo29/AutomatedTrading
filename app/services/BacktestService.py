@@ -86,14 +86,13 @@ class BacktestService:
     @staticmethod
     def _add_module_statistic_to_result(module: TestModule, result: Result) -> Result:
         """Fügt die Statistiken eines TestModules zum übergeordneten Result hinzu."""
-        # todo
         total_pnl = 0.0
         total_win_pnl = 0.0
         total_loss_pnl = 0.0
         total_win_count = 0
         total_loss_count = 0
         total_duration = 0.0
-        max_drawdown = float('-inf')
+        max_drawdown = float('inf')
 
         # Alle TradeResults aus dem TestModule iterieren
         for trade in module.trade_results.values():
@@ -129,7 +128,7 @@ class BacktestService:
         if result.average_loss != 0:
             result.risk_ratio = abs(result.average_win / result.average_loss)
         else:
-            result.risk_ratio = float('inf') if result.average_win > 0 else 0.0
+            result.risk_ratio = 0 if result.average_win > 0 else 0.0
 
             # Gesamt PnL und Max Drawdown
         result.pnl_percentage += total_pnl

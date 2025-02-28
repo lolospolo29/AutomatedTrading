@@ -1,5 +1,6 @@
 import sys
 
+from app.helper.calculator.framework.level.LevelEnum import LevelEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
 from app.interfaces.framework.ILevel import ILevel
@@ -21,7 +22,7 @@ class OTE(ILevel):
         """
         # Fibonacci retracement levels to calculate
         self.retracement_levels: list[float] = [0.79, 0.62,1.5]
-        self.name = "OTE"
+        self.name = LevelEnum.OPTIMALTRADEENTRY.value
 
     def return_levels(self, candles: list[Candle], lookback: int = None) -> list[Level]:
         """

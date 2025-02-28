@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
@@ -10,7 +11,7 @@ class BPR(IPDArray):
     """ICT Balanced price range (BPR) is the area on price chart where two opposite fair value gaps overlap"""
 
     def __init__(self):
-        self.name = "BPR"
+        self.name = PDEnum.BPR.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         """

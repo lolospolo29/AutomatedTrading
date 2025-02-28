@@ -1,0 +1,8 @@
+from enum import Enum
+
+
+class StructureEnum(Enum):
+    BREAKOFSTRUCTURE = 'BOS'
+    CHANGEINCHARACTER = 'CHOCH'
+    CHANGEINSTATEOFDELIVERY = 'CISD'
+    SMARTMONEYTECHNIQUE = 'SMT'

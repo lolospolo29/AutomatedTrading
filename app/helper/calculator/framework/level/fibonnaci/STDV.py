@@ -1,5 +1,6 @@
 import sys
 
+from app.helper.calculator.framework.level.LevelEnum import LevelEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
 from app.interfaces.framework.ILevel import ILevel
@@ -13,7 +14,7 @@ class STDV(ILevel):
 
     def __init__(self):
         self.extension_levels: list[float] = [1.5, 2, 3, 4]
-        self.name = "STDV"
+        self.name = LevelEnum.STANDARDDIVIATION.value
 
     def return_levels(self, candles: list[Candle], lookback: int = None) -> list[Level]:
         # Step 1: Apply lookback to limit the range of candles

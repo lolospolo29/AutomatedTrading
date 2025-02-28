@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -12,7 +13,7 @@ class FVG(IPDArray):
     Leaving a Gap between the first and third"""
 
     def __init__(self):
-        self.name = "FVG"
+        self.name = PDEnum.FVG.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:

@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.structure.StructureEnum import StructureEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 from app.helper.calculator.framework.structure.BOS import BOS
@@ -69,11 +70,11 @@ class StructureMediator:
                  implementation.
         """
         try:
-            if confirmation_type == "BOS":
+            if confirmation_type == StructureEnum.BREAKOFSTRUCTURE:
                 return self._bos.return_confirmation(candles)
-            if confirmation_type == "CHOCH":
+            if confirmation_type == StructureEnum.CHANGEINCHARACTER:
                 return self._choch.return_confirmation(candles)
-            if confirmation_type == "CISD":
+            if confirmation_type == StructureEnum.CHANGEINSTATEOFDELIVERY:
                 return self._cisd.return_confirmation(candles)
         except Exception as e:
             logger.error(f"Calculate confirmation failed {e}")

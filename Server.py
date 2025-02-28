@@ -21,8 +21,6 @@ def receive_signal():
     return f'Received Analyse data: {json_data}'
 
 # endregion
-# todo system testing
-#
 # todo dashboard  figma + css
 ###
 # todo tools / telegram / steuern

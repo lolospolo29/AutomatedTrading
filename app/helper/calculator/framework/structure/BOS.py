@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.structure.StructureEnum import StructureEnum
 from app.interfaces.framework.IConfirmation import IConfirmation
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
@@ -8,7 +9,7 @@ class BOS(IConfirmation):
 
     def __init__(self, lookback: int):
         self.lookback: int = lookback
-        self.name = "BOS"
+        self.name = StructureEnum.BREAKOFSTRUCTURE.value
 
     def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
         """

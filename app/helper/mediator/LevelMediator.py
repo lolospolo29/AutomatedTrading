@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.level.LevelEnum import LevelEnum
 from app.models.asset.Candle import Candle
 from app.helper.calculator.framework.level.CBDR import CBDR
 from app.helper.calculator.framework.level.equalHL import equalHL
@@ -71,11 +72,11 @@ class LevelMediator:
         :rtype: list
         """
         try:
-            if level_type == "CBDR":
+            if level_type == LevelEnum.CENTRALBANKDEALERRANGE.value:
                 return self._cbdr.return_levels(candles)
-            if level_type == "previousDaysLevels":
+            if level_type == LevelEnum.PDLEVEL:
                 return self._previous_days_level.return_levels(candles)
-            if level_type == "PreviousWeekLevels":
+            if level_type == LevelEnum.PWLEVEL.value:
                 return self._previous_week_levels.return_levels(candles)
         except Exception as e:
             logger.error("Error calculating levels: {}".format(e))
@@ -137,11 +138,11 @@ class LevelMediator:
         :rtype: list
         """
         try:
-            if level_type == "OTE":
+            if level_type == LevelEnum.OPTIMALTRADEENTRY.value:
                 return self._ote.return_levels(candles, lookback)
-            if level_type == "PD":
+            if level_type == LevelEnum.PREMIUMDISCOUNT.value:
                 return self._pd.return_levels(candles, lookback)
-            if level_type == "STDV":
+            if level_type == LevelEnum.STANDARDDIVIATION.value:
                 return self._stdv.return_levels(candles, lookback)
         except Exception as e:
             logger.error("Error calculating levels: {}".format(e))
@@ -165,9 +166,9 @@ class LevelMediator:
         :raises Exception: Logs any exception that occurs during the calculation.
         """
         try:
-            if level_type == "NWOG":
+            if level_type == LevelEnum.NEWYORKWEEKLYOPENGAP.value:
                 return self._nwog.return_levels(candles)
-            if level_type == "NDOG":
+            if level_type == LevelEnum.NEWYORKDAILYOPENGAP.value:
                 return self._ndog.return_levels(candles)
         except Exception as e:
             logger.error("Error calculating levels: {}".format(e))

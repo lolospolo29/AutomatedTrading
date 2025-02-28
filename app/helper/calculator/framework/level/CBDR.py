@@ -1,5 +1,6 @@
 import sys
 
+from app.helper.calculator.framework.level.LevelEnum import LevelEnum
 from app.interfaces.framework.ILevel import ILevel
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
@@ -15,7 +16,7 @@ class CBDR(ILevel):
      deviations in price
      """
     def __init__(self):
-        self.name = 'CBDR'
+        self.name = LevelEnum.CENTRALBANKDEALERRANGE.value
         self.projection_width = 3
 
     def return_levels(self, candles: list[Candle]) -> list:

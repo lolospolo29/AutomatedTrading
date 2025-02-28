@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -10,7 +11,7 @@ class RejectionBlock(IPDArray):
 
     def __init__(self, lookback):
         self.lookback = lookback
-        self.name = "RB"
+        self.name = PDEnum.RejectionBlock.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
@@ -102,11 +103,11 @@ class RejectionBlock(IPDArray):
                 # Bullish rejection: Large lower wick compared to average range
                 if  lower_wick > avg_range:
                     rejection_blocks = PDArray(name=self.name,direction= "Bullish",candles=candles[i-9:i+1])
-                    rejection_blocks.candles.append(candles[i])
+                    rejection_blocks.candles.append(rejection_blocks)
                 # Bearish rejection: Large upper wick compared to average range
                 elif upper_wick > avg_range:
                     rejection_blocks = PDArray(name=self.name, direction="Bearish",candles=candles[i-9:i+1])
-                    rejection_blocks.candles.append(candles[i])
+                    rejection_blocks.candles.append(rejection_blocks)
         except Exception as e:
             logger.error("Rejection Block Exception {}".format(e))
         finally:

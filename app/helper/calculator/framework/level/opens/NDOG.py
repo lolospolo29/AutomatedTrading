@@ -1,3 +1,4 @@
+from app.helper.calculator.framework.level.LevelEnum import LevelEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
 from app.monitoring.logging.logging_startup import logger
@@ -6,7 +7,7 @@ from app.monitoring.logging.logging_startup import logger
 class NDOG:
     """ The NDOG is the gap between the opening price and closing price of the previous day"""
     def __init__(self):
-        self.name = 'NDOG'
+        self.name = LevelEnum.NEWYORKDAILYOPENGAP.value
 
     def return_levels(self, candles: list[Candle]) -> list[Level]:
         all_levels = []
