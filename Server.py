@@ -21,12 +21,6 @@ def receive_signal():
     return f'Received Analyse data: {json_data}'
 
 # endregion
-# todo dashboard  figma + css
-###
-# todo tools / telegram / steuern
-# todo journal
-# todo candle data as chart
-#
 ###
 # region CREATE APP Route
 

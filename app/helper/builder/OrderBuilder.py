@@ -97,7 +97,7 @@ class OrderBuilder:
         return self
 
     def build(self):
-        logger.info(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},Symbol: {self.order.symbol},TradeId: {self.order.tradeId}")
+        logger.debug(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},Symbol: {self.order.symbol},TradeId: {self.order.tradeId}")
         return self.order
 
     @staticmethod

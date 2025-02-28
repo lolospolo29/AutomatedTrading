@@ -42,13 +42,13 @@ class SignalController:
     def get_asset_selection(self)->list[str]:
         return self._BacktestService.get_asset_selection()
 
-    def get_test_results(self,json_data:Dict[str,Any] = None)->list[dict]:
+    def get_test_results(self,strategy:str = None)->list[dict]:
         strategy_name = None
         try:
-            strategy_name = json_data["strategy"]
+            strategy_name = strategy
             self._BacktestService.get_test_results(strategy_name)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.exception("Get Backtest Results,Exception: {e}".format(e=e))
 
         results = self._BacktestService.get_test_results(strategy_name)
         updated_results = []

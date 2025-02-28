@@ -8,6 +8,7 @@ from app.models.asset.Candle import Candle
 from app.models.backtest.BacktestInput import BacktestInput
 from app.models.backtest.Result import Result
 from app.models.backtest.TestModule import TestModule
+from app.models.backtest.TradeResult import TradeResult
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -30,7 +31,7 @@ class BacktestService:
             self._fetch_test_assets()
             self._initialized = True  # Markiere als initialisiert
 
-    def start_backtesting_strategy(self, backtest_input: BacktestInput) -> Result:
+    def start_backtesting_strategy(self, backtest_input: BacktestInput):
 
         test_data: dict[str, list[Candle]] = self._prepare_test_data(backtest_input.test_assets)
 
@@ -38,21 +39,18 @@ class BacktestService:
 
         strategy = self.__factory.return_strategy(backtest_input.strategy)
 
-        result = Result(strategy=strategy.name, result_id=str(uuid.uuid4()))
-
         modules: list[TestModule] = []
 
         threads = []
 
         if strategy is None:
             logger.error(f"Strategy {strategy} not found in Backtest Service")
-            return result
 
         for asset in backtest_input.test_assets:
-            logger.info(f"Starting backtest for {asset}")
+            logger.info(f"Starting Backtest: {strategy.name} with Asset {asset}")
 
-            module = TestModule(asset_classes[asset], strategy.model_copy(), asset
-                                , test_data[asset], strategy.timeframes, result.result_id,trade_limit=backtest_input.trade_limit)
+            module = TestModule(asset_class=asset_classes[asset], strategy=strategy.model_copy(), asset=asset
+                                , candles=test_data[asset], timeframes=strategy.timeframes, trade_limit=backtest_input.trade_limit)
             modules.append(module)
             thread = threading.Thread(target=module.start_module())
             threads.append(thread)
@@ -60,15 +58,16 @@ class BacktestService:
 
         self._wait_for_threads(threads)
 
+        results = []
+
         for module in modules:
-            result = self._add_module_statistic_to_result(module, result)
+            result = self._create_result(module)
 
         logger.info(f"Backtest for {strategy.name} finished")
-        logger.info(f"Writing Result to DB...,ResultId: {result.result_id}")
-        if result.no_of_trades > 0:
-            self._backtest_repository.add_result(result)
-
-        return result
+        for result in results:
+            if result.no_of_trades > 0:
+                logger.info(f"Writing Result to DB...,ResultId: {result.result_id}")
+                self._backtest_repository.add_result(result)
 
     def get_asset_selection(self) -> list[str]:
         return self._asset_selection
@@ -84,7 +83,7 @@ class BacktestService:
             self._backtest_repository.add_candle(candle)
 
     @staticmethod
-    def _add_module_statistic_to_result(module: TestModule, result: Result) -> Result:
+    def _create_result(module: TestModule) -> Result:
         """Fügt die Statistiken eines TestModules zum übergeordneten Result hinzu."""
         total_pnl = 0.0
         total_win_pnl = 0.0
@@ -92,10 +91,16 @@ class BacktestService:
         total_win_count = 0
         total_loss_count = 0
         total_duration = 0.0
+        total_break_even = 0.0
+        total_risk_ratio = 0.0
+        total_activated = 0
         max_drawdown = float('inf')
+
+        result = Result(result_id=str(uuid.uuid4()),strategy=module.strategy.name,asset=module.asset)
 
         # Alle TradeResults aus dem TestModule iterieren
         for trade in module.trade_results.values():
+            trade: TradeResult = trade
             # Anzahl der Trades erhöhen
             result.no_of_trades += 1
 
@@ -103,12 +108,21 @@ class BacktestService:
             total_pnl += trade.pnl_percentage
             max_drawdown = min(max_drawdown, trade.max_drawdown)  # Niedrigster Wert
 
-            if trade.is_win:
+            if trade.take_profit and trade.stop and trade.entry_price:
+                distance_to_profit = trade.take_profit - trade.entry_price
+                distance_to_stop = trade.stop - trade.entry_price
+                risk_ratio = distance_to_profit / distance_to_stop
+                total_risk_ratio += abs(risk_ratio)
+                total_activated += 1
+
+            if trade.pnl_percentage > 0:
                 total_win_count += 1
                 total_win_pnl += trade.pnl_percentage
-            else:
+            if trade.pnl_percentage < 0:
                 total_loss_count += 1
                 total_loss_pnl += trade.pnl_percentage
+            if trade.pnl_percentage == 0:
+                total_break_even += 1
 
             # Durchschnittliche Dauer des Trades berechnen (wenn Zeit vorhanden)
             if trade.entry_time and trade.exit_time:
@@ -125,10 +139,7 @@ class BacktestService:
         result.average_loss = (total_loss_pnl / total_loss_count) if total_loss_count > 0 else 0.0
 
         # Risiko-Ertrags-Verhältnis berechnen
-        if result.average_loss != 0:
-            result.risk_ratio = abs(result.average_win / result.average_loss)
-        else:
-            result.risk_ratio = 0 if result.average_win > 0 else 0.0
+        result.risk_ratio = total_risk_ratio / total_activated if total_activated > 0 else 0.0
 
             # Gesamt PnL und Max Drawdown
         result.pnl_percentage += total_pnl
@@ -138,7 +149,7 @@ class BacktestService:
         # Gewinn-, Verlust- und Break-even-Zahlen setzen
         result.win_count += total_win_count
         result.loss_count += total_loss_count
-        result.break_even_count = result.no_of_trades - (total_win_count + total_loss_count)
+        result.break_even_count += total_break_even
 
         return result
 

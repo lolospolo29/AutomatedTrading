@@ -61,9 +61,6 @@ class FileHandler(FileSystemEventHandler):
                         logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
                     finally:
                         continue
-
-                self._move_to_archive(event.src_path)
-                self._archive()
             if filename.startswith("Testdata") and filename.endswith(".csv"):
                 candles_dict_list = self._parse_candle_data(event.src_path)
                 candles = []
@@ -74,6 +71,7 @@ class FileHandler(FileSystemEventHandler):
                     except Exception as e:
                         logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
                 self._backtest_service.add_test_data(candles)
+            self._move_to_archive(event.src_path)
         except Exception as e:
             logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
     # endregion
@@ -130,56 +128,6 @@ class FileHandler(FileSystemEventHandler):
     # endregion
 
     # region File Functions
-    @staticmethod
-    def _archive():
-
-        # Pfade definieren
-        observed_folder = r"/Users/lauris/PycharmProjects/AutomatedTrading/incomingFiles/_archive"
-        # Sicherstellen, dass der Archivordner existiert
-
-        # Alle Dateien im incomingFiles iterieren
-        for filename in os.listdir(observed_folder):
-            file_path = os.path.join(observed_folder, filename)
-
-            # Nur CSV-Dateien verarbeiten
-            if not filename.endswith(".csv"):
-                continue
-
-            logger.info(f"Verarbeite Datei: {filename}")
-
-            # CSV-Datei einlesen
-            try:
-                data = pd.read_csv(file_path)
-            except Exception as e:
-                logger.exception(f"Fehler beim Einlesen von {filename}: {e}")
-                continue
-
-            # Daten nach asset-Typ und Datum filtern
-            for _, row in data.iterrows():
-                try:
-                    # JSON aus der "Description"-Spalte extrahieren
-                    description_json = row["Description"]
-                    candle_data = json.loads(description_json)
-                    asset = candle_data["Candle"]["asset"]
-                    iso_time = candle_data["Candle"]["IsoTime"]
-
-                    # Datum aus IsoTime extrahieren
-                    date = datetime.strptime(iso_time.rstrip("Z"), "%Y-%m-%dT%H:%M:%S").strftime('%Y-%m-%d')
-
-                    # Ordnerstruktur: _archive/<asset>/<date>
-                    asset_folder = os.path.join(observed_folder, asset, date)
-                    os.makedirs(asset_folder, exist_ok=True)
-
-                    # Datei für das Datum erstellen oder anhängen
-                    asset_file_path = os.path.join(asset_folder, f"{asset}_{date}.csv")
-                    logger.debug(f"Writing to {asset_file_path}")
-                    with open(asset_file_path, "a") as f:
-                        f.write(",".join(map(str, row.values)) + "\n")  # Originalzeile speichern
-                except Exception as e:
-                    logger.debug(f"Error Writing to: {filename}: {e}")
-                    continue
-
-            logger.info(f"Succeed :{filename}.")
 
     @staticmethod
     def _delete_file(file_path):

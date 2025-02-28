@@ -4,6 +4,9 @@ from typing import Optional
 from pydantic import Field
 
 from app.helper.builder.OrderBuilder import OrderBuilder
+from app.helper.calculator.framework.level.LevelEnum import LevelEnum
+from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.helper.calculator.framework.structure.StructureEnum import StructureEnum
 from app.helper.facade.StrategyFacade import StrategyFacade
 from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
@@ -32,29 +35,22 @@ class DoubleFib(Strategy):
 
     def _analyzeData(self, candles: list[Candle], timeFrame: int):
         if timeFrame == 1 and len(candles) >= 90:
-            fibs = []
-            fibs.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="OTE", candles= candles, lookback=90))
-            fibs.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type="PD", candles= candles, lookback=90))
-            for fib in fibs:
-                self.strategy_facade.level_handler.add_level(fib)
-
-            bosS = self.strategy_facade.StructureMediator.calculate_confirmation("BOS", candles= candles)
+            bosS = self.strategy_facade.StructureMediator.calculate_confirmation(StructureEnum.BREAKOFSTRUCTURE.value, candles= candles)
 
             for bos in bosS:
                 self.strategy_facade.structure_handler.add_structure(bos)
 
             pds = []
 
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type="BPR", candles= candles))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type="BRK", candles= candles))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="FVG", candles= candles,lookback=3))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type="OB", candles= candles,lookback=2))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type="Swings", candles= candles))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type=PDEnum.BPR.value, candles= candles))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type=PDEnum.BREAKER.value, candles= candles))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type=PDEnum.FVG.value, candles= candles,lookback=3))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type=PDEnum.OrderBlock.value, candles= candles,lookback=2))
+            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type=PDEnum.SWINGS.value, candles= candles))
 
             for pd in pds:
                 self.strategy_facade.pd_array_handler.add_pd_array(pd)
 
-            self.strategy_facade.level_handler.remove_level(candles, timeFrame)
             self.strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
             self.strategy_facade.structure_handler.remove_structure(candles, timeFrame)
 
@@ -62,9 +58,14 @@ class DoubleFib(Strategy):
 
         self._analyzeData(candles, timeFrame)
 
-        levels:list[Level] = self.strategy_facade.level_handler.return_levels()
         structures:list[Structure] = self.strategy_facade.structure_handler.return_structure()
         pds:list[PDArray] = self.strategy_facade.pd_array_handler.return_pd_arrays()
+
+        levels:list[Level] = []
+        levels.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type=LevelEnum.OPTIMALTRADEENTRY.value,
+                                                                           candles=candles, lookback=90))
+        levels.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type=LevelEnum.PREMIUMDISCOUNT.value,
+                                                                           candles=candles, lookback=90))
 
         if candles and levels and pds and structures and timeFrame == 1:
 
@@ -107,8 +108,8 @@ class DoubleFib(Strategy):
             entry = []
 
             for pd in pds:
-                pd:PDArray = pd
-                if pd.name == "FVG" or pd.name == "OB" or pd.name == "BRK" or pd.name == "BPR":
+                pd: PDArray = pd
+                if pd.name == PDEnum.FVG.value or pd.name == PDEnum.OrderBlock.value or pd.name == PDEnum.BREAKER.value or pd.name == PDEnum.BPR.value:
                     for candle in pd.candles:
                         if last_structure.direction == "Bullish":
                             if candle.close <= fib_eq:
@@ -129,7 +130,7 @@ class DoubleFib(Strategy):
 
             if low < last_candle.close <= high and last_structure.direction == "Bullish" and last_candle.close > bullish_low_ote:
                 stop = fib_low
-                take_profit = fib_high
+                take_profit = bearish_high_ote
                 order_dir = OrderDirectionEnum.BUY.value
                 exit_dir = OrderDirectionEnum.SELL.value
                 profit_dir = TriggerDirection.RISE.value
@@ -137,7 +138,7 @@ class DoubleFib(Strategy):
 
             if low <= last_candle.close < high and last_structure.direction == "Bearish" and last_candle.close < bearish_high_ote:
                 stop = fib_high
-                take_profit = fib_low
+                take_profit = bullish_low_ote
                 order_dir = OrderDirectionEnum.SELL.value
                 exit_dir = OrderDirectionEnum.BUY.value
                 profit_dir = TriggerDirection.FALL.value

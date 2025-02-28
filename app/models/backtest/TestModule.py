@@ -20,8 +20,7 @@ from app.monitoring.logging.logging_startup import logger
 #todo test with news integrating and volatility on red folder
 class TestModule:
     def __init__(self,asset_class:str,strategy:Strategy, asset:str,candles:list[Candle]
-                 , timeframes:list[ExpectedTimeFrame],result_id:str,trade_limit:int=2):
-        self.result_id = result_id
+                 , timeframes:list[ExpectedTimeFrame],trade_limit:int=2):
         self.asset = asset
         self.asset_class = asset_class
         self.strategy = strategy
@@ -169,9 +168,6 @@ class TestModule:
                 max_drawdown = ((trade_result.highest_price - trade_result.entry_price) / trade_result.entry_price) * 100
                 trade_result.stop = highest_price
                 trade_result.take_profit = lowest_price
-
-            if trade_result.pnl_percentage > 0:
-                trade_result.is_win = True
 
             trade_result.max_drawdown = max_drawdown
 

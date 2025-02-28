@@ -78,6 +78,8 @@ class NewsService:
                     news_events.append(news)
             news_day.news_events = news_events
 
+        self._news_days = news_days
+
         logger.debug("News Days received : {count}".format(count=self._news_days))
 
     def is_news_ahead(self, hour: int = 1) -> tuple[bool, str]:

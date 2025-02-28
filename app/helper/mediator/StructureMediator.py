@@ -70,11 +70,11 @@ class StructureMediator:
                  implementation.
         """
         try:
-            if confirmation_type == StructureEnum.BREAKOFSTRUCTURE:
+            if confirmation_type == StructureEnum.BREAKOFSTRUCTURE.value:
                 return self._bos.return_confirmation(candles)
-            if confirmation_type == StructureEnum.CHANGEINCHARACTER:
+            if confirmation_type == StructureEnum.CHANGEINCHARACTER.value:
                 return self._choch.return_confirmation(candles)
-            if confirmation_type == StructureEnum.CHANGEINSTATEOFDELIVERY:
+            if confirmation_type == StructureEnum.CHANGEINSTATEOFDELIVERY.value:
                 return self._cisd.return_confirmation(candles)
         except Exception as e:
             logger.error(f"Calculate confirmation failed {e}")
