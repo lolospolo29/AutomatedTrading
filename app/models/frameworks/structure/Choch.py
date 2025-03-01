@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.structure.StructureEnum import StructureEnum
+from app.models.frameworks.structure.StructureEnum import StructureEnum
 from app.interfaces.framework.IConfirmation import IConfirmation
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure

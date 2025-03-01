@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
@@ -93,7 +93,7 @@ class BPR(IPDArray):
         except Exception as e:
             logger.error("BPR Return Candle Range Exception: {}".format(e))
 
-    def return_array_list(self, candles: list[Candle]) -> list[PDArray]:
+    def return_pd_arrays(self, candles: list[Candle]) -> list[PDArray]:
         """
         Calculates Balanced Price Ranges using 2 FVGs Overlapping
         :param candles:

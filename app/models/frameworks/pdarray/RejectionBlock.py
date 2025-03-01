@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -71,7 +71,7 @@ class RejectionBlock(IPDArray):
         except Exception as e:
             logger.error("Rejection Block Candle Range Error with Exception"+str(e))
 
-    def return_array_list(self, candles: list[Candle]) -> list:
+    def return_pd_arrays(self, candles: list[Candle]) -> list:
         rejection_blocks = []
 
         try:
@@ -90,7 +90,7 @@ class RejectionBlock(IPDArray):
 
             for i in range(9, len(opens)):  # Start from the 10th candle onwards
                 # Calculate average range of the previous 10 candles
-                avg_range = sum([highs[j] - lows[j] for j in range(i - 9, i + 1)]) / 10
+                avg_range = sum([opens[j] - close[j] for j in range(i - 9, i + 1)]) / 10
 
                 # Current candle details
                 open_price = opens[i]

@@ -3,4 +3,4 @@ from app.models.frameworks.FrameWork import FrameWork
 
 
 class Structure(FrameWork):
-    candle:Candle
+    candles:list[Candle]

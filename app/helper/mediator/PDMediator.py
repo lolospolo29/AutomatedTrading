@@ -1,14 +1,14 @@
-from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
-from app.helper.calculator.framework.pdarray.BPR import BPR
-from app.helper.calculator.framework.pdarray.Breaker import Breaker
-from app.helper.calculator.framework.pdarray.FVG import FVG
-from app.helper.calculator.framework.pdarray.OrderBlock import Orderblock
-from app.helper.calculator.framework.pdarray.RejectionBlock import RejectionBlock
-from app.helper.calculator.framework.pdarray.Swings import Swings
-from app.helper.calculator.framework.pdarray.Void import Void
-from app.helper.calculator.framework.pdarray.VolumeImbalance import VolumeImbalance
+from app.models.frameworks.pdarray.BPR import BPR
+from app.models.frameworks.pdarray.Breaker import Breaker
+from app.models.frameworks.pdarray.FVG import FVG
+from app.models.frameworks.pdarray.OrderBlock import Orderblock
+from app.models.frameworks.pdarray.RejectionBlock import RejectionBlock
+from app.models.frameworks.pdarray.Swings import Swings
+from app.models.frameworks.pdarray.Void import Void
+from app.models.frameworks.pdarray.VolumeImbalance import VolumeImbalance
 from app.monitoring.logging.logging_startup import logger
 
 
@@ -92,15 +92,15 @@ class PDMediator:
         """
         try:
             if pd_type == PDEnum.FVG.value:
-                    return self._fvg.return_array_list(candles, lookback)
+                    return self._fvg.return_pd_arrays(candles, lookback)
             if pd_type == PDEnum.OrderBlock.value:
-                    return self._orderBlock.return_array_list(candles, lookback)
+                    return self._orderBlock.return_pd_arrays(candles, lookback)
             if pd_type == PDEnum.SWINGS.value:
-                    return self._swings.return_array_list(candles, lookback)
+                    return self._swings.return_pd_arrays(candles, lookback)
             if pd_type == PDEnum.VOID.value:
-                    return self._void.return_array_list(candles, lookback)
+                    return self._void.return_pd_arrays(candles, lookback)
             if pd_type == PDEnum.VOLUMEIMBALANCE.value:
-                    return self._volume_imbalance.return_array_list(candles, lookback)
+                    return self._volume_imbalance.return_pd_arrays(candles, lookback)
         except Exception as e:
             logger.error("Error calculating PD array with lookback: {}".format(e))
 
@@ -125,21 +125,21 @@ class PDMediator:
         """
         try:
             if pd_type == PDEnum.BPR.value:
-                return self._bpr.return_array_list(candles)
+                return self._bpr.return_pd_arrays(candles)
             if pd_type == PDEnum.FVG.value:
-                return self._fvg.return_array_list(candles)
+                return self._fvg.return_pd_arrays(candles)
             if pd_type == PDEnum.BREAKER.value:
-                return self._breaker.return_array_list(candles)
+                return self._breaker.return_pd_arrays(candles)
             if pd_type == PDEnum.OrderBlock.value:
-                return self._orderBlock.return_array_list(candles)
+                return self._orderBlock.return_pd_arrays(candles)
             if pd_type == PDEnum.RejectionBlock.value:
-                return self._rejection_block.return_array_list(candles)
+                return self._rejection_block.return_pd_arrays(candles)
             if pd_type == PDEnum.SWINGS.value:
-                return self._swings.return_array_list(candles)
+                return self._swings.return_pd_arrays(candles)
             if pd_type == PDEnum.VOID.value:
-                return self._void.return_array_list(candles)
+                return self._void.return_pd_arrays(candles)
             if pd_type == PDEnum.VOLUMEIMBALANCE.value:
-                return self._volume_imbalance.return_array_list(candles)
+                return self._volume_imbalance.return_pd_arrays(candles)
         except Exception as e:
             logger.error("Error calculating PD array: {}".format(e))
 

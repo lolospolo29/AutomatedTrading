@@ -1,6 +1,6 @@
 import sys
 
-from app.helper.calculator.framework.level.LevelEnum import LevelEnum
+from app.models.frameworks.level.LevelEnum import LevelEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
 from app.interfaces.framework.ILevel import ILevel

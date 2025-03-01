@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.structure.StructureEnum import StructureEnum
+from app.models.frameworks.structure.StructureEnum import StructureEnum
 from app.interfaces.framework.IConfirmation import IConfirmation
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
@@ -36,14 +36,14 @@ class BOS(IConfirmation):
                 # Track the last significant bullish high
                 if i >= self.lookback:
                     if closes[i] > max(highs[i - self.lookback:i]):
-                        structure = Structure(name=self.name, direction="Bullish", candle=candles[i-1]
+                        structure = Structure(name=self.name, direction="Bullish", candles=[candles[i-1]]
                                               ,timeframe=last_candle.timeframe)
                         structures.append(structure)
 
                 # Track the last significant bearish low
                 if i >= self.lookback:
                     if closes[i] < min(lows[i - self.lookback:i]):
-                        structure = Structure(name=self.name, direction="Bearish",candle=candles[i-1]
+                        structure = Structure(name=self.name, direction="Bearish",candles=candles[i-1]
                                               ,timeframe=last_candle.timeframe)
                         structures.append(structure)
             return structures

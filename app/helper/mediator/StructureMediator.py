@@ -1,10 +1,10 @@
-from app.helper.calculator.framework.structure.StructureEnum import StructureEnum
+from app.models.frameworks.structure.StructureEnum import StructureEnum
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
-from app.helper.calculator.framework.structure.BOS import BOS
-from app.helper.calculator.framework.structure.CISD import CISD
-from app.helper.calculator.framework.structure.Choch import Choch
-from app.helper.calculator.framework.structure.SMT import SMT
+from app.models.frameworks.structure.BOS import BOS
+from app.models.frameworks.structure.CISD import CISD
+from app.models.frameworks.structure.Choch import Choch
+from app.models.frameworks.structure.SMT import SMT
 from app.monitoring.logging.logging_startup import logger
 
 

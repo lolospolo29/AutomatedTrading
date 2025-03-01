@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -7,17 +7,17 @@ from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.monitoring.logging.logging_startup import logger
 
 
-class FVG(IPDArray):
+class IFVG(IPDArray):
     """
     FVG Calculation,which Consist of the Candles trading in the same Direction.
     Leaving a Gap between the first and third"""
 
     def __init__(self):
-        self.name = PDEnum.FVG.value
+        self.name = PDEnum.IFVG.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
-            low,high =self.return_candle_range(pd_array)
+            low, high = self.return_candle_range(pd_array)
             if order_direction.BUY:
                 if risk_mode.SAFE:
                     return low
@@ -35,14 +35,13 @@ class FVG(IPDArray):
                 high = high
                 return (low + high) / 2
         except Exception as e:
-            logger.error("FVG Entry Error with Exception"+str(e))
-
+            logger.error("FVG Entry Error with Exception" + str(e))
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
             highs = [candle.high for candle in pd_array.candles]
             lows = [candle.low for candle in pd_array.candles]
-            close =  [candle.close for candle in pd_array.candles]
+            close = [candle.close for candle in pd_array.candles]
             open = [candle.open for candle in pd_array.candles]
 
             if order_direction.BUY:
@@ -60,9 +59,9 @@ class FVG(IPDArray):
                 if risk_mode.AGGRESSIVE:
                     return max(close)
         except Exception as e:
-            logger.error("FVG Stop Error with Exception"+str(e))
+            logger.error("FVG Stop Error with Exception" + str(e))
 
-    def checkForInverse(self, pd_array: PDArray, candles: list[Candle]) ->str:
+    def checkForInverse(self, pd_array: PDArray, candles: list[Candle]) -> str:
         """
         Sets the Status of the PDArray to Inverse if it is traded through,resets if inverse another time.
         :param pd_array:
@@ -70,7 +69,6 @@ class FVG(IPDArray):
         :return:
         """
         try:
-
             # Extract the two IDs from the PDArray
             _ids = [candle.id for candle in pd_array.candles]
 
@@ -83,7 +81,7 @@ class FVG(IPDArray):
                 raise ValueError("One or both IDs from PDArray not found in the candle list.")
 
             # Determine the older index (the one with the higher value)
-            older_index = min(index1, index2,index3)
+            older_index = min(index1, index2, index3)
 
             start_index = older_index + 1
 
@@ -92,7 +90,7 @@ class FVG(IPDArray):
 
             if len(neighbors) > 0:
                 for candle in neighbors:
-                    low,high = self.return_candle_range(pd_array)
+                    low, high = self.return_candle_range(pd_array)
                     if pd_array.direction == "Bullish":
                         if candle.close < low:
                             return "Bearish"
@@ -101,9 +99,9 @@ class FVG(IPDArray):
                             return "Bullish"
             return pd_array.direction
         except Exception as e:
-            logger.error("FVG Inverse Error with Exception"+str(e))
+            logger.error("FVG Inverse Error with Exception" + str(e))
 
-    def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
+    def return_candle_range(self, pd_array: PDArray) -> tuple[float, float]:
         """
         Returns the gap in the FVG.
 
@@ -121,9 +119,9 @@ class FVG(IPDArray):
             # Return the gap range
             return low, high
         except Exception as e:
-            logger.error("FVG return candle range error with Exception"+str(e))
+            logger.error("FVG return candle range error with Exception" + str(e))
 
-    def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
+    def return_pd_arrays(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         """
         Calculates a FVG by taking 3 consecutive Candles leaving a Gap between the first and third.
         :param lookback:
@@ -146,29 +144,51 @@ class FVG(IPDArray):
             close = [candle.close for candle in candles]
 
             n = len(opens)
-            if n > 2:
-                # Loop through the data and check 3 consecutive candles for FVGs
-                for i in range(2, n):  # Start bei der 3. Kerze (Index 2)
-                    open1, high1, low1, close1 = opens[i - 2], highs[i - 2], lows[i - 2], close[i - 2]
-                    open2, high2, low2, close2 = opens[i - 1], highs[i - 1], lows[i - 1], close[i - 1]
-                    open3, high3, low3, close3 = opens[i], highs[i], lows[i], close[i]
+            for i in range(2, n):  # Start bei der 3. Kerze (Index 2)
+                open1, high1, low1, close1 = opens[i - 2], highs[i - 2], lows[i - 2], close[i - 2]
+                open2, high2, low2, close2 = opens[i - 1], highs[i - 1], lows[i - 1], close[i - 1]
+                open3, high3, low3, close3 = opens[i], highs[i], lows[i], close[i]
 
-                    # Überprüfung auf Bearish FVG
-                    if low1 > high3 and close2 < low1:
-                        pdArray = PDArray(name=self.name, direction='Bearish',candles=[candles[i],candles[i-1],candles[i-2]],timeframe=last_candle.timeframe)
-                        pdArray.candles.append(candles[i])
-                        pdArray.candles.append(candles[i - 1])
-                        pdArray.candles.append(candles[i - 2])
-
-                    # Überprüfung auf Bullish FVG
-                    elif high1 < low3 and close2 > high1:
-                        pdArray = PDArray(name=self.name, direction='Bullish',candles=[candles[i],candles[i-1],candles[i-2]],timeframe=last_candle.timeframe)
-                        pdArray.candles.append(candles[i])
-                        pdArray.candles.append(candles[i - 1])
-                        pdArray.candles.append(candles[i - 2])
+                if open2 < close2:
+                    wick_high = self.calculate_wick_high(open2,high2,close2)
+                    wick_low = self.calculate_wick_low(open2,low2,close2)
+                    body = self.calculate_body(open2,close2)
+                    if high1 < low3 and (body > wick_high or body > wick_low):
+                        pdArray = PDArray(name=self.name, direction='Bullish',
+                                          candles=[candles[i], candles[i - 1], candles[i - 2]],
+                                          timeframe=last_candle.timeframe)
                         pd_arrays.append(pdArray)
+
+                if open2 > close2:
+                    wick_high = self.calculate_wick_high(open2,high2,close2)
+                    wick_low = self.calculate_wick_low(open2,low2,close2)
+                    body = self.calculate_body(open2,close2)
+                    if low1 < high3 and (body > wick_high or body > wick_low):
+                        pdArray = PDArray(name=self.name, direction='Bearish',
+                                          candles=[candles[i], candles[i - 1], candles[i - 2]],
+                                          timeframe=last_candle.timeframe)
+                        pd_arrays.append(pdArray)
+
         except Exception as e:
-            logger.error("FVG Error with Exception"+str(e))
+            logger.error("FVG Error with Exception" + str(e))
         finally:
             return pd_arrays
 
+    @staticmethod
+    def calculate_wick_high(open:float, high:float, close:float)->float:
+        if open < close:
+            return high - close
+        if open > close:
+            return high - open
+    @staticmethod
+    def calculate_wick_low(open:float, low:float, close:float)->float:
+        if open < close:
+            return open - low
+        if open > close:
+            return close - low
+    @staticmethod
+    def calculate_body(open:float, close:float)->float:
+        if open < close:
+            return close - open
+        if open > close:
+            return open - close

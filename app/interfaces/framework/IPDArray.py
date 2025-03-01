@@ -11,7 +11,7 @@ class IPDArray(ABC):  # Drill Fill CE
         pass
 
     @abstractmethod
-    def return_array_list(self, data_points):  # return list of possible entries
+    def return_pd_arrays(self, data_points):  # return list of possible entries
         pass
 
     @abstractmethod

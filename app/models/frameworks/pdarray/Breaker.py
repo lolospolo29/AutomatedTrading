@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
@@ -74,7 +74,7 @@ class Breaker(IPDArray):
                 swings['lows'].append((i, low[i]))  # Store index and value of swing low
         return swings
 
-    def return_array_list(self, candles: list[Candle]) -> list[PDArray]:
+    def return_pd_arrays(self, candles: list[Candle]) -> list[PDArray]:
         """
         Calculates Breakers inside a specific Range,which is Calculated by Breaking the Current Structure
         """

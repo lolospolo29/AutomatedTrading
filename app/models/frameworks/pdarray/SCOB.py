@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -9,7 +9,7 @@ from app.monitoring.logging.logging_startup import logger
 
 class Orderblock(IPDArray):
     def __init__(self):
-        self.name: str = PDEnum.OrderBlock.value
+        self.name: str = PDEnum.SCOB.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
@@ -109,7 +109,7 @@ class Orderblock(IPDArray):
         except Exception as e:
             logger.error("Orderblock return candle range error with Exception"+str(e))
 
-    def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
+    def return_pd_arrays(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         """Calculate the OB. By one Candle sweeps the other and finishes in the opposite direction."""
         # Step 1: Apply lookback to limit the range of candles
         pd_arrays = []
@@ -125,7 +125,6 @@ class Orderblock(IPDArray):
             if len(candles) < 2:
                 return []
 
-
             # Extract data points
             opens = [candle.open for candle in candles]
             highs = [candle.high for candle in candles]
@@ -135,17 +134,18 @@ class Orderblock(IPDArray):
             n = len(highs)
 
             # Loop through the data and check 3 consecutive candles for FVGs
-            for i in range(1, n):  # Start bei der 2. Kerze (Index 1)
-                open1, high1, low1, close1 = opens[i - 1], highs[i - 1], lows[i - 1], close[i - 1]
-                open2, high2, low2, close2 = opens[i], highs[i], lows[i], close[i]
+            for i in range(2, n):  # Start bei der 2. Kerze (Index 1)
+                open1, high1, low1, close1 = opens[i - 2], highs[i - 2], lows[i - 2], close[i - 2]
+                open2, high2, low2, close2 = opens[i - 1], highs[i - 1], lows[i - 1], close[i - 1]
+                open3, high3, low3, close3 = opens[i], highs[i], lows[i], close[i]
 
-                if close1 < open1 and close2 > open2 and low1 > low2:
-                    pdArray = PDArray(name="OB",direction="Bullish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
+                if low2 < low1 < close2 and close3 > high2:
+                    pdArray = PDArray(name=self.name,direction="Bullish",candles=[candles[i],candles[i-1],candles[-2]],timeframe=last_candle.timeframe)
                     pdArray.candles.append(candles[i])
                     pdArray.candles.append(candles[i-1])
                     pd_arrays.append(pdArray)
-                if close1 > open1 and close2 < open2 and high1 < high2:
-                    pdArray = PDArray(name="OB",direction="Bearish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
+                if high2 > high1 > close2 and close3 < low2:
+                    pdArray = PDArray(name=self.name,direction="Bearish",candles=[candles[i],candles[i-1],candles[-2]],timeframe=last_candle.timeframe)
                     pdArray.candles.append(candles[i])
                     pdArray.candles.append(candles[i-1])
                     pd_arrays.append(pdArray)

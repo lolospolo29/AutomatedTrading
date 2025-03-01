@@ -1,4 +1,4 @@
-from app.helper.calculator.framework.pdarray.PDEnum import PDEnum
+from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.calculators.RiskModeEnum import RiskMode
@@ -7,11 +7,10 @@ from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.monitoring.logging.logging_startup import logger
 
 
-class Void(IPDArray):
-
+class VolumeImbalance(IPDArray):
 
     def __init__(self):
-        self.name = PDEnum.VOID.value
+        self.name = PDEnum.VOLUMEIMBALANCE.value
 
     def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
@@ -31,7 +30,7 @@ class Void(IPDArray):
             if risk_mode.MODERAT:
                 return (low + high) / 2
         except Exception as e:
-            logger.error("Void Entry Error with Exception"+str(e))
+            logger.error("Volume Imbalance Entry Error with Exception"+str(e))
 
     def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode) -> float:
         try:
@@ -55,11 +54,11 @@ class Void(IPDArray):
                 if risk_mode.AGGRESSIVE:
                     return max(close)
         except Exception as e:
-            logger.error("Void Stop Error with Exception"+str(e))
+            logger.error("Volume Imbalance Stop Error with Exception"+str(e))
 
-    def return_candle_range(self, pd_array: PDArray) -> tuple[float, float]:
+    def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """
-        Returns the high and low of the Gap.
+        Returns the gap between two Fair Value Gaps (FVGs) within the Balanced Price Range (BPR).
 
         :param pd_array: A PDArray object that contains the IDs of the six candles forming the BPR.
         :return: A dictionary containing the gap range {'low': ..., 'high': ...}.
@@ -75,10 +74,9 @@ class Void(IPDArray):
             # Return the gap range
             return low,high
         except Exception as e:
-            logger.error("Void return candle range error with Exception"+str(e))
+            logger.error("Volume Imbalance return candle range error with Exception"+str(e))
 
-    def return_array_list(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
-
+    def return_pd_arrays(self, candles: list[Candle], lookback: int = None) -> list[PDArray]:
         pd_arrays = []
         try:
             last_candle:Candle = candles[-1]
@@ -88,25 +86,30 @@ class Void(IPDArray):
             if lookback is not None and len(candles) < lookback:
                 return []
 
+            opens = [candle.open for candle in candles]
             highs = [candle.high for candle in candles]
             lows = [candle.low for candle in candles]
             close = [candle.close for candle in candles]
 
             for i in range(1, len(close)):
-                # Check for a bullish void (upward gap)
-                if lows[i] > highs[i - 1]:
+                # Check for a bullish vi
+                if min(opens[i], close[i]) > highs[i - 1] and \
+                        lows[i] > max(opens[i - 1], close[-1]) and \
+                        (lows[i] <= highs[i - 1]):
                     pd_array = PDArray(name=self.name, direction="Bullish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pd_array.candles.append(candles[i])
                     pd_array.candles.append(candles[i - 1])
                     pd_arrays.append(pd_array)
 
-                # Check for a bearish void (downward gap)
-                elif highs[i] < lows[i - 1]:
+                # Check for a bearish vi
+                elif max(opens[i], close[i]) < lows[i - 1] and \
+                        highs[i] < min(opens[i - 1], close[-1]) and \
+                        (highs[i] >= lows[i - 1]):
                     pd_array = PDArray(name=self.name, direction="Bearish",candles=[candles[i],candles[i-1]],timeframe=last_candle.timeframe)
                     pd_array.candles.append(candles[i])
                     pd_array.candles.append(candles[i - 1])
                     pd_arrays.append(pd_array)
         except Exception as e:
-            logger.error("Void Calculator Exception: {}".format(e))
+            logger.error("Volume Imbalance Exception: {}".format(e))
         finally:
             return pd_arrays  # Return the list of voids found
