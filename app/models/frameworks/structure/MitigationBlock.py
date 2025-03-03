@@ -1,34 +1,25 @@
 from typing import Optional
 
-from app.interfaces.framework.IConfirmation import IConfirmation
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 from app.models.frameworks.structure.StructureEnum import StructureEnum
 
-
-class MitigationBlock(IConfirmation):
+class MitigationBlock(IStructure):
 
     def __init__(self):
         self.name = StructureEnum.MITIGATIONBLOCK.value
 
-    def return_confirmation(self, candles: list[Candle], lookback: int) -> list[Structure]:
+    def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
         structures = []
 
         last_candle: Candle = candles[-1]
-        if lookback is not None and len(candles) > lookback:
-            candles = candles[-lookback:]  # Slice the list to the last `lookback` elements
 
-        if lookback is not None and len(candles) < lookback:
-            return []
-
-        if len(candles) < 2:
+        if len(candles) < 3:
             return []
 
         bullish_a: Optional[Candle, None] = None
         bullish_b: Optional[Candle, None] = None
         bullish_is_valid = False
-
-        last_structure: Optional[Candle, None] = None
 
         bearish_a: Optional[Candle, None] = None
         bearish_b: Optional[Candle, None] = None

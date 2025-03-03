@@ -1,7 +1,5 @@
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
-from app.monitoring.logging.logging_startup import logger
-
 
 class equalHL:
     """
@@ -12,7 +10,6 @@ class equalHL:
     def _findMedian(values:list[float]):
         sums = sum(values)
         return sums/len(values)
-
 
     def _calculateThreshold(self, prices:list[float]):
         prev_price = 0
@@ -26,127 +23,11 @@ class equalHL:
         if differences:
             return self._findMedian(differences)
 
-
-    def returnLevels(self, candles: list[Candle], detect: str) -> list[Level]:
-        """:return Equal Highs and Lows with Treshold Range"""
-        equal_levels = []
-        equal_lows = []
-        equal_highs = []
-        logger.info("Calculating Equal Highs and Lows with Treshold Range")
-        try:
-
-            last_candle = candles[-1]
-
-            timeframe = last_candle.timeframe
-
-            # Detect equal lows
-            if detect == "low" or detect == "both":
-                filteredCandles = self.filterCandles(candles,"low")
-                equal_lows += self._detect_equal_lows(filteredCandles,timeframe)
-
-            # Detect equal highs
-            if detect == "high" or detect == "both":
-                filteredCandles = self.filterCandles(candles,"high")
-                equal_highs += self._detect_equal_highs(filteredCandles,timeframe)
-
-            # Filter equal levels to only keep the lowest or highest in the same threshold range
-            equal_levels += self._filter_levels(equal_lows)
-            equal_levels += self._filter_levels(equal_highs)
-        except Exception as e:
-            logger.critical("Exception occurred in CBDR: {}".format(e))
-        finally:
-            return equal_levels
-
-    @staticmethod
-    def filterCandles(candles: list[Candle], detect: str) -> list[Candle]:
-        filteredCandles = []
-        if detect == "low":
-            for candle in candles:
-                if candle.open < candle.close:
-                    filteredCandles.append(candle)
-        if detect == "high":
-            for candle in candles:
-                if candle.open > candle.close:
-                    filteredCandles.append(candle)
-        return filteredCandles
-
-
     def _detect_equal_lows(self, candles: list[Candle], timeframe) -> list[Level]:
-        equalLows = []
-        lows = []
-        last_candle:Candle = candles[-1]
-        # Collecting high and low values from each data point
-        for candle in candles:
-            lows.append(candle.low)
-        threshold = self._calculateThreshold(lows)
-        # Check for equal lows
-        for i in range(len(lows)):
-            currentLow = lows[i]
-            similarLows = []
-            similarCandles = []
-
-            # Compare with the remaining lows
-            for j in range(i + 1, len(lows)):
-                if abs(lows[j] - currentLow) < threshold:
-                    # Check if any price has gone lower after this potential equal low
-                    if not any(low < currentLow for low in lows[j:]) and lows[j] != currentLow:
-                        similarLows.append((lows[j]))  # Add the similar low
-                        similarCandles.append(candles[j])
-
-
-            # If we found similar lows, add them as levels
-            if similarLows:
-                if len(equalLows) >= 1:
-                    for k in range(len(similarLows)):
-                        isInLows = False
-                        for equalLow in equalLows:
-                            if equalLow.level == similarLows[k]:
-                                isInLows = True
-                        if not isInLows:
-                            level = Level(name="EqualLow", level=similarLows[k],fib_level=0.0, candles=[similarCandles[k]]
-                                          ,timeframe=timeframe,direction="Bullish")
-                            level.timeFrame = timeframe
-                            level.set_fib_level(0.0, "EQL", candles=[similarCandles[k]])
-                            equalLows.append(level)
-
-        return equalLows
+        pass
 
     def _detect_equal_highs(self, candles: list[Candle], timeFrame) -> list[Level]:
-        equalHighs = []
-        highs = []
-
-        # Collecting high and low values from each data point
-        for candle in candles:
-            highs.append(candle.high)
-        treshold = self._calculateThreshold(highs)
-        # Check for equal highs
-        for i in range(len(highs)):
-            currentHigh = highs[i]
-            similarHighs = []
-            similarCandles = []
-
-            # Compare with the remaining highs
-            for j in range(i + 1, len(highs)):
-                if abs(highs[j] - currentHigh) < treshold:
-                    # Check if any price has gone higher after this potential equal high
-                    if not any(high > currentHigh for high in highs[j:]) and highs[j] != currentHigh:
-                        similarHighs.append((highs[j]))  # Add the similar high
-                        similarCandles.append(similarCandles[j])
-
-            # If we found similar highs, add them as levels
-            if similarHighs:
-                if len(equalHighs) >= 1:
-                        for k in range(len(similarHighs)):
-                            isInEqualHighs = False
-                            for equalHigh in equalHighs:
-                                if equalHigh.level == similarHighs[k]:
-                                    isInEqualHighs = True
-                            if not isInEqualHighs:
-                                level = Level(name="EqualHigh", level=similarHighs[k],fib_level=0.0, candles=[similarCandles[k]]
-                                              ,timeframe=timeFrame,direction="Bearish")
-                                equalHighs.append(level)
-
-        return equalHighs
+        pass
 
     def _filter_levels(self, levels: list[Level]) -> list[Level]:
         """

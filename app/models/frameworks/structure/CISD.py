@@ -1,19 +1,19 @@
 from app.models.frameworks.structure.StructureEnum import StructureEnum
-from app.interfaces.framework.IConfirmation import IConfirmation
+from app.interfaces.framework.IStructure import IStructure
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 from app.monitoring.logging.logging_startup import logger
 
 
-class CISD(IConfirmation):
-    def __init__(self, lookback: int):
-        self.lookback: int = lookback
+class CISD(IStructure):
+
+    def __init__(self):
         self.name = StructureEnum.CHANGEINSTATEOFDELIVERY.value
 
     def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
         current_structure = []
         try:
-            if len(candles) < self.lookback:
+            if len(candles) < lookback:
                 return []
 
             last_candle:Candle = candles[-1]
@@ -41,7 +41,7 @@ class CISD(IConfirmation):
                     row_candles += 1
                 # Direction changes
                 else:
-                    if row_candles >= self.lookback:
+                    if row_candles >= lookback:
                         if direction == 'Bearish':
                             tracked_structures.append({
                                 "type": "Bearish",
@@ -62,7 +62,7 @@ class CISD(IConfirmation):
                 # Check if any tracked structure is traded through
                 for struct in tracked_structures:
                     if (struct["type"] == "Bearish" and close[i] > struct["level"]) or (struct["type"] == "Bullish" and close[i] < struct["level"]) :
-                        last_traded_structure = Structure(name=self.name, direction=struct["type"] , candle=candles[i],timeframe=last_candle.timeframe)
+                        last_traded_structure = Structure(name=self.name, direction=struct["type"] , candles=[candles[i]],timeframe=last_candle.timeframe)
                         current_structure.clear()
                         current_structure.append(last_traded_structure)
                         tracked_structures.remove(struct)  # Remove structure after it is traded through

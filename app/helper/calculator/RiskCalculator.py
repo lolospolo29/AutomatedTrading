@@ -5,11 +5,12 @@ from app.models.asset.AssetClassEnum import AssetClassEnum
 from app.models.asset.Candle import Candle
 from app.helper.calculator.exit.invalidation.InvalidationClose import InvalidationClose
 from app.helper.calculator.exit.invalidation.InvalidationSteady import InvalidationSteady
-from app.helper.calculator.exit.technicalStop.BreakEven import BreakEven
-from app.helper.calculator.exit.technicalStop.TrailingStop import TrailingStop
+from app.helper.calculator.BreakEven import BreakEven
+from app.helper.calculator.TrailingStop import TrailingStop
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 # todo tick size fetch from api
+# todo refactor
 class RiskCalculator:
     def __init__(self):
         self._risk_manager = RiskManager()

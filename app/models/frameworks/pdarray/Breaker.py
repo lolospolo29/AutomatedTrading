@@ -1,47 +1,9 @@
-from app.models.frameworks.pdarray.PDEnum import PDEnum
-from app.interfaces.framework.IPDArray import IPDArray
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
-from app.models.calculators.RiskModeEnum import RiskMode
-from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.monitoring.logging.logging_startup import logger
 
 
-class Breaker(IPDArray):
-    """
-    An ICT breaker block is basically a failed order block causing a
-    shift in market structure and acting as a level
-    of support or resistance for the price
-    """
-
-    def __init__(self, lookback: int):
-        self.lookback: int = lookback
-        self.name = PDEnum.BREAKER.value
-
-    def return_entry(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
-        try:
-            low,high =self.return_candle_range(pd_array)
-            if order_direction.BUY:
-                if risk_mode.SAFE:
-                    return low
-                if risk_mode.AGGRESSIVE:
-                    return high
-
-            if order_direction.SELL:
-                if risk_mode.SAFE:
-                    return high
-                if risk_mode.AGGRESSIVE:
-                    return low
-
-            if risk_mode.MODERAT:
-                low = low
-                high = high
-                return (low + high) / 2
-        except Exception as e:
-            logger.exception("Breaker Entry Error with Exception"+str(e))
-
-    def return_stop(self, pd_array: PDArray, order_direction: OrderDirectionEnum, risk_mode: RiskMode):
-        return self.return_entry(pd_array, order_direction, risk_mode)
+class Breaker:
 
     def return_candle_range(self, pd_array: PDArray) -> tuple[float,float]:
         """

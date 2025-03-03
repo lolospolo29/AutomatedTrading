@@ -4,7 +4,6 @@ from typing import Optional
 from pydantic import Field
 
 from app.helper.builder.OrderBuilder import OrderBuilder
-from app.models.frameworks.level.LevelEnum import LevelEnum
 from app.models.frameworks.pdarray.PDEnum import PDEnum
 from app.models.frameworks.structure.StructureEnum import StructureEnum
 from app.helper.facade.StrategyFacade import StrategyFacade

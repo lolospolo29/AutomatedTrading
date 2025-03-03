@@ -1,14 +1,13 @@
 from app.models.frameworks.structure.StructureEnum import StructureEnum
-from app.interfaces.framework.IConfirmation import IConfirmation
+from app.interfaces.framework.IStructure import IStructure
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 from app.monitoring.logging.logging_startup import logger
 
 
-class Choch(IConfirmation):
+class Choch(IStructure):
 
-    def __init__(self, lookback: int):
-        self.lookback: int = lookback
+    def __init__(self):
         self.name = StructureEnum.CHANGEINCHARACTER.value
 
     @staticmethod
@@ -43,7 +42,7 @@ class Choch(IConfirmation):
         """
         structures = []
         try:
-            if len(candles) < self.lookback:
+            if len(candles) < lookback:
                 return []
 
             last_candle:Candle = candles[-1]
@@ -62,26 +61,26 @@ class Choch(IConfirmation):
             upper_fractal = None
             lower_fractal = None
 
-            for i in range(self.lookback // 2, len(candles) - self.lookback // 2):
+            for i in range(lookback // 2, len(candles) - lookback // 2):
                 # Check for bullish fractal
-                if self.is_bullish_fractal(highs, i, self.lookback):
+                if self.is_bullish_fractal(highs, i, lookback):
                     upper_fractal = {'value': highs[i], 'index': i, 'crossed': False}
 
                 # Check for bearish fractal
-                if self.is_bearish_fractal(lows, i, self.lookback):
+                if self.is_bearish_fractal(lows, i, lookback):
                     lower_fractal = {'value': lows[i], 'index': i, 'crossed': False}
 
                 # Check crossover above the bullish fractal (ChoCH/BOS Bullish)
                 if upper_fractal and closes[i] > upper_fractal['value'] and not upper_fractal['crossed']:
                     upper_fractal['crossed'] = True
 
-                    structure =  Structure(name=self.name, direction="Bullish", candle=candles[i],timeframe=last_candle.timeframe)
+                    structure =  Structure(name=self.name, direction="Bullish", candles=[candles[i]],timeframe=last_candle.timeframe)
                     structures.append(structure)
 
                 # Check crossover below the bearish fractal (ChoCH/BOS Bearish)
                 if lower_fractal and closes[i] < lower_fractal['value'] and not lower_fractal['crossed']:
                     lower_fractal['crossed'] = True
-                    structure =  Structure(name=self.name, direction="Bearish", candle=candles[i],timeframe=last_candle.timeframe)
+                    structure =  Structure(name=self.name, direction="Bearish", candles=[candles[i]],timeframe=last_candle.timeframe)
                     structures.append(structure)
         except Exception as e:
             logger.error("CHOCH Confirmation Exception: {}".format(e))

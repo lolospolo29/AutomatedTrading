@@ -1,4 +1,3 @@
-import datetime
 import threading
 
 from app.api.brokers.models.BrokerOrder import BrokerOrder
@@ -8,7 +7,7 @@ from app.db.mongodb.TradeRepository import TradeRepository
 from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from app.db.mongodb.dtos.TradeDTO import TradeDTO
 from app.helper.builder.OrderBuilder import OrderBuilder
-from app.helper.facade.BrokerFacade import BrokerFacade
+from app.helper.registry.BrokerRegistry import BrokerRegistry
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
 from app.manager.RelationManager import RelationManager
@@ -46,7 +45,7 @@ class TradeManager:
                     cls._instance = super(TradeManager, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self,trade_repository:TradeRepository,broker_facade:BrokerFacade,risk_manager:RiskManager,relation_manager:RelationManager):
+    def __init__(self, trade_repository:TradeRepository, broker_facade:BrokerRegistry, risk_manager:RiskManager, relation_manager:RelationManager):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._trade_registry = SemaphoreRegistry()
             self._lock_registry = LockRegistry()

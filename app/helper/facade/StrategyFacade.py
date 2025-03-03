@@ -1,14 +1,9 @@
 from app.helper.calculator.RiskCalculator import RiskCalculator
-from app.helper.calculator.entry.PDStopEntryCalculator import PDStopEntryCalculator
-from app.helper.calculator.entry.ProfitStopEntryCalculator import ProfitStopEntryCalculator
-from app.helper.calculator.entry.ProfitStopEntrySorter import ProfitStopEntrySorter
+from app.helper.calculator.PDStopEntryCalculator import PDStopEntryCalculator
+from app.helper.calculator.ProfitStopEntryCalculator import ProfitStopEntryCalculator
+from app.helper.calculator.ProfitStopEntrySorter import ProfitStopEntrySorter
 from app.helper.handler.LevelHandler import LevelHandler
-from app.helper.handler.PDArrayHandler import PDArrayHandler
 from app.helper.handler.SMTHandler import SMTHandler
-from app.helper.handler.StructureHandler import StructureHandler
-from app.helper.mediator.LevelMediator import LevelMediator
-from app.helper.mediator.PDMediator import PDMediator
-from app.helper.mediator.StructureMediator import StructureMediator
 
 
 class StrategyFacade:
@@ -26,13 +21,6 @@ class StrategyFacade:
     """
     def __init__(self,asset1:str=None,asset2:str=None,correlation:str=None):
 
-        self.PDMediator = PDMediator()
-        self.StructureMediator:StructureMediator = StructureMediator()
-        self.LevelMediator: LevelMediator = LevelMediator()
-
-
-        self.pd_array_handler = PDArrayHandler()
-        self.structure_handler = StructureHandler()
         self.level_handler = LevelHandler()
 
         self.smt_handler = None

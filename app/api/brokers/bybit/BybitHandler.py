@@ -24,7 +24,6 @@ from app.monitoring.logging.logging_startup import logger
 from app.monitoring.retry_request import retry_request
 
 # endregion
-
 rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
 

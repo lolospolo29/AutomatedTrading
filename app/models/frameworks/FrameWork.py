@@ -2,7 +2,6 @@ import uuid
 
 from pydantic import BaseModel
 
-
 class FrameWork(BaseModel):
     name:str=None
     id: str = str(uuid.uuid4())

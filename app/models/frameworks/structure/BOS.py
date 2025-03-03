@@ -1,14 +1,13 @@
 from app.models.frameworks.structure.StructureEnum import StructureEnum
-from app.interfaces.framework.IConfirmation import IConfirmation
+from app.interfaces.framework.IStructure import IStructure
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 from app.monitoring.logging.logging_startup import logger
 
 
-class BOS(IConfirmation):
+class BOS(IStructure):
 
-    def __init__(self, lookback: int):
-        self.lookback: int = lookback
+    def __init__(self):
         self.name = StructureEnum.BREAKOFSTRUCTURE.value
 
     def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
@@ -19,8 +18,6 @@ class BOS(IConfirmation):
         """
         structures = []
         try:
-            if len(candles) < self.lookback:
-                return []
             last_candle:Candle = candles[-1]
             highs = []
             lows = []
@@ -31,18 +28,17 @@ class BOS(IConfirmation):
                 lows.append(candle.low)
                 closes.append(candle.close)
 
-
             for i in range(len(candles)):
                 # Track the last significant bullish high
-                if i >= self.lookback:
-                    if closes[i] > max(highs[i - self.lookback:i]):
+                if i >= lookback:
+                    if closes[i] > max(highs[i - lookback:i]):
                         structure = Structure(name=self.name, direction="Bullish", candles=[candles[i-1]]
                                               ,timeframe=last_candle.timeframe)
                         structures.append(structure)
 
                 # Track the last significant bearish low
-                if i >= self.lookback:
-                    if closes[i] < min(lows[i - self.lookback:i]):
+                if i >= lookback:
+                    if closes[i] < min(lows[i - lookback:i]):
                         structure = Structure(name=self.name, direction="Bearish",candles=candles[i-1]
                                               ,timeframe=last_candle.timeframe)
                         structures.append(structure)

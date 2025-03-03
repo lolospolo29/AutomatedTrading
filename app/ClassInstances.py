@@ -11,7 +11,7 @@ from app.db.mongodb.BacktestRepository import BacktestRepository
 from app.db.mongodb.NewsRepository import NewsRepository
 from app.db.mongodb.RelationRepository import RelationRepository
 from app.db.mongodb.TradeRepository import TradeRepository
-from app.helper.facade.BrokerFacade import BrokerFacade
+from app.helper.registry.BrokerRegistry import BrokerRegistry
 from app.manager.AssetManager import AssetManager
 from app.manager.RelationManager import RelationManager
 from app.manager.RiskManager import RiskManager
@@ -31,7 +31,7 @@ secret_manager = SecretsManager()
 
 bybit = Bybit("Bybit")
 
-broker_facade = BrokerFacade()
+broker_facade = BrokerRegistry()
 broker_facade.register_handler("Bybit", bybit)
 
 risk_manager = RiskManager()
