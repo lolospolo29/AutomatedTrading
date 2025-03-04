@@ -1,11 +1,10 @@
 from app.models.frameworks.structure.StructureEnum import StructureEnum
-from app.interfaces.framework.IStructure import IStructure
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 from app.monitoring.logging.logging_startup import logger
 
 
-class BOS(IStructure):
+class BOS:
 
     def __init__(self):
         self.name = StructureEnum.BREAKOFSTRUCTURE.value

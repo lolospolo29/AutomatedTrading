@@ -1,75 +1,61 @@
-from app.models.frameworks.structure.StructureEnum import StructureEnum
-from app.interfaces.framework.IStructure import IStructure
+from typing import Optional
+
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
-from app.monitoring.logging.logging_startup import logger
 
-
-class CISD(IStructure):
-
+class CISD:
     def __init__(self):
-        self.name = StructureEnum.CHANGEINSTATEOFDELIVERY.value
+        self.consecutive_series_of_candles:int = 0
+        self.highest_candle: Optional[Candle] = None  # Can be a Candle or None
+        self.lowest_candle: Optional[Candle] = None  # Can be a Candle or None
+        self.direction:str = ""
 
-    def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
-        current_structure = []
-        try:
-            if len(candles) < lookback:
-                return []
+    def add_candle(self, last_candle:Candle) -> Optional[Structure]:
+        if self.consecutive_series_of_candles >= 1:
+            is_bullish = last_candle.close > last_candle.open
+            is_bearish = last_candle.close < last_candle.open
 
-            last_candle:Candle = candles[-1]
+            if self.direction == "Bullish":
+                if is_bullish:
+                    self.consecutive_series_of_candles += 1
+                    self.highest_candle = max(self.highest_candle, last_candle, key=lambda c: c.close)
+                    self.lowest_candle = min(self.lowest_candle, last_candle, key=lambda c: c.open)
+                elif is_bearish and self.consecutive_series_of_candles >= 3:
+                    structure = Structure(name="Consecutive", candles=[self.highest_candle, self.lowest_candle],
+                                          direction="Bullish")
+                    self._reset_series(last_candle)
+                    return structure
 
-            row_candles = 0
-            direction = None
-            tracked_structures = []  # List of structures to track their levels
+            elif self.direction == "Bearish":
+                if is_bearish:
+                    self.consecutive_series_of_candles += 1
+                    self.highest_candle = max(self.highest_candle, last_candle, key=lambda c: c.open)
+                    self.lowest_candle = min(self.lowest_candle, last_candle, key=lambda c: c.close)
+                elif is_bullish and self.consecutive_series_of_candles >= 3:
+                    structure = Structure(name="Consecutive", candles=[self.highest_candle, self.lowest_candle],
+                                          direction="Bullish")
+                    self._reset_series(last_candle)
+                    return structure
+        else:
+            self._reset_series(last_candle)
 
-            # Extract candle data
-            opens = [candle.open for candle in candles]
-            highs = [candle.high for candle in candles]
-            lows = [candle.low for candle in candles]
-            close = [candle.close for candle in candles]
+    @staticmethod
+    def check_for_cisd(last_candle: Candle, consecutive: Structure) -> Optional[Structure]:
 
-            for i in range(1, len(close)):
-                # Determine the direction of the current candle
-                current_direction = 'Bullish' if close[i] > opens[i] else 'Bearish'
+        first_candle = consecutive.candles[0]  # The first candle in the consecutive structure
+        is_bearish_cisd = last_candle.close < first_candle.open and consecutive.direction == "Bullish"
+        is_bullish_cisd = last_candle.close > first_candle.open and consecutive.direction == "Bearish"
 
-                # Initialize direction on the first candle
-                if direction is None:
-                    direction = current_direction
-                    row_candles = 1
-                # Same direction: continue tracking
-                elif current_direction == direction:
-                    row_candles += 1
-                # Direction changes
-                else:
-                    if row_candles >= lookback:
-                        if direction == 'Bearish':
-                            tracked_structures.append({
-                                "type": "Bearish",
-                                "level": max(highs[i - row_candles:i]),
-                                "candles": candles[i - 1]
-                            })
-                        elif direction == 'Bullish':
-                            tracked_structures.append({
-                                "type": "Bullish",
-                                "level": min(lows[i - row_candles:i]),
-                                "candles": candles[i - 1]
-                            })
+        if is_bearish_cisd:
+            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bearish")
 
-                    # Reset for the new direction
-                    direction = current_direction
-                    row_candles = 1
+        if is_bullish_cisd:
+            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bullish")
 
-                # Check if any tracked structure is traded through
-                for struct in tracked_structures:
-                    if (struct["type"] == "Bearish" and close[i] > struct["level"]) or (struct["type"] == "Bullish" and close[i] < struct["level"]) :
-                        last_traded_structure = Structure(name=self.name, direction=struct["type"] , candles=[candles[i]],timeframe=last_candle.timeframe)
-                        current_structure.clear()
-                        current_structure.append(last_traded_structure)
-                        tracked_structures.remove(struct)  # Remove structure after it is traded through
+        return None  # No CISD detected
 
-                # Return the last traded structure
-        except Exception as e:
-            logger.error("CISD Confirmation Exception: {}".format(e))
-        finally:
-            return current_structure
-
+    def _reset_series(self, initialize_candle:Candle):
+        self.highest_candle = initialize_candle
+        self.lowest_candle = initialize_candle
+        self.consecutive_series_of_candles = 1
+        self.direction = "Bullish" if initialize_candle.close > initialize_candle.open else "Bearish"

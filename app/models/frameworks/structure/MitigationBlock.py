@@ -4,7 +4,7 @@ from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
 from app.models.frameworks.structure.StructureEnum import StructureEnum
 
-class MitigationBlock(IStructure):
+class MitigationBlock:
 
     def __init__(self):
         self.name = StructureEnum.MITIGATIONBLOCK.value

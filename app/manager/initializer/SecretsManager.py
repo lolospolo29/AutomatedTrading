@@ -4,7 +4,6 @@ from typing import Any
 from app.GlobalVariables import ENV
 from app.monitoring.logging.logging_startup import logger
 
-
 class SecretsManager:
 
     _instance = None

@@ -4,3 +4,4 @@ from app.models.frameworks.FrameWork import FrameWork
 
 class Structure(FrameWork):
     candles:list[Candle]
+    reference:str = ""
