@@ -1,46 +1,81 @@
-from app.models.frameworks.structure.StructureEnum import StructureEnum
+from typing import Optional
+
 from app.models.asset.Candle import Candle
 from app.models.frameworks.Structure import Structure
-from app.monitoring.logging.logging_startup import logger
 
 
 class BOS:
 
     def __init__(self):
-        self.name = StructureEnum.BREAKOFSTRUCTURE.value
+        self.bullish_a: Optional[Candle, None] = None
+        self.bullish_b: Optional[Candle, None] = None
+        self.bullish_is_valid = False
 
-    def return_confirmation(self, candles: list[Candle]) -> list[Structure]:
-        """
-        Identify Break of Structure (BOS) from provided data.
-        param data_points: A list of dictionaries with 'open', 'high', 'low', 'close' prices.
-        :return: 'BOS_Bullish', 'BOS_Bearish' or None.
-        """
-        structures = []
-        try:
-            last_candle:Candle = candles[-1]
-            highs = []
-            lows = []
-            closes = []
+        self.bearish_a: Optional[Candle, None] = None
+        self.bearish_b: Optional[Candle, None] = None
+        self.bearish_is_valid = False
 
-            for candle in candles:
-                highs.append(candle.high)
-                lows.append(candle.low)
-                closes.append(candle.close)
+    def return_confirmation(self, last_candle: Candle) -> Optional[Structure]:
 
-            for i in range(len(candles)):
-                # Track the last significant bullish high
-                if i >= lookback:
-                    if closes[i] > max(highs[i - lookback:i]):
-                        structure = Structure(name=self.name, direction="Bullish", candles=[candles[i-1]]
-                                              ,timeframe=last_candle.timeframe)
-                        structures.append(structure)
+        struct = None
 
-                # Track the last significant bearish low
-                if i >= lookback:
-                    if closes[i] < min(lows[i - lookback:i]):
-                        structure = Structure(name=self.name, direction="Bearish",candles=candles[i-1]
-                                              ,timeframe=last_candle.timeframe)
-                        structures.append(structure)
-            return structures
-        except Exception as e:
-            logger.error("BOS Confirmation Exception: {}".format(e))
+        if last_candle.close > last_candle.open:
+            if self.bullish_a is None:
+                self.bullish_a = last_candle
+            if self.bullish_a.high < last_candle.close and self.bullish_is_valid:
+                if self.bullish_a.iso_time < self.bullish_b.iso_time:
+                    struct = Structure(name="BOS", direction="Bullish", candles=[self.bullish_a, self.bullish_b]
+                                       , timeframe=last_candle.timeframe)
+                    self._structure_reset_bullish(last_candle)
+
+            if last_candle.close > last_candle.high:
+                self.bullish_a = last_candle
+
+        if last_candle.close < last_candle.open:
+            if self.bearish_a is None:
+                self.bearish_a: Candle = last_candle
+            if self.bearish_a.low > last_candle.close and self.bearish_is_valid:
+                if self.bearish_a.iso_time < self.bearish_b.iso_time:
+                    struct = Structure(name="BOS", direction="Bearish", candles=[self.bearish_a, self.bearish_b]
+                                       , timeframe=last_candle.timeframe)
+                    self._structure_reset_bearish(last_candle)
+
+            if last_candle.close < self.bearish_a.low:
+                self.bearish_a = last_candle
+
+        self._set_b_if_empty(last_candle)
+
+        self._check_b_leg_condition(last_candle)
+
+        if struct:
+            return struct
+
+    def _set_b_if_empty(self, last_candle: Candle):
+        if self.bullish_b is None:
+            self.bullish_b = last_candle
+        if self.bearish_b is None:
+            self.bearish_b = last_candle
+
+    def _check_b_leg_condition(self, last_candle: Candle):
+        if last_candle.close < self.bullish_b.low and self.bullish_a:
+            self.bullish_b = last_candle
+            self.bullish_is_valid = True
+        if last_candle.close > self.bearish_b.high and self.bearish_a:
+            self.bearish_b = last_candle
+            self.bearish_is_valid = True
+
+    def _structure_reset_bullish(self, last_candle: Candle):
+        self.bullish_a = last_candle
+        self.bullish_b = None
+        self.bullish_is_valid = False
+        self.bearish_a = None
+        self.bearish_b = None
+        self.bearish_is_valid = False
+
+    def _structure_reset_bearish(self, last_candle: Candle):
+        self.bullish_a = None
+        self.bullish_b = None
+        self.bullish_is_valid = False
+        self.bearish_a = last_candle
+        self.bearish_b = None
+        self.bearish_is_valid = False

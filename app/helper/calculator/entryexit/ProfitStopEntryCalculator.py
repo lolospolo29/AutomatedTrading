@@ -2,7 +2,7 @@ from typing import Tuple, Any
 
 from app.models.calculators.ProfitStopEntry import ProfitStopEntry
 from app.models.calculators.RiskModeEnum import RiskMode
-from app.helper.calculator.OrderWeightage import OrderWeightage
+from app.helper.calculator.entryexit.OrderWeightage import OrderWeightage
 from app.helper.calculator.ratio.BaseRatio import BaseRatio
 from app.helper.calculator.ratio.FixedRatio import FixedRatio
 from app.helper.calculator.ratio.RangeRatio import RangeRatio

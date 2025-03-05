@@ -3,7 +3,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class Swing:
     @staticmethod
-    def return_pd_arrays(first_candle:Candle,second_candle:Candle,third_candle:Candle) -> PDArray:
+    def detect_swing(first_candle:Candle, second_candle:Candle, third_candle:Candle) -> PDArray:
         high1 = first_candle.high
         high2 = second_candle.high
         high3 = third_candle.high

@@ -57,7 +57,7 @@ class DoubleFib(Strategy):
         self._analyzeData(candles, timeFrame)
 
         structures:list[Structure] = self.strategy_facade.structure_handler.return_structure()
-        pds:list[PDArray] = self.strategy_facade.pd_array_handler.return_pd_arrays()
+        pds:list[PDArray] = self.strategy_facade.pd_array_handler.detect_swing()
 
         levels:list[Level] = []
         levels.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type=LevelEnum.OPTIMALTRADEENTRY.value,

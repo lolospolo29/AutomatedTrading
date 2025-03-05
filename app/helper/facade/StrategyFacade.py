@@ -1,7 +1,7 @@
 from app.helper.calculator.RiskCalculator import RiskCalculator
-from app.helper.calculator.PDStopEntryCalculator import PDStopEntryCalculator
-from app.helper.calculator.ProfitStopEntryCalculator import ProfitStopEntryCalculator
-from app.helper.calculator.ProfitStopEntrySorter import ProfitStopEntrySorter
+from app.helper.calculator.entryexit.PDStopEntryCalculator import PDStopEntryCalculator
+from app.helper.calculator.entryexit.ProfitStopEntryCalculator import ProfitStopEntryCalculator
+from app.helper.calculator.entryexit.ProfitStopEntrySorter import ProfitStopEntrySorter
 from app.helper.handler.LevelHandler import LevelHandler
 from app.helper.handler.SMTHandler import SMTHandler
 

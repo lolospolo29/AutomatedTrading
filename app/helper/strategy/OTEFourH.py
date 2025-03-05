@@ -50,7 +50,7 @@ class OTEFourH(Strategy):
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self.strategy_facade.pd_array_handler.return_pd_arrays()
+        pds = self.strategy_facade.pd_array_handler.detect_swing()
         levels = self.strategy_facade.level_handler.return_levels()
         structures = self.strategy_facade.structure_handler.return_structure()
         if candles and pds and timeFrame == 240 and len(levels) > 3 and structures and len(candles) > 20:

@@ -47,7 +47,7 @@ class NYMSS(Strategy):
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds:list[PDArray] = self._strategy_handler.pd_array_handler.return_pd_arrays()
+        pds:list[PDArray] = self._strategy_handler.pd_array_handler.detect_swing()
         if candles and pds and timeFrame == 5:
 
             last_candle: Candle = candles[-1]

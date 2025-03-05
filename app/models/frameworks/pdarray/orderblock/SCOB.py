@@ -4,7 +4,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class SCOB:
     @staticmethod
-    def return_pd_arrays(first_candle:Candle, second_candle:Candle, third_candle) -> PDArray:
+    def detect_pd_single_candle_ob(first_candle:Candle, second_candle:Candle, third_candle) -> PDArray:
 
         high1 = first_candle.high
         high2 = second_candle.high

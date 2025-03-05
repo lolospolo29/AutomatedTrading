@@ -43,7 +43,7 @@ class FVGSession(Strategy):
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self.strategy_facade.pd_array_handler.return_pd_arrays()
+        pds = self.strategy_facade.pd_array_handler.detect_swing()
         levels = self.strategy_facade.level_handler.return_levels()
         if candles and pds and len(candles) > 5 and timeFrame == 1:
 
