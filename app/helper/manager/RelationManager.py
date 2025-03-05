@@ -5,8 +5,8 @@ from app.db.mongodb.RelationRepository import RelationRepository
 from app.db.mongodb.dtos.RelationDTO import RelationDTO
 from app.db.mongodb.dtos.SMTPairDTO import SMTPairDTO
 from app.helper.factories.StrategyFactory import StrategyFactory
-from app.manager.AssetManager import AssetManager
-from app.manager.StrategyManager import StrategyManager
+from app.helper.manager.AssetManager import AssetManager
+from app.helper.manager.StrategyManager import StrategyManager
 from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
 from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame

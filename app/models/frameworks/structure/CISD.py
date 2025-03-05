@@ -5,35 +5,35 @@ from app.models.frameworks.Structure import Structure
 
 class CISD:
     def __init__(self):
-        self.consecutive_series_of_candles:int = 0
-        self.highest_candle: Optional[Candle] = None  # Can be a Candle or None
-        self.lowest_candle: Optional[Candle] = None  # Can be a Candle or None
-        self.direction:str = ""
+        self._consecutive_series_of_candles:int = 0
+        self._highest_candle: Optional[Candle] = None  # Can be a Candle or None
+        self._lowest_candle: Optional[Candle] = None  # Can be a Candle or None
+        self._direction:str = ""
 
     def add_candle(self, last_candle:Candle) -> Optional[Structure]:
-        if self.consecutive_series_of_candles >= 1:
+        if self._consecutive_series_of_candles >= 1:
             is_bullish = last_candle.close > last_candle.open
             is_bearish = last_candle.close < last_candle.open
 
-            if self.direction == "Bullish":
+            if self._direction == "Bullish":
                 if is_bullish:
-                    self.consecutive_series_of_candles += 1
-                    self.highest_candle = max(self.highest_candle, last_candle, key=lambda c: c.close)
-                    self.lowest_candle = min(self.lowest_candle, last_candle, key=lambda c: c.open)
-                elif is_bearish and self.consecutive_series_of_candles >= 3:
-                    structure = Structure(name="Consecutive", candles=[self.highest_candle, self.lowest_candle],
-                                          direction="Bullish")
+                    self._consecutive_series_of_candles += 1
+                    self._highest_candle = max(self._highest_candle, last_candle, key=lambda c: c.close)
+                    self._lowest_candle = min(self._lowest_candle, last_candle, key=lambda c: c.open)
+                elif is_bearish and self._consecutive_series_of_candles >= 3:
+                    structure = Structure(name="Consecutive", candles=[self._highest_candle, self._lowest_candle],
+                                          direction="Bullish", timeframe=last_candle.timeframe)
                     self._reset_series(last_candle)
                     return structure
 
-            elif self.direction == "Bearish":
+            elif self._direction == "Bearish":
                 if is_bearish:
-                    self.consecutive_series_of_candles += 1
-                    self.highest_candle = max(self.highest_candle, last_candle, key=lambda c: c.open)
-                    self.lowest_candle = min(self.lowest_candle, last_candle, key=lambda c: c.close)
-                elif is_bullish and self.consecutive_series_of_candles >= 3:
-                    structure = Structure(name="Consecutive", candles=[self.highest_candle, self.lowest_candle],
-                                          direction="Bullish")
+                    self._consecutive_series_of_candles += 1
+                    self._highest_candle = max(self._highest_candle, last_candle, key=lambda c: c.open)
+                    self._lowest_candle = min(self._lowest_candle, last_candle, key=lambda c: c.close)
+                elif is_bullish and self._consecutive_series_of_candles >= 3:
+                    structure = Structure(name="Consecutive", candles=[self._highest_candle, self._lowest_candle],
+                                          direction="Bullish", timeframe=last_candle.timeframe)
                     self._reset_series(last_candle)
                     return structure
         else:
@@ -47,15 +47,15 @@ class CISD:
         is_bullish_cisd = last_candle.close > first_candle.open and consecutive.direction == "Bearish"
 
         if is_bearish_cisd:
-            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bearish")
+            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bearish",timeframe=last_candle.timeframe)
 
         if is_bullish_cisd:
-            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bullish")
+            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bullish",timeframe=last_candle.timeframe)
 
         return None  # No CISD detected
 
     def _reset_series(self, initialize_candle:Candle):
-        self.highest_candle = initialize_candle
-        self.lowest_candle = initialize_candle
-        self.consecutive_series_of_candles = 1
-        self.direction = "Bullish" if initialize_candle.close > initialize_candle.open else "Bearish"
+        self._highest_candle = initialize_candle
+        self._lowest_candle = initialize_candle
+        self._consecutive_series_of_candles = 1
+        self._direction = "Bullish" if initialize_candle.close > initialize_candle.open else "Bearish"

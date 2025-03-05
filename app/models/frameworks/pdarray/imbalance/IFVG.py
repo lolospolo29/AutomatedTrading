@@ -3,7 +3,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class IFVG:
     @staticmethod
-    def return_pd_arrays(first_candle:Candle, second_candle:Candle, third_candle:Candle) -> PDArray:
+    def detect_ifvg(first_candle:Candle, second_candle:Candle, third_candle:Candle) -> PDArray:
         high1 = first_candle.high
         low1 = first_candle.low
         high2 = second_candle.high

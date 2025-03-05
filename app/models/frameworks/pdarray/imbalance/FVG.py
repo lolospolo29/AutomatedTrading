@@ -4,7 +4,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class FVG:
     @staticmethod
-    def return_pd_arrays(first_candle:Candle, second_candle:Candle, third_candle:Candle) -> PDArray:
+    def detect_fvg(first_candle:Candle, second_candle:Candle, third_candle:Candle) -> PDArray:
         if first_candle.low > third_candle.high and second_candle.close < first_candle.low:
             return PDArray(name="FVG", direction='Bearish',
                            candles=[first_candle, second_candle, third_candle],

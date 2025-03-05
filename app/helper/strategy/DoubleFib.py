@@ -96,7 +96,7 @@ class DoubleFib(Strategy):
                     bearish_high_ote = level.level
                 if level.fib_level == 1.0 and level.direction == "Bearish":
                     fib_high = level.level
-                profit_stop_entry.extend([candle.close for candle in level.candles])
+                profit_stop_entry.extend([candle.close for candle in level._candles])
 
             if last_structure.direction == "Bullish" and last_candle.close > fib_eq or last_candle.low < fib_low:
                 return StrategyResult()

@@ -4,7 +4,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class PB:
     @staticmethod
-    def return_pd_arrays(last_candle: Candle, orderblock: PDArray) -> PDArray:
+    def detect_probulsion_block(last_candle: Candle, orderblock: PDArray) -> PDArray:
         if orderblock.direction == "Bullish":
             # Find last bearish candle with the lowest close
             last_bearish_candles = [candle for candle in orderblock.candles if candle.close < candle.open]

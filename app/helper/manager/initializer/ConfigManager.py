@@ -1,10 +1,10 @@
 import threading
 
 from app.helper.factories.StrategyFactory import StrategyFactory
-from app.manager.AssetManager import AssetManager
-from app.manager.RelationManager import RelationManager
-from app.manager.StrategyManager import StrategyManager
-from app.manager.TradeManager import TradeManager
+from app.helper.manager.AssetManager import AssetManager
+from app.helper.manager.RelationManager import RelationManager
+from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.manager.TradeManager import TradeManager
 from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
 from app.monitoring.log_time import log_time

@@ -4,7 +4,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class BPR:
     @staticmethod
-    def return_pd_arrays(buy_fvg:PDArray, sell_fvg:PDArray) -> PDArray:
+    def detect_bpr(buy_fvg:PDArray, sell_fvg:PDArray) -> PDArray:
 
         buy_fvg.candles.sort(key=lambda x: x.iso_time)
         sell_fvg.candles.sort(key=lambda x: x.iso_time)

@@ -3,7 +3,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class Orderblock:
     @staticmethod
-    def return_pd_arrays(first_candle:Candle,second_candle:Candle) -> PDArray:
+    def return_orderblock(first_candle:Candle, second_candle:Candle) -> PDArray:
 
         open1 = first_candle.open
         open2 = second_candle.open

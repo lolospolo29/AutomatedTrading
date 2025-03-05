@@ -10,8 +10,8 @@ from app.helper.builder.OrderBuilder import OrderBuilder
 from app.helper.registry.BrokerRegistry import BrokerRegistry
 from app.helper.registry.LockRegistry import LockRegistry
 from app.helper.registry.SemaphoreRegistry import SemaphoreRegistry
-from app.manager.RelationManager import RelationManager
-from app.manager.RiskManager import RiskManager
+from app.helper.manager.RelationManager import RelationManager
+from app.helper.manager.RiskManager import RiskManager
 from app.mappers.BrokerMapper import BrokerMapper
 from app.mappers.ClassMapper import ClassMapper
 from app.models.asset.Relation import Relation

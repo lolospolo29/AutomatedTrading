@@ -4,7 +4,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class InversionFVG:
     @staticmethod
-    def return_pd_array(last_candle:Candle, fvg:PDArray)->bool:
+    def detect_inversion(last_candle:Candle, fvg:PDArray)->bool:
 
         candles = sorted(fvg.candles,key = lambda x :x.iso_time)
         first_candle:Candle = candles[0]

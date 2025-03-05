@@ -12,18 +12,18 @@ from app.db.mongodb.NewsRepository import NewsRepository
 from app.db.mongodb.RelationRepository import RelationRepository
 from app.db.mongodb.TradeRepository import TradeRepository
 from app.helper.registry.BrokerRegistry import BrokerRegistry
-from app.manager.AssetManager import AssetManager
-from app.manager.RelationManager import RelationManager
-from app.manager.RiskManager import RiskManager
-from app.manager.StrategyManager import StrategyManager
-from app.manager.TradeManager import TradeManager
-from app.manager.initializer.SecretsManager import SecretsManager
+from app.helper.manager.AssetManager import AssetManager
+from app.helper.manager.RelationManager import RelationManager
+from app.helper.manager.RiskManager import RiskManager
+from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.manager.TradeManager import TradeManager
+from app.helper.manager.initializer.SecretsManager import SecretsManager
 from app.services.BacktestService import BacktestService
 from app.services.NewsService import NewsService
 from app.services.ScheduleService import ScheduleService
 from app.services.TradingService import TradingService
 from tools.FileHandler import FileHandler
-from app.manager.initializer.ConfigManager import ConfigManager
+from app.helper.manager.initializer.ConfigManager import ConfigManager
 
 # Broker
 

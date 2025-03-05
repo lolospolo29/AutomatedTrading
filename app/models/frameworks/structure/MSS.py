@@ -10,8 +10,8 @@ class MSS:
             if swing.direction == "Bullish":
                 highest_candle:Candle = sorted(swing.candles, key=lambda candle: candle.high,reverse= True)[-1]
                 if highest_candle.high < last_candle.close:
-                    return Structure(name="MSS",candles=[highest_candle],reference=swing.id,direction="Bullish")
+                    return Structure(name="MSS",candles=[highest_candle],reference=swing.id,direction="Bullish",timeframe=last_candle.timeframe)
             if swing.direction == "Bearish":
                 lowest_candle:Candle = sorted(swing.candles, key=lambda candle: candle.low)[-1]
                 if lowest_candle.low > last_candle.close:
-                    return Structure(name="MSS",candles=[lowest_candle],reference=swing.id,direction="Bullish")
+                    return Structure(name="MSS",candles=[lowest_candle],reference=swing.id,direction="Bullish",timeframe=last_candle.timeframe)

@@ -3,7 +3,7 @@ from app.models.frameworks.PDArray import PDArray
 
 class VolumeImbalance:
     @staticmethod
-    def return_pd_arrays(first_candle:Candle, second_candle:Candle) -> PDArray:
+    def detect_volume_imbalance(first_candle:Candle, second_candle:Candle) -> PDArray:
         if min(second_candle.open, second_candle.close) > first_candle.high and \
                 second_candle.low > max(first_candle.open, first_candle.close) and \
                 (second_candle.low <= first_candle.high):

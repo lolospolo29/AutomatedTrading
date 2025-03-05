@@ -1,9 +1,9 @@
 import threading
 from typing import Any, Dict
 
-from app.manager.AssetManager import AssetManager
-from app.manager.StrategyManager import StrategyManager
-from app.manager.TradeManager import TradeManager
+from app.helper.manager.AssetManager import AssetManager
+from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.manager.TradeManager import TradeManager
 from app.mappers.AssetMapper import AssetMapper
 from app.models.asset.Relation import Relation
 from app.models.asset.Candle import Candle

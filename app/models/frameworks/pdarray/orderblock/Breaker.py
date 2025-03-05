@@ -1,10 +1,12 @@
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
+from app.models.frameworks.pdarray.orderblock.OrderBlockStatusEnum import OrderBlockStatusEnum
+
 
 class Breaker:
     @staticmethod
-    def return_pd_arrays(last_candle:Candle, orderblock:PDArray) -> bool:
-        if orderblock.status != "Breaker":
+    def detect_breaker(last_candle:Candle, orderblock:PDArray) -> bool:
+        if orderblock.status != OrderBlockStatusEnum.Breaker.value:
             if orderblock.direction == "Bullish":
                 lowest_candle = min(orderblock.candles, key=lambda candle: candle.low)
                 if last_candle.close < lowest_candle.low:

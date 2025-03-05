@@ -1,21 +1,14 @@
 import math
 
-from app.manager.RiskManager import RiskManager
+from app.helper.manager.RiskManager import RiskManager
 from app.models.asset.AssetClassEnum import AssetClassEnum
-from app.models.asset.Candle import Candle
-from app.helper.calculator.exit.invalidation.InvalidationClose import InvalidationClose
-from app.helper.calculator.exit.invalidation.InvalidationSteady import InvalidationSteady
 from app.helper.calculator.BreakEven import BreakEven
 from app.helper.calculator.TrailingStop import TrailingStop
-from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 
 # todo tick size fetch from api
-# todo refactor
 class RiskCalculator:
     def __init__(self):
         self._risk_manager = RiskManager()
-        self._invalidation_close = InvalidationClose()
-        self._invalidation_steady = InvalidationSteady()
         self._be = BreakEven()
         self._trailing_stop = TrailingStop()
 
@@ -152,40 +145,6 @@ class RiskCalculator:
         return math.floor(value / factor) * factor
 
     # region Risk Management
-
-    # region Invalidation Exit
-    def check_invalidation_close(self, stop: float, candle: Candle, direction: OrderDirectionEnum) -> bool:
-        """
-        Checks whether the given parameters satisfy the invalidation conditions for
-        the current close of a trade. This method evaluates the provided stop value,
-        candle data, and trade direction against predefined invalidation logic.
-
-        :param stop: The stop-loss value for the trade to check.
-        :param candle: An instance of the Candle class containing the current price
-            and time data.
-        :param direction: The trade direction, represented as an
-            OrderDirectionEnum (e.g., buy or sell).
-        :return: True if the invalidation condition is met for the current close,
-            otherwise False.
-        """
-        return self._invalidation_close.check_invalidation(stop, candle, direction)
-
-    def check_invalidation(self, stop: float, candle: Candle, direction: OrderDirectionEnum) ->bool:
-        """
-        Checks whether an invalidation condition is met based on the provided stop value,
-        candle data, and order direction. The method uses the invalidation logic provided
-        by `_invalidation_steady` to determine the result.
-
-        :param stop: The stop value, typically representing the risk limit for invalidation.
-        :param candle: An instance of Candle containing data about a specific trading candle.
-        :param direction: The direction of the order, which is an instance of OrderDirectionEnum
-            indicating whether the order is a buy or sell.
-
-        :return: A boolean indicating whether the invalidation condition is met (`True`)
-            or not (`False`).
-        """
-        return self._invalidation_steady.check_invalidation(stop, candle, direction)
-    # endregion
 
     # region Move Stop Exit
     def is_price_in_break_even_range(self, currentPrice:float, entry: float, takeProfit: float) -> bool:

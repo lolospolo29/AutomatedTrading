@@ -62,9 +62,9 @@ class FVGSession(Strategy):
                 directionSweep = ""
 
                 for candle in candles:
-                    if candle.close < fourHourCandle.level and fourHourCandle.direction == "Low":
+                    if candle.close < fourHourCandle.level and fourHourCandle._direction == "Low":
                         directionSweep = "Bullish"
-                    if candle.close < fourHourCandle.level and fourHourCandle.direction == "High":
+                    if candle.close < fourHourCandle.level and fourHourCandle._direction == "High":
                         directionSweep = "Bearish"
 
 
@@ -75,10 +75,10 @@ class FVGSession(Strategy):
                 if len(one_m_fvgs) > 0:
                     for fvg in one_m_fvgs:
                         fvg_low,fvg_high = self.strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
-                        if fvg.direction == "Bullish" and directionSweep == "Bearish":
+                        if fvg._direction == "Bullish" and directionSweep == "Bearish":
                             if prelast_candle.close > fvg_low > last_candle.close:
                                 current_inversed.append(fvg)
-                        if fvg.direction == "Bearish" and directionSweep == "Bullish":
+                        if fvg._direction == "Bearish" and directionSweep == "Bullish":
                             if last_candle.close > fvg_high > prelast_candle.close:
                                 current_inversed.append(fvg)
                 if len(current_inversed) > 0:

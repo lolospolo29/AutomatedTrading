@@ -69,9 +69,9 @@ class LondonSB(Strategy):
             for fvg in fvgs:
                 fvgLow, fvgHigh = self.strategy_facade.PDMediator.return_candle_range("FVG", fvg)
                 if fvgLow <= last_candle.close <= fvgHigh:
-                    if last_structure.direction == "Bullish":
+                    if last_structure._direction == "Bullish":
                         return StrategyResult()
-                    if last_structure.direction == "Bearish":
+                    if last_structure._direction == "Bearish":
                         return StrategyResult()
         else:
             return StrategyResult()

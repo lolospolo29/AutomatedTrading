@@ -60,12 +60,12 @@ class OTEFourH(Strategy):
 
             fvgs = [fvg for fvg in pds if fvg.name == "FVG" and fvg.timeframe == 240]
 
-            min_level = min(last_four_levels, key=lambda x: x.level and x.direction == latest_structure.direction)
-            max_level = max(last_four_levels, key=lambda x: x.level and x.direction == latest_structure.direction)
+            min_level = min(last_four_levels, key=lambda x: x.level and x._direction == latest_structure.direction)
+            max_level = max(last_four_levels, key=lambda x: x.level and x._direction == latest_structure.direction)
 
             for fvg in fvgs:
                 fvg_low,fvg_high = self.strategy_facade.PDMediator.return_candle_range(fvg.name, fvg)
-                if fvg.direction == latest_structure.direction:
+                if fvg._direction == latest_structure.direction:
                     if fvg_high >= min_level.level and fvg_low <= max_level.level:
                         return StrategyResult()
         else:
