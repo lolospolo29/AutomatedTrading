@@ -3,7 +3,7 @@ from typing import Dict, Any
 from app.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from app.helper.manager.AssetManager import AssetManager
 from app.helper.manager.RelationManager import RelationManager
-from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.registry.StrategyRegistry import StrategyManager
 from app.helper.manager.TradeManager import TradeManager
 from app.models.asset.Asset import Asset
 from app.models.asset.Relation import Relation
@@ -176,15 +176,8 @@ class SignalController:
             logger.warning("Delete Asset failed,Error: {e}".format(e=e))
 
     def get_strategies(self):
-        strategies = self._StrategyManager.return_strategies()
-        dict_strategies = []
-        for strategy in strategies:
-            try:
-                strategy_dict: dict = strategy.dict(exclude={"time_windows", "strategy_facade"})
-                dict_strategies.append(strategy_dict)
-            except Exception as e:
-                logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=strategy.name, e=e))
-        return dict_strategies
+        strategies:list[str] = self._StrategyManager.return_strategies()
+        return strategies
 
     def get_brokers(self):
         brokers:list[BrokerDTO] = self._TradeManager.get_brokers()

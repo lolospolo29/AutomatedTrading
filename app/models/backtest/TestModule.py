@@ -75,7 +75,7 @@ class TestModule:
         for id in self._trade_que:
             try:
                 result = self.results[id]
-                strategy_result = self.strategy.model_copy().get_exit(candles=series,
+                strategy_result = self.strategy.get_exit(candles=series,
                                                                       timeFrame=last_candle.timeframe,
                                                                       relation=result.trade.relation,
                                                                       trade=result.trade)

@@ -1,4 +1,4 @@
-from app.interfaces.framework.ITimeWindow import ITimeWindow
+from app.interfaces.ITimeWindow import ITimeWindow
 from app.monitoring.logging.logging_startup import logger
 
 

@@ -1,4 +1,6 @@
 import threading
+from typing import Optional
+
 from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
 from app.models.frameworks.Structure import Structure
@@ -34,29 +36,19 @@ class PriceMediator:
         self._orderblocks: dict[int, list[PDArray]] = {}
         self._probulsion_blocks: dict[str, list[PDArray]] = {}
         self._consecutive_candles: dict[int, list[Structure]] = {}
-        self._current_mss:dict[int, Structure] = {}
-        self._previous_mss:dict[int, Structure] = {}
-        self._current_bos:dict[int, Structure] = {}
-        self._previous_bos:dict[int, Structure] = {}
-        self._current_cisd:dict[int, Structure] = {}
-        self._current_choch:dict[int, bool] = {}
-        self._bos:dict[int, Structure] = {}
-        self._cisd:dict[int, Structure] = {}
+        self._current_mss: dict[int, Structure] = {}
+        self._previous_mss: dict[int, Structure] = {}
+        self._current_bos: dict[int, Structure] = {}
+        self._previous_bos: dict[int, Structure] = {}
+        self._current_cisd: dict[int, Structure] = {}
+        self._current_choch: dict[int, bool] = {}
+        self._bos: dict[int, Structure] = {}
+        self._cisd: dict[int, Structure] = {}
         self._ndog: list[PDArray] = []
         self._nwog: list[PDArray] = []
-        self.adr: float = 0.0
+        self._adr: float = 0.0
 
-    def _calculate_average_range(self, timeframe: int):
-        candles = self._candles[timeframe]
-        high = max(candle.high for candle in candles)
-        low = min(candle.low for candle in candles)
-        self.adr = ADR.calculate_adr(high, low)
-
-    def get_current_adr(self, timeframe) -> float:
-        self._calculate_average_range(timeframe)
-        return self.adr
-
-    def addCandle(self, candle: Candle):
+    def add_candle(self, candle: Candle):
         with self._lock:
             if candle.timeframe not in self._candles:
                 self._candles[candle.timeframe] = []
@@ -101,7 +93,91 @@ class PriceMediator:
                 self._detect_breaker(third_candle, timeframe)
                 self._detect_inversion_fvg(third_candle, timeframe)
 
+    # ---- Getter Methods ---- #
+
+    def get_candles(self, key: int) -> list[Candle]:
+        """Returns the list of candles for a given timeframe."""
+        return self._candles.get(key, [])
+
+    def get_swings(self, key: int) -> list[PDArray]:
+        """Returns the swings for a given timeframe."""
+        return self._swings.get(key, [])
+
+    def get_imbalances(self, key: int) -> list[PDArray]:
+        """Returns the imbalances for a given timeframe."""
+        return self._imbalances.get(key, [])
+
+    def get_orderblocks(self, key: int) -> list[PDArray]:
+        """Returns the orderblocks for a given timeframe."""
+        return self._orderblocks.get(key, [])
+
+    def get_probulsion_blocks(self, key: str) -> list[PDArray]:
+        """Returns the propulsion blocks based on their ID."""
+        return self._probulsion_blocks.get(key, [])
+
+    def get_consecutive_candles(self, key: int) -> list[Structure]:
+        """Returns consecutive candles for a given timeframe."""
+        return self._consecutive_candles.get(key, [])
+
+    def get_mss(self, key: int, previous: bool = False) -> Optional[Structure]:
+        """Returns the current or previous MSS for a given timeframe."""
+        return self._previous_mss.get(key) if previous else self._current_mss.get(key)
+
+    def get_bos(self, key: int, previous: bool = False) -> Optional[Structure]:
+        """Returns the current or previous BOS for a given timeframe."""
+        return self._previous_bos.get(key) if previous else self._current_bos.get(key)
+
+    def get_cisd(self, key: int) -> Optional[Structure]:
+        """Returns the CISD for a given timeframe."""
+        return self._cisd.get(key)
+
+    def get_choch(self, key: int) -> Optional[bool]:
+        """Returns the CHoCH (Change of Character) for a given timeframe."""
+        return self._current_choch.get(key)
+
+    def get_ndog(self) -> list[PDArray]:
+        """Returns the NDOG patterns detected."""
+        return self._ndog
+
+    def get_nwog(self) -> list[PDArray]:
+        """Returns the NWOG patterns detected."""
+        return self._nwog
+
+    def get_adr(self) -> float:
+        """Returns the current ADR (Average Daily Range)."""
+        return self._adr
+
+    def reset(self):
+        with self._lock:
+            self._candles.clear()
+            self._swings.clear()
+            self._imbalances.clear()
+            self._orderblocks.clear()
+            self._probulsion_blocks.clear()
+            self._consecutive_candles.clear()
+            self._current_mss.clear()
+            self._previous_mss.clear()
+            self._current_bos.clear()
+            self._previous_bos.clear()
+            self._current_cisd.clear()
+            self._current_choch.clear()
+            self._bos.clear()
+            self._cisd.clear()
+            self._ndog.clear()
+            self._nwog.clear()
+            self._adr = 0.0
+
+    def get_current_adr(self, timeframe) -> float:
+        self._calculate_average_range(timeframe)
+        return self._adr
+
     # ---- Modular detection methods ---- #
+
+    def _calculate_average_range(self, timeframe: int):
+        candles = self._candles[timeframe]
+        high = max(candle.high for candle in candles)
+        low = min(candle.low for candle in candles)
+        self._adr = ADR.calculate_adr(high, low)
 
     def _detect_ndog(self, second_candle: Candle, third_candle: Candle):
         """Detects NDOG patterns."""
@@ -154,10 +230,9 @@ class PriceMediator:
             if orderblock.name == "OB" or orderblock.name == "SCOB":
                 pb = PB.detect_probulsion_block(last_candle=third_candle, orderblock=orderblock)
                 if pb:
-                    if timeframe not in self._orderblocks:
-                        self._orderblocks[timeframe] = []
-                    self._orderblocks[timeframe].append(pb)
-
+                    if timeframe not in self._probulsion_blocks:
+                        self._probulsion_blocks[pb.reference_pd] = []
+                    self._probulsion_blocks[pb.reference_pd].append(pb)
 
     def _detect_fvg(self, first_candle: Candle, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects FVG patterns."""
@@ -195,7 +270,7 @@ class PriceMediator:
                 self._imbalances[timeframe] = []
             self._imbalances[timeframe].append(void)
 
-    def _detect_bpr(self,timeframe:int):
+    def _detect_bpr(self, timeframe: int):
         """Detects BPR patterns."""
         for imbalance in self._imbalances[timeframe]:
             buy_fvg = None
@@ -210,7 +285,7 @@ class PriceMediator:
                         buy_fvg = imbalance2
                     if imbalance2.direction == "Bearish":
                         sell_fvg = imbalance2
-                    bpr = BPR.detect_bpr(buy_fvg,sell_fvg)
+                    bpr = BPR.detect_bpr(buy_fvg, sell_fvg)
                     if bpr:
                         if timeframe not in self._imbalances:
                             self._imbalances[timeframe] = []
@@ -218,7 +293,7 @@ class PriceMediator:
 
     def _detect_mss(self, third_candle: Candle, timeframe: int):
         for swing in self._swings[timeframe]:
-            swing:PDArray
+            swing: PDArray
             mss = MSS.detect_mss(last_candle=third_candle, swing=swing)
             if mss:
                 if timeframe not in self._current_mss:
@@ -261,21 +336,21 @@ class PriceMediator:
     def _detect_choch(self, timeframe: int):
         if timeframe in self._current_bos and timeframe in self._previous_bos:
             self._current_choch[timeframe] = Choch.is_choch(current_bos=self._current_bos[timeframe]
-                                                            ,previous_bos=self._previous_bos[timeframe])
+                                                            , previous_bos=self._previous_bos[timeframe])
 
     def _detect_breaker(self, third_candle: Candle, timeframe: int):
         for orderblock in self._orderblocks[timeframe]:
             if orderblock.name == "OB" or orderblock.name == "SCOB":
-                breaker = Breaker.detect_breaker(last_candle=third_candle,orderblock=orderblock)
+                breaker = Breaker.detect_breaker(last_candle=third_candle, orderblock=orderblock)
                 if breaker:
                     orderblock.status = OrderBlockStatusEnum.Breaker.value
                 if not breaker:
                     orderblock.status = OrderBlockStatusEnum.Normal.value
 
-    def _detect_inversion_fvg(self,third_candle: Candle, timeframe: int):
+    def _detect_inversion_fvg(self, third_candle: Candle, timeframe: int):
         for imbalance in self._imbalances[timeframe]:
             if imbalance.name == "FVG" or imbalance.name == "IFVG":
-                if InversionFVG.detect_inversion(last_candle=third_candle,fvg=imbalance):
+                if InversionFVG.detect_inversion(last_candle=third_candle, fvg=imbalance):
                     if imbalance.status == ImbalanceStatusEnum.Normal.value or imbalance.status == ImbalanceStatusEnum.Reclaimed.value:
                         imbalance.status = ImbalanceStatusEnum.Inversed.value
                 else:

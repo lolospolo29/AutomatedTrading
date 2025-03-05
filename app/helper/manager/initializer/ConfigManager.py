@@ -3,7 +3,7 @@ import threading
 from app.helper.factories.StrategyFactory import StrategyFactory
 from app.helper.manager.AssetManager import AssetManager
 from app.helper.manager.RelationManager import RelationManager
-from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.registry.StrategyRegistry import StrategyManager
 from app.helper.manager.TradeManager import TradeManager
 from app.models.asset.Relation import Relation
 from app.models.asset.SMTPair import SMTPair
@@ -73,7 +73,6 @@ class ConfigManager:
 
             self._strategy_manager.register_strategy(relation=relation, strategy=strategy)
             logger.debug(f"Adding relation to asset:{relation.asset}")
-            logger.debug(f"Adding relation to db:{relation}")
 
             self._relation_manager.add_timeframes_to_asset(relation=relation)
 

@@ -2,15 +2,11 @@ import math
 
 from app.helper.manager.RiskManager import RiskManager
 from app.models.asset.AssetClassEnum import AssetClassEnum
-from app.helper.calculator.BreakEven import BreakEven
-from app.helper.calculator.TrailingStop import TrailingStop
 
 # todo tick size fetch from api
 class RiskCalculator:
     def __init__(self):
         self._risk_manager = RiskManager()
-        self._be = BreakEven()
-        self._trailing_stop = TrailingStop()
 
     def _calculate_crypto_trade_size(self, entry_price, stop_loss_price):
         """
@@ -143,42 +139,6 @@ class RiskCalculator:
             return 0  # Spezieller Fall, wenn der Wert 0 ist
         factor = 10 ** math.floor(math.log10(abs(value)))
         return math.floor(value / factor) * factor
-
-    # region Risk Management
-
-    # region Move Stop Exit
-    def is_price_in_break_even_range(self, currentPrice:float, entry: float, takeProfit: float) -> bool:
-        """
-        Determines whether the current price is within the break-even range. The
-        break-even range is typically calculated based on the entry price and the
-        take-profit level, providing a zone where no significant profit or loss
-        occurs.
-
-        :param currentPrice: The current market price of the asset being traded.
-        :param entry: The price at which the position was initially entered.
-        :param takeProfit: The price point set to close the position for profit.
-        :return: A boolean indicating whether the current price falls within the
-            break-even range.
-        """
-        return self._be.IsPriceInBreakEvenRange(currentPrice, entry, takeProfit)
-
-    def return_fibonnaci_trailing(self, currentPrice: float, stop: float, entry: float) -> float:
-        """
-        Calculate and return the Fibonacci trailing value based on the current price,
-        stop loss, and entry price. This function acts as a wrapper to delegate the
-        calculation to an underlying method.
-
-        The Fibonacci trailing stop is often used in trading strategies to dynamically
-        adjust a trailing stop based on Fibonacci ratios.
-
-        :param currentPrice: The current market price of the asset.
-        :param stop: The initial stop-loss value.
-        :param entry: The entry price of the trade.
-        :return: The calculated Fibonacci trailing value.
-        :rtype: float
-        """
-        return self._trailing_stop.returnFibonnaciTrailing(currentPrice, stop, entry)
-    # endregion
 
     def calculate_money_at_risk(self):
         return self._risk_manager.calculate_money_at_risk()

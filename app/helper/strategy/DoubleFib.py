@@ -1,70 +1,47 @@
 import uuid
-from typing import Optional
-
-from pydantic import Field
 
 from app.helper.builder.OrderBuilder import OrderBuilder
-from app.models.frameworks.pdarray.PDEnum import PDEnum
-from app.models.frameworks.structure.StructureEnum import StructureEnum
-from app.helper.facade.StrategyFacade import StrategyFacade
+from app.helper.mediator.PriceMediator import PriceMediator
 from app.models.asset.Candle import Candle
 from app.models.asset.Relation import Relation
 from app.models.frameworks.FrameWork import FrameWork
-from app.models.frameworks.Level import Level
 from app.models.frameworks.PDArray import PDArray
-from app.models.frameworks.Structure import Structure
+from app.models.frameworks.pdarray.PDEnum import PDEnum
+from app.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from app.models.strategy.Strategy import Strategy
-from app.models.trade.Trade import Trade
 from app.models.strategy.StrategyResult import StrategyResult
+from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+from app.models.trade.Trade import Trade
 from app.models.trade.enums.CategoryEnum import CategoryEnum
 from app.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from app.models.trade.enums.TriggerByEnum import TriggerByEnum
 from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
-from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 
 
 # Double Fib
 
 class DoubleFib(Strategy):
-    model_config = {
-        "arbitrary_types_allowed": True
-    }
 
-    strategy_facade: Optional['StrategyFacade'] = Field(default=None)
+    def __init__(self,):
+        self.name = "DoubleFib"
+        self.timeframes = []
 
-    def _analyzeData(self, candles: list[Candle], timeFrame: int):
-        if timeFrame == 1 and len(candles) >= 240:
-            bosS = self.strategy_facade.StructureMediator.calculate_confirmation(StructureEnum.BREAKOFSTRUCTURE.value, candles= candles)
+        self.timeframes.append(ExpectedTimeFrame(timeframe=1,max_Len=90))
 
-            for bos in bosS:
-                self.strategy_facade.structure_handler.add_structure(bos)
+        self.time_windows = []
+        self._price_mediator:PriceMediator = PriceMediator()
 
-            pds = []
-
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type=PDEnum.BPR.value, candles= candles))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array(pd_type=PDEnum.BREAKER.value, candles= candles))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type=PDEnum.FVG.value, candles= candles,lookback=3))
-            pds.extend(self.strategy_facade.PDMediator.calculate_pd_array_with_lookback(pd_type=PDEnum.OrderBlock.value, candles= candles,lookback=2))
-
-            for pd in pds:
-                self.strategy_facade.pd_array_handler.add_pd_array(pd)
-
-            self.strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
-            self.strategy_facade.structure_handler.remove_structure(candles, timeFrame)
+    def is_in_time(self, time) -> bool:
+        pass
 
     def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
 
-        self._analyzeData(candles, timeFrame)
+        self._price_mediator.add_candle(candles[-1])
+        self._price_mediator.detect_pd_arrays(candles[-1].timeframe)
 
-        structures:list[Structure] = self.strategy_facade.structure_handler.return_structure()
-        pds:list[PDArray] = self.strategy_facade.pd_array_handler.detect_swing()
-
-        levels:list[Level] = []
-        levels.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type=LevelEnum.OPTIMALTRADEENTRY.value,
-                                                                           candles=candles, lookback=240))
-        levels.extend(self.strategy_facade.LevelMediator.calculate_fibonacci(level_type=LevelEnum.PREMIUMDISCOUNT.value,
-                                                                           candles=candles, lookback=240))
-
+        levels = []
+        structures = []
+        pds = []
         if candles and levels and pds and structures and timeFrame == 1:
 
             last_candle: Candle = candles[-1]

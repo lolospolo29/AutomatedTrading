@@ -2,7 +2,7 @@ import threading
 from typing import Any, Dict
 
 from app.helper.manager.AssetManager import AssetManager
-from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.registry.StrategyRegistry import StrategyManager
 from app.helper.manager.TradeManager import TradeManager
 from app.mappers.AssetMapper import AssetMapper
 from app.models.asset.Relation import Relation

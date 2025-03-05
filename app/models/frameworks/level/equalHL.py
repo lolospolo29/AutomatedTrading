@@ -1,32 +1,17 @@
-from app.models.asset.Candle import Candle
 from app.models.frameworks.Level import Level
+from app.models.frameworks.PDArray import PDArray
+
 
 class equalHL:
     """
     technical analysis tool that marks identical price levels on a trading chart using the current time-frame,
     assisting traders in identifying potential support and resistance zones or liquidity draws
     """
-    @staticmethod
-    def _findMedian(values:list[float]):
-        sums = sum(values)
-        return sums/len(values)
 
-    def _calculateThreshold(self, prices:list[float]):
-        prev_price = 0
-        differences = []
-        for price in prices:
-            if prev_price == 0:
-                prev_price = price
-            if prev_price != price:
-                differences.append(abs(price - prev_price))
-                prev_price = price
-        if differences:
-            return self._findMedian(differences)
-
-    def _detect_equal_lows(self, candles: list[Candle], timeframe) -> list[Level]:
+    def _detect_equal_lows(self, swings: list[PDArray], timeframe,adr:float) -> list[Level]:
         pass
 
-    def _detect_equal_highs(self, candles: list[Candle], timeFrame) -> list[Level]:
+    def _detect_equal_highs(self, swings: list[PDArray], timeframe,adr:float) -> list[Level]:
         pass
 
     def _filter_levels(self, levels: list[Level]) -> list[Level]:

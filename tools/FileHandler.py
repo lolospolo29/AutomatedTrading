@@ -5,7 +5,7 @@ import shutil
 from watchdog.events import FileSystemEventHandler
 
 from app.helper.manager.AssetManager import AssetManager
-from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.registry.StrategyRegistry import StrategyManager
 from app.mappers.AssetMapper import AssetMapper
 from app.models.asset.Candle import Candle
 from app.monitoring.logging.logging_startup import logger

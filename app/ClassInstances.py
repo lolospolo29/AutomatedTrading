@@ -4,7 +4,7 @@ from threading import Thread
 
 from watchdog.observers import Observer
 
-from app.api.brokers.bybit.Bybit import Bybit
+from app.api.brokers.bybit.BybitHandler import BybitHandler
 from app.controller.SignalController import SignalController
 from app.db.mongodb.AssetRepository import AssetRepository
 from app.db.mongodb.BacktestRepository import BacktestRepository
@@ -15,7 +15,7 @@ from app.helper.registry.BrokerRegistry import BrokerRegistry
 from app.helper.manager.AssetManager import AssetManager
 from app.helper.manager.RelationManager import RelationManager
 from app.helper.manager.RiskManager import RiskManager
-from app.helper.manager.StrategyManager import StrategyManager
+from app.helper.registry.StrategyRegistry import StrategyManager
 from app.helper.manager.TradeManager import TradeManager
 from app.helper.manager.initializer.SecretsManager import SecretsManager
 from app.services.BacktestService import BacktestService
@@ -29,7 +29,7 @@ from app.helper.manager.initializer.ConfigManager import ConfigManager
 
 secret_manager = SecretsManager()
 
-bybit = Bybit("Bybit")
+bybit = BybitHandler()
 
 broker_facade = BrokerRegistry()
 broker_facade.register_handler("Bybit", bybit)

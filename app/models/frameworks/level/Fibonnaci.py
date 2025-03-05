@@ -32,7 +32,7 @@ class Fibonnaci:
             bullish_level = highest_candle.high - fib_level * (highest_candle.high - lowest_candle.low)
             levels.append(Level(name=self.name, level=bullish_level
                                 ,fib_level=fib_level,direction="Bullish",timeframe=highest_candle.timeframe
-                                ,candles=[highest_candle,lowest_candle,lowest_candle]))
+                                ,candles=[highest_candle,lowest_candle]))
         return levels
 
     def _generate_fib_levels_bearish(self,highest_candle:Candle,lowest_candle:Candle) -> list[Level]:
