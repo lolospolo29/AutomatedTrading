@@ -1,10 +1,14 @@
 import threading
 from typing import Optional
 
+from app.interfaces.ITimeWindow import ITimeWindow
 from app.models.asset.Candle import Candle
+from app.models.frameworks.Level import Level
 from app.models.frameworks.PDArray import PDArray
 from app.models.frameworks.Structure import Structure
 from app.models.frameworks.level.ADR import ADR
+from app.models.frameworks.level.PreviousSessionLevels import PreviousSessionLevels
+from app.models.frameworks.level.equalHL import equalHL
 from app.models.frameworks.pdarray.Swing import Swing
 from app.models.frameworks.pdarray.imbalance.BPR import BPR
 from app.models.frameworks.pdarray.imbalance.FVG import FVG
@@ -25,13 +29,14 @@ from app.models.frameworks.structure.BOS import BOS
 from app.models.frameworks.structure.CISD import CISD
 from app.models.frameworks.structure.Choch import Choch
 from app.models.frameworks.structure.MSS import MSS
-
+from app.models.frameworks.structure.MitigationBlock import MitigationBlock
 
 class PriceMediator:
     def __init__(self):
         self._lock = threading.Lock()
         self._candles: dict[int, list[Candle]] = {}
         self._swings: dict[int, list[PDArray]] = {}
+        self._eqhl: dict[int, list[Level]] = {}
         self._imbalances: dict[int, list[PDArray]] = {}
         self._orderblocks: dict[int, list[PDArray]] = {}
         self._probulsion_blocks: dict[str, list[PDArray]] = {}
@@ -41,7 +46,6 @@ class PriceMediator:
         self._current_bos: dict[int, Structure] = {}
         self._previous_bos: dict[int, Structure] = {}
         self._current_cisd: dict[int, Structure] = {}
-        self._current_choch: dict[int, bool] = {}
         self._bos: dict[int, Structure] = {}
         self._cisd: dict[int, Structure] = {}
         self._ndog: list[PDArray] = []
@@ -59,8 +63,6 @@ class PriceMediator:
             if len(self._candles[timeframe]) >= 3:
                 first_candle, second_candle, third_candle = self._candles[timeframe][-3:]
 
-                # Execute each detection step in order
-
                 # Openings
                 self._detect_ndog(second_candle, third_candle)
                 self._detect_nwog(second_candle, third_candle)
@@ -68,6 +70,7 @@ class PriceMediator:
                 # Orderblocks and Swing
 
                 self._detect_swing(first_candle, second_candle, third_candle, timeframe)
+                self._detect_eqhl(timeframe)
                 self._detect_orderblock(second_candle, third_candle, timeframe)
                 self._detect_scob(first_candle, second_candle, third_candle, timeframe)
                 self._detect_rejection_block(third_candle, timeframe)
@@ -86,14 +89,23 @@ class PriceMediator:
                 self._detect_mss(third_candle, timeframe)
                 self._detect_bos(third_candle, timeframe)
                 self._detect_consecutive(third_candle, timeframe)
-                self._detect_choch(timeframe)
+                self._detect_cisd(third_candle,timeframe)
 
                 # Status Change
 
+                self._detect_choch(timeframe)
                 self._detect_breaker(third_candle, timeframe)
                 self._detect_inversion_fvg(third_candle, timeframe)
+                self._detect_liquidity_sweep(third_candle, timeframe)
+                self._detect_mitigation_block(timeframe)
 
-    # ---- Getter Methods ---- #
+                # Validator
+                # todo ob with fvg / divide pds in discount and premium
+
+    # region ---- Getter Methods ----
+
+    def get_previous_session_hl(self,timeframe: int,time_window:ITimeWindow)->list[Level]:
+        return PreviousSessionLevels.return_levels(self._candles[timeframe],time_window)
 
     def get_candles(self, key: int) -> list[Candle]:
         """Returns the list of candles for a given timeframe."""
@@ -102,6 +114,10 @@ class PriceMediator:
     def get_swings(self, key: int) -> list[PDArray]:
         """Returns the swings for a given timeframe."""
         return self._swings.get(key, [])
+
+    def get_eqhl(self, key: int) -> list[Level]:
+        """Returns the swings for a given timeframe."""
+        return self._eqhl.get(key, [])
 
     def get_imbalances(self, key: int) -> list[PDArray]:
         """Returns the imbalances for a given timeframe."""
@@ -131,10 +147,6 @@ class PriceMediator:
         """Returns the CISD for a given timeframe."""
         return self._cisd.get(key)
 
-    def get_choch(self, key: int) -> Optional[bool]:
-        """Returns the CHoCH (Change of Character) for a given timeframe."""
-        return self._current_choch.get(key)
-
     def get_ndog(self) -> list[PDArray]:
         """Returns the NDOG patterns detected."""
         return self._ndog
@@ -160,7 +172,6 @@ class PriceMediator:
             self._current_bos.clear()
             self._previous_bos.clear()
             self._current_cisd.clear()
-            self._current_choch.clear()
             self._bos.clear()
             self._cisd.clear()
             self._ndog.clear()
@@ -171,8 +182,9 @@ class PriceMediator:
         self._calculate_average_range(timeframe)
         return self._adr
 
-    # ---- Modular detection methods ---- #
+    # endregion
 
+    #region ---- Modular detection methods ----
     def _calculate_average_range(self, timeframe: int):
         candles = self._candles[timeframe]
         high = max(candle.high for candle in candles)
@@ -196,6 +208,15 @@ class PriceMediator:
             if timeframe not in self._swings:
                 self._swings[timeframe] = []
             self._swings[timeframe].append(swing)
+
+    def _detect_eqhl(self,timeframe: int):
+        """Detects EQHL patterns."""
+        swings = self._swings[timeframe]
+        eqhl = equalHL().detect_equal_hl(swings=swings,adr=self._adr)
+        if eqhl:
+            if timeframe not in self._eqhl:
+                self._eqhl[timeframe] = []
+            self._eqhl[timeframe].append(eqhl)
 
     def _detect_orderblock(self, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects Orderblock patterns."""
@@ -333,10 +354,19 @@ class PriceMediator:
             if cisd:
                 self._consecutive_candles[timeframe] = cisd
 
+    def _detect_cisd(self,third_candle:Candle, timeframe: int):
+        for consecutive_candle in self._consecutive_candles[timeframe]:
+            cisd = self._cisd[timeframe].check_for_cisd(third_candle,consecutive_candle)
+            if cisd:
+                if timeframe not in self._current_cisd:
+                    self._current_cisd[timeframe] = []
+                self._current_cisd[timeframe] = cisd
+
     def _detect_choch(self, timeframe: int):
         if timeframe in self._current_bos and timeframe in self._previous_bos:
-            self._current_choch[timeframe] = Choch.is_choch(current_bos=self._current_bos[timeframe]
-                                                            , previous_bos=self._previous_bos[timeframe])
+            if Choch.is_choch(current_bos=self._current_bos[timeframe]
+                                                            , previous_bos=self._previous_bos[timeframe]):
+                self._current_bos[timeframe].status = "CHOCH"
 
     def _detect_breaker(self, third_candle: Candle, timeframe: int):
         for orderblock in self._orderblocks[timeframe]:
@@ -356,3 +386,15 @@ class PriceMediator:
                 else:
                     if imbalance.status == ImbalanceStatusEnum.Inversed.value:
                         imbalance.status = ImbalanceStatusEnum.Reclaimed.value
+
+    def _detect_liquidity_sweep(self,third_candle:Candle, timeframe: int):
+        for swing in self._swings[timeframe]:
+            if Swing.detect_sweep(last_candle=third_candle, swing=swing):
+                swing.status = "Sweeped"
+
+    def _detect_mitigation_block(self,timeframe:int):
+        if timeframe in self._current_bos and timeframe in self._current_mss:
+            if MitigationBlock.is_mitigated(self._current_mss[timeframe],self._current_bos[timeframe]):
+                self._current_bos[timeframe].status = "MITIGATED"
+
+    # endregion

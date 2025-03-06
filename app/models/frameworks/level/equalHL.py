@@ -7,54 +7,64 @@ class equalHL:
     technical analysis tool that marks identical price levels on a trading chart using the current time-frame,
     assisting traders in identifying potential support and resistance zones or liquidity draws
     """
+    def detect_equal_hl(self,swings:list[PDArray], adr:float):
 
-    def _detect_equal_lows(self, swings: list[PDArray], timeframe,adr:float) -> list[Level]:
-        pass
+        levels = []
 
-    def _detect_equal_highs(self, swings: list[PDArray], timeframe,adr:float) -> list[Level]:
-        pass
+        highs = [swing for swing in swings if swing.name == "High"]
+        low = [swing for swing in swings if swing.name == "Low"]
 
-    def _filter_levels(self, levels: list[Level]) -> list[Level]:
-        """
-        Filters the detected equal levels to retain only the most significant level
-        (lowest for lows, highest for highs) within the same threshold range.
-        """
-        if not levels:
-            return levels
+        levels.extend(self._filter_highs(low,adr))
+        levels.extend(self._filter_lows(highs,adr))
 
-        filteredLevels = []
-        levels.sort(key=lambda x: x.level)  # Sort by price level
-        levelsValue = [level.level in levels for level in levels]
-
-        threshold = self._calculateThreshold(levelsValue)
-
-        currentGroup = [levels[0]]  # Start with the first level
-
-        for i in range(1, len(levels)):
-            # If the current level is within the threshold range of the previous, group them together
-            if abs(levels[i].level - currentGroup[-1].level) < threshold:
-                currentGroup.append(levels[i])
-            else:
-                # If a new group starts, filter the current group and add to the result
-                filteredLevels.append(self._get_significant_level(currentGroup))
-                currentGroup = [levels[i]]
-
-        # Handle the last group
-        if currentGroup:
-            filteredLevels.append(self._get_significant_level(currentGroup))
-
-        return filteredLevels
+        return levels
 
     @staticmethod
-    def _get_significant_level(levels: list[Level]) -> Level:
-        """
-        Returns the most significant level from a list of levels.
-        For lows, this is the lowest level.
-        For highs, this is the highest level.
-        """
-        # For equal lows, we take the lowest level
-        if levels[0].name == "EqualLow":
-            return min(levels, key=lambda x: x.level)
-        # For equal highs, we take the highest level
-        else:
-            return max(levels, key=lambda x: x.level)
+    def _filter_highs(swings: list[PDArray], adr: float) -> list[Level]:
+        """Helper function to find swings that are within ADR range."""
+        levels = []
+
+        for i, swing1 in enumerate(swings):
+            swing1:PDArray = swing1
+            for j, swing2 in enumerate(swings):
+                if i >= j:  # Avoid duplicate comparisons
+                    continue
+
+                swing1_high:float = max(candle.high for candle in swing1.candles)
+                swing2_high:float = max(candle.high for candle in swing2.candles)
+
+                highest = max(swing1_high, swing2_high)
+
+                # Check if the highs/lows are within ADR tolerance
+                if abs(swing1_high - swing2_high) <= adr:
+                    levels.append(Level(level=highest,fib_level=0,candles=[],reference=swing1.id,name="EQH"))
+
+        return levels
+
+    @staticmethod
+    def _filter_lows(swings: list[PDArray], adr: float) -> list[Level]:
+        """Helper function to find swings that are within ADR range."""
+        levels = []
+
+        for i, swing1 in enumerate(swings):
+            swing1: PDArray = swing1
+            for j, swing2 in enumerate(swings):
+                if i >= j:  # Avoid duplicate comparisons
+                    continue
+
+                swing1_low = max(candle.low for candle in swing1.candles)
+                swing2_low = max(candle.low for candle in swing2.candles)
+
+                lowest = min(swing1_low, swing2_low)
+
+                # Check if the highs/lows are within ADR tolerance
+                if abs(swing1_low - swing2_low) <= adr:
+                    levels.append(
+                        Level(level=lowest, fib_level=0, candles=[],
+                              reference=swing1.id,name="EQL"))
+
+        return levels
+
+    @staticmethod
+    def _filter_levels(levels:list[Level], adr: float) -> list[Level]:
+        pass

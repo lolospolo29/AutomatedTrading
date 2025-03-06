@@ -2,6 +2,7 @@ from app.models.asset.Candle import Candle
 from app.models.frameworks.PDArray import PDArray
 
 class Swing:
+
     @staticmethod
     def detect_swing(first_candle:Candle, second_candle:Candle, third_candle:Candle) -> PDArray:
         high1 = first_candle.high
@@ -19,3 +20,17 @@ class Swing:
             return PDArray(name="Low", direction="Bearish",
                                candles=[first_candle,second_candle,third_candle],
                                timeframe=first_candle.timeframe)
+
+    @staticmethod
+    def detect_sweep(last_candle:Candle, swing:PDArray) -> bool:
+        if swing.status == "Sweeped":
+            return True
+        if swing.direction == "Bullish":
+            highest_candle = max(candle.high for candle in swing.candles)
+            if highest_candle < last_candle.high:
+                return True
+        if swing.direction == "Bearish":
+            lowest_candle = min(candle.low for candle in swing.candles)
+            if lowest_candle > last_candle.low:
+                return True
+        return False
