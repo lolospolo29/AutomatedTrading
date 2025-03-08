@@ -1,5 +1,5 @@
 import queue
-from datetime import time
+import time
 from threading import Thread
 
 from flask import Flask, request, Response, render_template, jsonify
@@ -186,17 +186,21 @@ def show_logs():
 @app.route('/stream')
 def stream_logs():
     def generate():
-        empty_reads = 0
-        while empty_reads < 10:  # Limit empty retries
+        timeout_limit = 60  # Exit if no logs for 60s
+        start_time = time.time()
+
+        while True:
             try:
-                log_entry = log_queue.get(timeout=5)
+                log_entry = log_queue.get(timeout=5)  # Wait max 5s
                 yield f"data: {log_entry}\n\n"
                 log_queue.task_done()
-                empty_reads = 0  # Reset count on success
+                start_time = time.time()  # Reset timeout counter
             except queue.Empty:
-                empty_reads += 1
+                if time.time() - start_time > timeout_limit:
+                    yield "data: Stream closed due to inactivity\n\n"
+                    break  # Exit loop if no logs for `timeout_limit`
 
-        yield "data: Stream timeout\n\n"  # Send a message before stopping
+            time.sleep(1)  # Prevent 100% CPU usage
 
     return Response(generate(), mimetype='text/event-stream')
 # endregion
