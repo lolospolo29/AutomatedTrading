@@ -33,7 +33,7 @@ class CISD:
                     self._lowest_candle = min(self._lowest_candle, last_candle, key=lambda c: c.close)
                 elif is_bullish and self._consecutive_series_of_candles >= 3:
                     structure = Structure(name="Consecutive", candles=[self._highest_candle, self._lowest_candle],
-                                          direction="Bullish", timeframe=last_candle.timeframe)
+                                          direction="Bearish", timeframe=last_candle.timeframe)
                     self._reset_series(last_candle)
                     return structure
         else:
@@ -42,15 +42,16 @@ class CISD:
     @staticmethod
     def check_for_cisd(last_candle: Candle, consecutive: Structure) -> Optional[Structure]:
 
-        first_candle = consecutive.candles[0]  # The first candle in the consecutive structure
-        is_bearish_cisd = last_candle.close < first_candle.open and consecutive.direction == "Bullish"
-        is_bullish_cisd = last_candle.close > first_candle.open and consecutive.direction == "Bearish"
+        highest_candle = max(consecutive.candles, key=lambda candle: candle.high)
+        lowest_candle = max(consecutive.candles, key=lambda candle: candle.low)
+        is_bullish_cisd= last_candle.close > highest_candle.high and consecutive.direction == "Bearish"
+        is_bearish_cisd = last_candle.close < lowest_candle.low and consecutive.direction == "Bullish"
 
         if is_bearish_cisd:
-            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bearish",timeframe=last_candle.timeframe)
+            return Structure(name="CISD", candles=[highest_candle,lowest_candle], direction="Bullish",timeframe=last_candle.timeframe)
 
         if is_bullish_cisd:
-            return Structure(name="CISD", candles=[first_candle, last_candle], direction="Bullish",timeframe=last_candle.timeframe)
+            return Structure(name="CISD", candles=[highest_candle,lowest_candle], direction="Bearish",timeframe=last_candle.timeframe)
 
         return None  # No CISD detected
 

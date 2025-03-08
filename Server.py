@@ -20,6 +20,17 @@ def receive_signal():
 
     return f'Received Analyse data: {json_data}'
 
+@app.route('/atr', methods=['post'])
+def receive_atr():
+    json_data = request.get_json()
+
+    logger.debug(f"Received signal data: {json_data}")
+
+    thread = Thread(target=signal_controller.trading_view_signal, args=(json_data,))
+    thread.start()
+
+    return f'Received Analyse data: {json_data}'
+
 # endregion
 ###
 # region CREATE APP Route

@@ -16,8 +16,6 @@ from app.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from app.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 from app.monitoring.logging.logging_startup import logger
 
-#todo test with news integrating and volatility on red folder
-
 class TestModule:
     def __init__(self,asset_class:str,strategy:Strategy, asset:str,candles:list[Candle]
                  , timeframes:list[ExpectedTimeFrame],trade_limit:int=2):
@@ -58,6 +56,7 @@ class TestModule:
                         self.handle_exits(series)
 
         self.calculate_trade_results()
+
 
     def handle_new_trade(self,result:StrategyResult,last_candle:Candle):
         trade_result = TradeResult(tradeId=result.trade.tradeId

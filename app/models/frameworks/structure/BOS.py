@@ -9,10 +9,13 @@ class BOS:
     def __init__(self):
         self._bullish_a: Optional[Candle, None] = None
         self._bullish_b: Optional[Candle, None] = None
+        self._iteration_bullish: Optional[int] = 0
         self._bullish_is_valid = False
 
         self._bearish_a: Optional[Candle, None] = None
         self._bearish_b: Optional[Candle, None] = None
+        self._iteration_bearish: Optional[int] = 0
+
         self._bearish_is_valid = False
 
     def detect_bos(self, last_candle: Candle) -> Optional[Structure]:
@@ -28,7 +31,7 @@ class BOS:
                                        , timeframe=last_candle.timeframe)
                     self._structure_reset_bullish(last_candle)
 
-            if last_candle.close > last_candle.high:
+            if last_candle.close > self._bullish_a.high:
                 self._bullish_a = last_candle
 
         if last_candle.close < last_candle.open:
@@ -59,10 +62,14 @@ class BOS:
     def _check_b_leg_condition(self, last_candle: Candle):
         if last_candle.close < self._bullish_b.low and self._bullish_a:
             self._bullish_b = last_candle
-            self._bullish_is_valid = True
+            self._iteration_bullish += 1
+            if self._iteration_bullish > 6:
+                self._bullish_is_valid = True
         if last_candle.close > self._bearish_b.high and self._bearish_a:
             self._bearish_b = last_candle
-            self._bearish_is_valid = True
+            self._iteration_bearish += 1
+            if self._iteration_bearish > 6:
+                self._bearish_is_valid = True
 
     def _structure_reset_bullish(self, last_candle: Candle):
         self._bullish_a = last_candle
@@ -71,11 +78,15 @@ class BOS:
         self._bearish_a = None
         self._bearish_b = None
         self._bearish_is_valid = False
+        self._iteration_bullish = 0
+        self._iteration_bearish = 0
 
     def _structure_reset_bearish(self, last_candle: Candle):
         self._bullish_a = None
         self._bullish_b = None
-        self._bullish_is_valid = False
         self._bearish_a = last_candle
         self._bearish_b = None
+        self._bullish_is_valid = False
         self._bearish_is_valid = False
+        self._iteration_bullish = 0
+        self._iteration_bearish = 0

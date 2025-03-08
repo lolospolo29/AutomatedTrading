@@ -3,7 +3,6 @@ import math
 from app.helper.manager.RiskManager import RiskManager
 from app.models.asset.AssetClassEnum import AssetClassEnum
 
-# todo tick size fetch from api
 class RiskCalculator:
     def __init__(self):
         self._risk_manager = RiskManager()

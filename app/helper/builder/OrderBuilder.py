@@ -11,7 +11,7 @@ from app.monitoring.logging.logging_startup import logger
 
 class OrderBuilder:
     def __init__(self):
-        self.order = Order()
+        self.order = Order()  # Only create order when needed
 
     def create_order(self, relation:Relation, symbol:str, confirmations:list[FrameWork], category:str, side:str,
                      risk_percentage:float, order_number:int, tradeId:str, entry_frame_work:
@@ -91,13 +91,10 @@ class OrderBuilder:
             order.tpOrderType = tp_order_type
         if sl_order_type is not None:
             order.slOrderType = sl_order_type
-        if tp_order_type is not None:
-            order.tpOrderType = tp_order_type
         order.orderType = OrderTypeEnum.LIMIT.value
         return self
 
     def build(self):
-        logger.debug(f"Order Build successfully, OrderLinkId: {self.order.orderLinkId},Symbol: {self.order.symbol},TradeId: {self.order.tradeId}")
         return self.order
 
     @staticmethod

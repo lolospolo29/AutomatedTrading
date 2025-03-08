@@ -1,16 +1,17 @@
 import uuid
 
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 
 from app.models.asset.Candle import Candle
 
 
 class FrameWork(BaseModel):
-    name:str=None
-    id: str = str(uuid.uuid4())
-    timeframe:int = None
-    direction:str=None
-    orderLinkId:str=None
-    candles:list[Candle]
-    status:str="Normal"
-    reference:str = ""
+    name: str = None
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))  # Generates a new UUID per instance
+    timeframe: int = None
+    direction: str = None
+    orderLinkId: str = None
+    candles: list[Candle]
+    status: str = "Normal"
+    reference: str = ""
+    invalidation_candle: Candle = None

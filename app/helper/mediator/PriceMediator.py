@@ -7,6 +7,7 @@ from app.models.frameworks.Level import Level
 from app.models.frameworks.PDArray import PDArray
 from app.models.frameworks.Structure import Structure
 from app.models.frameworks.level.ADR import ADR
+from app.models.frameworks.level.Fibonnaci import Fibonnaci
 from app.models.frameworks.level.PreviousSessionLevels import PreviousSessionLevels
 from app.models.frameworks.level.equalHL import equalHL
 from app.models.frameworks.pdarray.Swing import Swing
@@ -31,10 +32,13 @@ from app.models.frameworks.structure.Choch import Choch
 from app.models.frameworks.structure.MSS import MSS
 from app.models.frameworks.structure.MitigationBlock import MitigationBlock
 
+
 class PriceMediator:
     def __init__(self):
         self._lock = threading.Lock()
-        self._candles: dict[int, list[Candle]] = {}
+        self._ote = Fibonnaci([0.62,0.79,1.5],"OTE")
+        self._pd = Fibonnaci([0.0,0.5,1.0],"PD")
+        self._deviation = Fibonnaci([1.5,2.0,3.0,4.0],"STDV")
         self._swings: dict[int, list[PDArray]] = {}
         self._eqhl: dict[int, list[Level]] = {}
         self._imbalances: dict[int, list[PDArray]] = {}
@@ -52,100 +56,109 @@ class PriceMediator:
         self._nwog: list[PDArray] = []
         self._adr: float = 0.0
 
-    def add_candle(self, candle: Candle):
+    def detect_pd_arrays(self, first_candle:Candle, second_candle:Candle, third_candle:Candle, timeframe):
         with self._lock:
-            if candle.timeframe not in self._candles:
-                self._candles[candle.timeframe] = []
-            self._candles[candle.timeframe].append(candle)
 
-    def detect_pd_arrays(self, timeframe: int):
-        with self._lock:
-            if len(self._candles[timeframe]) >= 3:
-                first_candle, second_candle, third_candle = self._candles[timeframe][-3:]
+            # ADR
 
-                # Openings
-                self._detect_ndog(second_candle, third_candle)
-                self._detect_nwog(second_candle, third_candle)
+            self._calculate_average_range(first_candle, second_candle, third_candle)
 
-                # Orderblocks and Swing
+            # Openings
 
-                self._detect_swing(first_candle, second_candle, third_candle, timeframe)
-                self._detect_eqhl(timeframe)
-                self._detect_orderblock(second_candle, third_candle, timeframe)
-                self._detect_scob(first_candle, second_candle, third_candle, timeframe)
-                self._detect_rejection_block(third_candle, timeframe)
-                self._detect_probulsion(third_candle, timeframe)
+            self._detect_ndog(second_candle, third_candle)
+            self._detect_nwog(second_candle, third_candle)
 
-                # Imbalance
+            # Orderblocks and Swing
 
-                self._detect_fvg(first_candle, second_candle, third_candle, timeframe)
-                self._detect_ifvg(first_candle, second_candle, third_candle, timeframe)
-                self._detect_void(second_candle, third_candle, timeframe)
-                self._detect_volume_imbalance(second_candle, third_candle, timeframe)
-                self._detect_bpr(timeframe)
+            self._detect_swing(first_candle, second_candle, third_candle, timeframe)
+            self._detect_eqhl(timeframe)
+            self._detect_orderblock(second_candle, third_candle, timeframe)
+            self._detect_scob(first_candle, second_candle, third_candle, timeframe)
+            self._detect_rejection_block(third_candle, timeframe)
+            self._detect_probulsion(third_candle, timeframe)
 
-                # Structure
+            # Imbalance
 
-                self._detect_mss(third_candle, timeframe)
-                self._detect_bos(third_candle, timeframe)
-                self._detect_consecutive(third_candle, timeframe)
-                self._detect_cisd(third_candle,timeframe)
+            self._detect_fvg(first_candle, second_candle, third_candle, timeframe)
+            self._detect_ifvg(first_candle, second_candle, third_candle, timeframe)
+            self._detect_void(second_candle, third_candle, timeframe)
+            self._detect_volume_imbalance(second_candle, third_candle, timeframe)
+            self._detect_bpr(timeframe)
 
-                # Status Change
+            # Structure
 
-                self._detect_choch(timeframe)
-                self._detect_breaker(third_candle, timeframe)
-                self._detect_inversion_fvg(third_candle, timeframe)
-                self._detect_liquidity_sweep(third_candle, timeframe)
-                self._detect_mitigation_block(timeframe)
+            self._detect_mss(third_candle, timeframe)
+            self._detect_bos(third_candle, timeframe)
+            self._detect_consecutive(third_candle, timeframe)
+            self._detect_cisd(third_candle, timeframe)
 
-                # Validator
-                # todo ob with fvg / divide pds in discount and premium
+            # Status Change
+
+            self._detect_choch(timeframe)
+            self._detect_breaker(third_candle, timeframe)
+            self._detect_inversion_fvg(third_candle, timeframe)
+            self._detect_liquidity_sweep(third_candle, timeframe)
+            self._detect_mitigation_block(timeframe)
+
+            # Remove Duplicates
+
+            self._remove_duplicate_consecutive_candles(timeframe)
+            self._remove_duplicate_bpr(timeframe)
 
     # region ---- Getter Methods ----
 
-    def get_previous_session_hl(self,timeframe: int,time_window:ITimeWindow)->list[Level]:
-        return PreviousSessionLevels.return_levels(self._candles[timeframe],time_window)
+    @staticmethod
+    def get_previous_session_hl(candles:list[Candle],time_window: ITimeWindow) -> list[Level]:
+        return PreviousSessionLevels.return_levels(candles, time_window)
 
-    def get_candles(self, key: int) -> list[Candle]:
-        """Returns the list of candles for a given timeframe."""
-        return self._candles.get(key, [])
+    def get_fibonnaci(self,candles:list[Candle],ote:bool=True,pd:bool=False,stdv:bool=False,fib_levels:list[float]=None) -> list[Level]:
+        highest_candle = max(candles, key=lambda candle: candle.high)
+        lowest_candle = min(candles, key=lambda candle: candle.low)
 
-    def get_swings(self, key: int) -> list[PDArray]:
+        if fib_levels:
+            return Fibonnaci(fib_levels,"User").return_levels(highest_candle, lowest_candle)
+        if stdv:
+            return self._deviation.return_levels(highest_candle, lowest_candle)
+        if pd:
+            return self._pd.return_levels(highest_candle, lowest_candle)
+        if ote:
+            return self._ote.return_levels(highest_candle, lowest_candle)
+
+    def get_swings(self, timeframe: int) -> list[PDArray]:
         """Returns the swings for a given timeframe."""
-        return self._swings.get(key, [])
+        return self._swings.get(timeframe, [])
 
-    def get_eqhl(self, key: int) -> list[Level]:
+    def get_eqhl(self, timeframe: int) -> list[Level]:
         """Returns the swings for a given timeframe."""
-        return self._eqhl.get(key, [])
+        return self._eqhl.get(timeframe, [])
 
-    def get_imbalances(self, key: int) -> list[PDArray]:
+    def get_imbalances(self, timeframe: int) -> list[PDArray]:
         """Returns the imbalances for a given timeframe."""
-        return self._imbalances.get(key, [])
+        return self._imbalances.get(timeframe, [])
 
-    def get_orderblocks(self, key: int) -> list[PDArray]:
+    def get_orderblocks(self, timeframe: int) -> list[PDArray]:
         """Returns the orderblocks for a given timeframe."""
-        return self._orderblocks.get(key, [])
+        return self._orderblocks.get(timeframe, [])
 
-    def get_probulsion_blocks(self, key: str) -> list[PDArray]:
+    def get_probulsion_blocks(self, timeframe: str) -> list[PDArray]:
         """Returns the propulsion blocks based on their ID."""
-        return self._probulsion_blocks.get(key, [])
+        return self._probulsion_blocks.get(timeframe, [])
 
-    def get_consecutive_candles(self, key: int) -> list[Structure]:
+    def get_consecutive_candles(self, timeframe: int) -> list[Structure]:
         """Returns consecutive candles for a given timeframe."""
-        return self._consecutive_candles.get(key, [])
+        return self._consecutive_candles.get(timeframe, [])
 
-    def get_mss(self, key: int, previous: bool = False) -> Optional[Structure]:
+    def get_mss(self, timeframe: int, previous: bool = False) -> Optional[Structure]:
         """Returns the current or previous MSS for a given timeframe."""
-        return self._previous_mss.get(key) if previous else self._current_mss.get(key)
+        return self._previous_mss.get(timeframe) if previous else self._current_mss.get(timeframe)
 
-    def get_bos(self, key: int, previous: bool = False) -> Optional[Structure]:
+    def get_bos(self, timeframe: int, previous: bool = False) -> Optional[Structure]:
         """Returns the current or previous BOS for a given timeframe."""
-        return self._previous_bos.get(key) if previous else self._current_bos.get(key)
+        return self._previous_bos.get(timeframe) if previous else self._current_bos.get(timeframe)
 
-    def get_cisd(self, key: int) -> Optional[Structure]:
+    def get_cisd(self, timeframe: int) -> Optional[Structure]:
         """Returns the CISD for a given timeframe."""
-        return self._cisd.get(key)
+        return self._current_cisd.get(timeframe)
 
     def get_ndog(self) -> list[PDArray]:
         """Returns the NDOG patterns detected."""
@@ -161,7 +174,6 @@ class PriceMediator:
 
     def reset(self):
         with self._lock:
-            self._candles.clear()
             self._swings.clear()
             self._imbalances.clear()
             self._orderblocks.clear()
@@ -173,33 +185,37 @@ class PriceMediator:
             self._previous_bos.clear()
             self._current_cisd.clear()
             self._bos.clear()
+            self._eqhl.clear()
             self._cisd.clear()
             self._ndog.clear()
             self._nwog.clear()
             self._adr = 0.0
 
-    def get_current_adr(self, timeframe) -> float:
-        self._calculate_average_range(timeframe)
+    def get_current_adr(self) -> float:
         return self._adr
 
     # endregion
 
-    #region ---- Modular detection methods ----
-    def _calculate_average_range(self, timeframe: int):
-        candles = self._candles[timeframe]
-        high = max(candle.high for candle in candles)
-        low = min(candle.low for candle in candles)
-        self._adr = ADR.calculate_adr(high, low)
+    # region ---- Modular detection methods ----
+    def _calculate_average_range(self,first_candle:Candle, second_candle:Candle, third_candle:Candle):
+        high = max(first_candle.high, second_candle.high, third_candle.high)
+        low = min(first_candle.high, second_candle.high, third_candle.high)
+        if self._adr == 0:
+            self._adr = ADR.calculate_adr(high, low)
+        else:
+            self._adr = (self._adr + ADR.calculate_adr(high, low)) / 2
 
     def _detect_ndog(self, second_candle: Candle, third_candle: Candle):
         """Detects NDOG patterns."""
         ndog = NDOG.detect_ndog(first_candle=second_candle, second_candle=third_candle)
-        self._ndog.append(ndog)
+        if ndog:
+            self._ndog.append(ndog)
 
     def _detect_nwog(self, second_candle: Candle, third_candle: Candle):
         """Detects NWOG patterns."""
         nwog = NWOG.detect_nwog(first_candle=second_candle, second_candle=third_candle)
-        self._nwog.append(nwog)
+        if nwog:
+            self._nwog.append(nwog)
 
     def _detect_swing(self, first_candle: Candle, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects Swing patterns."""
@@ -209,14 +225,15 @@ class PriceMediator:
                 self._swings[timeframe] = []
             self._swings[timeframe].append(swing)
 
-    def _detect_eqhl(self,timeframe: int):
+    def _detect_eqhl(self, timeframe: int):
         """Detects EQHL patterns."""
-        swings = self._swings[timeframe]
-        eqhl = equalHL().detect_equal_hl(swings=swings,adr=self._adr)
-        if eqhl:
-            if timeframe not in self._eqhl:
-                self._eqhl[timeframe] = []
-            self._eqhl[timeframe].append(eqhl)
+        if timeframe in self._swings:
+            swings = self._swings[timeframe]
+            eqhl = equalHL().detect_equal_hl(swings=swings, adr=self._adr)
+            if eqhl:
+                if timeframe not in self._eqhl:
+                    self._eqhl[timeframe] = []
+                self._eqhl[timeframe].append(eqhl)
 
     def _detect_orderblock(self, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects Orderblock patterns."""
@@ -238,7 +255,7 @@ class PriceMediator:
     def _detect_rejection_block(self, third_candle: Candle, timeframe: int):
         """Detects rejection patterns."""
         rejection_block = RejectionBlock.detect_rejection_block(candle=third_candle,
-                                                                average_range=self.get_current_adr(timeframe))
+                                                                average_range=self.get_current_adr())
 
         if rejection_block:
             if timeframe not in self._orderblocks:
@@ -247,13 +264,15 @@ class PriceMediator:
 
     def _detect_probulsion(self, third_candle: Candle, timeframe: int):
         """Detects probulsion patterns."""
-        for orderblock in self._orderblocks[timeframe]:
-            if orderblock.name == "OB" or orderblock.name == "SCOB":
-                pb = PB.detect_probulsion_block(last_candle=third_candle, orderblock=orderblock)
-                if pb:
-                    if timeframe not in self._probulsion_blocks:
-                        self._probulsion_blocks[pb.reference_pd] = []
-                    self._probulsion_blocks[pb.reference_pd].append(pb)
+        if timeframe in self._orderblocks:
+            for orderblock in self._orderblocks[timeframe]:
+                if orderblock.name == "OB" or orderblock.name == "SCOB":
+                    pb = PB.detect_probulsion_block(last_candle=third_candle, orderblock=orderblock)
+                    if pb:
+                        pb.reference = orderblock.id
+                        if timeframe not in self._probulsion_blocks:
+                            self._probulsion_blocks[pb.reference] = []
+                        self._probulsion_blocks[pb.reference].append(pb)
 
     def _detect_fvg(self, first_candle: Candle, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects FVG patterns."""
@@ -285,7 +304,6 @@ class PriceMediator:
     def _detect_volume_imbalance(self, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects Void patterns."""
         void = VolumeImbalance.detect_volume_imbalance(first_candle=second_candle, second_candle=third_candle)
-
         if void:
             if timeframe not in self._imbalances:
                 self._imbalances[timeframe] = []
@@ -293,108 +311,169 @@ class PriceMediator:
 
     def _detect_bpr(self, timeframe: int):
         """Detects BPR patterns."""
-        for imbalance in self._imbalances[timeframe]:
-            buy_fvg = None
-            sell_fvg = None
-            if imbalance.name == "FVG" and imbalance.direction == "Bullish":
-                buy_fvg = imbalance
-            if imbalance.name == "FVG" and imbalance.direction == "Bearish":
-                sell_fvg = imbalance
-            for imbalance2 in self._imbalances[timeframe]:
-                if imbalance2.name == imbalance.name and imbalance2.direction != imbalance.direction:
-                    if imbalance2.direction == "Bullish":
-                        buy_fvg = imbalance2
-                    if imbalance2.direction == "Bearish":
-                        sell_fvg = imbalance2
-                    bpr = BPR.detect_bpr(buy_fvg, sell_fvg)
-                    if bpr:
-                        if timeframe not in self._imbalances:
-                            self._imbalances[timeframe] = []
-                        self._imbalances[timeframe].append(bpr)
+        if timeframe in self._imbalances:
+            for imbalance in self._imbalances[timeframe]:
+                buy_fvg = None
+                sell_fvg = None
+                if imbalance.name == "FVG":
+                    if imbalance.direction == "Bullish":
+                        buy_fvg = imbalance
+                    if imbalance.direction == "Bearish":
+                        sell_fvg = imbalance
+                else:
+                    continue
+                for imbalance2 in self._imbalances[timeframe]:
+                    if imbalance2.name == imbalance.name and imbalance2.direction != imbalance.direction:
+                        if imbalance2.direction == "Bullish":
+                            buy_fvg = imbalance2
+                        if imbalance2.direction == "Bearish":
+                            sell_fvg = imbalance2
+                        bpr = BPR.detect_bpr(buy_fvg, sell_fvg)
+                        if bpr:
+                            if timeframe not in self._imbalances:
+                                self._imbalances[timeframe] = []
+                            self._imbalances[timeframe].append(bpr)
 
     def _detect_mss(self, third_candle: Candle, timeframe: int):
-        for swing in self._swings[timeframe]:
-            swing: PDArray
-            mss = MSS.detect_mss(last_candle=third_candle, swing=swing)
-            if mss:
-                if timeframe not in self._current_mss:
-                    self._current_mss[timeframe] = []
-                if timeframe not in self._current_mss:
-                    self._previous_mss[timeframe] = []
+        if timeframe in self._swings:
+            for swing in self._swings[timeframe]:
+                swing: PDArray
+                mss = MSS.detect_mss(last_candle=third_candle, swing=swing)
+                if mss:
+                    if timeframe not in self._previous_mss:
+                        self._previous_mss[timeframe] = mss
+                    if timeframe not in self._current_mss:
+                        self._current_mss[timeframe] = mss
 
-                self._previous_mss[timeframe] = self._current_mss[timeframe]
-                self._current_mss[timeframe] = mss
-                swing.status = "Sweeped"
-                break
+                    self._previous_mss[timeframe] = self._current_mss[timeframe]
+                    self._current_mss[timeframe] = mss
+                    if mss.invalidation_candle is None:
+                        swing.status = "Sweeped"
+                        mss.invalidation_candle = third_candle
+                    break
 
     def _detect_bos(self, third_candle: Candle, timeframe: int):
         if timeframe not in self._bos:
             self._bos[timeframe] = BOS()
-        bos = self._bos[timeframe].detect_bos(third_candle=third_candle)
+        bos = self._bos[timeframe].detect_bos(last_candle=third_candle)
         if bos:
             if timeframe not in self._current_bos:
-                self._current_bos[timeframe] = []
+                self._current_bos[timeframe] = bos
             if timeframe not in self._previous_bos:
-                self._previous_bos[timeframe] = []
+                self._previous_bos[timeframe] = self._current_bos[timeframe]
+
             self._previous_bos[timeframe] = self._current_bos[timeframe]
             self._current_bos[timeframe] = bos
 
     def _detect_consecutive(self, third_candle: Candle, timeframe: int):
         if timeframe not in self._cisd:
             self._cisd[timeframe] = CISD()
-        consecutive = self._cisd[timeframe].add_candle(third_candle=third_candle)
+        if timeframe not in self._consecutive_candles:
+            self._consecutive_candles[timeframe] = []
+        consecutive = self._cisd[timeframe].add_candle(last_candle=third_candle)
         if consecutive:
-            if timeframe not in self._consecutive_candles:
-                self._consecutive_candles[timeframe] = []
             self._consecutive_candles[timeframe].append(consecutive)
 
-        for consecutive_candle in self._cisd[timeframe]:
-            cisd = self._cisd[timeframe].check_for_cisd(third_candle=third_candle,
-                                                        consecutive_candle=consecutive_candle)
-            if cisd:
-                self._consecutive_candles[timeframe] = cisd
-
-    def _detect_cisd(self,third_candle:Candle, timeframe: int):
-        for consecutive_candle in self._consecutive_candles[timeframe]:
-            cisd = self._cisd[timeframe].check_for_cisd(third_candle,consecutive_candle)
-            if cisd:
-                if timeframe not in self._current_cisd:
-                    self._current_cisd[timeframe] = []
-                self._current_cisd[timeframe] = cisd
+    def _detect_cisd(self, third_candle: Candle, timeframe: int):
+        if timeframe in self._consecutive_candles[timeframe] and timeframe in self._cisd and timeframe in \
+                self._current_cisd[timeframe]:
+            for consecutive_candle in self._consecutive_candles[timeframe]:
+                cisd:Structure = self._cisd[timeframe].check_for_cisd(third_candle, consecutive_candle)
+                if cisd:
+                    self._current_cisd[timeframe] = cisd
+                    if cisd.invalidation_candle is None:
+                        cisd.invalidation_candle = third_candle
 
     def _detect_choch(self, timeframe: int):
         if timeframe in self._current_bos and timeframe in self._previous_bos:
             if Choch.is_choch(current_bos=self._current_bos[timeframe]
-                                                            , previous_bos=self._previous_bos[timeframe]):
+                    , previous_bos=self._previous_bos[timeframe]):
                 self._current_bos[timeframe].status = "CHOCH"
 
     def _detect_breaker(self, third_candle: Candle, timeframe: int):
-        for orderblock in self._orderblocks[timeframe]:
-            if orderblock.name == "OB" or orderblock.name == "SCOB":
-                breaker = Breaker.detect_breaker(last_candle=third_candle, orderblock=orderblock)
-                if breaker:
-                    orderblock.status = OrderBlockStatusEnum.Breaker.value
-                if not breaker:
-                    orderblock.status = OrderBlockStatusEnum.Normal.value
+        if timeframe in self._orderblocks:
+            for orderblock in self._orderblocks[timeframe]:
+                if orderblock.name == "OB" or orderblock.name == "SCOB":
+                    breaker = Breaker.detect_breaker(last_candle=third_candle, orderblock=orderblock)
+                    if breaker:
+                        orderblock.status = OrderBlockStatusEnum.Breaker.value
+                        if orderblock.invalidation_candle is None:
+                            orderblock.invalidation_candle = third_candle
+                    if not breaker:
+                        if orderblock == OrderBlockStatusEnum.Breaker.value:
+                            orderblock.status = OrderBlockStatusEnum.Reclaimed.value
+                        else:
+                            orderblock.status = OrderBlockStatusEnum.Normal.value
 
     def _detect_inversion_fvg(self, third_candle: Candle, timeframe: int):
-        for imbalance in self._imbalances[timeframe]:
-            if imbalance.name == "FVG" or imbalance.name == "IFVG":
-                if InversionFVG.detect_inversion(last_candle=third_candle, fvg=imbalance):
-                    if imbalance.status == ImbalanceStatusEnum.Normal.value or imbalance.status == ImbalanceStatusEnum.Reclaimed.value:
-                        imbalance.status = ImbalanceStatusEnum.Inversed.value
-                else:
-                    if imbalance.status == ImbalanceStatusEnum.Inversed.value:
-                        imbalance.status = ImbalanceStatusEnum.Reclaimed.value
+        if timeframe in self._imbalances:
+            for imbalance in self._imbalances[timeframe]:
+                if imbalance.name == "FVG" or imbalance.name == "IFVG":
+                    if InversionFVG.detect_inversion(last_candle=third_candle, fvg=imbalance):
+                        if imbalance.status == ImbalanceStatusEnum.Normal.value or imbalance.status == ImbalanceStatusEnum.Reclaimed.value:
+                            imbalance.status = ImbalanceStatusEnum.Inversed.value
+                            if imbalance.invalidation_candle is None:
+                                imbalance.invalidation_candle = third_candle
+                    else:
+                        if imbalance.status == ImbalanceStatusEnum.Inversed.value:
+                            imbalance.status = ImbalanceStatusEnum.Reclaimed.value
 
-    def _detect_liquidity_sweep(self,third_candle:Candle, timeframe: int):
-        for swing in self._swings[timeframe]:
-            if Swing.detect_sweep(last_candle=third_candle, swing=swing):
-                swing.status = "Sweeped"
+    def _detect_liquidity_sweep(self, third_candle: Candle, timeframe: int):
+        if timeframe in self._swings:
+            for swing in self._swings[timeframe]:
+                if Swing.detect_sweep(last_candle=third_candle, swing=swing):
+                    swing.status = "Sweeped"
+                    if swing.invalidation_candle is None:
+                        swing.invalidation_candle = third_candle
 
-    def _detect_mitigation_block(self,timeframe:int):
+    def _detect_mitigation_block(self, timeframe: int):
         if timeframe in self._current_bos and timeframe in self._current_mss:
-            if MitigationBlock.is_mitigated(self._current_mss[timeframe],self._current_bos[timeframe]):
+            if MitigationBlock.is_mitigated(self._current_mss[timeframe], self._current_bos[timeframe]):
                 self._current_bos[timeframe].status = "MITIGATED"
+
+    # endregion
+
+    # region Duplicate Detection
+    def _remove_duplicate_consecutive_candles(self, timeframe: int):
+        if timeframe not in self._consecutive_candles:
+            return
+
+        unique_consecutive_candles = []  # Stores filtered consecutive candle groups
+        seen_candle_sets = set()  # Tracks existing sets of candle IDs
+
+        # Sort by length to ensure we keep the longest first
+        sorted_candle_groups = sorted(self._consecutive_candles[timeframe], key=lambda x: len(x.candles), reverse=True)
+
+        for consecutive_candles in sorted_candle_groups:
+            candle_ids = frozenset(candle.id for candle in consecutive_candles.candles)  # Extract candle IDs
+
+            # If no subset of these candles is already stored, keep it
+            if not any(existing_ids.issubset(candle_ids) for existing_ids in seen_candle_sets):
+                unique_consecutive_candles.append(consecutive_candles)
+                seen_candle_sets.add(candle_ids)  # Add to tracking set
+
+        # Update the list with filtered consecutive candles
+        self._consecutive_candles[timeframe] = unique_consecutive_candles
+
+    def _remove_duplicate_bpr(self, timeframe: int):
+        if timeframe not in self._imbalances:
+            return
+
+        unique_bpr_candles = []
+        seen_candle_sets = set()  # Track unique sets of candle IDs
+        non_bpr_imbalances = []  # Store non-BPR imbalances
+
+        for imbalance in self._imbalances[timeframe]:
+            if imbalance.name == "BPR":
+                candle_ids = frozenset(candle.id for candle in imbalance.candles)  # Get unique candle IDs
+
+                if candle_ids not in seen_candle_sets:
+                    unique_bpr_candles.append(imbalance)
+                    seen_candle_sets.add(candle_ids)  # Mark as seen
+            else:
+                non_bpr_imbalances.append(imbalance)  # Keep non-BPR imbalances
+
+        # Combine filtered BPR imbalances with non-BPR imbalances
+        self._imbalances[timeframe] = unique_bpr_candles + non_bpr_imbalances
 
     # endregion

@@ -37,11 +37,9 @@ class BacktestService:
 
         asset_classes: dict[str, str] = self._get_asset_classes(backtest_input.test_assets)
 
-
         modules: list[TestModule] = []
 
         threads = []
-
 
         for asset in backtest_input.test_assets:
             strategy = self.__factory.return_strategy(backtest_input.strategy)
@@ -54,7 +52,7 @@ class BacktestService:
             module = TestModule(asset_class=asset_classes[asset], strategy=strategy, asset=asset
                                 , candles=test_data[asset], timeframes=strategy.timeframes, trade_limit=backtest_input.trade_limit)
             modules.append(module)
-            thread = threading.Thread(target=module.start_module())
+            thread = threading.Thread(target=module.start_module)
             threads.append(thread)
             thread.start()
 
@@ -85,7 +83,21 @@ class BacktestService:
             self._backtest_repository.add_candle(candle)
 
     @staticmethod
-    def _create_result(module: TestModule) -> Result:
+    def generate_custom_id(strategy_name, asset):
+        now = datetime.utcnow()
+        timestamp = now.strftime("%H%M%S%d%m%Y")  # Format: HHMMSSDDMMYYYY
+        short_uuid = str(uuid.uuid4().hex)[:4]  # Take first 4 chars from UUID
+
+        # Shorten strategy and asset names (max 3 chars each to fit in 16)
+        strategy_part = strategy_name[:3].upper()
+        asset_part = asset[:3].upper()
+
+        # Construct the 16-character ID
+        custom_id = f"{timestamp[:8]}{short_uuid}{strategy_part}{asset_part}"
+
+        return custom_id[:16]  # Ensure it remains 16 chars
+
+    def _create_result(self,module: TestModule) -> Result:
         """Fügt die Statistiken eines TestModules zum übergeordneten Result hinzu."""
         total_pnl = 0.0
         total_win_pnl = 0.0
@@ -98,7 +110,7 @@ class BacktestService:
         total_activated = 0
         max_drawdown = float('inf')
 
-        result = Result(result_id=str(uuid.uuid4()),strategy=module.strategy.name,asset=module.asset)
+        result = Result(result_id=str(self.generate_custom_id(strategy_name=module.strategy.name,asset=module.asset)),strategy=module.strategy.name,asset=module.asset)
 
         # Alle TradeResults aus dem TestModule iterieren
         for trade in module.trade_results.values():

@@ -196,4 +196,11 @@ class SignalController:
             self._TradingService.handle_price_action_signal(json_data)
         except Exception as e:
             logger.warning("Price Action Signal failed,Error: {e}".format(e=e))
+
+
+    def atr_signal(self, json_data: Dict[str, Any]):
+        try:
+            self._TradingService.handle_price_action_signal(json_data)
+        except Exception as e:
+            logger.warning("ATR Signal failed,Error: {e}".format(e=e))
     # endregion

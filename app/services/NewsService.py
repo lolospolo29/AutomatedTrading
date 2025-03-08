@@ -57,10 +57,11 @@ class NewsService:
             Safe News on the Day to the List.
         """
 
-        now = datetime.utcnow().isoformat() + "Z"
+        now = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
 
-        # Calculate the date 7 days from now
-        future_date = (datetime.utcnow() + timedelta(days=7)).isoformat() + "Z"
+        # Calculate the date 7 days from now and set the time to 00:00:00
+        future_date = (datetime.utcnow() + timedelta(days=7)).replace(hour=0, minute=0, second=0,
+                                                                      microsecond=0).isoformat()
 
         from_date_iso = datetime.fromisoformat(now.replace("Z", "+00:00"))
         to_date_iso = datetime.fromisoformat(future_date.replace("Z", "+00:00"))

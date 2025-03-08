@@ -46,6 +46,27 @@ class RiskManager:
             self.__account_balance = 1000
             self._initialized = True  # Markiere als initialisiert
 
+    @staticmethod
+    def breakeven_exchange_rate(current_exchange_rate: float, lower_yield: float, higher_yield: float) -> float:
+        """
+        Calculates the breakeven exchange rate where the yield advantage of the higher-yielding currency
+        is fully offset by exchange rate movement.
+
+        :param current_exchange_rate: Current exchange rate (e.g., EUR/USD = 1.1000)
+        :param lower_yield: Yield (interest rate) of the lower-yielding currency (as a decimal, e.g., 0.02 for 2%)
+        :param higher_yield: Yield (interest rate) of the higher-yielding currency (as a decimal, e.g., 0.04 for 4%)
+        :return: Breakeven exchange rate
+        """
+        return current_exchange_rate * ((1 + lower_yield) / (1 + higher_yield))
+
+    # # Example usage:
+    # current_rate = 1.1000  # EUR/USD
+    # lower_yield = 0.01  # EUR at 1%
+    # higher_yield = 0.04  # USD at 4%
+    #
+    # breakeven_rate = breakeven_exchange_rate(current_rate, lower_yield, higher_yield)
+    # print(f"Breakeven Exchange Rate: {breakeven_rate:.4f}")
+
     @property
     def max_risk_percentage(self):
         return self.__max_risk_percentage
