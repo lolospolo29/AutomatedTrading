@@ -1,9 +1,10 @@
 from typing import Any
 
 from bson.objectid import ObjectId
+from bson.son import SON  # ✅ Correct way
+
 
 from pymongo import MongoClient
-
 
 class MongoDB:
 
