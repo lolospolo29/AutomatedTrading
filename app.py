@@ -186,13 +186,17 @@ def show_logs():
 @app.route('/stream')
 def stream_logs():
     def generate():
-        while True:
+        empty_reads = 0
+        while empty_reads < 10:  # Limit empty retries
             try:
-                log_entry = log_queue.get_nowait()  # Non-blocking
+                log_entry = log_queue.get(timeout=5)
                 yield f"data: {log_entry}\n\n"
                 log_queue.task_done()
+                empty_reads = 0  # Reset count on success
             except queue.Empty:
-                time.sleep(1)  # Prevents CPU overuse, waits before retrying
+                empty_reads += 1
+
+        yield "data: Stream timeout\n\n"  # Send a message before stopping
 
     return Response(generate(), mimetype='text/event-stream')
 # endregion
