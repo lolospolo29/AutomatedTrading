@@ -71,11 +71,9 @@ class TradingService:
 
         candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
 
-        is_news_ahead = True
-
         is_news_ahead,message = self._news_service.is_news_ahead()
 
-        if is_news_ahead:
+        if not is_news_ahead:
 
             relations: list[Relation] = self._asset_manager.return_relations(candle.asset, candle.broker)
 

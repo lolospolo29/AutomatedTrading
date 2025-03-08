@@ -63,8 +63,5 @@ class SecretsManager:
 
     def return_secret(self, key: str) -> Any:
         """Gibt das Secret für den angegebenen Schlüssel zurück."""
-        try:
-            return self._secrets.get(key)
-        except Exception as e:
-            logger.exception(f"Failed to load secrets file: {e}")
+        return self._secrets.get(key)
     # endregion
