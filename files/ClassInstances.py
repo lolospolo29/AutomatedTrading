@@ -65,7 +65,7 @@ trade_manager = TradeManager(trade_repository=trade_repository,broker_facade=bro
 
 strategy_manager = StrategyManager()
 
-#config_manager = ConfigManager(trade_manager=trade_manager,asset_manager=asset_manager,relation_manager=relation_manager,strategy_manager=strategy_manager)
+config_manager = ConfigManager(trade_manager=trade_manager,asset_manager=asset_manager,relation_manager=relation_manager,strategy_manager=strategy_manager)
 
 strategy_manager = StrategyManager()
 
@@ -88,7 +88,7 @@ signal_controller = SignalController(trading_service=trading_service, news_servi
 
 # Logic
 
-#config_manager.initialize_managers()
+config_manager.initialize_managers()
 
 schedule_manager = ScheduleService()
 

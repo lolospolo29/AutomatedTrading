@@ -1,4 +1,4 @@
-from app.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+from main.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 
 
 def main():

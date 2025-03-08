@@ -5,8 +5,8 @@ import time
 
 import requests as requests
 
-from app.api.brokers.bybit.post.PlaceOrder import PlaceOrder
-from app.helper.manager.initializer.SecretsManager import SecretsManager
+from main.api.brokers.bybit.post.PlaceOrder import PlaceOrder
+from main.helper.manager.initializer.SecretsManager import SecretsManager
 
 sm: SecretsManager = SecretsManager()
 
