@@ -186,19 +186,19 @@ def show_logs():
 @app.route('/stream')
 def stream_logs():
     def generate():
-        timeout_limit = 60  # Exit if no logs for 60s
+        timeout_limit = 3  # Close connection if no logs in 60 seconds
         start_time = time.time()
 
         while True:
             try:
-                log_entry = log_queue.get(timeout=5)  # Wait max 5s
+                log_entry = log_queue.get(timeout=1)  # Wait max 5s
                 yield f"data: {log_entry}\n\n"
                 log_queue.task_done()
-                start_time = time.time()  # Reset timeout counter
+                start_time = time.time()  # Reset timeout timer
             except queue.Empty:
                 if time.time() - start_time > timeout_limit:
                     yield "data: Stream closed due to inactivity\n\n"
-                    break  # Exit loop if no logs for `timeout_limit`
+                    break  # Exit loop if no logs for too long
 
             time.sleep(1)  # Prevent 100% CPU usage
 
