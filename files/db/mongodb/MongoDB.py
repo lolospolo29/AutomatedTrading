@@ -1,10 +1,7 @@
 from typing import Any
 
-from bson.objectid import ObjectId
-from bson.son import SON  # ✅ Correct way
-
-
 from pymongo import MongoClient
+
 
 class MongoDB:
 
@@ -38,11 +35,11 @@ class MongoDB:
         return: The document, or None if not found.
         """
         collection = self.db[collection_name]
-        return collection.find_one({"_id": ObjectId(document_id)})
+        return collection.find_one({"_id": document_id})
 
     def update(self, collection_name: str, document_id: Any, updates: Any) -> bool:
         collection = self.db[collection_name]
-        result = collection.update_one({"_id": ObjectId(document_id)}, {"$set": updates})
+        result = collection.update_one({"_id": document_id}, {"$set": updates})
         return result.modified_count > 0
 
     def delete(self, collection_name: str, document_id: Any) -> bool:
@@ -53,7 +50,7 @@ class MongoDB:
         return: True if the deletion was successful, False otherwise.
         """
         collection = self.db[collection_name]
-        result = collection.delete_one({"_id": ObjectId(document_id)})
+        result = collection.delete_one({"_id": document_id})
         return result.deleted_count > 0
     # endregion
 
