@@ -45,7 +45,7 @@ class SecretsManager:
         if self._config_file:
             config.read(self._config_file)
         else:
-            config.read(os.getenv("CONFIG_PATH", "config.ini"))  # Fallback auf "config.ini"
+            config.read(os.getenv("CONFIG_PATH", "config.ii"))  # Fallback auf "config.ini"
 
         secrets_path = config.get("paths", environment_path_key, fallback="config/secrets.json")
 
@@ -63,5 +63,8 @@ class SecretsManager:
 
     def return_secret(self, key: str) -> Any:
         """Gibt das Secret für den angegebenen Schlüssel zurück."""
-        return self._secrets.get(key)
+        try:
+            return self._secrets.get(key)
+        except Exception as e:
+            logger.exception(f"Failed to load secrets file: {e}")
     # endregion
