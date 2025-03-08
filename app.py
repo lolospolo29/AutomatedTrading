@@ -3,8 +3,8 @@ from threading import Thread
 
 from flask import Flask, request, Response, render_template, jsonify
 
-from app.ClassInstances import signal_controller
-from app.monitoring.logging.logging_startup import logger, log_queue
+from files.ClassInstances import signal_controller
+from files.monitoring.logging.logging_startup import logger, log_queue
 
 app = Flask(__name__)
 # region API APP Route
