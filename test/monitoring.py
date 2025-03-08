@@ -3,7 +3,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
 
-# Initialize Dash app
+# Initialize Dash files
 app = dash.Dash(__name__)
 
 # Define the nodes and logical flow edges of the dataflow

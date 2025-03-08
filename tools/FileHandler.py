@@ -4,12 +4,12 @@ import os
 import shutil
 from watchdog.events import FileSystemEventHandler
 
-from app.helper.manager.AssetManager import AssetManager
-from app.helper.registry.StrategyRegistry import StrategyManager
-from app.mappers.AssetMapper import AssetMapper
-from app.models.asset.Candle import Candle
-from app.monitoring.logging.logging_startup import logger
-from app.services.BacktestService import BacktestService
+from files.helper.manager.AssetManager import AssetManager
+from files.helper.registry.StrategyRegistry import StrategyManager
+from files.mappers.AssetMapper import AssetMapper
+from files.models.asset.Candle import Candle
+from files.monitoring.logging.logging_startup import logger
+from files.services.BacktestService import BacktestService
 
 
 class FileHandler(FileSystemEventHandler):
