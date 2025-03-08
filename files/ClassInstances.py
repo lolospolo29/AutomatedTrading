@@ -108,5 +108,5 @@ def MonitorFolder(handler, folderPath):
         observer.stop()
     observer.join()
 
-thread = Thread(target=partial(MonitorFolder, new_file_handler, "/Users/lauris/PycharmProjects/AutomatedTrading/incomingFiles"))
+thread = Thread(target=partial(MonitorFolder, new_file_handler, "incomingFiles"))
 thread.start()
