@@ -28,7 +28,7 @@ class BacktestService:
             self.__factory = StrategyFactory()
             self._backtest_repository = backtest_repository
             self._asset_selection: list[str] = []
-            self._fetch_test_assets()
+
             self._initialized = True  # Markiere als initialisiert
 
     def start_backtesting_strategy(self, backtest_input: BacktestInput):
@@ -178,7 +178,8 @@ class BacktestService:
             if not alive:  # If no threads are alive, exit the loop
                 break
 
-    def _fetch_test_assets(self):
+    def fetch_test_assets(self):
+        logger.info("Fetching Test Assets...")
         self._asset_selection = self._backtest_repository.find_assets_in_testdata()
 
     def _get_asset_classes(self, test_assets: list[str]) -> dict[str, str]:

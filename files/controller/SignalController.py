@@ -79,17 +79,6 @@ class SignalController:
                 logger.error("Error appending trade to list: {id},Error:{e}".format(id=news_day,e=e))
         return updated_news
 
-    def update_trade(self):
-        # todo close trade amend trade
-        pass
-
-
-    def add_trade(self):
-        pass
-
-    def delete_trade(self):
-        pass
-
     def get_smt_pairs(self)->list[dict]:
         smt_pairs:list[SMTPair] = self._Relation_manager.return_smt_pairs()
         dict_smt_pairs = []

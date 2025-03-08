@@ -55,7 +55,7 @@ class DoubleFib(Strategy):
 
             imbalances = self._price_mediator.get_imbalances(timeFrame)
 
-            if candles[-2].iso_time.day != candles[-1].iso_time.day:
+            if candles[-2].iso_time.day != candles[-1].iso_time.day or len(imbalances) > 350:
                 self._price_mediator.reset()
 
             if not bos or not imbalances:

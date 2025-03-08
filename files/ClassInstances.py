@@ -110,3 +110,6 @@ def MonitorFolder(handler, folderPath):
 
 thread = Thread(target=partial(MonitorFolder, new_file_handler, "incomingFiles"))
 thread.start()
+
+thread2 = Thread(target=partial(backtest_service.fetch_test_assets))
+thread2.start()

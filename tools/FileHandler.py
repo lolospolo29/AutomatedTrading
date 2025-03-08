@@ -2,6 +2,9 @@ import csv
 import json
 import os
 import shutil
+from datetime import datetime
+
+import pandas as pd
 from watchdog.events import FileSystemEventHandler
 
 from files.helper.manager.AssetManager import AssetManager
@@ -74,6 +77,41 @@ class FileHandler(FileSystemEventHandler):
     # endregion
 
     # region CSV Parsing
+    def candle_csv_to_backtest_db(self, folder_path):
+        candles = self._read_from_multiple_candle_files(folder_path)
+        self._backtest_service.add_test_data(candles)
+
+    @staticmethod
+    def _read_from_multiple_candle_files(folder_path):
+        candles = []
+
+        for root, _, files in os.walk(folder_path):
+            for file in files:
+                if file.endswith(".csv"):
+                    file_path = os.path.join(root, file)
+                    parts = file.split(".")[0]  # Entfernt die Dateiendung
+                    asset = "".join(filter(str.isalpha, parts))  # Extrahiert den Asset-Namen
+                    timeframe = int("".join(filter(str.isdigit, parts)))  # Extrahiert die Zahl als Timeframe
+
+                    df = pd.read_csv(file_path, delimiter='\t', header=None,
+                                     names=["iso_time", "open", "high", "low", "close", "volume"])
+
+                    for _, row in df.iterrows():
+                        candle = Candle(
+                            asset=asset,
+                            broker="Faker",
+                            open=row["open"],
+                            high=row["high"],
+                            low=row["low"],
+                            close=row["close"],
+                            iso_time=datetime.strptime(row["iso_time"], "%Y-%m-%d %H:%M"),
+                            timeframe=timeframe
+                        )
+                        candles.append(candle)
+
+
+        return candles
+
 
     @staticmethod
     def _parse_candle_data(csv_filename) -> list[dict]:
