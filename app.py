@@ -1,4 +1,5 @@
 import queue
+from datetime import time
 from threading import Thread
 
 from flask import Flask, request, Response, render_template, jsonify
@@ -187,12 +188,11 @@ def stream_logs():
     def generate():
         while True:
             try:
-                # Check if there's a log entry available in the queue
-                log_entry = log_queue.get(timeout=5)  # Add a timeout to avoid hanging indefinitely when no client is connected
+                log_entry = log_queue.get_nowait()  # Non-blocking
                 yield f"data: {log_entry}\n\n"
                 log_queue.task_done()
             except queue.Empty:
-                continue  # No logs to send, continue waiting
+                time.sleep(1)  # Prevents CPU overuse, waits before retrying
 
     return Response(generate(), mimetype='text/event-stream')
 # endregion
