@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from app.api.GETParams import GETParams
+from files.api.GETParams import GETParams
 
 
 # get /v5/position/list

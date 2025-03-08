@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from app.api.POSTParams import POSTParams
+from files.api.POSTParams import POSTParams
 
 
 # post /v5/order/cancel

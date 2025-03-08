@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-from app.models.asset.Candle import Candle
-from app.models.trade.Order import Order
+from files.models.asset.Candle import Candle
+from files.models.trade.Order import Order
 
 
 class TradeResult(BaseModel):

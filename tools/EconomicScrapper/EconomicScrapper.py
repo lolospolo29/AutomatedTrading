@@ -3,7 +3,7 @@ from datetime import datetime
 
 from zoneinfo import ZoneInfo
 import pytz
-from app.monitoring.logging.logging_startup import logger
+from files.monitoring.logging.logging_startup import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service

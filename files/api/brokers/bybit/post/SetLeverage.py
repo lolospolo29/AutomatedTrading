@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from app.api.POSTParams import POSTParams
+from files.api.POSTParams import POSTParams
 
 
 # post /v5/position/set-leverage
