@@ -2,7 +2,6 @@ flask~=3.0.3
 gunicorn
 
 motor
-bson
 pymongo
 requests
 dash

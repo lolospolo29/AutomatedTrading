@@ -1,7 +1,6 @@
 from typing import Any
 
 from bson.objectid import ObjectId
-from bson.son import SON  # ✅ Correct
 
 from pymongo import MongoClient
 
