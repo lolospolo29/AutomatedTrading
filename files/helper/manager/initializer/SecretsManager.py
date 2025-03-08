@@ -45,9 +45,9 @@ class SecretsManager:
         if self._config_file:
             config.read(self._config_file)
         else:
-            config.read(os.getenv("CONFIG_PATH", "config.ii"))  # Fallback auf "config.ini"
+            config.read(os.getenv("CONFIG_PATH", "config.ini"))  # Fallback auf "config.ini"
 
-        secrets_path = config.get("paths", environment_path_key, fallback="config/secrets.json")
+        secrets_path = config.get("paths", environment_path_key, fallback="secrets.DEV.json")
 
         # Rückgabe des vollständigen Pfads zur Secrets-Datei
         return os.path.join(os.path.dirname(self._config_file), secrets_path)
