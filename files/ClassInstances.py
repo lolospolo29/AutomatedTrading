@@ -2,6 +2,7 @@ import time
 from functools import partial
 from threading import Thread
 
+from dotenv import load_dotenv
 from watchdog.observers import Observer
 
 from files.api.brokers.bybit.BybitHandler import BybitHandler
@@ -26,6 +27,9 @@ from tools.FileHandler import FileHandler
 from files.helper.manager.initializer.ConfigManager import ConfigManager
 
 # Broker
+
+load_dotenv()
+
 
 secret_manager = SecretsManager()
 
