@@ -1,5 +1,6 @@
 from files.helper.strategy.DoubleFib15 import DoubleFib15
 from files.helper.strategy.DoubleFib1 import DoubleFib1
+from files.helper.strategy.DoubleFib5 import DoubleFib5
 from files.helper.strategy.SB import LondonSB
 from files.models.strategy.Strategy import Strategy
 from files.monitoring.logging.logging_startup import logger
@@ -16,6 +17,9 @@ class StrategyFactory:
             return doublefib
         if typ == "DoubleFib1":
             doublefib =  DoubleFib1()
+            return doublefib
+        if typ == "DoubleFib5":
+            doublefib =  DoubleFib5()
             return doublefib
         logger.warning(f"No strategy found for {typ}")
 

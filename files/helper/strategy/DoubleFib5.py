@@ -23,7 +23,7 @@ from files.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
 # Double Fib
 
-class DoubleFib15(Strategy):
+class DoubleFib5(Strategy):
 
     def __init__(self,):
         self.name = "DoubleFib5"
