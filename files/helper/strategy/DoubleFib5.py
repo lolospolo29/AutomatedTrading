@@ -39,7 +39,8 @@ class DoubleFib5(Strategy):
 
     def is_in_time(self, time) -> bool:
         for timewindow in self.time_windows:
-            if timewindow.is_in_time(time):
+            timewindow:ITimeWindow = timewindow
+            if timewindow.is_in_entry_window(time):
                 return True
         return False
 
