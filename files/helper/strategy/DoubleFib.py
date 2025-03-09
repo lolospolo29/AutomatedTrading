@@ -55,7 +55,7 @@ class DoubleFib(Strategy):
 
             imbalances = self._price_mediator.get_imbalances(timeFrame)
 
-            if candles[-2].iso_time.day != candles[-1].iso_time.day or len(imbalances) > 350:
+            if candles[-2].iso_time.day != candles[-1].iso_time.day or len(imbalances) > 900:
                 self._price_mediator.reset()
 
             if not bos or not imbalances:
@@ -82,14 +82,14 @@ class DoubleFib(Strategy):
             if fib_levels["fib_low"] < last_candle.close < fib_levels["fib_high"]:
                 if bos.direction == "Bullish" and fib_levels["bullish_low_ote"] < last_candle.close < fib_levels["bullish_high_ote"]:
                     stop = fib_levels["fib_low"]
-                    take_profit = fib_levels["fib_high"]
+                    take_profit = fib_levels["fib_bearish_tp"]
                     order_dir = OrderDirectionEnum.BUY.value
                     exit_dir = OrderDirectionEnum.SELL.value
                     profit_dir = TriggerDirection.RISE.value
                     stop_dir = TriggerDirection.FALL.value
                 if bos.direction == "Bearish" and fib_levels["bearish_low_ote"] < last_candle.close < fib_levels["bearish_high_ote"]:
                     stop = fib_levels["fib_high"]
-                    take_profit = fib_levels["fib_low"]
+                    take_profit = fib_levels["fib_bullish_tp"]
                     order_dir = OrderDirectionEnum.SELL.value
                     exit_dir = OrderDirectionEnum.BUY.value
                     profit_dir = TriggerDirection.FALL.value
@@ -115,6 +115,7 @@ class DoubleFib(Strategy):
     def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
 
         # todo trail stop
+        #todo faker exit trade prd
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)
 
     def _create_trade(self,relation:Relation,order_dir:str,exit_dir:str,stop_dir:str
@@ -166,6 +167,8 @@ class DoubleFib(Strategy):
             "fib_high": None,
             "fib_low": None,
             "fib_eq": None,
+            "fib_bearish_tp": None,
+            "fib_bullish_tp": None,
             "bullish_low_ote": None,
             "bearish_high_ote": None
         }
@@ -173,11 +176,11 @@ class DoubleFib(Strategy):
         profit_stop_entry = []
 
         for level in levels:
-            if level.fib_level == 0.79 and level.direction == "Bullish":
+            if level.fib_level == 0.705 and level.direction == "Bullish":
                 fib_levels["bullish_low_ote"] = level.level
             if level.fib_level == 0.62 and level.direction == "Bullish":
                 fib_levels["bullish_high_ote"] = level.level
-            if level.fib_level == 0.79 and level.direction == "Bearish":
+            if level.fib_level == 0.705 and level.direction == "Bearish":
                 fib_levels["bearish_high_ote"] = level.level
             if level.fib_level == 0.62 and level.direction == "Bearish":
                 fib_levels["bearish_low_ote"] = level.level
@@ -187,6 +190,11 @@ class DoubleFib(Strategy):
                 fib_levels["fib_eq"] = level.level
             if level.fib_level == 0.0 and level.direction == "Bullish":
                 fib_levels["fib_high"] = level.level
+            if level.fib_level == 1.5 and level.direction == "Bullish":
+                fib_levels["fib_bullish_tp"] = level.level
+            if level.fib_level == 1.5 and level.direction == "Bearish":
+                fib_levels["fib_bearish_tp"] = level.level
+
             profit_stop_entry.extend([candle.close for candle in level.candles])
 
         return fib_levels, profit_stop_entry

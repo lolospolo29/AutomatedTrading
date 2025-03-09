@@ -36,7 +36,7 @@ from files.models.frameworks.structure.MitigationBlock import MitigationBlock
 class PriceMediator:
     def __init__(self):
         self._lock = threading.Lock()
-        self._ote = Fibonnaci([0.62,0.79,1.5],"OTE")
+        self._ote = Fibonnaci([0.62,0.705,1.5],"OTE")
         self._pd = Fibonnaci([0.0,0.5,1.0],"PD")
         self._deviation = Fibonnaci([1.5,2.0,3.0,4.0],"STDV")
         self._swings: dict[int, list[PDArray]] = {}
@@ -104,6 +104,10 @@ class PriceMediator:
 
             self._remove_duplicate_consecutive_candles(timeframe)
             self._remove_duplicate_bpr(timeframe)
+            self._remove_duplicate_eqhl(timeframe)
+            self._remove_duplicate_orderblocks(timeframe)
+            self._remove_duplicate_consecutive_candles(timeframe)
+            self._remove_duplicate_swings(timeframe)
 
     # region ---- Getter Methods ----
 
@@ -233,7 +237,7 @@ class PriceMediator:
             if eqhl:
                 if timeframe not in self._eqhl:
                     self._eqhl[timeframe] = []
-                self._eqhl[timeframe].append(eqhl)
+                self._eqhl[timeframe].extend(eqhl)
 
     def _detect_orderblock(self, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects Orderblock patterns."""
@@ -432,6 +436,84 @@ class PriceMediator:
                 self._current_bos[timeframe].status = "MITIGATED"
 
     # endregion
+    def _remove_duplicate_swings(self, timeframe: int):
+        if timeframe not in self._swings:
+            return
+
+        unique_eqhl = []
+        seen_candle_sets = set()  # Track unique sets of candle IDs
+
+        for hl in self._swings[timeframe]:
+            if hl.name == "High" or hl.name == "Low":
+                candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
+
+                if candle_ids not in seen_candle_sets:
+                    unique_eqhl.append(hl)
+                    seen_candle_sets.add(candle_ids)  # Mark as seen
+
+        # Combine filtered BPR imbalances with non-BPR imbalances
+        self._swings[timeframe] = unique_eqhl
+
+    def _remove_duplicate_eqhl(self, timeframe: int):
+        if timeframe not in self._eqhl:
+            return
+
+        unique_eqhl = []
+        seen_candle_sets = set()  # Track unique sets of candle IDs
+
+        for hl in self._eqhl[timeframe]:
+            if hl.name == "EQH" or hl.name == "EQL":
+                candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
+
+                if candle_ids not in seen_candle_sets:
+                    unique_eqhl.append(hl)
+                    seen_candle_sets.add(candle_ids)  # Mark as seen
+
+        # Combine filtered BPR imbalances with non-BPR imbalances
+        self._eqhl[timeframe] = unique_eqhl
+
+    def _remove_duplicate_pbs(self, timeframe: int):
+        if timeframe not in self._probulsion_blocks:
+            return
+
+        unique_ob = []
+        seen_candle_sets = set()  # Track unique sets of candle IDs
+        non_obs = []  # Store non-BPR imbalances
+
+        for pb in self._probulsion_blocks[timeframe]:
+            if pb.name == "PB":
+                candle_ids = frozenset(candle.id for candle in pb.candles)  # Get unique candle IDs
+
+                if candle_ids not in seen_candle_sets:
+                    unique_ob.append(pb)
+                    seen_candle_sets.add(candle_ids)  # Mark as seen
+            else:
+                non_obs.append(pb)  # Keep non-BPR imbalances
+
+        # Combine filtered BPR imbalances with non-BPR imbalances
+        self._probulsion_blocks[timeframe] = unique_ob + non_obs
+
+
+    def _remove_duplicate_orderblocks(self, timeframe: int):
+        if timeframe not in self._orderblocks:
+            return
+
+        unique_ob = []
+        seen_candle_sets = set()  # Track unique sets of candle IDs
+        non_obs = []  # Store non-BPR imbalances
+
+        for ob in self._orderblocks[timeframe]:
+            if ob.name == "SCOB" or ob.name == "OB":
+                candle_ids = frozenset(candle.id for candle in ob.candles)  # Get unique candle IDs
+
+                if candle_ids not in seen_candle_sets:
+                    unique_ob.append(ob)
+                    seen_candle_sets.add(candle_ids)  # Mark as seen
+            else:
+                non_obs.append(ob)  # Keep non-BPR imbalances
+
+        # Combine filtered BPR imbalances with non-BPR imbalances
+        self._orderblocks[timeframe] = unique_ob + non_obs
 
     # region Duplicate Detection
     def _remove_duplicate_consecutive_candles(self, timeframe: int):
@@ -464,7 +546,7 @@ class PriceMediator:
         non_bpr_imbalances = []  # Store non-BPR imbalances
 
         for imbalance in self._imbalances[timeframe]:
-            if imbalance.name == "BPR":
+            if imbalance.name == "BPR" or imbalance.name == "IFVG" or imbalance.name == "FVG":
                 candle_ids = frozenset(candle.id for candle in imbalance.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
