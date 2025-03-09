@@ -1,4 +1,4 @@
-from files.helper.strategy.DoubleFib import DoubleFib
+from files.helper.strategy.DoubleFib15 import DoubleFib15
 from files.helper.strategy.DoubleFib1 import DoubleFib1
 from files.helper.strategy.SB import LondonSB
 from files.models.strategy.Strategy import Strategy
@@ -11,8 +11,8 @@ class StrategyFactory:
         if typ == "LondonSB":
             londonsb =  LondonSB()
             return londonsb
-        if typ == "DoubleFib":
-            doublefib =  DoubleFib()
+        if typ == "DoubleFib15":
+            doublefib =  DoubleFib15()
             return doublefib
         if typ == "DoubleFib1":
             doublefib =  DoubleFib1()
