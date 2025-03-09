@@ -37,7 +37,10 @@ class equalHL:
 
                 # Check if the highs/lows are within ADR tolerance
                 if abs(swing1_high - swing2_high) <= adr:
-                    levels.append(Level(level=highest,fib_level=0,candles=[swing1.candles, swing2.candles],reference=swing1.id,name="EQH"))
+                    candles = []
+                    candles.extend(swing1.candles)
+                    candles.extend(swing2.candles)
+                    levels.append(Level(level=highest,fib_level=0,candles=candles,reference=swing1.id,name="EQH"))
 
         return levels
 
@@ -59,8 +62,11 @@ class equalHL:
 
                 # Check if the highs/lows are within ADR tolerance
                 if abs(swing1_low - swing2_low) <= adr:
+                    candles = []
+                    candles.extend(swing1.candles)
+                    candles.extend(swing2.candles)
                     levels.append(
-                        Level(level=lowest, fib_level=0, candles=[swing1.candles, swing2.candles],
+                        Level(level=lowest, fib_level=0, candles=candles,
                               reference=swing1.id,name="EQL"))
 
         return levels
