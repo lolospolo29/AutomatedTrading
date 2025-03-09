@@ -8,7 +8,7 @@ import pandas as pd
 from watchdog.events import FileSystemEventHandler
 
 from files.helper.manager.AssetManager import AssetManager
-from files.helper.registry.StrategyRegistry import StrategyManager
+from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.mappers.AssetMapper import AssetMapper
 from files.models.asset.Candle import Candle
 from files.monitoring.logging.logging_startup import logger
@@ -25,9 +25,9 @@ class FileHandler(FileSystemEventHandler):
     """
     # region Initializing
 
-    def __init__(self,asset_manager:AssetManager,strategy_manager:StrategyManager,backtest_service:BacktestService):
+    def __init__(self, asset_manager:AssetManager, strategy_manager:StrategyRegistry, backtest_service:BacktestService):
         self._asset_manager: AssetManager = asset_manager
-        self._strategy_manager: StrategyManager = strategy_manager
+        self._strategy_manager: StrategyRegistry = strategy_manager
         self._backtest_service:BacktestService = backtest_service
 
     # endregion

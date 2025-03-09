@@ -2,7 +2,7 @@ import threading
 from typing import Any, Dict
 
 from files.helper.manager.AssetManager import AssetManager
-from files.helper.registry.StrategyRegistry import StrategyManager
+from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.helper.manager.TradeManager import TradeManager
 from files.mappers.AssetMapper import AssetMapper
 from files.models.asset.Relation import Relation
@@ -44,12 +44,12 @@ class TradingService:
 
     # region Initializing
 
-    def __init__(self,asset_manager:AssetManager,trade_manager:TradeManager
-                 ,strategy_manager:StrategyManager,news_service:NewsService):
+    def __init__(self, asset_manager:AssetManager, trade_manager:TradeManager
+                 , strategy_manager:StrategyRegistry, news_service:NewsService):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._asset_manager: AssetManager = asset_manager
             self._trade_manager: TradeManager = trade_manager
-            self._strategy_manager: StrategyManager = strategy_manager
+            self._strategy_manager: StrategyRegistry = strategy_manager
             self._asset_mapper = AssetMapper()
             self._news_service :NewsService = news_service
             self._logger = logger

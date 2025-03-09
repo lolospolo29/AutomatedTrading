@@ -21,13 +21,13 @@ from files.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
 # Double Fib
 
-class DoubleFib(Strategy):
+class DoubleFib1(Strategy):
 
     def __init__(self,):
-        self.name = "DoubleFib"
+        self.name = "DoubleFib1"
         self.timeframes = []
 
-        self.timeframes.append(ExpectedTimeFrame(timeframe=15,max_Len=90))
+        self.timeframes.append(ExpectedTimeFrame(timeframe=1,max_Len=90))
 
 
         self._timewindow:ITimeWindow = NYOpen()
@@ -46,7 +46,7 @@ class DoubleFib(Strategy):
         else:
             return StrategyResult()
 
-        if candles and timeFrame == 15:
+        if candles and timeFrame == 1:
 
             third_candle: Candle = candles[-1]
             second_candle: Candle = candles[-2]
@@ -58,7 +58,7 @@ class DoubleFib(Strategy):
 
             imbalances = self._price_mediator.get_imbalances(timeFrame)
 
-            if len(imbalances) > 900 or third_candle.iso_time.year != second_candle.iso_time.year:
+            if len(imbalances) > 900 or third_candle.iso_time.day != second_candle.iso_time.day:
                 self._price_mediator.reset()
 
             if not bos or not imbalances:
@@ -84,22 +84,22 @@ class DoubleFib(Strategy):
 
             if fib_levels["fib_low"] < third_candle.close < fib_levels["fib_high"]:
                 if bos.direction == "Bullish" and fib_levels["bullish_low_ote"] < third_candle.close < fib_levels["bullish_high_ote"]:
-                    stop = fib_levels["fib_low"]
+                    stop = fib_levels["fib_bullish_tp"]
                     take_profit = fib_levels["fib_bearish_tp"]
                     order_dir = OrderDirectionEnum.BUY.value
                     exit_dir = OrderDirectionEnum.SELL.value
                     profit_dir = TriggerDirection.RISE.value
                     stop_dir = TriggerDirection.FALL.value
                 if bos.direction == "Bearish" and fib_levels["bearish_low_ote"] < third_candle.close < fib_levels["bearish_high_ote"]:
-                    stop = fib_levels["fib_high"]
+                    stop = fib_levels["fib_bearish_tp"]
                     take_profit = fib_levels["fib_bullish_tp"]
                     order_dir = OrderDirectionEnum.SELL.value
                     exit_dir = OrderDirectionEnum.BUY.value
                     profit_dir = TriggerDirection.FALL.value
                     stop_dir = TriggerDirection.RISE.value
 
-            # if not self.is_in_time(time):
-            #     return StrategyResult()
+            if not self.is_in_time(time):
+                 return StrategyResult()
 
             if order_dir:
 
@@ -117,10 +117,6 @@ class DoubleFib(Strategy):
 
     def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
 
-        # todo trail stop
-        # todo faker exit trade prd
-        # todo entry exit swap
-        # todo ui strategy builder for backtest
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)
 
     def _create_trade(self,relation:Relation,order_dir:str,exit_dir:str,stop_dir:str

@@ -76,6 +76,14 @@ class RelationRepository:
         query = self._db.buildQuery("strategyId", _id)
         return StrategyDTO(**self._db.find("Strategy",query)[0])
 
+    def find_strategies(self)->list[StrategyDTO]:
+        strategies_db:list = self._db.find("Strategy",None)
+
+        strategies:list[StrategyDTO] = []
+        for strategy in strategies_db:
+            strategies.append(StrategyDTO(**strategy))
+        return strategies
+
     def update_relation(self,relation:Relation):
         dto:RelationDTO = self.find_relation_by_id(relation.id)
 

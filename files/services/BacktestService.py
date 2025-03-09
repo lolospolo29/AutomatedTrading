@@ -27,7 +27,16 @@ class BacktestService:
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.__factory = StrategyFactory()
             self._backtest_repository = backtest_repository
-            self._asset_selection: list[str] = []
+            self._asset_selection: list[str] = [
+                                                "AUDUSD",
+                                                "BTCUSD",
+                                                "EURJPY",
+                                                "DOGEUSDT",
+                                                "AAPLUSUSD",
+                                                "EURUSD",
+                                                "XAUUSD",
+                                                "NZDJPY"
+                                            ]
 
             self._initialized = True  # Markiere als initialisiert
 

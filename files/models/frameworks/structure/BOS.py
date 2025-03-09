@@ -63,12 +63,12 @@ class BOS:
         if last_candle.close < self._bullish_b.low and self._bullish_a:
             self._bullish_b = last_candle
             self._iteration_bullish += 1
-            if self._iteration_bullish > 10:
+            if self._iteration_bullish > 8:
                 self._bullish_is_valid = True
         if last_candle.close > self._bearish_b.high and self._bearish_a:
             self._bearish_b = last_candle
             self._iteration_bearish += 1
-            if self._iteration_bearish > 10:
+            if self._iteration_bearish > 8:
                 self._bearish_is_valid = True
 
     def _structure_reset_bullish(self, last_candle: Candle):

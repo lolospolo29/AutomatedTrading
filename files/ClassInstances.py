@@ -16,7 +16,7 @@ from files.helper.registry.BrokerRegistry import BrokerRegistry
 from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.RelationManager import RelationManager
 from files.helper.manager.RiskManager import RiskManager
-from files.helper.registry.StrategyRegistry import StrategyManager
+from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.helper.manager.TradeManager import TradeManager
 from files.helper.manager.initializer.SecretsManager import SecretsManager
 from files.services.BacktestService import BacktestService
@@ -63,11 +63,11 @@ relation_manager = RelationManager(relation_repository=relation_repository,asset
 
 trade_manager = TradeManager(trade_repository=trade_repository,broker_facade=broker_facade,risk_manager=risk_manager,relation_manager=relation_manager)
 
-strategy_manager = StrategyManager()
+strategy_manager = StrategyRegistry()
 
 config_manager = ConfigManager(trade_manager=trade_manager,asset_manager=asset_manager,relation_manager=relation_manager,strategy_manager=strategy_manager)
 
-strategy_manager = StrategyManager()
+strategy_manager = StrategyRegistry()
 
 # Handler
 
@@ -111,5 +111,5 @@ def MonitorFolder(handler, folderPath):
 thread = Thread(target=partial(MonitorFolder, new_file_handler, "incomingFiles"))
 thread.start()
 
-thread2 = Thread(target=partial(backtest_service.fetch_test_assets))
-thread2.start()
+# thread2 = Thread(target=partial(backtest_service.fetch_test_assets))
+# thread2.start()

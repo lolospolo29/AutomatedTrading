@@ -9,7 +9,7 @@ from files.models.trade.Trade import Trade
 from files.monitoring.logging.logging_startup import logger
 
 
-class StrategyManager:
+class StrategyRegistry:
     """
     Manages strategy instances for asset-broker relations.
 
@@ -30,7 +30,7 @@ class StrategyManager:
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:  # Double-checked locking
-                    cls._instance = super(StrategyManager, cls).__new__(cls)
+                    cls._instance = super(StrategyRegistry, cls).__new__(cls)
         return cls._instance
 
     # region Initializing

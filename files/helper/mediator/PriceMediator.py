@@ -191,8 +191,6 @@ class PriceMediator:
             self._bos.clear()
             self._eqhl.clear()
             self._cisd.clear()
-            self._ndog.clear()
-            self._nwog.clear()
             self._adr = 0.0
 
     def get_current_adr(self) -> float:

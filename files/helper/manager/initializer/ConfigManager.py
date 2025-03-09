@@ -3,7 +3,7 @@ import threading
 from files.helper.factories.StrategyFactory import StrategyFactory
 from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.RelationManager import RelationManager
-from files.helper.registry.StrategyRegistry import StrategyManager
+from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.helper.manager.TradeManager import TradeManager
 from files.models.asset.Relation import Relation
 from files.models.asset.SMTPair import SMTPair
@@ -24,13 +24,13 @@ class ConfigManager:
                     cls._instance = super(ConfigManager, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self,trade_manager:TradeManager,asset_manager:AssetManager,relation_manager:RelationManager,strategy_manager:StrategyManager):
+    def __init__(self, trade_manager:TradeManager, asset_manager:AssetManager, relation_manager:RelationManager, strategy_manager:StrategyRegistry):
 
         self._trade_manager: TradeManager = trade_manager
         self._asset_manager: AssetManager = asset_manager
         self._relation_manager: RelationManager = relation_manager
         self._strategy_factory = StrategyFactory()
-        self._strategy_manager: StrategyManager = strategy_manager
+        self._strategy_manager: StrategyRegistry = strategy_manager
 
     # endregion
 

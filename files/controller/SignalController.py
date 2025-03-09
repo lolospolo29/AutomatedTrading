@@ -3,7 +3,7 @@ from typing import Dict, Any
 from files.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.RelationManager import RelationManager
-from files.helper.registry.StrategyRegistry import StrategyManager
+from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.helper.manager.TradeManager import TradeManager
 from files.models.asset.Asset import Asset
 from files.models.asset.Relation import Relation
@@ -26,7 +26,7 @@ class SignalController:
         self._TradeManager = trade_manager
         self._AssetManager = asset_manager
         self._Relation_manager = relation_manager
-        self._StrategyManager = StrategyManager()
+        self._StrategyRegistry = StrategyRegistry()
         self._BacktestService = backtest_service
     # endregion
 
@@ -41,11 +41,6 @@ class SignalController:
 
     def get_test_results(self,strategy:str = None)->list[dict]:
         strategy_name = None
-        try:
-            strategy_name = strategy
-            self._BacktestService.get_test_results(strategy_name)
-        except Exception as e:
-            logger.exception("Get Backtest Results,Exception: {e}".format(e=e))
 
         results = self._BacktestService.get_test_results(strategy_name)
         updated_results = []
@@ -165,7 +160,7 @@ class SignalController:
             logger.warning("Delete Asset failed,Error: {e}".format(e=e))
 
     def get_strategies(self):
-        strategies:list[str] = self._StrategyManager.return_strategies()
+        strategies:list[str] = self._Relation_manager.return_strategies()
         return strategies
 
     def get_brokers(self):

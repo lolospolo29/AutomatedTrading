@@ -4,12 +4,14 @@ from files.db.mongodb.AssetRepository import AssetRepository
 from files.db.mongodb.RelationRepository import RelationRepository
 from files.db.mongodb.dtos.RelationDTO import RelationDTO
 from files.db.mongodb.dtos.SMTPairDTO import SMTPairDTO
+from files.db.mongodb.dtos.StrategyDTO import StrategyDTO
 from files.helper.factories.StrategyFactory import StrategyFactory
 from files.helper.manager.AssetManager import AssetManager
-from files.helper.registry.StrategyRegistry import StrategyManager
+from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.models.asset.Relation import Relation
 from files.models.asset.SMTPair import SMTPair
 from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from files.models.strategy.Strategy import Strategy
 from files.monitoring.logging.logging_startup import logger
 
 
@@ -42,9 +44,18 @@ class RelationManager:
             self._relation_repository = relation_repository
             self._asset_repository = asset_repository
             self._asset_manager = asset_manager
-            self._strategy_manager = StrategyManager()
+            self._strategy_manager = StrategyRegistry()
             self._strategy_factory = StrategyFactory()
             self._initialized = True  # Markiere als initialisiert
+
+    def return_strategies(self)->list[str]:
+        strategies:list[StrategyDTO] =  self._relation_repository.find_strategies()
+        names = []
+
+        for strategy in strategies:
+            strategy:StrategyDTO
+            names.append(strategy.name)
+        return names
 
     def return_relation_for_id(self,relation_id:int)->Relation:
         relation_dto:RelationDTO = self._relation_repository.find_relation_by_id(relation_id)
