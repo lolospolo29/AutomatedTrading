@@ -32,7 +32,6 @@ from files.models.frameworks.structure.Choch import Choch
 from files.models.frameworks.structure.MSS import MSS
 from files.models.frameworks.structure.MitigationBlock import MitigationBlock
 
-
 class PriceMediator:
     def __init__(self):
         self._lock = threading.Lock()

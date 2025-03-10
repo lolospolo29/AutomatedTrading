@@ -13,22 +13,6 @@ class AssetRepository:
         self._db = MongoDB(db_name=db_name, uri=uri)
         self._dto_mapper = DTOMapper()
 
-    # Candle CRUD
-
-    def add_candle(self, asset: str, candle: Candle):
-        self._db.add(asset, candle.model_dump())
-
-    def find_candles_by_asset(self, asset:str)->list[Candle]:
-        query = self._db.buildQuery("asset", asset)
-
-        candles_db:list = self._db.find(collectionName=asset,query=query)
-        candles:list[Candle] = []
-        for candle in candles_db:
-            candles.append(Candle(**candle))
-        return candles
-
-    # endregion
-
     # region Asset Class CRUD
 
     def find_asset_class_by_name(self,name:str)->AssetClassDTO:

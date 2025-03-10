@@ -200,8 +200,6 @@ def stream_logs():
                     yield "data: Stream closed due to inactivity\n\n"
                     break  # Exit loop if no logs for too long
 
-            time.sleep(1)  # Prevent 100% CPU usage
-
     return Response(generate(), mimetype='text/event-stream')
 # endregion
 

@@ -9,6 +9,7 @@ from files.api.brokers.bybit.BybitHandler import BybitHandler
 from files.controller.SignalController import SignalController
 from files.db.mongodb.AssetRepository import AssetRepository
 from files.db.mongodb.BacktestRepository import BacktestRepository
+from files.db.mongodb.DataRepository import DataRepository
 from files.db.mongodb.NewsRepository import NewsRepository
 from files.db.mongodb.RelationRepository import RelationRepository
 from files.db.mongodb.TradeRepository import TradeRepository
@@ -48,6 +49,8 @@ trade_repository = TradeRepository(db_name="Trades",uri=mongo_server)
 
 asset_repository = AssetRepository(db_name="TradingConfig",uri=mongo_server)
 
+data_repository = DataRepository(db_name="TradingData",uri=mongo_server)
+
 relation_repository = RelationRepository(db_name="TradingConfig",uri=mongo_server)
 
 news_repository = NewsRepository("News",mongo_server)
@@ -56,8 +59,7 @@ backtest_repository = BacktestRepository(db_name="Backtest",uri=mongo_server)
 
 # Manager
 
-
-asset_manager = AssetManager(asset_respository=asset_repository)
+asset_manager = AssetManager(asset_respository=asset_repository,trading_data_repository=data_repository)
 
 relation_manager = RelationManager(relation_repository=relation_repository,asset_manager=asset_manager,asset_repository=asset_repository)
 

@@ -1,6 +1,6 @@
 import time
 
-from venv import logger
+from files.monitoring.logging.logging_startup import logger
 
 
 def retry_request(func, max_retries=2, retry_delay=5, *args, **kwargs):

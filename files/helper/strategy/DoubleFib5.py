@@ -91,21 +91,21 @@ class DoubleFib5(Strategy):
             if fib_levels["fib_low"] < third_candle.close < fib_levels["fib_high"]:
                 if bos.direction == "Bullish" and fib_levels["bullish_low_ote"] < third_candle.close < fib_levels["bullish_high_ote"]:
                     stop = fib_levels["fib_low"]
-                    take_profit = fib_levels["fib_bearish_tp"]
+                    take_profit = fib_levels["fib_high"]
                     order_dir = OrderDirectionEnum.BUY.value
                     exit_dir = OrderDirectionEnum.SELL.value
                     profit_dir = TriggerDirection.RISE.value
                     stop_dir = TriggerDirection.FALL.value
                 if bos.direction == "Bearish" and fib_levels["bearish_low_ote"] < third_candle.close < fib_levels["bearish_high_ote"]:
                     stop = fib_levels["fib_high"]
-                    take_profit = fib_levels["fib_bullish_tp"]
+                    take_profit = fib_levels["fib_low"]
                     order_dir = OrderDirectionEnum.SELL.value
                     exit_dir = OrderDirectionEnum.BUY.value
                     profit_dir = TriggerDirection.FALL.value
                     stop_dir = TriggerDirection.RISE.value
 
-            if not self.is_in_time(time):
-                 return StrategyResult()
+            # if not self.is_in_time(time):
+            #      return StrategyResult()
 
             if order_dir:
 
@@ -123,10 +123,6 @@ class DoubleFib5(Strategy):
 
     def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
 
-        # todo trail stop
-        # todo faker exit trade prd
-        # todo entry exit swap
-        # todo ui strategy builder for backtest
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)
 
     def _create_trade(self,relation:Relation,order_dir:str,exit_dir:str,stop_dir:str

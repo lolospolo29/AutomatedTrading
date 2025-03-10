@@ -65,6 +65,8 @@ class DoubleFib15(Strategy):
 
             imbalances = self._price_mediator.get_imbalances(timeFrame)
 
+            # todo list clear logic
+
             if len(imbalances) > 900 or third_candle.iso_time.year != second_candle.iso_time.year:
                 self._price_mediator.reset()
 
@@ -92,14 +94,14 @@ class DoubleFib15(Strategy):
             if fib_levels["fib_low"] < third_candle.close < fib_levels["fib_high"]:
                 if bos.direction == "Bullish" and fib_levels["bullish_low_ote"] < third_candle.close < fib_levels["bullish_high_ote"]:
                     stop = fib_levels["fib_low"]
-                    take_profit = fib_levels["fib_bearish_tp"]
+                    take_profit = fib_levels["fib_high"]
                     order_dir = OrderDirectionEnum.BUY.value
                     exit_dir = OrderDirectionEnum.SELL.value
                     profit_dir = TriggerDirection.RISE.value
                     stop_dir = TriggerDirection.FALL.value
                 if bos.direction == "Bearish" and fib_levels["bearish_low_ote"] < third_candle.close < fib_levels["bearish_high_ote"]:
                     stop = fib_levels["fib_high"]
-                    take_profit = fib_levels["fib_bullish_tp"]
+                    take_profit = fib_levels["fib_low"]
                     order_dir = OrderDirectionEnum.SELL.value
                     exit_dir = OrderDirectionEnum.BUY.value
                     profit_dir = TriggerDirection.FALL.value

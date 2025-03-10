@@ -1,6 +1,7 @@
 import threading
 
 from files.db.mongodb.AssetRepository import AssetRepository
+from files.db.mongodb.DataRepository import DataRepository
 from files.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
 from files.db.mongodb.dtos.AssetDTO import AssetDTO
 from files.models.asset.Asset import Asset
@@ -40,10 +41,11 @@ class AssetManager:
         return cls._instance
 
 
-    def __init__(self,asset_respository:AssetRepository):
+    def __init__(self,asset_respository:AssetRepository,trading_data_repository:DataRepository):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.assets: dict[str,Asset] = {}
             self._asset_respository = asset_respository
+            self._data_repository = trading_data_repository
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
@@ -124,7 +126,7 @@ class AssetManager:
     def _add_candle_to_db(self, candle: Candle):
         logger.debug(f"Adding candle to db:{candle.asset}")
         try:
-            self._asset_respository.add_candle(candle.asset, candle)
+            self._data_repository.add_candle(candle.asset, candle)
         except Exception as e:
             logger.critical("Failed to add candle to db with exception {}".format(e))
 
