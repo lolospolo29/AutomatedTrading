@@ -1,6 +1,5 @@
-import uuid
-
 from files.helper.builder.OrderBuilder import OrderBuilder
+from files.helper.builder.TradeBuilder import TradeBuilder
 from files.helper.calculator.RiskCalculator import RiskCalculator
 from files.helper.mediator.PriceMediator import PriceMediator
 from files.interfaces.ITimeWindow import ITimeWindow
@@ -18,30 +17,32 @@ from files.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from files.models.trade.enums.TriggerByEnum import TriggerByEnum
 from files.models.trade.enums.TriggerDirectionEnum import TriggerDirection
 
-
 # Double Fib
 
 class DoubleFib1(Strategy):
 
-    def __init__(self,):
+    def __init__(self, ):
         self.name = "DoubleFib1"
         self.timeframes = []
 
-        self.timeframes.append(ExpectedTimeFrame(timeframe=1,max_Len=90))
+        self.timeframes.append(ExpectedTimeFrame(timeframe=1, max_Len=90))
 
-        self._timewindow:ITimeWindow = NYOpen()
+        self._timewindow: ITimeWindow = NYOpen()
+        self._order_builder = OrderBuilder()
+        self._trade_builder = TradeBuilder()
         self.time_windows = []
-        self._price_mediator:PriceMediator = PriceMediator()
-        self._risk_calculator:RiskCalculator = RiskCalculator()
+        self._price_mediator: PriceMediator = PriceMediator()
+        self._risk_calculator: RiskCalculator = RiskCalculator()
 
     def is_in_time(self, time) -> bool:
         return self._timewindow.is_in_entry_window(time) or self._timewindow.is_in_exit_window(time)
 
-    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
+    def get_entry(self, candles: list[Candle], timeFrame: int, relation: Relation, asset_class: str) -> StrategyResult:
 
-        if len(candles) >= 3:
-            self._price_mediator.detect_pd_arrays(first_candle=candles[-3],second_candle=candles[-2],third_candle=candles[-1]
-                                                  ,timeframe=timeFrame)
+        if len(candles) >= 0:
+            self._price_mediator.detect_pd_arrays(first_candle=candles[-3], second_candle=candles[-2],
+                                                  third_candle=candles[-1]
+                                                  , timeframe=timeFrame)
         else:
             return StrategyResult()
 
@@ -50,29 +51,29 @@ class DoubleFib1(Strategy):
             third_candle: Candle = candles[-1]
             second_candle: Candle = candles[-2]
             first_candle: Candle = candles[-3]
-
-            time = third_candle.iso_time
-
-            bos = self._price_mediator.get_bos(timeFrame)
-
-            imbalances = self._price_mediator.get_imbalances(timeFrame)
-
-            if len(imbalances) > 900 or third_candle.iso_time.day != second_candle.iso_time.day:
-                self._price_mediator.reset()
-
-            if not bos or not imbalances:
-                return StrategyResult()
-
-            levels = self._price_mediator.get_fibonnaci(bos.candles,ote=True)
-
-            levels.extend(self._price_mediator.get_fibonnaci(bos.candles,pd=True))
-
-            fib_levels,profit_stop_entry = self._get_fibonacci_levels(levels)
-
-            if bos.direction == "Bullish" and (third_candle.close > fib_levels["fib_eq"] or third_candle.low < fib_levels["fib_low"]):
-                return StrategyResult()
-            if bos.direction == "Bearish" and (third_candle.close < fib_levels["fib_eq"] or third_candle.high > fib_levels["fib_high"]):
-                return StrategyResult()
+            #
+            # time = third_candle.iso_time
+            #
+            # bos = self._price_mediator.get_bos(timeFrame)
+            #
+            # imbalances = self._price_mediator.get_imbalances(timeFrame)
+            #
+            # if len(imbalances) > 900 or third_candle.iso_time.day != second_candle.iso_time.day:
+            #     self._price_mediator.reset()
+            #
+            # if not bos or not imbalances:
+            #     return StrategyResult()
+            #
+            # levels = self._price_mediator.get_fibonnaci(bos.candles,ote=True)
+            #
+            # levels.extend(self._price_mediator.get_fibonnaci(bos.candles,pd=True))
+            #
+            # fib_levels,profit_stop_entry = self._get_fibonacci_levels(levels)
+            #
+            # if bos.direction == "Bullish" and (third_candle.close > fib_levels["fib_eq"] or third_candle.low < fib_levels["fib_low"]):
+            #     return StrategyResult()
+            # if bos.direction == "Bearish" and (third_candle.close < fib_levels["fib_eq"] or third_candle.high > fib_levels["fib_high"]):
+            #     return StrategyResult()
 
             stop = None
             take_profit = None
@@ -80,60 +81,76 @@ class DoubleFib1(Strategy):
             exit_dir = None
             profit_dir = None
             stop_dir = None
+            stop = first_candle.close
+            take_profit = first_candle.high
+            order_dir = OrderDirectionEnum.BUY.value
+            exit_dir = OrderDirectionEnum.SELL.value
+            profit_dir = TriggerDirection.RISE.value
+            stop_dir = TriggerDirection.FALL.value
 
-            if fib_levels["fib_low"] < third_candle.close < fib_levels["fib_high"]:
-                if bos.direction == "Bullish" and fib_levels["bullish_low_ote"] < third_candle.close < fib_levels["bullish_high_ote"]:
-                    stop = fib_levels["fib_bullish_tp"]
-                    take_profit = fib_levels["fib_bearish_tp"]
-                    order_dir = OrderDirectionEnum.BUY.value
-                    exit_dir = OrderDirectionEnum.SELL.value
-                    profit_dir = TriggerDirection.RISE.value
-                    stop_dir = TriggerDirection.FALL.value
-                if bos.direction == "Bearish" and fib_levels["bearish_low_ote"] < third_candle.close < fib_levels["bearish_high_ote"]:
-                    stop = fib_levels["fib_bearish_tp"]
-                    take_profit = fib_levels["fib_bullish_tp"]
-                    order_dir = OrderDirectionEnum.SELL.value
-                    exit_dir = OrderDirectionEnum.BUY.value
-                    profit_dir = TriggerDirection.FALL.value
-                    stop_dir = TriggerDirection.RISE.value
-
-            if not self.is_in_time(time):
-                 return StrategyResult()
+            # if fib_levels["fib_low"] < third_candle.close < fib_levels["fib_high"]:
+            #     if bos.direction == "Bullish" and fib_levels["bullish_low_ote"] < third_candle.close < fib_levels["bullish_high_ote"]:
+            #         stop = fib_levels["fib_bullish_tp"]
+            #         take_profit = fib_levels["fib_bearish_tp"]
+            #         order_dir = OrderDirectionEnum.BUY.value
+            #         exit_dir = OrderDirectionEnum.SELL.value
+            #         profit_dir = TriggerDirection.RISE.value
+            #         stop_dir = TriggerDirection.FALL.value
+            #     if bos.direction == "Bearish" and fib_levels["bearish_low_ote"] < third_candle.close < fib_levels["bearish_high_ote"]:
+            #         stop = fib_levels["fib_bearish_tp"]
+            #         take_profit = fib_levels["fib_bullish_tp"]
+            #         order_dir = OrderDirectionEnum.SELL.value
+            #         exit_dir = OrderDirectionEnum.BUY.value
+            #         profit_dir = TriggerDirection.FALL.value
+            #         stop_dir = TriggerDirection.RISE.value
+            #
+            # if not self.is_in_time(time):
+            #      return StrategyResult()
 
             if order_dir:
 
-                trade = self._create_trade(relation=relation,order_dir=order_dir
-                                           ,exit_dir=exit_dir,profit_dir=profit_dir
-                                           ,stop_dir=stop_dir,take_profit=take_profit
-                                           ,stop=stop,last_candle=third_candle
-                                           ,asset_class=asset_class,levels=levels)
+                trade = self._create_trade(relation=relation, order_dir=order_dir
+                                           , exit_dir=exit_dir, profit_dir=profit_dir
+                                           , stop_dir=stop_dir, take_profit=take_profit
+                                           , stop=stop, last_candle=third_candle
+                                           , asset_class=asset_class, levels=[])
 
-                return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NEWTRADE.value)
+                return StrategyResult(trade=trade, status=StrategyResultStatusEnum.NEWTRADE.value)
             else:
                 return StrategyResult()
         else:
             return StrategyResult()
 
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
+    def get_exit(self, candles: list, timeFrame: int, trade: Trade, relation: Relation) -> StrategyResult:
+        # todo db asset add category also too strategy
+        # todo test trade on dev
+        # todo list clear limit logic with queue or limit or candles input + expcetimeframe
+        # todo test price mediator
+        # todo restart after shutdown logic for trade / fill strategy
+        # todo trail stop
+        # todo faker exit trade prd
+        # todo entry exit swap
+        # todo ui strategy builder for backtest
+        return StrategyResult(trade=trade, status=StrategyResultStatusEnum.NOCHANGE.value)
 
-        return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)
+    def _create_trade(self, relation: Relation, order_dir: str, exit_dir: str, stop_dir: str
+                      , profit_dir: str, take_profit: float, stop: float, last_candle: Candle, asset_class: str,
+                      levels: list[FrameWork]):
 
-    def _create_trade(self,relation:Relation,order_dir:str,exit_dir:str,stop_dir:str
-                      ,profit_dir:str,take_profit:float,stop:float,last_candle:Candle,asset_class:str,levels:list[FrameWork]):
-        trade = Trade(relation=relation, category=CategoryEnum.LINEAR.value, orders=[], tradeId=str(uuid.uuid4()))
-        trade.side = order_dir
+        trade = self._trade_builder.create_trade(relation=relation, category=CategoryEnum.LINEAR.value, orders=[],
+                                                 side=order_dir).build()
 
-        entry_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
-                                                  , category=CategoryEnum.LINEAR.value, side=order_dir
-                                                  , risk_percentage=1
-                                                  , order_number=1,
-                                                  tradeId=trade.tradeId).build()
+        entry_order = self._order_builder.create_order(relation=relation, symbol=relation.asset, confirmations=levels
+                                                       , category=CategoryEnum.LINEAR.value, side=order_dir
+                                                       , risk_percentage=1
+                                                       , order_number=1,
+                                                       tradeId=trade.tradeId).build()
 
-        stop_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
-                                                 , category=CategoryEnum.LINEAR.value, side=exit_dir
-                                                 , risk_percentage=1
-                                                 , order_number=2
-                                                 , tradeId=trade.tradeId).set_conditional(
+        stop_order = self._order_builder.create_order(relation=relation, symbol=relation.asset, confirmations=levels
+                                                      , category=CategoryEnum.LINEAR.value, side=exit_dir
+                                                      , risk_percentage=1
+                                                      , order_number=2
+                                                      , tradeId=trade.tradeId).set_conditional(
             trigger_direction=stop_dir
             , trigger_price=stop, trigger_by=
             TriggerByEnum.MARKPRICE.value).set_defaults(price=stop).build()
@@ -162,7 +179,7 @@ class DoubleFib1(Strategy):
         return trade
 
     @staticmethod
-    def _get_fibonacci_levels(levels)->tuple[dict,list]:
+    def _get_fibonacci_levels(levels) -> tuple[dict, list]:
         fib_levels = {
             "fib_high": None,
             "fib_low": None,
@@ -198,4 +215,3 @@ class DoubleFib1(Strategy):
             profit_stop_entry.extend([candle.close for candle in level.candles])
 
         return fib_levels, profit_stop_entry
-

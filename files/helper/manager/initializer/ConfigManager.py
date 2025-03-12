@@ -1,4 +1,5 @@
 import threading
+from logging import Logger
 
 from files.helper.factories.StrategyFactory import StrategyFactory
 from files.helper.manager.AssetManager import AssetManager
@@ -8,7 +9,6 @@ from files.helper.manager.TradeManager import TradeManager
 from files.models.asset.Relation import Relation
 from files.models.asset.SMTPair import SMTPair
 from files.monitoring.log_time import log_time
-from files.monitoring.logging.logging_startup import logger
 
 
 class ConfigManager:
@@ -24,20 +24,23 @@ class ConfigManager:
                     cls._instance = super(ConfigManager, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, trade_manager:TradeManager, asset_manager:AssetManager, relation_manager:RelationManager, strategy_manager:StrategyRegistry):
+    def __init__(self, trade_manager:TradeManager, asset_manager:AssetManager, relation_manager:RelationManager
+                 , strategy_registry:StrategyRegistry,strategy_factory:StrategyFactory
+                 , logger:Logger):
 
         self._trade_manager: TradeManager = trade_manager
         self._asset_manager: AssetManager = asset_manager
         self._relation_manager: RelationManager = relation_manager
-        self._strategy_factory = StrategyFactory()
-        self._strategy_manager: StrategyRegistry = strategy_manager
+        self._strategy_factory = strategy_factory
+        self._strategy_manager: StrategyRegistry = strategy_registry
+        self._logger: Logger = logger
 
     # endregion
 
     # region Starting Setup
     @log_time
     def initialize_managers(self):
-        logger.info("Initializing ConfigManager")
+        self._logger.info("Initializing ConfigManager")
 
         assets = self._asset_manager.return_assets()
 
@@ -59,7 +62,7 @@ class ConfigManager:
         for trade in trades:
             self._trade_manager.register_trade(trade=trade)
 
-        logger.info("ConfigManager initialized")
+        self._logger.info("ConfigManager initialized")
     # endregion
 
     def _create_relation(self, relation:Relation):
@@ -72,12 +75,12 @@ class ConfigManager:
                 return
 
             self._strategy_manager.register_strategy(relation=relation, strategy=strategy)
-            logger.debug(f"Adding relation to asset:{relation.asset}")
+            self._logger.debug(f"Adding relation to asset:{relation.asset}")
 
             self._relation_manager.add_timeframes_to_asset(relation=relation)
 
         except Exception as e:
-            logger.critical("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+            self._logger.critical("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 
     def _create_smt(self,smt_pair:SMTPair,relation:Relation):
         if ((relation.asset == smt_pair.asset_a or relation.asset == smt_pair.asset_b)

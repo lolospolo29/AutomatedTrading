@@ -1,6 +1,5 @@
 from files.models.asset.Candle import Candle
 from files.models.frameworks.Level import Level
-from files.monitoring.logging.logging_startup import logger
 
 class Fibonnaci:
 
@@ -22,7 +21,7 @@ class Fibonnaci:
             all_levels.extend(levels)
 
         except Exception as e:
-            logger.error("Return Levels failed with exception:{e}".format(e=e))
+            pass
         finally:
             return all_levels
 

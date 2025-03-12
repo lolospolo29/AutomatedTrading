@@ -4,7 +4,6 @@ import json
 from typing import Any
 from configparser import ConfigParser
 from dotenv import load_dotenv
-from files.monitoring.logging.logging_startup import logger
 
 # Lade die Umgebungsvariablen aus der .env-Datei
 load_dotenv()
@@ -24,16 +23,16 @@ class SecretsManager:
     # region Initializing
     def __init__(self, config_file=None):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            try:
-                config_file = os.getenv("CONFIG_PATH", config_file)  # Holen von CONFIG_PATH
-                self._config_file = config_file
-                self._secrets_file_path = self.load_secrets_path()  # Laden des Geheimnis-Pfades
-                self._secrets = self.load_secrets()  # Laden der Geheimnisse
-                self._initialized = True  # Markiere als initialisiert
-            except Exception as e:
-                logger.exception(f"Failed to load secrets file: {e}")
-
+            config_file = os.getenv("CONFIG_PATH", config_file)  # Holen von CONFIG_PATH
+            self._config_file = config_file
+            self._secrets_file_path = self.load_secrets_path()  # Laden des Geheimnis-Pfades
+            self._secrets = self.load_secrets()  # Laden der Geheimnisse
+            self._initialized = True  # Markiere als initialisiert
     # endregion
+
+    @staticmethod
+    def get_environment():
+        return os.getenv('ENV', 'DEV').upper()
 
     # region Secrets Functions
     def load_secrets_path(self) -> Any:

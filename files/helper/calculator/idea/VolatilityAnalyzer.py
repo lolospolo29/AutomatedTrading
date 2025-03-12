@@ -1,5 +1,3 @@
-import numpy as np
-
 from files.helper.manager.RiskManager import RiskManager
 
 

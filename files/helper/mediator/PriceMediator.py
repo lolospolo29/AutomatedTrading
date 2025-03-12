@@ -49,8 +49,8 @@ class PriceMediator:
         self._current_bos: dict[int, Structure] = {}
         self._previous_bos: dict[int, Structure] = {}
         self._current_cisd: dict[int, Structure] = {}
-        self._bos: dict[int, Structure] = {}
-        self._cisd: dict[int, Structure] = {}
+        self._bos: dict[int, BOS] = {}
+        self._cisd: dict[int, CISD] = {}
         self._ndog: list[PDArray] = []
         self._nwog: list[PDArray] = []
         self._adr: float = 0.0
@@ -468,28 +468,6 @@ class PriceMediator:
 
         # Combine filtered BPR imbalances with non-BPR imbalances
         self._eqhl[timeframe] = unique_eqhl
-
-    def _remove_duplicate_pbs(self, timeframe: int):
-        if timeframe not in self._probulsion_blocks:
-            return
-
-        unique_ob = []
-        seen_candle_sets = set()  # Track unique sets of candle IDs
-        non_obs = []  # Store non-BPR imbalances
-
-        for pb in self._probulsion_blocks[timeframe]:
-            if pb.name == "PB":
-                candle_ids = frozenset(candle.id for candle in pb.candles)  # Get unique candle IDs
-
-                if candle_ids not in seen_candle_sets:
-                    unique_ob.append(pb)
-                    seen_candle_sets.add(candle_ids)  # Mark as seen
-            else:
-                non_obs.append(pb)  # Keep non-BPR imbalances
-
-        # Combine filtered BPR imbalances with non-BPR imbalances
-        self._probulsion_blocks[timeframe] = unique_ob + non_obs
-
 
     def _remove_duplicate_orderblocks(self, timeframe: int):
         if timeframe not in self._orderblocks:

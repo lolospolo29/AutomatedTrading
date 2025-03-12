@@ -1,5 +1,6 @@
 # region Imports
 import time
+from logging import Logger
 
 from files.api.brokers.bybit.Bybit import Bybit
 from files.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
@@ -20,7 +21,6 @@ from files.helper.registry.RateLimitRegistry import RateLimitRegistry
 from files.interfaces.IBrokerHandler import IBrokerHandler
 from files.mappers.ClassMapper import ClassMapper
 from files.api.brokers.models.RequestParameters import RequestParameters
-from files.monitoring.logging.logging_startup import logger
 from files.monitoring.retry_request import retry_request
 
 # endregion
@@ -50,11 +50,12 @@ class BybitHandler(IBrokerHandler):
     :ivar _rate_limit_registry: Manages the rate limits for various API calls.
     :type _rate_limit_registry: RateLimitRegistry
     """
-    def __init__(self):
+    def __init__(self,logger:Logger,class_mapper:ClassMapper):
         self.name = "BYBIT"
         self.__broker: Bybit = Bybit("BYBIT")
         self.__is_lock_active = False
-        self._class_mapper = ClassMapper()
+        self._class_mapper = class_mapper
+        self._logger = logger
         self._rate_limit_registry = RateLimitRegistry(RateLimitEnum)
 
     # region get Methods
@@ -64,19 +65,19 @@ class BybitHandler(IBrokerHandler):
 
         openAndClosedOrders: OpenAndClosedOrders = (self._class_mapper.map_args_to_dataclass
                                                     (OpenAndClosedOrders, request_params, RequestParameters))
-        logger.info(f"Sending API-Call to Return Position Info Bybit,Symbol:{request_params.symbol}")
+        self._logger.info(f"Sending API-Call to Return Position Info Bybit,Symbol:{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not openAndClosedOrders.validate():
             raise ValueError("The Fields that were required were not given")
 
         endPoint = EndPointEnum.OPENANDCLOSED.value
-        logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
+        self._logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
         method = "get"
 
         previousCursor: str = ""
 
         while True:
-            logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
+            self._logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
             params = openAndClosedOrders.to_query_string()
             responseJson = self.__broker.send_request(endPoint, method, params)
             if not responseJson.get("retMsg") == "OK":
@@ -103,20 +104,20 @@ class BybitHandler(IBrokerHandler):
     def return_position_info(self, request_params: RequestParameters) -> list[BrokerPosition]:
         positionInfo: PositionInfo = (self._class_mapper.map_args_to_dataclass
                                       (PositionInfo, request_params, RequestParameters))
-        logger.info(f"Sending Return Position Info API-Call to Bybit,Symbol:{request_params.symbol}")
+        self._logger.info(f"Sending Return Position Info API-Call to Bybit,Symbol:{request_params.symbol}")
         brokerPositionList: list[BrokerPosition] = []
         # Validierung der Eingabeparameter
         if not positionInfo.validate():
             raise ValueError("The Fields that were required were not given")
 
         endPoint = EndPointEnum.POSITIONINFO.value
-        logger.info(f"Request Bybit Endpoint,Symbol:{request_params.symbol}{endPoint}")
+        self._logger.info(f"Request Bybit Endpoint,Symbol:{request_params.symbol}{endPoint}")
         method = "get"
 
         previousCursor: str = ""
 
         while True:
-            logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
+            self._logger.info(f"Request Return Position Info Bybit,Symbol:{request_params.symbol}")
             params = positionInfo.to_query_string()
             responseJson = self.__broker.send_request(endPoint, method, params)
             if not responseJson.get("retMsg") == "OK":
@@ -144,7 +145,7 @@ class BybitHandler(IBrokerHandler):
         orderHistory: OrderHistory = (self._class_mapper.map_args_to_dataclass
                                       (OrderHistory, request_params, RequestParameters))
 
-        logger.info(f"Sending API-Call to Return Order History  Bybit,Symbol:{request_params.symbol}")
+        self._logger.info(f"Sending API-Call to Return Order History  Bybit,Symbol:{request_params.symbol}")
         brokerOrderList: list[BrokerOrder] = []
         # Validierung der Eingabeparameter
         if not orderHistory.validate():
@@ -152,14 +153,14 @@ class BybitHandler(IBrokerHandler):
 
         endPoint = EndPointEnum.HISTORY.value
 
-        logger.info(f"Request Bybit Return Order History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
+        self._logger.info(f"Request Bybit Return Order History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
         method = "get"
 
         previousCursor: str = ""
 
         while True:
             params = orderHistory.to_query_string()
-            logger.info(f"Request Return Order History Bybit,Symbol:{request_params.symbol}")
+            self._logger.info(f"Request Return Order History Bybit,Symbol:{request_params.symbol}")
             responseJson = self.__broker.send_request(endPoint, method, params)
             if not responseJson.get("retMsg") == "OK":
                 raise ValueError(responseJson.get("retMsg"))
@@ -186,7 +187,7 @@ class BybitHandler(IBrokerHandler):
         fundingHistory: FundingHistory = (self._class_mapper.map_args_to_dataclass
                                       (FundingHistory, request_params, RequestParameters))
 
-        logger.info(f"Sending API-Call to Return Funding History  Bybit,Symbol:{request_params.symbol}")
+        self._logger.info(f"Sending API-Call to Return Funding History  Bybit,Symbol:{request_params.symbol}")
         brokeFundingList: list[BrokerFunding] = []
         # Validierung der Eingabeparameter
         if not fundingHistory.validate():
@@ -194,11 +195,11 @@ class BybitHandler(IBrokerHandler):
 
         endPoint = EndPointEnum.HISTORY.value
 
-        logger.info(f"Request Bybit Return Funding History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
+        self._logger.info(f"Request Bybit Return Funding History  Endpoint,Symbol:{request_params.symbol}{endPoint}")
         method = "get"
 
         params = fundingHistory.to_query_string()
-        logger.info(f"Request Return Funding History Bybit,Symbol:{request_params.symbol}")
+        self._logger.info(f"Request Return Funding History Bybit,Symbol:{request_params.symbol}")
         responseJson = self.__broker.send_request(endPoint, method, params)
         if not responseJson.get("retMsg") == "OK":
             raise ValueError(responseJson.get("retMsg"))
@@ -220,7 +221,7 @@ class BybitHandler(IBrokerHandler):
     def amend_order(self, request_params: RequestParameters) -> BrokerOrder:
         amendOrder: AmendOrder = (self._class_mapper.map_args_to_dataclass
                                   (AmendOrder, request_params, RequestParameters))
-        logger.info(
+        self._logger.info(
             f"Sending API-Call to Amend Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
 
         # Validierung der Eingabeparameter
@@ -229,7 +230,7 @@ class BybitHandler(IBrokerHandler):
 
         params = amendOrder.to_dict()
         endPoint = EndPointEnum.AMEND.value
-        logger.info(
+        self._logger.info(
             f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
 
         method = "post"
@@ -245,13 +246,13 @@ class BybitHandler(IBrokerHandler):
     def cancel_all_orders(self, request_params: RequestParameters) -> list[BrokerOrder]:
         cancelOrders: CancelAllOrders = (self._class_mapper.map_args_to_dataclass
                                          (CancelAllOrders, request_params, RequestParameters))
-        logger.info(f"Sending API-Call to Cancel All Orders Bybit,Symbol:{request_params.symbol}")
+        self._logger.info(f"Sending API-Call to Cancel All Orders Bybit,Symbol:{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not cancelOrders.validate():
             raise ValueError("The Fields that were required were not given")
 
         endPoint = EndPointEnum.CANCELALL.value
-        logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
+        self._logger.info(f"Request Bybit Endpoint,Symbol:{endPoint}")
 
         method = "post"
 
@@ -273,7 +274,7 @@ class BybitHandler(IBrokerHandler):
     def cancel_order(self, request_params: RequestParameters) -> BrokerOrder:
         cancelOrder: CancelOrder = (self._class_mapper.map_args_to_dataclass
                                     (CancelOrder, request_params, RequestParameters))
-        logger.info(
+        self._logger.info(
             f"Sending API-Call to Cancel Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not cancelOrder.validate():
@@ -282,7 +283,7 @@ class BybitHandler(IBrokerHandler):
         params = cancelOrder.to_dict()
 
         endPoint = EndPointEnum.CANCEL.value
-        logger.info(
+        self._logger.info(
             f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
         method = "post"
 
@@ -296,7 +297,7 @@ class BybitHandler(IBrokerHandler):
     def place_order(self, request_params: RequestParameters) -> BrokerOrder:
         placeOrder: PlaceOrder = (self._class_mapper.map_args_to_dataclass
                                   (PlaceOrder, request_params, RequestParameters))
-        logger.info(
+        self._logger.info(
             f"Sending API-Call to Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not placeOrder.validate():
@@ -305,7 +306,7 @@ class BybitHandler(IBrokerHandler):
         params = placeOrder.to_dict()
 
         endPoint = EndPointEnum.PLACEORDER.value
-        logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint}")
+        self._logger.info(f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint}")
         method = "post"
 
         responseJson = self.__broker.send_request(endPoint, method, params)
@@ -318,7 +319,7 @@ class BybitHandler(IBrokerHandler):
     def set_leverage(self, request_params: RequestParameters) -> bool:
         setLeverage: SetLeverage = (self._class_mapper.map_args_to_dataclass
                                     (SetLeverage, request_params, RequestParameters))
-        logger.info(
+        self._logger.info(
             f"Sending API-Call to Set Leverage Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
         # Validierung der Eingabeparameter
         if not setLeverage.validate():
@@ -327,7 +328,7 @@ class BybitHandler(IBrokerHandler):
         params = setLeverage.to_dict()
 
         endPoint = EndPointEnum.SETLEVERAGE.value
-        logger.info(
+        self._logger.info(
             f"Request Bybit Endpoint,OrderLinkId:{request_params.orderLinkId},{endPoint},{request_params.symbol}")
 
         method = "post"

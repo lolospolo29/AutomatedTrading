@@ -1,5 +1,4 @@
 from files.interfaces.ITimeWindow import ITimeWindow
-from files.monitoring.logging.logging_startup import logger
 
 
 class LastQuarterWindow(ITimeWindow):
@@ -10,12 +9,9 @@ class LastQuarterWindow(ITimeWindow):
         return self.is_in_entry_window(time)
 
     def is_in_entry_window(self, time):
-        try:
-            current_minute = time.minute
+        current_minute = time.minute
 
-            if 0 <= current_minute <= 10 or 59 >= current_minute >= 50:
-                return True
+        if 0 <= current_minute <= 10 or 59 >= current_minute >= 50:
+            return True
 
-            return False
-        except Exception as e:
-            logger.critical("Last Close Macro Exception", e)
+        return False

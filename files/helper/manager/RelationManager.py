@@ -1,4 +1,5 @@
 import threading
+from logging import Logger
 
 from files.db.mongodb.AssetRepository import AssetRepository
 from files.db.mongodb.RelationRepository import RelationRepository
@@ -11,8 +12,6 @@ from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.models.asset.Relation import Relation
 from files.models.asset.SMTPair import SMTPair
 from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
-from files.models.strategy.Strategy import Strategy
-from files.monitoring.logging.logging_startup import logger
 
 
 class RelationManager:
@@ -39,13 +38,17 @@ class RelationManager:
         return cls._instance
 
 
-    def __init__(self,relation_repository:RelationRepository,asset_manager:AssetManager,asset_repository:AssetRepository):
+    def __init__(self,relation_repository:RelationRepository
+                 ,asset_manager:AssetManager,asset_repository:AssetRepository
+                 ,logger:Logger,strategy_registry:StrategyRegistry
+                 ,strategy_factory:StrategyFactory):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._relation_repository = relation_repository
             self._asset_repository = asset_repository
             self._asset_manager = asset_manager
-            self._strategy_manager = StrategyRegistry()
-            self._strategy_factory = StrategyFactory()
+            self._strategy_manager = strategy_registry
+            self._strategy_factory = strategy_factory
+            self._logger = logger
             self._initialized = True  # Markiere als initialisiert
 
     def return_strategies(self)->list[str]:
@@ -95,13 +98,13 @@ class RelationManager:
             strategy = self._strategy_factory.return_strategy(typ=relation.strategy)
 
             self._strategy_manager.register_strategy(relation=relation, strategy=strategy)
-            logger.debug(f"Adding relation to asset:{relation.asset}")
-            logger.debug(f"Adding relation to db:{relation}")
+            self._logger.debug(f"Adding relation to asset:{relation.asset}")
+            self._logger.debug(f"Adding relation to db:{relation}")
 
             self.add_timeframes_to_asset(relation=relation)
 
         except Exception as e:
-            logger.critical("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+            self._logger.critical("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 
     def add_timeframes_to_asset(self,relation:Relation):
 
@@ -114,7 +117,7 @@ class RelationManager:
                                                    ,maxlen=exp_timeframe.max_Len,broker=relation.broker)
 
     def create_smt(self,smt_pair:SMTPair):
-        logger.info(f"Adding SMT,{smt_pair.asset_a},{smt_pair.asset_b},{smt_pair.correlation} to db and manager.")
+        self._logger.info(f"Adding SMT,{smt_pair.asset_a},{smt_pair.asset_b},{smt_pair.correlation} to db and manager.")
         self._relation_repository.add_smt_pair(smt_pair=smt_pair)
 
         self._asset_manager.add_smt_pair(asset=smt_pair.asset_a,smt_pair=smt_pair)
@@ -136,7 +139,7 @@ class RelationManager:
                     self._strategy_manager.register_smt_strategy(relation_smt=relation, strategy_smt=strategy,asset2=asset_b)
                     self.add_timeframes_to_asset(relation=relation)
             except Exception as e:
-                logger.critical("Failed to add SMT pair to db and manager. Error:{e}".format(e=e))
+                self._logger.critical("Failed to add SMT pair to db and manager. Error:{e}".format(e=e))
                 continue
 
     # todo test smt
@@ -158,12 +161,12 @@ class RelationManager:
 
                 smt_pairs.append(smt_pair)
             except Exception as e:
-                logger.critical("Failed to add SMT pair to db and manager. Error:{e}".format(e=e))
+                self._logger.critical("Failed to add SMT pair to db and manager. Error:{e}".format(e=e))
                 continue
         return smt_pairs
 
     def delete_smt_pair(self,smt_pair:SMTPair):
-        logger.info(f"Removing SMT pair:{smt_pair.asset_a},{smt_pair.asset_b},{smt_pair.correlation} from db and manager.")
+        self._logger.info(f"Removing SMT pair:{smt_pair.asset_a},{smt_pair.asset_b},{smt_pair.correlation} from db and manager.")
 
         relations:list[Relation] = self.return_relations()
 

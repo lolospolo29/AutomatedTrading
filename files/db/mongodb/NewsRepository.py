@@ -8,7 +8,7 @@ from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 class NewsRepository:
 
-    def __init__(self, db_name:str,uri:str):
+    def __init__(self, db_name:str,uri:str,dto_mapper:DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
         self._dto_mapper = DTOMapper()
 

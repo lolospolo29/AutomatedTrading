@@ -65,8 +65,6 @@ class DoubleFib15(Strategy):
 
             imbalances = self._price_mediator.get_imbalances(timeFrame)
 
-            # todo list clear logic
-
             if len(imbalances) > 900 or third_candle.iso_time.year != second_candle.iso_time.year:
                 self._price_mediator.reset()
 
@@ -126,10 +124,6 @@ class DoubleFib15(Strategy):
 
     def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
 
-        # todo trail stop
-        # todo faker exit trade prd
-        # todo entry exit swap
-        # todo ui strategy builder for backtest
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)
 
     def _create_trade(self,relation:Relation,order_dir:str,exit_dir:str,stop_dir:str

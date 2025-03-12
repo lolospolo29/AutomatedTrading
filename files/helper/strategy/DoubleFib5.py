@@ -7,7 +7,6 @@ from files.interfaces.ITimeWindow import ITimeWindow
 from files.models.asset.Candle import Candle
 from files.models.asset.Relation import Relation
 from files.models.frameworks.FrameWork import FrameWork
-from files.models.frameworks.time.Asia import Asia
 from files.models.frameworks.time.London import LondonOpen
 from files.models.frameworks.time.NYOpen import NYOpen
 from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame

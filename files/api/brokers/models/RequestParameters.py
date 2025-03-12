@@ -55,8 +55,3 @@ class RequestParameters:
         non_none_fields = {key: value for key, value in self.__dict__.items() if value is not None}
         # Create a string representation
         return f"{self.__class__.__name__}({', '.join(f'{k}={v}' for k, v in non_none_fields.items())})"
-
-
-
-
-req = RequestParameters(broker="bybit")

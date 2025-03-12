@@ -1,4 +1,5 @@
 import threading
+from logging import Logger
 from typing import Any, Dict
 
 from files.helper.manager.AssetManager import AssetManager
@@ -9,10 +10,12 @@ from files.models.asset.Relation import Relation
 from files.models.asset.Candle import Candle
 from files.models.strategy.StrategyResult import StrategyResult
 from files.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
+from files.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from files.monitoring.log_time import log_time
-from files.monitoring.logging.logging_startup import logger
 from files.services.NewsService import NewsService
+from files.services.TelegramService import TelegramService
 
 
 class TradingService:
@@ -45,13 +48,14 @@ class TradingService:
     # region Initializing
 
     def __init__(self, asset_manager:AssetManager, trade_manager:TradeManager
-                 , strategy_manager:StrategyRegistry, news_service:NewsService):
+                 , strategy_registry:StrategyRegistry, news_service:NewsService, telegram_service:TelegramService, logger:Logger, asset_mapper:AssetMapper):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._asset_manager: AssetManager = asset_manager
             self._trade_manager: TradeManager = trade_manager
-            self._strategy_manager: StrategyRegistry = strategy_manager
-            self._asset_mapper = AssetMapper()
+            self._strategy_registry: StrategyRegistry = strategy_registry
+            self._asset_mapper = asset_mapper
             self._news_service :NewsService = news_service
+            self._telegram_service = telegram_service
             self._logger = logger
             self._logger.info("TradingService initialized")
             self._initialized = True  # Markiere als initialisiert
@@ -67,7 +71,7 @@ class TradingService:
         candle:Candle = self._asset_mapper.map_tradingview_json_to_candle(jsonData)
         self._asset_manager.add_candle(candle)
 
-        logger.debug("Received candle for Asset:{asset},{timeframe}".format(asset=candle.asset, timeframe=candle.timeframe))
+        self._logger.debug("Received candle for Asset:{asset},{timeframe}".format(asset=candle.asset, timeframe=candle.timeframe))
 
         candles : list[Candle] = self._asset_manager.return_candles(candle.asset, candle.broker, candle.timeframe)
 
@@ -125,15 +129,18 @@ class TradingService:
         asset_class = self._asset_manager.return_asset_class(relation.asset)
 
 
-        result: StrategyResult = self._strategy_manager.get_entry(candles, relation, timeframe,asset_class)
+        result: StrategyResult = self._strategy_registry.get_entry(candles, relation, timeframe, asset_class)
         if result.status is None:
             return
         if result.status == StrategyResultStatusEnum.NEWTRADE.value:
-            self._logger.info(f"New Entry found: {relation.asset}")
+            self._logger.info(f"New Trade found:{result.trade.relation}")
 
             self._trade_manager.register_trade(result.trade)
             exceptionOrders,trade = self._trade_manager.place_trade(result.trade)
             self._trade_manager.update_trade(trade)
+
+            message = self._format_orders(trade.orders)
+            self._telegram_service.send(f"New Trade: {message}")
 
             if exceptionOrders:
                 self._closing_trade(result.trade)
@@ -149,20 +156,25 @@ class TradingService:
                 2. **CHANGED**: Logs the change action, attempts to amend the trade, and updates the trade if modifications are successful.
                    If there are issues with the orders (`exceptionOrders`), the trade is closed.
         """
-        result: StrategyResult = self._strategy_manager.get_exit(candles, relation, timeframe,trade)
+        result: StrategyResult = self._strategy_registry.get_exit(candles, relation, timeframe, trade)
 
         if result.status is None:
             return
         if result.status == StrategyResultStatusEnum.CLOSE.value:
-            self._logger.info(f"Close Exit found: {relation.asset}")
+            self._logger.info(f"Closing Trade: {relation.asset}")
             self._trade_manager.update_trade(result.trade)
             self._closing_trade(result.trade)
+            message = self._format_orders(trade.orders)
+            self._telegram_service.send(f"Closing Trade: {message}")
 
         if result.status == StrategyResultStatusEnum.CHANGED.value:
-            self._logger.info(f"Changed Exit found: {relation.asset}")
-
+            self._logger.info(f"Changed Trade: {relation.asset}")
             exceptionOrders,trade = self._trade_manager.amend_trade(result.trade)
             self._trade_manager.update_trade(trade)
+
+            message = self._format_orders(trade.orders)
+            self._telegram_service.send(f"Changed Trade: {message}")
+
         if result.status == StrategyResultStatusEnum.NOCHANGE.value:
             self._trade_manager.update_trade(trade)
         else:
@@ -175,3 +187,26 @@ class TradingService:
         self._trade_manager.archive_trade(trade)
         self._logger.info(f"Canceled Trade: TradeId:{trade.tradeId},"
                              f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
+        message = self._format_orders(trade.orders)
+        self._telegram_service.send(f"Cancelled Trade: {message}")
+
+    @staticmethod
+    def _format_orders(orders:list[Order])->str:
+        """Format orders dynamically based on their type."""
+
+        formatted_orders = []
+
+        for order in orders:
+            if order.orderType == OrderTypeEnum.MARKET.value:
+                if order.takeProfit:
+                    formatted_orders.append(f"TakeProfit: {order.takeProfit},Id:{order.orderLinkId}")
+                if order.stopLoss:
+                    formatted_orders.append(f"StopLoss: {order.stopLoss},Id:{order.orderLinkId}")
+                if order.triggerPrice:
+                    formatted_orders.append(f"TriggerPrice: {order.triggerPrice},Id:{order.orderLinkId}")
+                formatted_orders.append(f"• Market Order: {order.side} @ {order.qty},Id:{order.orderLinkId}")
+            elif order.orderType == OrderTypeEnum.LIMIT.value:
+                formatted_orders.append(f"• Limit Order: {order.side} @ {order.qty} (Limit: {order.price}),Id:{order.orderLinkId}")
+
+        return "\n".join(formatted_orders)
+

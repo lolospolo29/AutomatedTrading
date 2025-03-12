@@ -5,7 +5,7 @@ from files.models.asset.Candle import Candle
 
 class DataRepository:
 
-    def __init__(self, db_name:str,uri:str):
+    def __init__(self, db_name:str,uri:str,dto_mapper:DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
         self._dto_mapper = DTOMapper()
 

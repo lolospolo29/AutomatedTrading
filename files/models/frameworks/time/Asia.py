@@ -1,5 +1,4 @@
 from files.interfaces.ITimeWindow import ITimeWindow
-from files.monitoring.logging.logging_startup import logger
 
 
 class Asia(ITimeWindow):
@@ -9,9 +8,6 @@ class Asia(ITimeWindow):
 
     @staticmethod
     def is_in_entry_window(time) -> bool:
-        try:
-            if  5 >= time.hour >= 0 :
-                return True
-            return False
-        except Exception as e:
-            logger.critical("Asia Session Error", e)
+        if 5 >= time.hour >= 0:
+            return True
+        return False

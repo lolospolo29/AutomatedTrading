@@ -3,20 +3,16 @@ from files.api.brokers.models.BrokerOrder import BrokerOrder
 from files.api.brokers.models.BrokerPosition import BrokerPosition
 from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
-from files.monitoring.logging.logging_startup import logger
 
 
 class BrokerMapper:
 
-    # noinspection PyArgumentList
     @staticmethod
-    def map_broker_order_to_order(broker_order:BrokerOrder, order:Order,check_time:bool=False) -> Order:
-        try:
+    def map_broker_order_to_order(broker_order:BrokerOrder, order:Order, check_time:bool=False) -> Order:
             try:
                 if order.updatedTime > broker_order.updatedTime and check_time:
                         return order
             except Exception as e:
-                logger.error(f"Mapping Error for Order,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol},Error: {e}")
                 order.orderType = broker_order.orderType
                 order.orderLinkId = broker_order.orderLinkId
                 order.symbol = broker_order.symbol
@@ -48,17 +44,14 @@ class BrokerMapper:
                 order.orderStatus = broker_order.orderStatus
                 order.leavesValue = broker_order.leavesValue
                 return order
-        except Exception as e:
-            logger.error(f"Mapping Error for Order,OrderLinkId: {order.orderLinkId},TradeId:{order.trade_id},Symbol:{order.symbol},Error: {e}")
 
     @staticmethod
-    def map_broker_position_to_trade(broker_position:BrokerPosition, trade:Trade,check_time:bool=True) -> Trade:
-        try:
+    def map_broker_position_to_trade(broker_position:BrokerPosition, trade:Trade, check_time:bool=True) -> Trade:
             try:
                 if int(broker_position.updatedTime) < int(trade.updatedTime) and check_time:
                     return trade
             except Exception:
-                logger.debug(broker_position.updatedTime,trade.updatedTime)
+                pass
             if trade.updatedTime is None and broker_position.updatedTime is not None:
                 trade.createdTime = broker_position.createdTIme
                 trade.updatedTime = broker_position.updatedTime
@@ -69,9 +62,3 @@ class BrokerMapper:
                 trade.leverage = broker_position.leverage
                 trade.size = broker_position.size
                 trade.tradeMode = broker_position.tradeMode
-                trade.positionValue = broker_position.positionValue
-
-        except Exception as e:
-            logger.error(f"Update Trade Error,TradeId: {trade.id}: {e}")
-        finally:
-            return trade

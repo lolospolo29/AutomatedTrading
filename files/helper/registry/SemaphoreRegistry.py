@@ -1,7 +1,6 @@
 import threading
 
 from files.models.asset.Relation import Relation
-from files.monitoring.logging.logging_startup import logger
 
 
 class SemaphoreRegistry:
@@ -55,13 +54,13 @@ class SemaphoreRegistry:
         # Versuche, einen Platz für die Relation zu belegen
         acquired = semaphore.acquire() # put in queue
         if not acquired:
-            logger.exception("Acquired semaphore was already acquired")
+            pass
 
     def release_semaphore(self, relation:Relation):
         """Einen Trade für die gegebene Relation beenden."""
         with self._lock:
             if relation not in self.registry:
-                logger.exception("Acquired semaphore was already acquired")
+                pass
             semaphore = self.registry[relation]
         # Gebe einen Platz frei
         semaphore.release()

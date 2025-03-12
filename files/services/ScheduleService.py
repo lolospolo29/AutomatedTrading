@@ -1,9 +1,7 @@
 import threading
+from logging import Logger
 
 import schedule
-
-from files.monitoring.logging.logging_startup import logger
-
 
 class ScheduleService:
     _instance = None
@@ -16,9 +14,10 @@ class ScheduleService:
                     cls._instance = super(ScheduleService, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self,logger:Logger):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._jobs:dict = {}
+            self._logger = logger
             self._initialized = True  # Markiere als initialisiert
 
 
@@ -50,7 +49,7 @@ class ScheduleService:
         return self._jobs.keys()
 
     def every_second_add_schedule(self,name:str,seconds:int,func,tag1:str=None,tag2:str=None):
-        logger.info("Adding schedule for {}".format(name))
+        self._logger.info("Adding schedule for {}".format(name))
         if tag1 or tag2:
             job = self._add_tag(schedule.every(seconds).seconds.do(func),tag1,tag2)
             self._jobs[name] = job
@@ -58,7 +57,7 @@ class ScheduleService:
             self._jobs[name] = schedule.every(seconds).seconds.do(func)
 
     def every_minute_add_schedule(self,name:str,minutes:int,func,tag1:str=None,tag2:str=None):
-        logger.info("Adding schedule for {}".format(name))
+        self._logger.info("Adding schedule for {}".format(name))
         if tag1 or tag2:
             job = self._add_tag(schedule.every(minutes).minutes.do(func),tag1,tag2)
             self._jobs[name] = job
@@ -66,7 +65,7 @@ class ScheduleService:
             self._jobs[name] = schedule.every(minutes).minutes.do(func)
 
     def every_hour_add_schedule(self,name,hours,func,tag1:str=None,tag2:str=None):
-        logger.info("Adding schedule for {}".format(name))
+        self._logger.info("Adding schedule for {}".format(name))
         if tag1 or tag2:
             job = self._add_tag(schedule.every(hours).hours.do(func),tag1,tag2)
             self._jobs[name] = job
@@ -74,7 +73,7 @@ class ScheduleService:
             self._jobs[name] = schedule.every(hours).hours.do(func)
 
     def every_day_add_schedule(self,name,time,func,tag1:str=None,tag2:str=None):
-        logger.info("Adding schedule for {}".format(name))
+        self._logger.info("Adding schedule for {}".format(name))
         if tag1 or tag2:
             job = self._add_tag(schedule.every().day.at(time).do(func),tag1,tag2)
             self._jobs[name] = job
@@ -82,7 +81,7 @@ class ScheduleService:
             self._jobs[name] = schedule.every().day.at(time).do(func)
 
     def every_specific_day_add_schedule(self,name,day,time,func,tag1:str=None,tag2:str=None):
-        logger.info("Adding schedule for {}".format(name))
+        self._logger.info("Adding schedule for {}".format(name))
         job = None
 
         if day == "Monday":
@@ -108,7 +107,7 @@ class ScheduleService:
     def every_x_between_add_schedule(self,func,name,repeating,between_from,between_to
                                      ,minutes:bool=True,seconds:bool=False
                                      ,hours:bool=False,day:bool=None,tag1:str=None,tag2:str=None):
-        logger.info("Adding schedule for {}".format(name))
+        self._logger.info("Adding schedule for {}".format(name))
 
         job = None
 
@@ -125,5 +124,3 @@ class ScheduleService:
             job = self._add_tag(job,tag1,tag2)
 
         self._jobs[name] = job
-
-

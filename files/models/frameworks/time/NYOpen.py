@@ -1,5 +1,4 @@
 from files.interfaces.ITimeWindow import ITimeWindow
-from files.monitoring.logging.logging_startup import logger
 
 
 class NYOpen(ITimeWindow):
@@ -9,9 +8,6 @@ class NYOpen(ITimeWindow):
 
     @staticmethod
     def is_in_entry_window(time) -> bool:
-        try:
-            if  15 >= time.hour >= 12 :
-                return True
-            return False
-        except Exception as e:
-            logger.critical("Ny Open Error: {}".format(e))
+        if 15 >= time.hour >= 12:
+            return True
+        return False

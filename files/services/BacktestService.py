@@ -1,6 +1,7 @@
 import threading
 import uuid
 from datetime import datetime
+from logging import Logger
 
 from files.db.mongodb.BacktestRepository import BacktestRepository
 from files.helper.factories.StrategyFactory import StrategyFactory
@@ -9,7 +10,6 @@ from files.models.backtest.BacktestInput import BacktestInput
 from files.models.backtest.Result import Result
 from files.models.backtest.TestModule import TestModule
 from files.models.backtest.TradeResult import TradeResult
-from files.monitoring.logging.logging_startup import logger
 
 
 class BacktestService:
@@ -23,9 +23,10 @@ class BacktestService:
                     cls._instance = super(BacktestService, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, backtest_repository: BacktestRepository):
+    def __init__(self, backtest_repository: BacktestRepository,strategy_factory: StrategyFactory
+                 ,logger:Logger):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.__factory = StrategyFactory()
+            self.__factory = strategy_factory
             self._backtest_repository = backtest_repository
             self._asset_selection: list[str] = [
                                                 "AUDUSD",
@@ -37,6 +38,7 @@ class BacktestService:
                                                 "XAUUSD",
                                                 "NZDJPY"
                                             ]
+            self.logger = logger
 
             self._initialized = True  # Markiere als initialisiert
 
@@ -56,10 +58,10 @@ class BacktestService:
             if strategy is None:
                 continue
 
-            logger.info(f"Starting Backtest: {strategy.name} with Asset {asset}")
+            self.logger.info(f"Starting Backtest: {strategy.name} with Asset {asset}")
 
             module = TestModule(asset_class=asset_classes[asset], strategy=strategy, asset=asset
-                                , candles=test_data[asset], timeframes=strategy.timeframes, trade_limit=backtest_input.trade_limit)
+                                , candles=test_data[asset], timeframes=strategy.timeframes, trade_limit=backtest_input.trade_limit,logger=self.logger)
             modules.append(module)
             thread = threading.Thread(target=module.start_module)
             threads.append(thread)
@@ -75,7 +77,7 @@ class BacktestService:
 
         for result in results:
             if result.no_of_trades > 0:
-                logger.info(f"Writing Result to DB...,ResultId: {result.result_id}")
+                self.logger.info(f"Writing Result to DB...,ResultId: {result.result_id}")
                 self._backtest_repository.add_result(result)
 
     def get_asset_selection(self) -> list[str]:
@@ -188,7 +190,7 @@ class BacktestService:
                 break
 
     def fetch_test_assets(self):
-        logger.info("Fetching Test Assets...")
+        self.logger.info("Fetching Test Assets...")
         self._asset_selection = self._backtest_repository.find_assets_in_testdata()
 
     def _get_asset_classes(self, test_assets: list[str]) -> dict[str, str]:

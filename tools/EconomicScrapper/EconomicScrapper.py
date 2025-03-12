@@ -1,9 +1,9 @@
 import re
 from datetime import datetime
+from logging import Logger
 
 from zoneinfo import ZoneInfo
 import pytz
-from files.monitoring.logging.logging_startup import logger
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -21,8 +21,9 @@ class EconomicScrapper:
     The output is a list of NewsDay objects, each containing relevant news events for a specific day.
     """
 
-    def __init__(self):
+    def __init__(self,logger:Logger):
         self.__driver = None
+        self.__logger = logger
 
     @staticmethod
     def _extract_time_and_daytime(event_text):
@@ -132,7 +133,7 @@ class EconomicScrapper:
                     event_text = event.text.strip()
 
                     date = self._extract_date_from_event(event_text)
-                    logger.debug("Event text: {} and formatted Date {}".format(event_text, date))
+                    self.__logger.debug("Event text: {} and formatted Date {}".format(event_text, date))
                     if not date is None:
                         news_day = NewsDay(day_iso=date,news_events=[])
                         news_days.append(news_day)
@@ -148,7 +149,7 @@ class EconomicScrapper:
                         news_event = NewsEvent(time=time_obj, title=str(title), currency=str(currency), daytime=daytime)
                         current_news_day.news_events.append(news_event)
                 except Exception as e:
-                    logger.critical("NewsDay exception: {}".format(e))
+                    self.__logger.critical("NewsDay exception: {}".format(e))
                 finally:
                     continue
             try:
@@ -182,7 +183,7 @@ class EconomicScrapper:
                             # Now, combined_datetime_with_tz is in UTC+1
                             news_event.time = combined_datetime_with_tz
                     except Exception as e:
-                        logger.critical("NewsDay exception: {}".format(e))
+                        self.__logger.critical("NewsDay exception: {}".format(e))
                     finally:
                         continue
 
@@ -191,5 +192,5 @@ class EconomicScrapper:
         finally:
             # Close the WebDriver
             self.__driver.quit()
-            logger.info("Finished scraping Economic Scraper,Found {} news days.".format(len(news_days)))
+            self.__logger.info("Finished scraping Economic Scraper,Found {} news days.".format(len(news_days)))
             return news_days

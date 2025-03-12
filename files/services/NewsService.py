@@ -1,12 +1,12 @@
 import threading
 from datetime import datetime, timedelta
+from logging import Logger
 
 import pytz
 
 from files.db.mongodb.NewsRepository import NewsRepository
 from tools.EconomicScrapper.EconomicScrapper import EconomicScrapper
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
-from files.monitoring.logging.logging_startup import logger
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
 
@@ -32,11 +32,13 @@ class NewsService:
                     cls._instance = super(NewsService, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self,news_repository:NewsRepository):
+    def __init__(self,news_repository:NewsRepository,economic_scrapper:EconomicScrapper
+                 ,logger:Logger):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self._economic_scrapper = EconomicScrapper()
+            self._economic_scrapper = economic_scrapper
             self._news_days: list[NewsDay] = []
             self._news_repository = news_repository
+            self.logger = logger
             self._initialized = True  # Markiere als initialisiert
 
     def run_news_scheduler(self):
@@ -81,7 +83,7 @@ class NewsService:
 
         self._news_days = news_days
 
-        logger.debug("News Days received : {count}".format(count=self._news_days))
+        self.logger.debug("News Days received : {count}".format(count=self._news_days))
 
     def is_news_ahead(self, hour: int = 1) -> tuple[bool, str]:
         """
@@ -98,20 +100,20 @@ class NewsService:
             utc_minus_5 = utc_now.astimezone(pytz.timezone('US/Eastern'))  # Eastern Time is UTC-5 during standard time
 
             for newsDay in self._news_days:
-                logger.debug(newsDay.__str__())
+                self.logger.debug(newsDay.__str__())
                 try:
                     day = datetime.fromisoformat(newsDay.day_iso).date().day
                     if day == utc_minus_5.day:
                         for news in newsDay.news_events:
-                            logger.debug(news.__str__())
+                            self.logger.debug(news.__str__())
                             if ( news.time.hour - hour == utc_minus_5.hour or news.time.hour + hour == utc_minus_5.hour or
                                     news.time.hour == utc_minus_5.hour):
-                                logger.info(f"News Day {newsDay.day_iso} ahead")
+                                self.logger.info(f"News Day {newsDay.day_iso} ahead")
                                 return True,"News {title}: At {news_hour}".format(title=news.title,news_hour=news.time.hour)
                 except Exception as e:
-                    logger.critical(f"News Day failed: {e}")
+                    self.logger.critical(f"News Day failed: {e}")
                 finally:
                     continue
             return False,""
         except Exception as e:
-            logger.critical(e)
+            self.logger.critical(e)

@@ -1,3 +1,5 @@
+from logging import Logger
+
 from files.db.mongodb.MongoDB import MongoDB
 from files.db.mongodb.dtos.BrokerDTO import BrokerDTO
 from files.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
@@ -7,14 +9,13 @@ from files.mappers.DTOMapper import DTOMapper
 from files.models.frameworks.FrameWork import FrameWork
 from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
-from files.monitoring.logging.logging_startup import logger
-
 
 class TradeRepository:
 
-    def __init__(self, db_name:str,uri:str):
+    def __init__(self, db_name:str,uri:str,logger:Logger,dto_mapper:DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
         self._dto_mapper = DTOMapper()
+        self._logger = logger
 
     # endregion
 
@@ -35,25 +36,25 @@ class TradeRepository:
         return TradeDTO(**self._db.find("OpenTrades", query)[0])
 
     def add_trade_to_db(self, trade: Trade):
-        logger.info(f"Adding Trade to DB: {trade.id}")
+        self._logger.info(f"Adding Trade to DB: {trade.tradeId}")
 
         trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
         self._db.add("OpenTrades",trade_dto.model_dump())
 
     def update_trade(self, trade: Trade):
-        logger.info(f"Updating Trade,OrderLinkId:{trade.id}")
+        self._logger.info(f"Updating Trade,TradeID:{trade.tradeId}")
 
-        query = self._db.buildQuery( "tradeId", str(trade.id))
+        query = self._db.buildQuery( "tradeId", str(trade.tradeId))
         res = self._db.find("OpenTrades", query)
         trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
         self._db.update("OpenTrades", res[0].get("_id"), trade_dto.model_dump())
 
     def archive_trade(self, trade: Trade):
-        logger.info(f"Arching Trade,OrderLinkId:{trade.id}")
+        self._logger.info(f"Arching Trade,TradeID:{trade.tradeId}")
 
         trade_dto:TradeDTO = self._dto_mapper.map_trade_to_dto(trade=trade)
         self._db.add("ClosedTrades", trade_dto.model_dump())
-        query = self._db.buildQuery( "tradeId", str(trade.id))
+        query = self._db.buildQuery( "tradeId", str(trade.tradeId))
         self._db.deleteByQuery("OpenTrades", query)
 
     # endregion
@@ -77,7 +78,7 @@ class TradeRepository:
         return orders
 
     def update_order(self, order: Order):
-        logger.info(f"Update Order To DB,OrderLinkId: {order.orderLinkId},Symbol: {order.symbol}")
+        self._logger.info(f"Update Order To DB,OrderLinkId: {order.orderLinkId},Symbol: {order.symbol}")
 
         query = self._db.buildQuery( "orderLinkId", str(order.orderLinkId))
         res = self._db.find("OpenOrders", query)
@@ -85,7 +86,7 @@ class TradeRepository:
                                                                                           ,'confirmations'}))
 
     def archive_order(self, order: Order):
-        logger.info(f"Arching Order To DB,OrderLinkId: {order.orderLinkId}, Symbol: {order.symbol}")
+        self._logger.info(f"Arching Order To DB,OrderLinkId: {order.orderLinkId}, Symbol: {order.symbol}")
 
         self._db.add("ClosedOrders", order.model_dump(exclude={'entry_frame_work','confirmations'}))
         query = self._db.buildQuery( "orderLinkId", str(order.orderLinkId))
@@ -96,7 +97,7 @@ class TradeRepository:
         return Order(**self._db.find("OpenOrders", query)[0])
 
     def add_order_to_db(self, order: Order):
-        logger.info(f"Adding Order To DB,OrderLinkId: {order.orderLinkId}")
+        self._logger.info(f"Adding Order To DB,OrderLinkId: {order.orderLinkId}")
 
         self._db.add("OpenOrders", order.model_dump(exclude={'entry_frame_work','confirmations'}))
 
@@ -125,13 +126,13 @@ class TradeRepository:
         return candles
 
     def add_framework_to_db(self,framework:FrameWork):
-        logger.info(f"Adding Framework To DB,Name: {framework.name}")
+        self._logger.info(f"Adding Framework To DB,Name: {framework.name}")
 
         framework_dto:FrameWorkDTO = self._dto_mapper.map_framework_to_dto(framework=framework)
         self._db.add("FrameWorks", framework_dto.model_dump())
 
     def add_framework_candles_to_db(self,framework:FrameWork):
-        logger.info(f"Adding Framework Candles To DB,Name: {framework.name}")
+        self._logger.info(f"Adding Framework Candles To DB,Name: {framework.name}")
 
         for candle in framework.candles:
             candle_dto = self._dto_mapper.map_candle_to_dto(candle=candle, framework=framework)
@@ -139,7 +140,7 @@ class TradeRepository:
                 candle_dto.model_dump())
 
     def update_framework(self, framework:FrameWork):
-        logger.info(f"Update Framework To DB,Name: {framework.name}")
+        self._logger.info(f"Update Framework To DB,Name: {framework.name}")
 
         query = self._db.buildQuery( "frameWorkId", framework.id)
         res = self._db.find("FrameWorks", query)
@@ -162,29 +163,3 @@ class TradeRepository:
         return brokers_dtos
 
     # endregion
-
-
-# mongo_trades = MongoDBTrades()
-#
-# trade = Trade(relation=Relation(asset="BTC",broker="bc",strategy="a",id=1,max_trades=1),id="31")
-#
-# mongo_trades.add_trade_to_db(trade)
-#
-# trades = mongo_trades.find_trades()
-#
-# candle = Candle(asset="BTC",broker="bc",open=234,high=131,low=123,close=22,iso_time=datetime.now(),timeframe=1)
-#
-# pd = PDArray(candles=[candle])
-# pd.name = "test"
-# pd.orderLinkId = "131"
-#
-# mongo_trades.add_framework_to_db(pd)
-#
-# frameworks_db = mongo_trades.find_frameworks_by_orderLinkId(pd.orderLinkId)
-#
-# pd.status = "a"
-#
-# mongo_trades.update_framework(pd)
-#
-# mongo_trades.add_framework_candles_to_db(pd)
-

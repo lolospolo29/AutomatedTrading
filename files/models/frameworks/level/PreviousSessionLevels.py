@@ -1,7 +1,6 @@
 from files.interfaces.ITimeWindow import ITimeWindow
 from files.models.asset.Candle import Candle
 from files.models.frameworks.Level import Level
-from files.monitoring.logging.logging_startup import logger
 
 
 class PreviousSessionLevels:
@@ -21,10 +20,10 @@ class PreviousSessionLevels:
             :param candles:
             :param window:
         """
+        session_levels = []
+
         try:
             last_candle: Candle = candles[-1]
-            logger.info("Previous Session Levels Calculator")
-            session_levels = []
 
             session_name = window.__class__.__name__  # Use class name as session identifier
 
@@ -50,6 +49,6 @@ class PreviousSessionLevels:
 
             return session_levels
         except Exception as e:
-            logger.error("Previous Session Level Calculator Exception: {}".format(e))
-
-
+            pass
+        finally:
+            return session_levels

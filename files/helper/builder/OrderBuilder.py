@@ -6,16 +6,16 @@ from files.models.frameworks.FrameWork import FrameWork
 from files.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.enums.OrderTypeEnum import OrderTypeEnum
-from files.monitoring.logging.logging_startup import logger
 
 
 class OrderBuilder:
     def __init__(self):
-        self.order = Order()  # Only create order when needed
+        self.order = None  # Only create order when needed
 
     def create_order(self, relation:Relation, symbol:str, confirmations:list[FrameWork], category:str, side:str,
                      risk_percentage:float, order_number:int, tradeId:str, entry_frame_work:
                      FrameWork=None, qty=None):
+        self.order = Order()
         o = self.order
         o.tradeId = tradeId
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
@@ -32,7 +32,6 @@ class OrderBuilder:
         o.orderType = OrderTypeEnum.MARKET.value # set Default
         if qty is not None:
             o.qty = qty
-        logger.debug(f"Building Order, OrderLinkId:{o.orderLinkId}, Symbol:{o.symbol},TradeId:{o.tradeId}")
         return self
 
     def set_defaults(self,price:str=None, time_in_force:str=None, take_profit:str=None,

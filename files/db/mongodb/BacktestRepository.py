@@ -1,3 +1,5 @@
+from builtins import list
+
 from files.db.mongodb.MongoDB import MongoDB
 from files.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
 from files.db.mongodb.dtos.AssetDTO import AssetDTO
@@ -9,7 +11,7 @@ from files.models.trade.Trade import Trade
 
 
 class BacktestRepository:
-    def __init__(self, db_name: str, uri: str):
+    def __init__(self, db_name: str, uri: str,dto_mapper: DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
         self._dto_mapper = DTOMapper()
 
@@ -34,7 +36,7 @@ class BacktestRepository:
 
         return AssetClassDTO(**self._db.find("AssetClasses", query)[0]).name
 
-    def find_assets_in_testdata(self)->list[str]:
+    def find_assets_in_testdata(self)-> list[str]:
         candles_db: list = self._db.find(collectionName="Testdata", query=None)
 
         # Nutze ein Set für eindeutige Assets

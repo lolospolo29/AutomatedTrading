@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 from datetime import datetime
+from logging import Logger
 
 import pandas as pd
 from watchdog.events import FileSystemEventHandler
@@ -11,7 +12,6 @@ from files.helper.manager.AssetManager import AssetManager
 from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.mappers.AssetMapper import AssetMapper
 from files.models.asset.Candle import Candle
-from files.monitoring.logging.logging_startup import logger
 from files.services.BacktestService import BacktestService
 
 
@@ -25,10 +25,11 @@ class FileHandler(FileSystemEventHandler):
     """
     # region Initializing
 
-    def __init__(self, asset_manager:AssetManager, strategy_manager:StrategyRegistry, backtest_service:BacktestService):
+    def __init__(self, asset_manager:AssetManager, strategy_registry:StrategyRegistry, backtest_service:BacktestService, logger:Logger):
         self._asset_manager: AssetManager = asset_manager
-        self._strategy_manager: StrategyRegistry = strategy_manager
+        self._strategy_manager: StrategyRegistry = strategy_registry
         self._backtest_service:BacktestService = backtest_service
+        self._logger: Logger = logger
 
     # endregion
 
@@ -43,22 +44,22 @@ class FileHandler(FileSystemEventHandler):
                 event: The event triggered by the file system when a new file is created.
             """
         try:
-            logger.debug("Processed File {}".format(event.src_path))
+            self._logger.debug("Processed File {}".format(event.src_path))
             filename = os.path.basename(event.src_path)
-            logger.info("Processing file {}".format(filename))
+            self._logger.info("Processing file {}".format(filename))
 
             if filename.startswith("TradingView_Alerts_Log") and filename.endswith(".csv"):
 
                 candles_dict_list = self._parse_candle_data(event.src_path)
 
-                logger.debug("Candles list {}".format(len(candles_dict_list)))
+                self._logger.debug("Candles list {}".format(len(candles_dict_list)))
 
                 for candle_dict in candles_dict_list:
                     try:
                         candle:Candle = AssetMapper().map_tradingview_json_to_candle(candle_dict)
                         candle: Candle = self._asset_manager.add_candle(candle)
                     except Exception as e:
-                        logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
+                        self._logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
                     finally:
                         continue
             if filename.startswith("Testdata") and filename.endswith(".csv"):
@@ -69,11 +70,11 @@ class FileHandler(FileSystemEventHandler):
                         candle:Candle = AssetMapper().map_tradingview_json_to_candle(candle_dict)
                         candles.append(candle)
                     except Exception as e:
-                        logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
+                        self._logger.debug("Failed to add Candle to AssetManager from File: {}".format(e))
                 self._backtest_service.add_test_data(candles)
             self._move_to_archive(event.src_path)
         except Exception as e:
-            logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
+            self._logger.error("Failed to add Candle to AssetManager from File: {}".format(e))
     # endregion
 
     # region CSV Parsing
@@ -95,7 +96,6 @@ class FileHandler(FileSystemEventHandler):
 
                     df = pd.read_csv(file_path, delimiter='\t', header=None,
                                      names=["iso_time", "open", "high", "low", "close", "volume"])
-
                     for _, row in df.iterrows():
                         candle = Candle(
                             asset=asset,
@@ -108,13 +108,10 @@ class FileHandler(FileSystemEventHandler):
                             timeframe=timeframe
                         )
                         candles.append(candle)
-
-
         return candles
 
 
-    @staticmethod
-    def _parse_candle_data(csv_filename) -> list[dict]:
+    def _parse_candle_data(self,csv_filename) -> list[dict]:
         """Parses the Candle Data from a TradingView CSV"""
         candles = []
         try:
@@ -157,25 +154,23 @@ class FileHandler(FileSystemEventHandler):
                     candles.append(formatted_candle)
             return candles
         except Exception as e:
-            logger.error("Failed to Parse Candle Data from CSV: {e}".format(e=e))
+            self._logger.error("Failed to Parse Candle Data from CSV: {e}".format(e=e))
             return candles
 
     # endregion
 
     # region File Functions
 
-    @staticmethod
-    def _delete_file(file_path):
+    def _delete_file(self,file_path):
         try:
             # Delete the file after processing
             os.remove(file_path)
-            logger.info(f"Deleted File: {file_path}")
+            self._logger.info(f"Deleted File: {file_path}")
 
         except Exception as e:
-            logger.error(f"Error deleting file {file_path}: {e}")
+            self._logger.error(f"Error deleting file {file_path}: {e}")
 
-    @staticmethod
-    def _move_to_archive(src_path):
+    def _move_to_archive(self,src_path):
         try:
             # Get the directory where the source file is located
             src_dir = os.path.dirname(src_path)
@@ -192,8 +187,8 @@ class FileHandler(FileSystemEventHandler):
 
             # Move the file to the _archive folder
             shutil.move(src_path, destination)
-            logger.info(f"File moved to _archive: {destination}")
+            self._logger.info(f"File moved to _archive: {destination}")
 
         except Exception as e:
-            logger.error(f"Error moving file {src_path} to _archive: {e}")
+            self._logger.error(f"Error moving file {src_path} to _archive: {e}")
     # endregion

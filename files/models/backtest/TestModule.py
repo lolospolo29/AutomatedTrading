@@ -1,4 +1,6 @@
 import random
+from logging import Logger
+
 from collections import deque
 
 from files.models.asset.Candle import Candle
@@ -14,17 +16,17 @@ from files.models.trade.Order import Order
 from files.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
 from files.models.trade.enums.OrderTypeEnum import OrderTypeEnum
 from files.models.trade.enums.TriggerDirectionEnum import TriggerDirection
-from files.monitoring.logging.logging_startup import logger
 
 class TestModule:
     def __init__(self,asset_class:str,strategy:Strategy, asset:str,candles:list[Candle]
-                 , timeframes:list[ExpectedTimeFrame],trade_limit:int=2):
+                 , timeframes:list[ExpectedTimeFrame],logger:Logger,trade_limit:int=2,):
         self.asset = asset
         self.asset_class = asset_class
         self.strategy = strategy
         self.candles = candles
         self.timeframes = timeframes
-        self._trade_que = deque(maxlen=trade_limit) # list of tradeIds
+        self.trade_que = deque(maxlen=trade_limit) # list of tradeIds
+        self.logger = logger
         self.results:dict[str,StrategyResult] = {}
         self.trade_results:dict[str,TradeResult] = {}
 
@@ -48,10 +50,10 @@ class TestModule:
                                                              ,timeFrame=candle.timeframe
                                                              ,relation=fake_relation,asset_class=self.asset_class)
 
-                        if result.status == StrategyResultStatusEnum.NEWTRADE.value and len(self._trade_que) < self._trade_que.maxlen:
+                        if result.status == StrategyResultStatusEnum.NEWTRADE.value and len(self.trade_que) < self.trade_que.maxlen:
                             self.handle_new_trade(result, series[-1])
                     except Exception as e:
-                        logger.debug("Testing Strategy Entry Failed,Error{e}".format(e=e))
+                        self.logger.error("Testing Strategy Entry Failed,Error{e}".format(e=e))
                     if self.results:
                         self.handle_exits(series)
 
@@ -64,14 +66,14 @@ class TestModule:
         self.trade_results[result.trade.tradeId] = trade_result
         updated_result = self._update_trade_results(result, last_candle)
         self.results[updated_result.trade.tradeId] = updated_result
-        self._trade_que.append(updated_result.trade.tradeId)
+        self.trade_que.append(updated_result.trade.tradeId)
 
     def handle_exits(self,series:list[Candle]):
         last_candle = series[-1]
 
         finished_ids = []
 
-        for id in self._trade_que:
+        for id in self.trade_que:
             try:
                 result = self.results[id]
                 strategy_result = self.strategy.get_exit(candles=series,
@@ -89,12 +91,12 @@ class TestModule:
                     finished_ids.append(id)
 
             except Exception as e:
-                logger.error("Testing Strategy Entry Failed,Error{e}".format(e=e))
+                self.logger.error("Testing Strategy Entry Failed,Error{e}".format(e=e))
                 finished_ids.append(id)
                 continue
 
         for id in finished_ids:
-            self._trade_que.remove(id)
+            self.trade_que.remove(id)
 
     def calculate_trade_results(self):
         for trade_result in self.trade_results.values():

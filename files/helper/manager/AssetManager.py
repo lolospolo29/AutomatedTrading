@@ -1,4 +1,5 @@
 import threading
+from logging import Logger
 
 from files.db.mongodb.AssetRepository import AssetRepository
 from files.db.mongodb.DataRepository import DataRepository
@@ -8,8 +9,6 @@ from files.models.asset.Asset import Asset
 from files.models.asset.Candle import Candle
 from files.models.asset.Relation import Relation
 from files.models.asset.SMTPair import SMTPair
-from files.monitoring.logging.logging_startup import logger
-
 
 class AssetManager:
     """
@@ -41,33 +40,34 @@ class AssetManager:
         return cls._instance
 
 
-    def __init__(self,asset_respository:AssetRepository,trading_data_repository:DataRepository):
+    def __init__(self,asset_respository:AssetRepository,trading_data_repository:DataRepository,logger:Logger):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.assets: dict[str,Asset] = {}
             self._asset_respository = asset_respository
             self._data_repository = trading_data_repository
+            self._logger = logger
             self._initialized = True  # Markiere als initialisiert
 
     # endregion
 
     # region Registry Functions
     def register_asset(self, asset: Asset) -> bool:
-        logger.info(f"Register Asset to Asset Manager:{asset.name}")
+        self._logger.info(f"Register Asset to Asset Manager:{asset.name}")
 
         if not asset.name in self.assets:
             self.assets[asset.name] = asset
-            logger.info("Registered asset {}".format(asset.name))
+            self._logger.info("Registered asset {}".format(asset.name))
             return True
-        logger.warning("Asset {} already registered".format(asset.name))
+        self._logger.warning("Asset {} already registered".format(asset.name))
         return False
 
     def remove_asset(self,asset:Asset):
         try:
             if asset.name in self.assets:
                 del self.assets[asset.name]
-                logger.info(f"Asset {asset.name} deleted")
+                self._logger.info(f"Asset {asset.name} deleted")
         except Exception as e:
-            logger.exception("Failed to delete asset {asset},Error:{e}".format(asset=asset, e=e))
+            self._logger.exception("Failed to delete asset {asset},Error:{e}".format(asset=asset, e=e))
 
     # endregion
 
@@ -92,54 +92,54 @@ class AssetManager:
         try:
             if not asset.name in self.assets:
                 self.register_asset(asset)
-                logger.debug(f"Adding Asset to Asset Manager:{asset}")
+                self._logger.debug(f"Adding Asset to Asset Manager:{asset}")
                 self._asset_respository.add_asset(asset)
-                logger.debug(f"Adding Asset to db:{asset}")
+                self._logger.debug(f"Adding Asset to db:{asset}")
         except Exception as e:
-            logger.critical("Failed to add Asset to db with exception {}".format(e))
+            self._logger.critical("Failed to add Asset to db with exception {}".format(e))
 
     def delete_asset(self,asset:Asset):
         try:
             if asset.name in self.assets:
                 self.remove_asset(asset)
-                logger.debug(f"Delete Asset:{asset}")
+                self._logger.debug(f"Delete Asset:{asset}")
                 self._asset_respository.delete_asset(asset)
-                logger.debug(f"Delete Asset from db:{asset}")
+                self._logger.debug(f"Delete Asset from db:{asset}")
         except Exception as e:
-            logger.critical("Failed to delete Asset from db with exception {}".format(e))
+            self._logger.critical("Failed to delete Asset from db with exception {}".format(e))
 
     def update_asset(self,asset:Asset):
         try:
             dto:AssetDTO = self._asset_respository.find_asset_by_id(asset.asset_id)
             if dto.name in self.assets:
                 self.assets[asset.name].update_asset(asset)
-                logger.debug(f"Update Asset in Asset Manager:{asset}")
+                self._logger.debug(f"Update Asset in Asset Manager:{asset}")
                 self._asset_respository.update_asset(asset)
-                logger.debug(f"Update Asset in db:{asset}")
+                self._logger.debug(f"Update Asset in db:{asset}")
         except Exception as e:
-            logger.critical("Failed to update Asset with exception {}".format(e))
+            self._logger.critical("Failed to update Asset with exception {}".format(e))
 
     # endregion
 
     # region Add Functions
 
     def _add_candle_to_db(self, candle: Candle):
-        logger.debug(f"Adding candle to db:{candle.asset}")
+        self._logger.debug(f"Adding candle to db:{candle.asset}")
         try:
             self._data_repository.add_candle(candle.asset, candle)
         except Exception as e:
-            logger.critical("Failed to add candle to db with exception {}".format(e))
+            self._logger.critical("Failed to add candle to db with exception {}".format(e))
 
     def add_candle(self,candle:Candle) -> Candle:
         try:
-            logger.debug(f"Add Candle to:{candle.asset}")
+            self._logger.debug(f"Add Candle to:{candle.asset}")
 
             if candle.asset in self.assets:
                 self.assets[candle.asset].add_candle(candle)
                 self._add_candle_to_db(candle)
                 return candle
         except Exception as e:
-            logger.exception("Failed to add candle to db with exception {}".format(e))
+            self._logger.exception("Failed to add candle to db with exception {}".format(e))
 
     def add_relation(self, relation: Relation)->bool:
         try:
@@ -148,35 +148,35 @@ class AssetManager:
                 return True
             return False
         except Exception as e:
-            logger.exception("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+            self._logger.exception("Failed to add relation to asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 
     def update_relation(self,relation:Relation):
         try:
             if relation.asset in self.assets:
                 self.assets[relation.asset].update_relation(relation)
         except Exception as e:
-            logger.exception("Failed to update relation for asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+            self._logger.exception("Failed to update relation for asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 
     def remove_relation(self,relation:Relation):
         try:
             if relation.asset in self.assets:
                 self.assets[relation.asset].remove_relation(relation)
         except Exception as e:
-            logger.exception("Failed to remove relation from asset {asset},Error:{e}".format(asset=relation.asset, e=e))
+            self._logger.exception("Failed to remove relation from asset {asset},Error:{e}".format(asset=relation.asset, e=e))
 
     def add_candles_series(self,asset:str,maxlen:int,timeframe:int,broker:str):
         try:
             if asset in self.assets:
                 self.assets[asset].add_candles_series(maxlen,timeframe,broker)
         except Exception as e:
-            logger.exception("Failed to add candles series to asset {asset},Error:{e}".format(asset=asset, e=e))
+            self._logger.exception("Failed to add candles series to asset {asset},Error:{e}".format(asset=asset, e=e))
 
     def add_smt_pair(self, asset: str, smt_pair: SMTPair):
         try:
             if asset in self.assets:
                 self.assets[asset].add_smt_pair(smt_pair)
         except Exception as e:
-            logger.exception("Failed to add smt pair to asset {asset},Error:{e}".format(asset=asset, e=e))
+            self._logger.exception("Failed to add smt pair to asset {asset},Error:{e}".format(asset=asset, e=e))
 
     # endregion
 
@@ -187,26 +187,26 @@ class AssetManager:
             if asset in self.assets:
                 return self.assets[asset].asset_class
         except Exception as e:
-            logger.exception("Failed to return asset class for asset {asset},Error:{e}".format(asset=asset, e=e))
+            self._logger.exception("Failed to return asset class for asset {asset},Error:{e}".format(asset=asset, e=e))
 
     def return_relations(self, asset: str,broker:str) -> list[Relation]:
         try:
             if asset in self.assets:
                 return self.assets[asset].return_relations(broker)
         except Exception as e:
-            logger.exception("Failed to return relations for asset:{asset},Error {e}".format(asset=asset, e=e))
+            self._logger.exception("Failed to return relations for asset:{asset},Error {e}".format(asset=asset, e=e))
 
     def return_candles(self, asset: str, broker: str, timeFrame: int) -> list[Candle]:
         try:
             if asset in self.assets:
                 return self.assets[asset].return_candles(timeFrame, broker)
         except Exception as e:
-            logger.exception("Failed to return candles for asset {asset},Error {e}".format(asset=asset, e=e))
+            self._logger.exception("Failed to return candles for asset {asset},Error {e}".format(asset=asset, e=e))
 
     def return_all_relations(self, asset: str)->list[Relation]:
         try:
             if asset in self.assets:
                 return self.assets[asset].relations
         except Exception as e:
-            logger.exception("Failed to return relations for asset{asset},Error {e}".format(asset=asset, e=e))
+            self._logger.exception("Failed to return relations for asset{asset},Error {e}".format(asset=asset, e=e))
     # endregion

@@ -11,7 +11,7 @@ from files.models.asset.SMTPair import SMTPair
 
 class RelationRepository:
 
-    def __init__(self, db_name:str,uri:str):
+    def __init__(self, db_name:str,uri:str,dto_mapper:DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
         self._dto_mapper = DTOMapper()
 
