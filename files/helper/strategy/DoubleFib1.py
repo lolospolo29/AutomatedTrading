@@ -122,10 +122,11 @@ class DoubleFib1(Strategy):
             return StrategyResult()
 
     def get_exit(self, candles: list, timeFrame: int, trade: Trade, relation: Relation) -> StrategyResult:
-        # todo db asset add category also too strategy
         # todo test trade on dev
+        # todo db asset add category also too strategy
         # todo list clear limit logic with queue or limit or candles input + expcetimeframe
         # todo test price mediator
+        # todo unit testing / pen testing
         # todo restart after shutdown logic for trade / fill strategy
         # todo trail stop
         # todo faker exit trade prd

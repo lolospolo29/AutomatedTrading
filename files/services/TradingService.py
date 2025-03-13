@@ -198,15 +198,14 @@ class TradingService:
 
         for order in orders:
             if order.orderType == OrderTypeEnum.MARKET.value:
+                formatted_orders.append(f"• Market Order: {order.side} @ {order.qty},Id:{order.orderLinkId}")
                 if order.takeProfit:
                     formatted_orders.append(f"TakeProfit: {order.takeProfit},Id:{order.orderLinkId}")
                 if order.stopLoss:
                     formatted_orders.append(f"StopLoss: {order.stopLoss},Id:{order.orderLinkId}")
                 if order.triggerPrice:
                     formatted_orders.append(f"TriggerPrice: {order.triggerPrice},Id:{order.orderLinkId}")
-                formatted_orders.append(f"• Market Order: {order.side} @ {order.qty},Id:{order.orderLinkId}")
             elif order.orderType == OrderTypeEnum.LIMIT.value:
                 formatted_orders.append(f"• Limit Order: {order.side} @ {order.qty} (Limit: {order.price}),Id:{order.orderLinkId}")
 
         return "\n".join(formatted_orders)
-
