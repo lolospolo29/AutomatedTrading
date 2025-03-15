@@ -5,7 +5,7 @@ from files.models.asset.Relation import Relation
 from files.models.frameworks.FrameWork import FrameWork
 from files.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from files.models.trade.Order import Order
-from files.models.trade.enums.OrderTypeEnum import OrderTypeEnum
+from files.models.trade.enums.OrderType import OrderType
 
 
 class OrderBuilder:
@@ -29,7 +29,7 @@ class OrderBuilder:
         o.money_at_risk = 0.0
         o.risk_percentage = risk_percentage
         o.order_result_status = OrderResultStatusEnum.NEW.value
-        o.orderType = OrderTypeEnum.MARKET.value # set Default
+        o.orderType = OrderType.MARKET.value # set Default
         if qty is not None:
             o.qty = qty
         return self
@@ -90,7 +90,7 @@ class OrderBuilder:
             order.tpOrderType = tp_order_type
         if sl_order_type is not None:
             order.slOrderType = sl_order_type
-        order.orderType = OrderTypeEnum.LIMIT.value
+        order.orderType = OrderType.LIMIT.value
         return self
 
     def build(self):

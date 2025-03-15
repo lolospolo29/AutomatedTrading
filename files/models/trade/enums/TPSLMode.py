@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class TPSLModeEnum(Enum):
+class TPSLMode(Enum):
     FULL = "Full"
     PARTIAL = "Partial"

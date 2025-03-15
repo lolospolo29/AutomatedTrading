@@ -1,14 +1,14 @@
 import threading
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from logging import Logger
 
 import pytz
 
 from files.db.mongodb.NewsRepository import NewsRepository
+from files.functions.to_utc import to_utc
 from tools.EconomicScrapper.EconomicScrapper import EconomicScrapper
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
-
 
 class NewsService:
     """
@@ -64,19 +64,24 @@ class NewsService:
         # Calculate the date 7 days from now and set the time to 00:00:00
         future_date = (datetime.utcnow() + timedelta(days=7)).replace(hour=0, minute=0, second=0,
                                                                       microsecond=0).isoformat()
-
         from_date_iso = datetime.fromisoformat(now.replace("Z", "+00:00"))
         to_date_iso = datetime.fromisoformat(future_date.replace("Z", "+00:00"))
 
+        time_obj = from_date_iso.replace(tzinfo=timezone.utc)
+        from_date_iso = to_utc(time_obj)
+
+        time_obj = to_date_iso.replace(tzinfo=timezone.utc)
+        to_date_iso = to_utc(time_obj)
+
         news_events_db:list[NewsEvent] = self._news_repository.get_news_events(from_date_iso, to_date_iso)
-        news_days:list[NewsDay] = self._news_repository.get_news_days(now, future_date)
+        news_days:list[NewsDay] = self._news_repository.get_news_days(from_date_iso, to_date_iso)
 
         for news_day in news_days:
 
             news_events = []
 
             for news in news_events_db:
-                day = datetime.fromisoformat(news_day.day_iso).date().day
+                day = news_day.day_iso.day
                 if day == news.time.day:
                     news_events.append(news)
             news_day.news_events = news_events
@@ -96,24 +101,19 @@ class NewsService:
         try:
             utc_now = datetime.now(pytz.utc)
 
-            # Convert to UTC-5
-            utc_minus_5 = utc_now.astimezone(pytz.timezone('US/Eastern'))  # Eastern Time is UTC-5 during standard time
-
             for newsDay in self._news_days:
                 self.logger.debug(newsDay.__str__())
                 try:
-                    day = datetime.fromisoformat(newsDay.day_iso).date().day
-                    if day == utc_minus_5.day:
+                    day = newsDay.day_iso.day
+                    if day == utc_now.day:
                         for news in newsDay.news_events:
                             self.logger.debug(news.__str__())
-                            if ( news.time.hour - hour == utc_minus_5.hour or news.time.hour + hour == utc_minus_5.hour or
-                                    news.time.hour == utc_minus_5.hour):
+                            if ( news.time.hour - hour == utc_now.hour or news.time.hour + hour == utc_now.hour or
+                                    news.time.hour == utc_now.hour):
                                 self.logger.info(f"News Day {newsDay.day_iso} ahead")
                                 return True,"News {title}: At {news_hour}".format(title=news.title,news_hour=news.time.hour)
                 except Exception as e:
                     self.logger.critical(f"News Day failed: {e}")
-                finally:
-                    continue
             return False,""
         except Exception as e:
             self.logger.critical(e)

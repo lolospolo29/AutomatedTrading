@@ -10,7 +10,7 @@ class NewsRepository:
 
     def __init__(self, db_name:str,uri:str,dto_mapper:DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
-        self._dto_mapper = DTOMapper()
+        self._dto_mapper = dto_mapper
 
     # News CRUD
 
@@ -45,7 +45,7 @@ class NewsRepository:
 
         return news_events
 
-    def get_news_days(self, from_date: str, to_date: str)->list[NewsDay]:
+    def get_news_days(self, from_date: datetime, to_date: datetime)->list[NewsDay]:
         news_days = []
 
         # MongoDB-Abfrage mit Datumsbereich auf das Feld "time"

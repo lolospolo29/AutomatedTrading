@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -15,5 +16,5 @@ class NewsDay(BaseModel):
     chronological organization of events is required.
 
     """
-    day_iso: str
+    day_iso: datetime
     news_events : Optional[list[NewsEvent]] = None

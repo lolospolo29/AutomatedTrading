@@ -12,7 +12,7 @@ from files.models.strategy.StrategyResult import StrategyResult
 from files.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
-from files.models.trade.enums.OrderTypeEnum import OrderTypeEnum
+from files.models.trade.enums.OrderType import OrderType
 from files.monitoring.log_time import log_time
 from files.services.NewsService import NewsService
 from files.services.TelegramService import TelegramService
@@ -197,7 +197,7 @@ class TradingService:
         formatted_orders = []
 
         for order in orders:
-            if order.orderType == OrderTypeEnum.MARKET.value:
+            if order.orderType == OrderType.MARKET.value:
                 formatted_orders.append(f"• Market Order: {order.side} @ {order.qty},Id:{order.orderLinkId}")
                 if order.takeProfit:
                     formatted_orders.append(f"TakeProfit: {order.takeProfit},Id:{order.orderLinkId}")
@@ -205,7 +205,7 @@ class TradingService:
                     formatted_orders.append(f"StopLoss: {order.stopLoss},Id:{order.orderLinkId}")
                 if order.triggerPrice:
                     formatted_orders.append(f"TriggerPrice: {order.triggerPrice},Id:{order.orderLinkId}")
-            elif order.orderType == OrderTypeEnum.LIMIT.value:
+            elif order.orderType == OrderType.LIMIT.value:
                 formatted_orders.append(f"• Limit Order: {order.side} @ {order.qty} (Limit: {order.price}),Id:{order.orderLinkId}")
 
         return "\n".join(formatted_orders)

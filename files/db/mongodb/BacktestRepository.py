@@ -13,7 +13,7 @@ from files.models.trade.Trade import Trade
 class BacktestRepository:
     def __init__(self, db_name: str, uri: str,dto_mapper: DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
-        self._dto_mapper = DTOMapper()
+        self._dto_mapper = dto_mapper
 
     def add_candle(self, candle: Candle):
         self._db.add("Testdata", candle.model_dump())

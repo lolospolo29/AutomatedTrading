@@ -12,7 +12,7 @@ class SilverBulletLondon(ITimeWindow):
     def is_in_entry_window(self, time):
         current_hour = time.hour
 
-        if 8 <= current_hour < 9:
+        if 7 <= current_hour < 8:
             return True
 
         return False

@@ -19,8 +19,8 @@ class BrokerRegistry:
     def __init__(self):
         self.__registry:dict[str,IBrokerHandler]= {}
 
-    def register_handler(self, broker:str, handler:IBrokerHandler):
-        self.__registry[broker] = handler
+    def register_handler(self,handler:IBrokerHandler):
+        self.__registry[handler.return_name().upper()] = handler
 
     def place_order(self, request_params:RequestParameters):
         if request_params.broker.upper() in self.__registry:

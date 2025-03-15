@@ -73,6 +73,9 @@ class AssetManager:
 
     # region CRUD
 
+    def return_asset_classes(self)->list[AssetClassDTO]:
+        return self._asset_respository.find_asset_classes()
+
     def return_assets(self)->list[Asset]:
         dtos:list[AssetDTO] = self._asset_respository.find_assets()
         assets = []

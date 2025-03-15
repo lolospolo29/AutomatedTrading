@@ -13,7 +13,7 @@ class LastCloseMacro(ITimeWindow):
         current_hour = time.hour
         current_minute = time.minute
 
-        if 40 >= current_minute > 20 and current_hour == 20:
+        if 50 >= current_minute > 20 and current_hour == 19:
             return True
 
         return False

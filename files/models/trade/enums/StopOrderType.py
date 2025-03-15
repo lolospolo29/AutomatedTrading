@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class StopOrderTypeEnum(Enum):
+class StopOrderType(Enum):
     TakeProfit = "TakeProfit"
     StopLoss = "StopLoss"
     TrailingStop = "TrailingStop"

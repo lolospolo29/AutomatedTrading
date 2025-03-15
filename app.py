@@ -45,14 +45,6 @@ def run_backtest():
 
     return jsonify({"status": "success"})
 
-@app.route('/get-test-results', methods=['POST'])
-def get_test_results():
-    json_data = request.get_json()  # Get the JSON data sent with the POST request
-    logger.debug(f"Received signal data: {json_data}")#
-    result = signal_controller.get_test_results(json_data)
-
-    return jsonify(result)
-
 @app.route('/create-asset', methods=['POST'])
 def create_asset():
     json_data = request.get_json()  # Get the JSON data sent with the POST request
@@ -86,6 +78,14 @@ def create_smt_pair():
 
 # region GET APP Route
 
+@app.route('/get-asset-classes', methods=['GET'])
+def get_asset_classes():
+    return jsonify(signal_controller.get_asset_classes())
+
+@app.route('/get-categories', methods=['GET'])
+def get_categories():
+    return jsonify(signal_controller.get_categories())
+
 @app.route('/get-asset-selection', methods=['GET'])
 def get_asset_selection():
     return jsonify(signal_controller.get_asset_selection())
@@ -117,6 +117,14 @@ def get_assets():
 @app.route('/get-strategies', methods=['GET'])
 def get_strategies():
     return jsonify(signal_controller.get_strategies())
+
+@app.route('/get-test-results', methods=['POST'])
+def get_test_results():
+    json_data = request.get_json()  # Get the JSON data sent with the POST request
+    logger.debug(f"Received signal data: {json_data}")#
+    result = signal_controller.get_test_results(json_data)
+
+    return jsonify(result)
 # endregion
 
 # region UPDATE APP Route

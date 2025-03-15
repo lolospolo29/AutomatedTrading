@@ -12,7 +12,7 @@ class SilverBulletClose(ITimeWindow):
     def is_in_entry_window(self, time):
         current_hour = time.hour
 
-        if 20 <= current_hour < 21:
+        if 18 <= current_hour < 19:
             return True
 
         return False

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class TriggerByEnum(Enum):
+class TriggerBy(Enum):
     MARKPRICE = "MarkPrice"
     INDEXPRICE = "IndexPrice"
     LASTPRICE = "LastPrice"

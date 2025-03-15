@@ -6,11 +6,10 @@ from pydantic import BaseModel, Field
 from files.db.mongodb.dtos.PyObjectId import PyObjectId
 
 
-class AssetDTO(BaseModel):
+class CategoryDTO(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)  # MongoDB _id
     name: str=None
-    assetId: int
-    assetClass: Optional[int] = None
+    categoryId: int
 
     class Config:
         json_encoders = {ObjectId: str}  # Convert ObjectId to str in JSON

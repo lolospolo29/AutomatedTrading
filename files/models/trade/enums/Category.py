@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class CategoryEnum(Enum):
+class Category(Enum):
     SPOT = "spot"
     LINEAR = "linear"
     INVERSE = "inverse"

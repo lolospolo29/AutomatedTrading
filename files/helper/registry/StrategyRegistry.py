@@ -82,7 +82,7 @@ class StrategyRegistry:
             self._logger.exception("Failed to delete strategy {strategy},Error:{e}".format(strategy=relation, e=e))
 
     def return_strategies(self)->list[str]:
-        return [x.name for x in self.strategies.values()]
+        return [x.__name for x in self.strategies.values()]
 
     def return_expected_time_frame(self, relation: Relation) -> list[ExpectedTimeFrame]:
         try:

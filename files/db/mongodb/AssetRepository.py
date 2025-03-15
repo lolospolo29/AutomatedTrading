@@ -9,7 +9,7 @@ class AssetRepository:
 
     def __init__(self, db_name:str,uri:str,dto_mapper:DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
-        self._dto_mapper = DTOMapper()
+        self._dto_mapper = dto_mapper
 
     # region Asset Class CRUD
 
@@ -21,6 +21,16 @@ class AssetRepository:
     def find_asset_class_by_id(self,_id:int)->AssetClassDTO:
         query = self._db.buildQuery("assetClassId", _id)
         return AssetClassDTO(**self._db.find("AssetClasses",query)[0])
+
+    def find_asset_classes(self):
+        asset_classes_db: list = self._db.find("AssetClasses", None)
+
+        asset_classes:list[AssetClassDTO] = []
+
+        for asset_class in asset_classes_db:
+            asset_classes.append(AssetClassDTO(**asset_class))
+
+        return asset_classes
     # endregion
 
     # region Asset CRUD

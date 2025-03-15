@@ -3,7 +3,7 @@ import math
 from files.helper.manager.RiskManager import RiskManager
 from files.models.asset.AssetClassEnum import AssetClassEnum
 
-class RiskCalculator:
+class PositionSizeCalculator:
     def __init__(self):
         self._risk_manager = RiskManager()
 
@@ -138,9 +138,6 @@ class RiskCalculator:
             return 0  # Spezieller Fall, wenn der Wert 0 ist
         factor = 10 ** math.floor(math.log10(abs(value)))
         return math.floor(value / factor) * factor
-
-    def calculate_money_at_risk(self):
-        return self._risk_manager.calculate_money_at_risk()
 
     def calculate_order_qty(self, asset_class: str, entry_price:float, exit_price:float, risk_percentage:float=1,
                             pip_value:int=None, lot_size:int=None, point_value:int=None) -> float:

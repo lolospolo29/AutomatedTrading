@@ -1,7 +1,9 @@
 from logging import Logger
 from typing import Dict, Any
 
+from files.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
 from files.db.mongodb.dtos.BrokerDTO import BrokerDTO
+from files.db.mongodb.dtos.CategoryDTO import CategoryDTO
 from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.RelationManager import RelationManager
 from files.helper.registry.StrategyRegistry import StrategyRegistry
@@ -51,6 +53,7 @@ class SignalController:
                 updated_results.append(trade_str)
             except Exception as e:
                 self._logger.error("Error appending trade to list: {id},Error:{e}".format(id=result.result_id,e=e))
+                continue
         return updated_results
 
     def get_trades(self)->list[dict]:
@@ -62,6 +65,7 @@ class SignalController:
                 updated_trades.append(trade_str)
             except Exception as e:
                 self._logger.error("Error appending trade to list: {id},Error:{e}".format(id=trade.id,e=e))
+                continue
         return updated_trades
 
     def get_news(self):
@@ -73,6 +77,7 @@ class SignalController:
                 updated_news.append(trade_str)
             except Exception as e:
                 self._logger.error("Error appending trade to list: {id},Error:{e}".format(id=news_day,e=e))
+                continue
         return updated_news
 
     def get_smt_pairs(self)->list[dict]:
@@ -84,6 +89,7 @@ class SignalController:
                 dict_smt_pairs.append(relation_dict)
             except Exception as e:
                 self._logger.error("Error appending relation to list: {id},Error:{e}".format(id=smt_pair.strategy,e=e))
+                continue
         return dict_smt_pairs
 
     def add_smt_pair(self,json_data:Dict[str,Any] = None):
@@ -109,6 +115,7 @@ class SignalController:
                 dict_relations.append(relation_dict)
             except Exception as e:
                 self._logger.error("Error appending relation to list: {id},Error:{e}".format(id=relation.id,e=e))
+                continue
         return dict_relations
 
     def add_relation(self,json_data:Dict[str,Any] = None):
@@ -138,7 +145,8 @@ class SignalController:
                 asset_dict:dict = asset.dict(exclude={'candles_series'})
                 dict_assets.append(asset_dict)
             except Exception as e:
-                self._logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=asset.name,e=e))
+                self._logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=asset.__name, e=e))
+                continue
         return dict_assets
 
     def add_asset(self, json_data: Dict[str, Any]) -> None:
@@ -172,8 +180,33 @@ class SignalController:
                 broker_dict:dict = broker.dict(exclude={"id"})
                 dict_brokers.append(broker_dict)
             except Exception as e:
-                self._logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=broker.name,e=e))
+                self._logger.error("Error appending asset to list Name: {name},Error:{e}".format(name=broker.__name, e=e))
+                continue
         return dict_brokers
+
+    def get_categories(self):
+        categories:list[CategoryDTO] = self._Relation_manager.return_categories()
+        dict_categories = []
+        for category in categories:
+            try:
+                category_dict:dict = category.dict(exclude={"id"})
+                dict_categories.append(category_dict)
+            except Exception as e:
+                self._logger.error("Error while dumping category name: {name},Error:{e}".format(name=category.__name, e=e))
+                continue
+        return dict_categories
+
+    def get_asset_classes(self):
+        asset_classes:list[AssetClassDTO] = self._AssetManager.return_asset_classes()
+        dict_asset_classes = []
+        for asset_class in asset_classes:
+            try:
+                asset_class_dict:dict = asset_class.dict(exclude={"id"})
+                dict_asset_classes.append(asset_class_dict)
+            except Exception as e:
+                self._logger.error("Error while dumping Asset Class,Error:{e}".format(e=e))
+                continue
+        return dict_asset_classes
 
     # region TradingView Handling
     def trading_view_signal(self, json_data: Dict[str, Any]) -> None:

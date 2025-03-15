@@ -1,5 +1,5 @@
 from enum import Enum
 
-class OrderTypeEnum(Enum):
+class OrderType(Enum):
     LIMIT = "Limit"
     MARKET = "Market"

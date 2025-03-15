@@ -12,7 +12,7 @@ class SecondNYMacro(ITimeWindow):
     def is_in_entry_window(self, time):
         current_hour = time.hour
 
-        if 15 <= current_hour < 16:
+        if 14 <= current_hour < 15:
             return True
 
         return False

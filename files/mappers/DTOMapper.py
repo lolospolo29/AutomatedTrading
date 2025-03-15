@@ -9,7 +9,6 @@ from files.models.frameworks.Level import Level
 from files.models.frameworks.PDArray import PDArray
 from files.models.trade.Trade import Trade
 
-
 class DTOMapper:
 
     @staticmethod

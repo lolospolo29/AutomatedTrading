@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class OrderStatusEnum(Enum):
+class OrderStatus(Enum):
     NEW = "New"
     PARTIALLYFILLED = "PartiallyFilled"
     UNTRIGGERED = "Untriggered"

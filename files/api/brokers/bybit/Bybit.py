@@ -4,17 +4,12 @@ import time
 
 import requests as requests
 
-from files.helper.manager.initializer.SecretsManager import SecretsManager
-
-
 class Bybit:
 
-    def __init__(self,name: str):
-        self.name = name
-        self._secret_manager: SecretsManager = SecretsManager()
-        self.__apiKey: str = self._secret_manager.return_secret("BybitKey")
-        self.__apiSecret: str = self._secret_manager.return_secret("BybitSecret")
-        self.__baseUrl = self._secret_manager.return_secret("BybitUrl")
+    def __init__(self,api_key: str,api_secret: str,uri:str) -> None:
+        self.__apiKey: str = api_key
+        self.__apiSecret: str = api_secret
+        self.__baseUrl = uri
         self.__recvWindow = str(5000)
         self.__session = requests.Session()
 

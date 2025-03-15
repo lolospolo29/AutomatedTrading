@@ -47,8 +47,8 @@ class NYMSS(Strategy):
             if not self.is_in_time(time):
                 return StrategyResult()
 
-            fvgs_one_hour: list[PDArray] = [fvg for fvg in pds if fvg.name == "FVG" and fvg.timeframe == 60]
-            fvgs_five_minute:list[PDArray] = [fvg for fvg in pds if fvg.name == "FVG" and fvg.timeframe == 5]
+            fvgs_one_hour: list[PDArray] = [fvg for fvg in pds if fvg.__name == "FVG" and fvg.timeframe == 60]
+            fvgs_five_minute:list[PDArray] = [fvg for fvg in pds if fvg.__name == "FVG" and fvg.timeframe == 5]
 
             for fvg1 in fvgs_one_hour:
                 fvg_one_h_low, fvg_one_h_high = self._strategy_handler.PDMediator.return_candle_range("FVG", fvg1)

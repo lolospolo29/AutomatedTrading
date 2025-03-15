@@ -56,7 +56,7 @@ class LondonSB(Strategy):
             if not self.is_in_time(time):
                 return StrategyResult()
 
-            fvgs: list[PDArray] = [brk for brk in pds if brk.name == "FVG"]
+            fvgs: list[PDArray] = [brk for brk in pds if brk.__name == "FVG"]
 
             for fvg in fvgs:
                 fvgLow, fvgHigh = self.strategy_facade.PDMediator.return_candle_range("FVG", fvg)

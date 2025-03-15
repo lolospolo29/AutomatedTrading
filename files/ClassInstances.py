@@ -1,12 +1,12 @@
 import logging
 import queue
-import time
 from functools import partial
 from threading import Thread
 
 from dotenv import load_dotenv
-from watchdog.observers import Observer
+import os
 
+from files.api.brokers.bybit.Bybit import Bybit
 from files.api.brokers.bybit.BybitHandler import BybitHandler
 from files.controller.SignalController import SignalController
 from files.db.mongodb.AssetRepository import AssetRepository
@@ -15,14 +15,16 @@ from files.db.mongodb.DataRepository import DataRepository
 from files.db.mongodb.NewsRepository import NewsRepository
 from files.db.mongodb.RelationRepository import RelationRepository
 from files.db.mongodb.TradeRepository import TradeRepository
+from files.helper.factories.MongoDBSyncFactory import MongoDBSyncFactory
 from files.helper.factories.StrategyFactory import StrategyFactory
-from files.helper.registry.BrokerRegistry import BrokerRegistry
 from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.RelationManager import RelationManager
 from files.helper.manager.RiskManager import RiskManager
-from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.helper.manager.TradeManager import TradeManager
-from files.helper.manager.initializer.SecretsManager import SecretsManager
+from files.helper.manager.RestartManager import RestartManager
+from files.helper.observer.MongoDBSyncObserver import MongoDBSyncObserver
+from files.helper.registry.BrokerRegistry import BrokerRegistry
+from files.helper.registry.StrategyRegistry import StrategyRegistry
 from files.mappers.AssetMapper import AssetMapper
 from files.mappers.BrokerMapper import BrokerMapper
 from files.mappers.ClassMapper import ClassMapper
@@ -37,19 +39,16 @@ from files.services.TelegramService import TelegramService
 from files.services.TradingService import TradingService
 from tools.EconomicScrapper.EconomicScrapper import EconomicScrapper
 from tools.FileHandler import FileHandler
-from files.helper.manager.initializer.ConfigManager import ConfigManager
 
 load_dotenv()
 
 # Secret Manager
-secret_manager = SecretsManager()
-
 # Logging
 log_queue = queue.Queue()
 logger = logging.getLogger()
 
 queue_handler = QueueHandler(log_queue)
-telegram_handler = TelegramLogHandler(token=secret_manager.return_secret("telegram-bot-token"),chat_id=secret_manager.return_secret("telegram-chat"))
+telegram_handler = TelegramLogHandler(token=os.getenv("TELEGRAMBOTTOKEN"),chat_id=os.getenv("TELEGRAMCHAT"))
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 # Set global logging level (should be the lowest level needed)
@@ -79,6 +78,11 @@ logger.addHandler(telegram_handler)
 
 strategy_factory = StrategyFactory()
 
+if os.getenv("ENV") == "TST":
+    sync_factory = MongoDBSyncFactory()
+    watch_asset = sync_factory.create_sync_watcher(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Asset")
+    watch_relation = sync_factory.create_sync_watcher(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Relation")
+    watch_smt_pairs = sync_factory.create_sync_watcher(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="SMTPairs")
 # scrapper
 
 economic_scrapper = EconomicScrapper(logger=logger)
@@ -92,11 +96,12 @@ broker_mapper = BrokerMapper()
 
 # broker
 
-bybit = BybitHandler(logger=logger,class_mapper=class_mapper)
+bybit = Bybit(api_key=os.getenv("BYBITKEY"),api_secret=os.getenv("BYBITSECRET"),uri=os.getenv("BYBITURL"))
+
+bybit_handler = BybitHandler(logger=logger, class_mapper=class_mapper,bybit=bybit)
 
 # DB
-
-mongo_server = secret_manager.return_secret("mongodb")
+mongo_server = os.getenv("MONGODB")
 
 trade_repository = TradeRepository(db_name="Trades",uri=mongo_server,logger=logger,dto_mapper=dto_mapper)
 
@@ -115,8 +120,7 @@ backtest_repository = BacktestRepository(db_name="Backtest",uri=mongo_server,dto
 strategy_registry = StrategyRegistry(logger=logger)
 broker_facade = BrokerRegistry()
 
-
-broker_facade.register_handler("BYBIT", bybit)
+broker_facade.register_handler(bybit_handler)
 
 risk_manager = RiskManager()
 
@@ -128,8 +132,8 @@ relation_manager = RelationManager(relation_repository=relation_repository,asset
 
 trade_manager = TradeManager(trade_repository=trade_repository,broker_facade=broker_facade,risk_manager=risk_manager,relation_manager=relation_manager, logger=logger,broker_mapper=broker_mapper,class_mapper=class_mapper)
 
-config_manager = ConfigManager(trade_manager=trade_manager, asset_manager=asset_manager, relation_manager=relation_manager,
-                               strategy_registry=strategy_registry, logger=logger,strategy_factory=strategy_factory)
+config_manager = RestartManager(trade_manager=trade_manager, asset_manager=asset_manager, relation_manager=relation_manager,
+                                strategy_registry=strategy_registry, logger=logger, strategy_factory=strategy_factory, data_repository=data_repository)
 
 # services
 
@@ -137,7 +141,7 @@ backtest_service = BacktestService(backtest_repository=backtest_repository,logge
 
 news_service = NewsService(news_repository=news_repository,logger=logger,economic_scrapper=economic_scrapper)
 
-telegram_service = TelegramService(token=secret_manager.return_secret("telegram-bot-token"), chat_id=secret_manager.return_secret("telegram-group-chat"),logger=logger)
+telegram_service = TelegramService(token=os.getenv("TELEGRAMBOTTOKEN"), chat_id=os.getenv("TELEGRAMGROUPCHAT"),logger=logger)
 
 trading_service = TradingService(asset_manager=asset_manager, trade_manager=trade_manager, strategy_registry=strategy_registry, news_service=news_service, telegram_service=telegram_service, logger=logger,asset_mapper=asset_mapper)
 

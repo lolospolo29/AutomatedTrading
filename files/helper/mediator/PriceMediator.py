@@ -32,19 +32,20 @@ from files.models.frameworks.structure.Choch import Choch
 from files.models.frameworks.structure.MSS import MSS
 from files.models.frameworks.structure.MitigationBlock import MitigationBlock
 
+
 class PriceMediator:
     def __init__(self):
         self._lock = threading.Lock()
-        self._ote = Fibonnaci([0.62,0.705,1.5],"OTE")
-        self._pd = Fibonnaci([0.0,0.5,1.0],"PD")
-        self._deviation = Fibonnaci([1.5,2.0,3.0,4.0],"STDV")
+        self._ote = Fibonnaci([0.62, 0.705, 1.5], "OTE") # todo extract fib
+        self._pd = Fibonnaci([0.0, 0.5, 1.0], "PD")
+        self._deviation = Fibonnaci([1.5, 2.0, 3.0, 4.0], "STDV")
         self._swings: dict[int, list[PDArray]] = {}
         self._eqhl: dict[int, list[Level]] = {}
         self._imbalances: dict[int, list[PDArray]] = {}
         self._orderblocks: dict[int, list[PDArray]] = {}
         self._probulsion_blocks: dict[str, list[PDArray]] = {}
         self._consecutive_candles: dict[int, list[Structure]] = {}
-        self._current_mss: dict[int, Structure] = {}
+        self._current_mss: dict[int, Structure] = {} #todo too queue
         self._previous_mss: dict[int, Structure] = {}
         self._current_bos: dict[int, Structure] = {}
         self._previous_bos: dict[int, Structure] = {}
@@ -55,9 +56,8 @@ class PriceMediator:
         self._nwog: list[PDArray] = []
         self._adr: float = 0.0
 
-    def detect_pd_arrays(self, first_candle:Candle, second_candle:Candle, third_candle:Candle, timeframe):
+    def detect_pd_arrays(self, first_candle: Candle, second_candle: Candle, third_candle: Candle, timeframe):
         with self._lock:
-
             # ADR
 
             self._calculate_average_range(first_candle, second_candle, third_candle)
@@ -111,15 +111,16 @@ class PriceMediator:
     # region ---- Getter Methods ----
 
     @staticmethod
-    def get_previous_session_hl(candles:list[Candle],time_window: ITimeWindow) -> list[Level]:
+    def get_previous_session_hl(candles: list[Candle], time_window: ITimeWindow) -> list[Level]:
         return PreviousSessionLevels.return_levels(candles, time_window)
 
-    def get_fibonnaci(self,candles:list[Candle],ote:bool=True,pd:bool=False,stdv:bool=False,fib_levels:list[float]=None) -> list[Level]:
+    def get_fibonnaci(self, candles: list[Candle], ote: bool = True, pd: bool = False, stdv: bool = False,
+                      fib_levels: list[float] = None) -> list[Level]:
         highest_candle = max(candles, key=lambda candle: candle.high)
         lowest_candle = min(candles, key=lambda candle: candle.low)
 
         if fib_levels:
-            return Fibonnaci(fib_levels,"User").return_levels(highest_candle, lowest_candle)
+            return Fibonnaci(fib_levels, "User").return_levels(highest_candle, lowest_candle)
         if stdv:
             return self._deviation.return_levels(highest_candle, lowest_candle)
         if pd:
@@ -198,7 +199,7 @@ class PriceMediator:
     # endregion
 
     # region ---- Modular detection methods ----
-    def _calculate_average_range(self,first_candle:Candle, second_candle:Candle, third_candle:Candle):
+    def _calculate_average_range(self, first_candle: Candle, second_candle: Candle, third_candle: Candle):
         high = max(first_candle.high, second_candle.high, third_candle.high)
         low = min(first_candle.high, second_candle.high, third_candle.high)
         if self._adr == 0:
@@ -267,7 +268,7 @@ class PriceMediator:
         """Detects probulsion patterns."""
         if timeframe in self._orderblocks:
             for orderblock in self._orderblocks[timeframe]:
-                if orderblock.name == "OB" or orderblock.name == "SCOB":
+                if orderblock.__name == "OB" or orderblock.__name == "SCOB":
                     pb = PB.detect_probulsion_block(last_candle=third_candle, orderblock=orderblock)
                     if pb:
                         pb.reference = orderblock.id
@@ -316,7 +317,7 @@ class PriceMediator:
             for imbalance in self._imbalances[timeframe]:
                 buy_fvg = None
                 sell_fvg = None
-                if imbalance.name == "FVG":
+                if imbalance.__name == "FVG":
                     if imbalance.direction == "Bullish":
                         buy_fvg = imbalance
                     if imbalance.direction == "Bearish":
@@ -324,7 +325,7 @@ class PriceMediator:
                 else:
                     continue
                 for imbalance2 in self._imbalances[timeframe]:
-                    if imbalance2.name == imbalance.name and imbalance2.direction != imbalance.direction:
+                    if imbalance2.__name == imbalance.__name and imbalance2.direction != imbalance.direction:
                         if imbalance2.direction == "Bullish":
                             buy_fvg = imbalance2
                         if imbalance2.direction == "Bearish":
@@ -379,7 +380,7 @@ class PriceMediator:
         if timeframe in self._consecutive_candles[timeframe] and timeframe in self._cisd and timeframe in \
                 self._current_cisd[timeframe]:
             for consecutive_candle in self._consecutive_candles[timeframe]:
-                cisd:Structure = self._cisd[timeframe].check_for_cisd(third_candle, consecutive_candle)
+                cisd: Structure = self._cisd[timeframe].check_for_cisd(third_candle, consecutive_candle)
                 if cisd:
                     self._current_cisd[timeframe] = cisd
                     if cisd.invalidation_candle is None:
@@ -394,7 +395,7 @@ class PriceMediator:
     def _detect_breaker(self, third_candle: Candle, timeframe: int):
         if timeframe in self._orderblocks:
             for orderblock in self._orderblocks[timeframe]:
-                if orderblock.name == "OB" or orderblock.name == "SCOB":
+                if orderblock.__name == "OB" or orderblock.__name == "SCOB":
                     breaker = Breaker.detect_breaker(last_candle=third_candle, orderblock=orderblock)
                     if breaker:
                         orderblock.status = OrderBlockStatusEnum.Breaker.value
@@ -409,7 +410,7 @@ class PriceMediator:
     def _detect_inversion_fvg(self, third_candle: Candle, timeframe: int):
         if timeframe in self._imbalances:
             for imbalance in self._imbalances[timeframe]:
-                if imbalance.name == "FVG" or imbalance.name == "IFVG":
+                if imbalance.__name == "FVG" or imbalance.__name == "IFVG":
                     if InversionFVG.detect_inversion(last_candle=third_candle, fvg=imbalance):
                         if imbalance.status == ImbalanceStatusEnum.Normal.value or imbalance.status == ImbalanceStatusEnum.Reclaimed.value:
                             imbalance.status = ImbalanceStatusEnum.Inversed.value
@@ -441,7 +442,7 @@ class PriceMediator:
         seen_candle_sets = set()  # Track unique sets of candle IDs
 
         for hl in self._swings[timeframe]:
-            if hl.name == "High" or hl.name == "Low":
+            if hl.__name == "High" or hl.__name == "Low":
                 candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
@@ -459,7 +460,7 @@ class PriceMediator:
         seen_candle_sets = set()  # Track unique sets of candle IDs
 
         for hl in self._eqhl[timeframe]:
-            if hl.name == "EQH" or hl.name == "EQL":
+            if hl.__name == "EQH" or hl.__name == "EQL":
                 candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
@@ -478,7 +479,7 @@ class PriceMediator:
         non_obs = []  # Store non-BPR imbalances
 
         for ob in self._orderblocks[timeframe]:
-            if ob.name == "SCOB" or ob.name == "OB":
+            if ob.__name == "SCOB" or ob.__name == "OB":
                 candle_ids = frozenset(candle.id for candle in ob.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
@@ -491,6 +492,43 @@ class PriceMediator:
         self._orderblocks[timeframe] = unique_ob + non_obs
 
     # region Duplicate Detection
+
+    def remove_old_frameworks_by_candle_ids(self, candles: list[Candle], timeframe):
+        _ids = [candle.id for candle in candles]
+
+        self._remove_swings_by_ids(_ids, timeframe)
+        self._remove_eqhls_by_ids(_ids, timeframe)
+        self._remove_imbalances_by_ids(_ids, timeframe)
+        self._remove_orderblocks_by_ids(_ids, timeframe)
+        self._remove_probulsion_blocks_by_ids(_ids, timeframe)
+        self._remove_consecutive_candles_by_ids(_ids, timeframe)
+
+    def _remove_swings_by_ids(self, _ids, timeframe):
+        self._swings[timeframe] = [
+            swing for swing in self._swings[timeframe]
+            if all(candle.id in _ids for candle in swing.candles)
+        ]
+
+    def _remove_eqhls_by_ids(self, _ids, timeframe):
+        self._eqhl[timeframe] = [eqhl for eqhl in self._eqhl[timeframe]
+                                 if all(candle.id in _ids for candle in eqhl.candles)]
+
+    def _remove_imbalances_by_ids(self, _ids, timeframe):
+        self._imbalances[timeframe] = [imbalances for imbalances in self._imbalances[timeframe]
+                                 if all(candle.id in _ids for candle in imbalances.candles)]
+
+    def _remove_orderblocks_by_ids(self, _ids, timeframe):
+        self._orderblocks[timeframe] = [orderblocks for orderblocks in self._orderblocks[timeframe]
+                                 if all(candle.id in _ids for candle in orderblocks.candles)]
+
+    def _remove_probulsion_blocks_by_ids(self, _ids, timeframe):
+        self._probulsion_blocks[timeframe] = [pb for pb in self._probulsion_blocks[timeframe]
+                                 if all(candle.id in _ids for candle in pb.candles)]
+
+    def _remove_consecutive_candles_by_ids(self, _ids, timeframe):
+        self._consecutive_candles[timeframe] = [consecutive for consecutive in self._consecutive_candles[timeframe]
+                                 if all(candle.id in _ids for candle in consecutive.candles)]
+
     def _remove_duplicate_consecutive_candles(self, timeframe: int):
         if timeframe not in self._consecutive_candles:
             return
@@ -521,7 +559,7 @@ class PriceMediator:
         non_bpr_imbalances = []  # Store non-BPR imbalances
 
         for imbalance in self._imbalances[timeframe]:
-            if imbalance.name == "BPR" or imbalance.name == "IFVG" or imbalance.name == "FVG":
+            if imbalance.__name == "BPR" or imbalance.__name == "IFVG" or imbalance.__name == "FVG":
                 candle_ids = frozenset(candle.id for candle in imbalance.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:

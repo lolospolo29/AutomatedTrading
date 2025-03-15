@@ -101,7 +101,7 @@ class RiskCalculator:
         base_risk = (self._risk_manager.max_risk_percentage / 100) * self._risk_manager.account_balance
 
         # **DYNAMIC RISK SCALING BASED ON VOLATILITY & EXPOSURE**
-        adjusted_risk = base_risk * min(1.5, max(0.5, 1 / (0.5 + 0.01)))
+        adjusted_risk = base_risk * min(1, max(base_risk))
 
         return adjusted_risk
 

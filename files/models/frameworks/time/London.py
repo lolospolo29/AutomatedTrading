@@ -7,6 +7,6 @@ class LondonOpen(ITimeWindow):
 
     @staticmethod
     def is_in_entry_window(time) -> bool:
-            if  10 >= time.hour >= 7 :
+            if  9 >= time.hour >= 6 :
                 return True
             return False

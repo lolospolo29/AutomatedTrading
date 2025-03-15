@@ -2,10 +2,6 @@ from files.helper.manager.RiskManager import RiskManager
 
 
 class VolatilityAnalyzer:
-    """ATR (Average True Range) for price-based volatility.
-        Historical volatility using standard deviation of returns.
-        Pip values, tick values, and point values dynamically for different assets.
-        Portfolio-wide volatility assessment for risk-adjusted position sizing"""
 
     def __init__(self):
         self._risk_manager = RiskManager()
@@ -56,7 +52,8 @@ class VolatilityAnalyzer:
 
         return pip_value
 
-    def get_index_point_value(self, index: str) -> float:
+    @staticmethod
+    def get_index_point_value(index: str) -> float:
         """
         Retrieves the value per point for indices.
 
@@ -71,7 +68,8 @@ class VolatilityAnalyzer:
         }
         return point_values.get(index, 50)  # Default to 50 if unknown
 
-    def get_commodity_specs(self, commodity: str):
+    @staticmethod
+    def get_commodity_specs(commodity: str):
         """
         Retrieves contract size and tick size for commodities.
 

@@ -3,6 +3,8 @@ from logging import Logger
 
 from files.db.mongodb.AssetRepository import AssetRepository
 from files.db.mongodb.RelationRepository import RelationRepository
+from files.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
+from files.db.mongodb.dtos.CategoryDTO import CategoryDTO
 from files.db.mongodb.dtos.RelationDTO import RelationDTO
 from files.db.mongodb.dtos.SMTPairDTO import SMTPairDTO
 from files.db.mongodb.dtos.StrategyDTO import StrategyDTO
@@ -66,11 +68,11 @@ class RelationManager:
         asset_dto = self._relation_repository.find_asset_by_id(relation_dto.assetId)
         broker_dto = self._relation_repository.find_broker_by_id(relation_dto.brokerId)
         strategy_dto = self._relation_repository.find_strategy_by_id(relation_dto.strategyId)
+        category_dto = self._relation_repository.find_category_by_id(relation_dto.categoryId)
 
         relation = Relation(asset=asset_dto.name, broker=broker_dto.name, strategy=strategy_dto.name
-                            , max_trades=relation_dto.maxTrades, id=relation_dto.relationId)
+                            , max_trades=relation_dto.maxTrades, id=relation_dto.relationId,category=category_dto.name)
         return relation
-
 
     def return_relations(self)->list[Relation]:
         relation_dtos:list[RelationDTO] = self._relation_repository.find_relations()
@@ -142,7 +144,6 @@ class RelationManager:
                 self._logger.critical("Failed to add SMT pair to db and manager. Error:{e}".format(e=e))
                 continue
 
-    # todo test smt
     def return_smt_pairs(self)->list[SMTPair]:
         smt_pair_dtos:list[SMTPairDTO] = self._relation_repository.find_smt_pairs()
 
@@ -175,3 +176,6 @@ class RelationManager:
                 self.delete_relation(relation=relation)
 
         self._relation_repository.delete_smt_pair(smt_pair=smt_pair)
+
+    def return_categories(self)->list[CategoryDTO]:
+        return self._relation_repository.find_categories()

@@ -19,8 +19,8 @@ from files.models.asset.Relation import Relation
 from files.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
-from files.models.trade.enums.OrderDirectionEnum import OrderDirectionEnum
-from files.models.trade.enums.OrderStatusEnum import OrderStatusEnum
+from files.models.trade.enums.Side import Side
+from files.models.trade.enums.OrderStatus import OrderStatus
 
 
 class TradeManager:
@@ -55,8 +55,8 @@ class TradeManager:
             self._trade_repository: TradeRepository = trade_repository
             self._risk_manager = risk_manager
             self._broker_facade = broker_facade
-            self._broker_mapper = BrokerMapper()
-            self._class_mapper = ClassMapper()
+            self._broker_mapper = broker_mapper
+            self._class_mapper = class_mapper
             self._logger = logger
             self._relation_manager = relation_manager
             self._initialized = True  # Markiere als initialisiert
@@ -259,7 +259,7 @@ class TradeManager:
                     try:
                         self.__cancel_order(trade.relation.broker, order)
                     except Exception as e:
-                        if order.orderStatus == OrderStatusEnum.NEW.value or order.orderStatus == OrderStatusEnum.PARTIALLYFILLED.value or order.orderStatus == OrderStatusEnum.UNTRIGGERED.value:
+                        if order.orderStatus == OrderStatus.NEW.value or order.orderStatus == OrderStatus.PARTIALLYFILLED.value or order.orderStatus == OrderStatus.UNTRIGGERED.value:
                             exceptionOrders.append(order)
                             self._logger.error(f"Failed To Cancel Order,Error:{e},OrderLinkId: "
                                          f"{order.orderLinkId},TradeId:{order.tradeId},Symbol:{order.symbol},OrderType:{order.orderType}")
@@ -269,11 +269,11 @@ class TradeManager:
                                                                 , category=trade.category, side=trade.side
                                                                 , risk_percentage=0, order_number=1
                                                                 , tradeId=trade.tradeId).set_defaults(
-                    reduce_only=True).build()
-                if trade.side == OrderDirectionEnum.BUY.value:
-                    cancel_size_order.side = OrderDirectionEnum.SELL.value
-                if trade.side == OrderDirectionEnum.SELL.value:
-                    cancel_size_order.side = OrderDirectionEnum.BUY.value
+                                                                  reduce_only=True).build()
+                if trade.side == Side.BUY.value:
+                    cancel_size_order.side = Side.SELL.value
+                if trade.side == Side.SELL.value:
+                    cancel_size_order.side = Side.BUY.value
                 cancel_size_order.qty = trade.size
 
                 try:

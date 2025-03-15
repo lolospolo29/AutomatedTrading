@@ -12,7 +12,7 @@ class FirstLondonMacro(ITimeWindow):
         current_hour = time.hour
         current_minute = time.minute
 
-        if current_minute >= 33 and current_hour == 7:
+        if current_minute >= 33 and current_hour == 6:
             return True
 
         return False

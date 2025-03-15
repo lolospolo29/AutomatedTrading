@@ -8,6 +8,6 @@ class Asia(ITimeWindow):
 
     @staticmethod
     def is_in_entry_window(time) -> bool:
-        if 5 >= time.hour >= 0:
+        if 4 > time.hour >= 0 or time.hour >= 12:
             return True
         return False

@@ -33,10 +33,10 @@ class equalHL:
                 swing1_high:float = max(candle.high for candle in swing1.candles)
                 swing2_high:float = max(candle.high for candle in swing2.candles)
 
-                highest = max(swing1_high, swing2_high)
 
                 # Check if the highs/lows are within ADR tolerance
                 if abs(swing1_high - swing2_high) <= adr:
+                    highest = max(swing1_high, swing2_high)
                     candles = []
                     candles.extend(swing1.candles)
                     candles.extend(swing2.candles)
@@ -58,10 +58,10 @@ class equalHL:
                 swing1_low = max(candle.low for candle in swing1.candles)
                 swing2_low = max(candle.low for candle in swing2.candles)
 
-                lowest = min(swing1_low, swing2_low)
 
                 # Check if the highs/lows are within ADR tolerance
                 if abs(swing1_low - swing2_low) <= adr:
+                    lowest = min(swing1_low, swing2_low)
                     candles = []
                     candles.extend(swing1.candles)
                     candles.extend(swing2.candles)

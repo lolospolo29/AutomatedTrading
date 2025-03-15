@@ -5,6 +5,11 @@ from files.api.brokers.models.BrokerPosition import BrokerPosition
 
 
 class IBrokerHandler(ABC):
+
+    @abstractmethod
+    def return_name(self)->str:
+        pass
+
     @abstractmethod
     def return_open_and_closed_order(self, request_params: RequestParameters) -> list[BrokerOrder]:
         """Retrieve open and closed orders."""

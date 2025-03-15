@@ -13,6 +13,7 @@ class RelationDTO(BaseModel):
     strategyId: Optional[int] = None
     maxTrades: Optional[int] = None
     relationId: Optional[int] = None
+    categoryId: Optional[int] = None
 
 
     class Config:

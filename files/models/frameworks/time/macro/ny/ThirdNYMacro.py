@@ -13,7 +13,7 @@ class ThirdNYMacro(ITimeWindow):
         current_hour = time.hour
         current_minute = time.minute
 
-        if (50 <= current_minute and current_hour == 15) or (10 >= current_minute and current_hour == 16):
+        if (50 <= current_minute and current_hour == 14) or (10 >= current_minute and current_hour == 15):
             return True
 
         return False

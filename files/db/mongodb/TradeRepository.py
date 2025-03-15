@@ -14,7 +14,7 @@ class TradeRepository:
 
     def __init__(self, db_name:str,uri:str,logger:Logger,dto_mapper:DTOMapper):
         self._db = MongoDB(db_name=db_name, uri=uri)
-        self._dto_mapper = DTOMapper()
+        self._dto_mapper = dto_mapper
         self._logger = logger
 
     # endregion

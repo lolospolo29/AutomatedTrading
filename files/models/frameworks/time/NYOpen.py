@@ -8,6 +8,6 @@ class NYOpen(ITimeWindow):
 
     @staticmethod
     def is_in_entry_window(time) -> bool:
-        if 15 >= time.hour >= 12:
+        if 15 > time.hour >= 11:
             return True
         return False

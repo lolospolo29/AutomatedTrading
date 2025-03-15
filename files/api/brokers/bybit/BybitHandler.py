@@ -3,8 +3,8 @@ import time
 from logging import Logger
 
 from files.api.brokers.bybit.Bybit import Bybit
-from files.api.brokers.bybit.enums.EndPointEnum import EndPointEnum
-from files.api.brokers.bybit.enums.RateLimitEnum import RateLimitEnum
+from files.api.brokers.bybit.enums.EndPoint import EndPointEnum
+from files.api.brokers.bybit.enums.RateLimit import RateLimitEnum
 from files.api.brokers.bybit.get.FundingHistory import FundingHistory
 from files.api.brokers.bybit.get.OpenAndClosedOrders import OpenAndClosedOrders
 from files.api.brokers.bybit.get.OrderHistory import OrderHistory
@@ -39,8 +39,8 @@ class BybitHandler(IBrokerHandler):
     queries and responses. It allows for paginated requests, error handling, and transformation
     of response objects into standardized data structures.
 
-    :ivar name: The name of the broker associated with this handler.
-    :type name: str
+    :ivar __name: The name of the broker associated with this handler.
+    :type __name: str
     :ivar __broker: An instance of the Bybit client used for sending API requests.
     :type __broker: Bybit
     :ivar __is_lock_active: Boolean status indicating whether a lock is active.
@@ -50,13 +50,18 @@ class BybitHandler(IBrokerHandler):
     :ivar _rate_limit_registry: Manages the rate limits for various API calls.
     :type _rate_limit_registry: RateLimitRegistry
     """
-    def __init__(self,logger:Logger,class_mapper:ClassMapper):
-        self.name = "BYBIT"
-        self.__broker: Bybit = Bybit("BYBIT")
+
+
+    def __init__(self,bybit:Bybit,logger:Logger,class_mapper:ClassMapper):
+        self.__name = "BYBIT"
+        self.__broker: Bybit = bybit
         self.__is_lock_active = False
         self._class_mapper = class_mapper
         self._logger = logger
         self._rate_limit_registry = RateLimitRegistry(RateLimitEnum)
+
+    def return_name(self) -> str:
+        return self.__name
 
     # region get Methods
     @rate_limit_registry.rate_limited
@@ -261,7 +266,7 @@ class BybitHandler(IBrokerHandler):
         brokerOrderList: list[BrokerOrder] = []
 
         responseJson = self.__broker.send_request(endPoint, method, params)
-        if not responseJson.get("success") == "1":
+        if not responseJson.get("retMsg") == "OK":
             raise ValueError(responseJson.get("retMsg"))
 
         objList = responseJson.get("result").get("list")
