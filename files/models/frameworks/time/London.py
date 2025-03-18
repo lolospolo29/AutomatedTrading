@@ -2,6 +2,10 @@ from files.interfaces.ITimeWindow import ITimeWindow
 
 class LondonOpen(ITimeWindow):
 
+    @property
+    def name(self):
+        return "London"
+
     def is_in_exit_window(self, time) -> bool :
         return self.is_in_entry_window(time)
 

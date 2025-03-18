@@ -3,7 +3,6 @@ from logging import Logger
 
 from files.db.mongodb.AssetRepository import AssetRepository
 from files.db.mongodb.RelationRepository import RelationRepository
-from files.db.mongodb.dtos.AssetClassDTO import AssetClassDTO
 from files.db.mongodb.dtos.CategoryDTO import CategoryDTO
 from files.db.mongodb.dtos.RelationDTO import RelationDTO
 from files.db.mongodb.dtos.SMTPairDTO import SMTPairDTO
@@ -115,8 +114,8 @@ class RelationManager:
         for exp_timeframe in exp_timeframes:
             exp_timeframe:ExpectedTimeFrame = exp_timeframe
 
-            self._asset_manager.add_candles_series(asset=relation.asset,timeframe=exp_timeframe.timeframe
-                                                   ,maxlen=exp_timeframe.max_Len,broker=relation.broker)
+            self._asset_manager.add_candles_series(asset=relation.asset, timeframe=exp_timeframe.timeframe
+                                                   , maxlen=exp_timeframe.max_len, broker=relation.broker)
 
     def create_smt(self,smt_pair:SMTPair):
         self._logger.info(f"Adding SMT,{smt_pair.asset_a},{smt_pair.asset_b},{smt_pair.correlation} to db and manager.")

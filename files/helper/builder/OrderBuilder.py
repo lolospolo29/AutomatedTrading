@@ -3,7 +3,7 @@ import string
 
 from files.models.asset.Relation import Relation
 from files.models.frameworks.FrameWork import FrameWork
-from files.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
+from files.models.strategy.OrderResultStatus import OrderResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.enums.OrderType import OrderType
 

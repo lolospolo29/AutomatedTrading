@@ -10,7 +10,7 @@ from files.helper.manager.TradeManager import TradeManager
 from files.models.asset.Relation import Relation
 from files.models.asset.SMTPair import SMTPair
 from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
-from files.monitoring.log_time import log_time
+from files.functions.monitoring.log_time import log_time
 
 class RestartManager:
     # region Initializing
@@ -47,7 +47,7 @@ class RestartManager:
         assets = self._asset_manager.return_assets()
 
         for asset in assets:
-            self._asset_manager.register_asset(asset)
+            self._asset_manager.add_asset(asset)
 
         relations = self._relation_manager.return_relations()
 
@@ -93,7 +93,7 @@ class RestartManager:
             timeframe: ExpectedTimeFrame = timeframe
             candles = self._data_repository.fetch_candles_by_asset_and_timeframe(asset=relation.asset,
                                                                                  timeframe=timeframe.timeframe,
-                                                                                 lookback_candles=timeframe.max_Len)
+                                                                                 lookback_candles=timeframe.max_len)
             asset_class = self._asset_manager.return_asset_class(asset=relation.asset)
             if len(candles) >  1:
                 section_size = 2  # Start mit 2 Kerzen (1,2)

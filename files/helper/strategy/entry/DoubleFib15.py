@@ -7,12 +7,13 @@ from files.interfaces.ITimeWindow import ITimeWindow
 from files.models.asset.Candle import Candle
 from files.models.asset.Relation import Relation
 from files.models.frameworks.FrameWork import FrameWork
+from files.models.frameworks.time.Asia import Asia
 from files.models.frameworks.time.London import LondonOpen
 from files.models.frameworks.time.NYOpen import NYOpen
 from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from files.models.strategy.Strategy import Strategy
-from files.models.strategy.StrategyResult import StrategyResult
-from files.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+from files.models.strategy.Result import StrategyResult
+from files.models.strategy.ResultStatus import StrategyResultStatusEnum
 from files.models.trade.Trade import Trade
 from files.models.trade.enums.Category import Category
 from files.models.trade.enums.Side import Side
@@ -22,36 +23,30 @@ from files.models.trade.enums.TriggerDirection import TriggerDirection
 
 # Double Fib
 
-class DoubleFib5(Strategy):
+class DoubleFib15(Strategy):
 
     def __init__(self,):
-        self.name = "DoubleFib5"
+        self.name = "DoubleFib15"
         self.timeframes = []
 
-        self.timeframes.append(ExpectedTimeFrame(timeframe=5,max_Len=90))
+        self.timeframes.append(ExpectedTimeFrame(timeframe=15, max_len=90))
 
         self._timewindow:ITimeWindow = NYOpen()
+        self._timewindow2:ITimeWindow = Asia()
         self._timewindow3:ITimeWindow = LondonOpen()
-        self.time_windows = [self._timewindow,self._timewindow3]
+        self.time_windows = [self._timewindow,self._timewindow2,self._timewindow3]
         self._price_mediator:PriceMediator = PriceMediator()
         self._risk_calculator:PositionSizeCalculator = PositionSizeCalculator()
 
-    def is_in_time(self, time) -> bool:
-        for timewindow in self.time_windows:
-            timewindow:ITimeWindow = timewindow
-            if timewindow.is_in_entry_window(time):
-                return True
-        return False
-
-    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
+    def entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
 
         if len(candles) >= 3:
-            self._price_mediator.detect_pd_arrays(first_candle=candles[-3],second_candle=candles[-2],third_candle=candles[-1]
-                                                  ,timeframe=timeFrame)
+            self._price_mediator.analyze(first_candle=candles[-3], second_candle=candles[-2], third_candle=candles[-1]
+                                         , timeframe=timeFrame)
         else:
             return StrategyResult()
 
-        if candles and timeFrame == 5:
+        if candles and timeFrame == 15:
 
             third_candle: Candle = candles[-1]
             second_candle: Candle = candles[-2]
@@ -69,9 +64,9 @@ class DoubleFib5(Strategy):
             if not bos or not imbalances:
                 return StrategyResult()
 
-            levels = self._price_mediator.get_fibonnaci(bos.candles,ote=True)
+            levels = self._price_mediator.calculate_fibonnaci(bos.candles, ote=True)
 
-            levels.extend(self._price_mediator.get_fibonnaci(bos.candles,pd=True))
+            levels.extend(self._price_mediator.calculate_fibonnaci(bos.candles, pd=True))
 
             fib_levels,profit_stop_entry = self._get_fibonacci_levels(levels)
 
@@ -103,8 +98,8 @@ class DoubleFib5(Strategy):
                     profit_dir = TriggerDirection.FALL.value
                     stop_dir = TriggerDirection.RISE.value
 
-            # if not self.is_in_time(time):
-            #      return StrategyResult()
+            # if not self._is_in_time(time):
+            #     return StrategyResult()
 
             if order_dir:
 
@@ -120,7 +115,7 @@ class DoubleFib5(Strategy):
         else:
             return StrategyResult()
 
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
+    def exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
 
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)
 

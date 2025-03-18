@@ -21,7 +21,7 @@ from files.helper.registry.RateLimitRegistry import RateLimitRegistry
 from files.interfaces.IBrokerHandler import IBrokerHandler
 from files.mappers.ClassMapper import ClassMapper
 from files.api.brokers.models.RequestParameters import RequestParameters
-from files.monitoring.retry_request import retry_request
+from files.functions.monitoring.retry_request import retry_request
 
 # endregion
 rate_limit_registry = RateLimitRegistry(RateLimitEnum)

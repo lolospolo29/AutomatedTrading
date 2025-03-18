@@ -2,7 +2,7 @@ from files.models.asset.Candle import Candle
 from files.models.asset.Relation import Relation
 from files.models.frameworks.PDArray import PDArray
 from files.models.strategy.Strategy import Strategy
-from files.models.strategy.StrategyResult import StrategyResult
+from files.models.strategy.Result import StrategyResult
 from files.models.trade.Trade import Trade
 
 
@@ -41,9 +41,9 @@ class LondonSB(Strategy):
         self.strategy_facade.pd_array_handler.remove_pd_array(candles, timeFrame)
         self.strategy_facade.structure_handler.remove_structure(candles, timeFrame)
 
-    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
+    def entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds = self.strategy_facade.pd_array_handler.detect_swing()
+        pds = self.strategy_facade.pd_array_handler._detect_swing()
         structures = self.strategy_facade.structure_handler.return_structure()
         levels = self.strategy_facade.level_handler.return_levels()
         if candles and pds and structures and levels and timeFrame == 1:
@@ -68,5 +68,5 @@ class LondonSB(Strategy):
         else:
             return StrategyResult()
 
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
+    def exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
         pass

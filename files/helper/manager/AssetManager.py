@@ -51,7 +51,7 @@ class AssetManager:
     # endregion
 
     # region Registry Functions
-    def register_asset(self, asset: Asset) -> bool:
+    def add_asset(self, asset: Asset) -> bool:
         self._logger.info(f"Register Asset to Asset Manager:{asset.name}")
 
         if not asset.name in self.assets:
@@ -94,7 +94,7 @@ class AssetManager:
     def create_asset(self,asset:Asset):
         try:
             if not asset.name in self.assets:
-                self.register_asset(asset)
+                self.add_asset(asset)
                 self._logger.debug(f"Adding Asset to Asset Manager:{asset}")
                 self._asset_respository.add_asset(asset)
                 self._logger.debug(f"Adding Asset to db:{asset}")

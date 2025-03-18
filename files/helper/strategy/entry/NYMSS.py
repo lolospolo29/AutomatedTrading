@@ -2,7 +2,7 @@ from files.models.asset.Candle import Candle
 from files.models.asset.Relation import Relation
 from files.models.frameworks.PDArray import PDArray
 from files.models.strategy.Strategy import Strategy
-from files.models.strategy.StrategyResult import StrategyResult
+from files.models.strategy.Result import StrategyResult
 from files.models.trade.Trade import Trade
 
 
@@ -36,9 +36,9 @@ class NYMSS(Strategy):
 
         self._strategy_handler.pd_array_handler.remove_pd_array(candles,timeFrame)
 
-    def get_entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
+    def entry(self, candles: list[Candle], timeFrame: int, relation:Relation, asset_class:str) ->StrategyResult:
         self._analyzeData(candles, timeFrame)
-        pds:list[PDArray] = self._strategy_handler.pd_array_handler.detect_swing()
+        pds:list[PDArray] = self._strategy_handler.pd_array_handler._detect_swing()
         if candles and pds and timeFrame == 5:
 
             last_candle: Candle = candles[-1]
@@ -65,5 +65,5 @@ class NYMSS(Strategy):
 
 
 
-    def get_exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
+    def exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
         pass

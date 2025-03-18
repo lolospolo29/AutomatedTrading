@@ -16,7 +16,7 @@ from files.helper.manager.RiskManager import RiskManager
 from files.mappers.BrokerMapper import BrokerMapper
 from files.mappers.ClassMapper import ClassMapper
 from files.models.asset.Relation import Relation
-from files.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
+from files.models.strategy.OrderResultStatus import OrderResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
 from files.models.trade.enums.Side import Side

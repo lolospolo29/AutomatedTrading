@@ -1,20 +1,36 @@
 from abc import abstractmethod, ABC
-from typing import Optional
-from files.models.asset.Relation import Relation
-from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
-from files.models.strategy.StrategyResult import StrategyResult
+
+from files.models.strategy import ExitStrategy
+from files.models.strategy.EntryStrategy import EntryStrategy
 
 
 class Strategy(ABC):
-    name:Optional[str]
-    timeframes:Optional[list[ExpectedTimeFrame]]
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Jede Strategie muss einen Namen haben"""
+        pass
 
+    @property
     @abstractmethod
-    def is_in_time(self, time) -> bool:
+    def entry_strategy(self) -> EntryStrategy:
+        """Getter für Entry-Strategie"""
         pass
+
+    @entry_strategy.setter
     @abstractmethod
-    def get_exit(self, candles: list, timeFrame: int, trade, relation)->StrategyResult:
+    def entry_strategy(self, entry_strategy: EntryStrategy):
+        """Setter für Entry-Strategie"""
         pass
+
+    @property
     @abstractmethod
-    def get_entry(self, candles: list, timeFrame: int, relation:Relation, asset_class:str)->StrategyResult:
+    def exit_strategy(self) -> ExitStrategy:
+        """Getter für Exit-Strategie"""
+        pass
+
+    @exit_strategy.setter
+    @abstractmethod
+    def exit_strategy(self, exit_strategy: ExitStrategy):
+        """Setter für Exit-Strategie"""
         pass

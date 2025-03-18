@@ -8,12 +8,12 @@ from files.helper.manager.TradeManager import TradeManager
 from files.mappers.AssetMapper import AssetMapper
 from files.models.asset.Relation import Relation
 from files.models.asset.Candle import Candle
-from files.models.strategy.StrategyResult import StrategyResult
-from files.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+from files.models.strategy.Result import StrategyResult
+from files.models.strategy.ResultStatus import StrategyResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
 from files.models.trade.enums.OrderType import OrderType
-from files.monitoring.log_time import log_time
+from files.functions.monitoring.log_time import log_time
 from files.services.NewsService import NewsService
 from files.services.TelegramService import TelegramService
 

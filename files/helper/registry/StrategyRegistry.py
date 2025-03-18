@@ -5,7 +5,7 @@ from files.models.asset.Relation import Relation
 from files.models.asset.Candle import Candle
 from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
 from files.models.strategy.Strategy import Strategy
-from files.models.strategy.StrategyResult import StrategyResult
+from files.models.strategy.Result import StrategyResult
 from files.models.trade.Trade import Trade
 
 
@@ -97,7 +97,7 @@ class StrategyRegistry:
         try:
             if relation in self.strategies:
                 self._logger.info(f"Strategy {relation.asset} get Entry")
-                return self.strategies[relation].get_entry(candles, timeFrame,relation,asset_class)
+                return self.strategies[relation].exit(candles, timeFrame, relation, asset_class)
         except Exception as e:
             self._logger.exception(f"Get Entry Failed for {relation.strategy}/{relation.asset}: {e}")
 
@@ -106,6 +106,6 @@ class StrategyRegistry:
         try:
             if relation in self.strategies:
                 self._logger.info(f"Strategy {relation.asset} get Exit TimeFrame,TradeId: {trade.tradeId}")
-                return self.strategies[relation].get_exit(candles, timeFrame, trade,relation)
+                return self.strategies[relation].exit(candles, timeFrame, trade, relation)
         except Exception as e:
             self._logger.exception(f"Get Exit Failed for {relation.strategy}/{relation}: {e}")

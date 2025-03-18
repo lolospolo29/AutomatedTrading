@@ -9,10 +9,8 @@ from files.models.asset.Relation import Relation
 from files.models.backtest.FakeBroker import FakeBroker
 from files.models.backtest.TradeResult import TradeResult
 from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
-from files.models.strategy.OrderResultStatusEnum import OrderResultStatusEnum
 from files.models.strategy.Strategy import Strategy
-from files.models.strategy.StrategyResult import StrategyResult
-from files.models.strategy.StrategyResultStatusEnum import StrategyResultStatusEnum
+from files.models.strategy.Result import StrategyResult
 from files.models.trade.Order import Order
 from files.models.trade.enums.Side import Side
 from files.models.trade.enums.OrderType import OrderType
@@ -47,9 +45,9 @@ class TestModule:
                     series = serie.to_list()
 
                     try:
-                        result = self.strategy.get_entry(candles=series
-                                                             ,timeFrame=candle.timeframe
-                                                             ,relation=fake_relation,asset_class=self.asset_class)
+                        result = self.strategy..entry(candles=series
+                                                     , timeFrame=candle.timeframe
+                                                     , relation=fake_relation, asset_class=self.asset_class)
 
                         if result.status == StrategyResultStatusEnum.NEWTRADE.value and len(self.trade_que) < self.trade_que.maxlen:
                             self.handle_new_trade(result, series[-1])
@@ -77,10 +75,10 @@ class TestModule:
         for id in self.trade_que:
             try:
                 result = self.results[id]
-                strategy_result = self.strategy.get_exit(candles=series,
-                                                                      timeFrame=last_candle.timeframe,
-                                                                      relation=result.trade.relation,
-                                                                      trade=result.trade)
+                strategy_result = self.strategy.exit(candles=series,
+                                                     timeFrame=last_candle.timeframe,
+                                                     relation=result.trade.relation,
+                                                     trade=result.trade)
 
                 updated_result = self._update_trade_results(strategy_result, last_candle)
 
@@ -188,7 +186,7 @@ class TestModule:
             if is_found:
                 continue
 
-            candle_series.append(CandleSeries(candleSeries=deque(maxlen=timeframe.max_Len)
+            candle_series.append(CandleSeries(candleSeries=deque(maxlen=timeframe.max_len)
                                               , timeFrame=timeframe.timeframe, broker=""))
         return candle_series
 
