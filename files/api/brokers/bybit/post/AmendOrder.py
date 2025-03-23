@@ -1,33 +1,30 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
-from files.api.POSTParams import POSTParams
-
+from pydantic import BaseModel, Field
 
 # post /v5/order/amend
 # You can only modify unfilled or partially filled orders.
-@dataclass
-class AmendOrder(POSTParams):
+class AmendOrder(BaseModel):
     # Required parameter
     category: str
     symbol: str
 
     # Either one Required
-    orderId: Optional[str] = field(default=None)
-    orderLinkId: Optional[str] = field(default=None)
+    orderId: Optional[str] = Field(default=None)
+    orderLinkId: Optional[str] = Field(default=None)
 
     # Optional parameters
-    orderlv: Optional[str] = field(default=None)
-    triggerPrice: Optional[str] = field(default=None)
-    price: Optional[str] = field(default=None)
-    tpslMode: Optional[str] = field(default=None)
-    takeProfit: Optional[str] = field(default=None)
-    stopLoss: Optional[str] = field(default=None)
-    tpTriggerBy: Optional[str] = field(default=None)
-    slTriggerBy: Optional[str] = field(default=None)
-    triggerBy: Optional[str] = field(default=None)
-    tpLimitPrice: Optional[str] = field(default=None)
-    slLimitPrice: Optional[str] = field(default=None)
+    orderlv: Optional[str] = Field(default=None)
+    triggerPrice: Optional[str] = Field(default=None)
+    price: Optional[str] = Field(default=None)
+    tpslMode: Optional[str] = Field(default=None)
+    takeProfit: Optional[str] = Field(default=None)
+    stopLoss: Optional[str] = Field(default=None)
+    tpTriggerBy: Optional[str] = Field(default=None)
+    slTriggerBy: Optional[str] = Field(default=None)
+    triggerBy: Optional[str] = Field(default=None)
+    tpLimitPrice: Optional[str] = Field(default=None)
+    slLimitPrice: Optional[str] = Field(default=None)
 
     def validate(self) -> bool:
         """Validate required parameters."""

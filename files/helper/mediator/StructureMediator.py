@@ -17,6 +17,7 @@ from files.models.frameworks.structure.MitigationBlock import MitigationBlock
 class StructureMediator:
     def __init__(self):
         self._lock = threading.Lock()
+
         self._swings: dict[int, list[PDArray]] = {}
         self._consecutive_candles: dict[int, list[Structure]] = {}
         self._current_mss: dict[int, Structure] = {}
@@ -47,6 +48,22 @@ class StructureMediator:
             self._remove_duplicate_eqhl(timeframe)
             self._remove_duplicate_consecutive_candles(timeframe)
             self._remove_duplicate_swings(timeframe)
+
+    def get_eqhl(self,timeframe)->list[Level]:
+        with self._lock:
+            return self._eqhl[timeframe]
+
+    def get_swings(self,timeframe)->list[PDArray]:
+        with self._lock:
+            return self._swings[timeframe]
+
+    def get_current_structure(self,timeframe)->list[Structure]:
+        with self._lock:
+            return [self._current_mss[timeframe],self._current_bos[timeframe],self._current_cisd[timeframe]]
+
+    def get_previous_structure(self,timeframe)->list[Structure]:
+        with self._lock:
+            return [self._previous_mss[timeframe],self._previous_bos]
 
     def clear(self):
         self._swings.clear()
@@ -147,30 +164,6 @@ class StructureMediator:
             if MitigationBlock.is_mitigated(self._current_mss[timeframe], self._current_bos[timeframe]):
                 self._current_bos[timeframe].status = "MITIGATED"
 
-    def get_eqhl(self, timeframe: int) -> list[Level]:
-        """Returns the swings for a given timeframe."""
-        return self._eqhl.get(timeframe, [])
-
-    def get_swings(self, timeframe: int) -> list[PDArray]:
-        """Returns the swings for a given timeframe."""
-        return self._swings.get(timeframe, [])
-
-    def get_consecutive_candles(self, timeframe: int) -> list[Structure]:
-        """Returns consecutive candles for a given timeframe."""
-        return self._consecutive_candles.get(timeframe, [])
-
-    def get_mss(self, timeframe: int, previous: bool = False) -> Optional[Structure]:
-        """Returns the current or previous MSS for a given timeframe."""
-        return self._previous_mss.get(timeframe) if previous else self._current_mss.get(timeframe)
-
-    def get_bos(self, timeframe: int, previous: bool = False) -> Optional[Structure]:
-        """Returns the current or previous BOS for a given timeframe."""
-        return self._previous_bos.get(timeframe) if previous else self._current_bos.get(timeframe)
-
-    def get_cisd(self, timeframe: int) -> Optional[Structure]:
-        """Returns the CISD for a given timeframe."""
-        return self._current_cisd.get(timeframe)
-
     def remove_duplicates(self,timeframe: int):
         self._remove_duplicate_swings(timeframe)
         self._remove_duplicate_consecutive_candles(timeframe)
@@ -196,7 +189,7 @@ class StructureMediator:
         seen_candle_sets = set()  # Track unique sets of candle IDs
 
         for hl in self._swings[timeframe]:
-            if hl.__name == "High" or hl.__name == "Low":
+            if hl._name == "High" or hl._name == "Low":
                 candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
@@ -244,7 +237,7 @@ class StructureMediator:
         seen_candle_sets = set()  # Track unique sets of candle IDs
 
         for hl in self._eqhl[timeframe]:
-            if hl.__name == "EQH" or hl.__name == "EQL":
+            if hl._name == "EQH" or hl._name == "EQL":
                 candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:

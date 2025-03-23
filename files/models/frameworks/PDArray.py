@@ -1,5 +1,7 @@
+from pydantic import Field
+
 from files.models.frameworks.FrameWork import FrameWork
 
 
 class PDArray(FrameWork):
-    pass
+    typ: str = Field(default='PDArray')

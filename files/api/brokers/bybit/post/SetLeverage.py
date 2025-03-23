@@ -1,11 +1,7 @@
-from dataclasses import dataclass
-
-from files.api.POSTParams import POSTParams
-
+from pydantic import BaseModel
 
 # post /v5/position/set-leverage
-@dataclass
-class SetLeverage(POSTParams):
+class SetLeverage(BaseModel):
     # Required parameter
     category: str
     symbol: str

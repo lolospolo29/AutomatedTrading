@@ -6,6 +6,7 @@ from files.helper.mediator.PriceMediator import PriceMediator
 from files.models.asset.Candle import Candle
 from files.models.asset.Relation import Relation
 
+#todo class instance
 class PriceMediatorRegistry:
     _instance = None
     _lock = threading.Lock()
@@ -25,7 +26,7 @@ class PriceMediatorRegistry:
             self._logger = logger
             self._initialized = True
 
-    def register_mediator(self, relation:Relation,price_mediator:PriceMediator):
+    def register_mediator(self, relation:Relation, price_mediator:PriceMediator):
         if relation.asset + relation.broker not in self._price_mediators:
             self._price_mediators[relation.asset+relation.broker] = price_mediator
             self._logger.info(f"Price Mediator for {relation.asset} + {relation.broker} registered")
@@ -45,7 +46,7 @@ class PriceMediatorRegistry:
         except Exception as e:
             self._logger.exception(f"{relation.asset} + {relation.broker} retrieval failed: {e}")
 
-    def analyze_mediator(self, relation: Relation,candles:list[Candle],timeframe:int):
+    def analyze_mediator(self, relation: Relation, candles:list[Candle], timeframe:int):
         try:
             if relation.asset + relation.broker in self._price_mediators and len(candles) >= 3:
                 mediator = self._price_mediators[relation.asset+relation.broker]

@@ -3,7 +3,6 @@ import string
 
 from files.models.asset.Relation import Relation
 from files.models.frameworks.FrameWork import FrameWork
-from files.models.strategy.OrderResultStatus import OrderResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.enums.OrderType import OrderType
 
@@ -20,7 +19,7 @@ class OrderBuilder:
         o.tradeId = tradeId
         orderlinkId = self._generate_order_link_id(relation.asset, relation.broker,
                                                    relation.strategy, order_number)
-        o.orderLinkId = orderlinkId
+        o.order_link_id = orderlinkId
         o.confirmations = confirmations
         o.entry_frame_work = entry_frame_work
         o.symbol = symbol
@@ -28,8 +27,7 @@ class OrderBuilder:
         o.side = side
         o.money_at_risk = 0.0
         o.risk_percentage = risk_percentage
-        o.order_result_status = OrderResultStatusEnum.NEW.value
-        o.orderType = OrderType.MARKET.value # set Default
+        o.order_type = OrderType.MARKET.value # set Default
         if qty is not None:
             o.qty = qty
         return self
@@ -40,23 +38,23 @@ class OrderBuilder:
         if price is not None:
             order.price = price
         if time_in_force is not None:
-            order.timeInForce = time_in_force
+            order.time_in_force = time_in_force
         if take_profit is not None:
-            order.takeProfit = take_profit
+            order.take_profit = take_profit
         if stop_loss is not None:
-            order.stopLoss = stop_loss
+            order.stop_loss = stop_loss
         if reduce_only is not None:
-            order.reduceOnly = reduce_only
+            order.reduce_only = reduce_only
         if close_on_trigger is not None:
-            order.closeOnTrigger = close_on_trigger
+            order.close_on_trigger = close_on_trigger
         return self
 
     def set_spot(self, is_leverage:str=None, market_unit:str=None, orderlv:str=None):
         order = self.order
         if is_leverage is not None:
-            order.isLeverage = is_leverage
+            order.is_leverage = is_leverage
         if market_unit is not None:
-            order.marketUnit = market_unit
+            order.market_unit = market_unit
         if orderlv is not None:
             order.orderlv = orderlv
         return self
@@ -66,31 +64,31 @@ class OrderBuilder:
                         trigger_direction:int=None):
         order = self.order
         if trigger_price is not None:
-            order.triggerPrice = trigger_price
+            order.trigger_price = trigger_price
         if trigger_by is not None:
-            order.triggerBy = trigger_by
+            order.trigger_by = trigger_by
         if tp_trigger_by is not None:
-            order.tpTriggerBy = tp_trigger_by
+            order.tp_trigger_by = tp_trigger_by
         if sl_trigger_by is not None:
-            order.slTriggerBy = sl_trigger_by
+            order.sl_trigger_by = sl_trigger_by
         if trigger_direction is not None:
-            order.triggerDirection = trigger_direction
+            order.trigger_direction = trigger_direction
         return self
 
     def set_limit(self, tpsl_mode:str=None, tp_limit_price:str=None, sl_limit_price:str=None,
                   tp_order_type:str=None, sl_order_type:str=None):
         order = self.order
         if tpsl_mode is not None:
-            order.tpslMode = tpsl_mode
+            order.tpsl_mode = tpsl_mode
         if tp_limit_price is not None:
-            order.tpLimitPrice = tp_limit_price
+            order.tp_limit_price = tp_limit_price
         if sl_limit_price is not None:
-            order.slLimitPrice = sl_limit_price
+            order.sl_limit_price = sl_limit_price
         if tp_order_type is not None:
-            order.tpOrderType = tp_order_type
+            order.tp_order_type = tp_order_type
         if sl_order_type is not None:
-            order.slOrderType = sl_order_type
-        order.orderType = OrderType.LIMIT.value
+            order.sl_order_type = sl_order_type
+        order.order_type = OrderType.LIMIT.value
         return self
 
     def build(self):

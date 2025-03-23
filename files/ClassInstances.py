@@ -8,22 +8,26 @@ import os
 
 from files.api.brokers.bybit.Bybit import Bybit
 from files.api.brokers.bybit.BybitHandler import BybitHandler
+from files.controller.AssetController import AssetController
 from files.controller.SignalController import SignalController
-from files.db.mongodb.AssetRepository import AssetRepository
-from files.db.mongodb.BacktestRepository import BacktestRepository
-from files.db.mongodb.DataRepository import DataRepository
-from files.db.mongodb.NewsRepository import NewsRepository
-from files.db.mongodb.RelationRepository import RelationRepository
-from files.db.mongodb.TradeRepository import TradeRepository
-from files.helper.factories.MongoDBSyncFactory import MongoDBSyncFactory
-from files.helper.factories.StrategyFactory import StrategyFactory
+from files.controller.StrategyController import StrategyController
+from files.controller.ToolsController import ToolsController
+from files.db.repositories.AssetRepository import AssetRepository
+from files.db.repositories.BacktestRepository import BacktestRepository
+from files.db.repositories.CandleRepository import CandleRepository
+from files.db.repositories.NewsRepository import NewsRepository
+from files.db.repositories.RelationRepository import RelationRepository
+from files.db.repositories.StrategyRepository import StrategyRepository
+from files.db.repositories.TradeRepository import TradeRepository
+from files.helper.builder.StrategyBuilder import StrategyBuilder
 from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.RelationManager import RelationManager
 from files.helper.manager.RiskManager import RiskManager
-from files.helper.manager.TradeManager import TradeManager
-from files.helper.manager.RestartManager import RestartManager
+from files.helper.manager.SMTManager import SMTManager
+from files.helper.observer.MongoDBSyncObserver import MongoDBSyncObserver
+from files.services.BrokerService import BrokerService
 from files.helper.registry.BrokerRegistry import BrokerRegistry
-from files.helper.registry.StrategyRegistry import StrategyRegistry
+from files.helper.manager.StrategyManager import StrategyManager
 from files.mappers.AssetMapper import AssetMapper
 from files.mappers.BrokerMapper import BrokerMapper
 from files.mappers.ClassMapper import ClassMapper
@@ -32,9 +36,9 @@ from files.functions.monitoring.logging.QueueHandler import QueueHandler
 from files.functions.monitoring.logging.TelegramLogHandler import TelegramLogHandler
 from files.functions.monitoring.monitorFolder import MonitorFolder
 from files.services.BacktestService import BacktestService
-from files.services.NewsService import NewsService
-from files.services.ScheduleService import ScheduleService
-from files.services.TelegramService import TelegramService
+from tools.NewsService import NewsService
+from tools.ScheduleService import ScheduleService
+from tools.TelegramService import TelegramService
 from files.services.TradingService import TradingService
 from tools.EconomicScrapper.EconomicScrapper import EconomicScrapper
 from tools.FileHandler import FileHandler
@@ -75,13 +79,14 @@ logger.addHandler(telegram_handler)
 
 # factory
 
-strategy_factory = StrategyFactory()
+strategy_factory = StrategyBuilder()
 
 if os.getenv("ENV") == "TST":
-    sync_factory = MongoDBSyncFactory()
-    watch_asset = sync_factory.create_sync_watcher(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Asset")
-    watch_relation = sync_factory.create_sync_watcher(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Relation")
-    watch_smt_pairs = sync_factory.create_sync_watcher(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="SMTPairs")
+    watch_asset = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Asset")
+    watch_relation = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Relation")
+    watch_smt_pairs = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="SMTPairs")
+    watch_strategy = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Strategy")
+    watch_exit_entry = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="EntryExitStrategy")
 # scrapper
 
 economic_scrapper = EconomicScrapper(logger=logger)
@@ -102,37 +107,41 @@ bybit_handler = BybitHandler(logger=logger, class_mapper=class_mapper,bybit=bybi
 # DB
 mongo_server = os.getenv("MONGODB")
 
-trade_repository = TradeRepository(db_name="Trades",uri=mongo_server,logger=logger,dto_mapper=dto_mapper)
+trade_repository = TradeRepository(db_name="Trades",uri=mongo_server)
 
-asset_repository = AssetRepository(db_name="TradingConfig",uri=mongo_server,dto_mapper=dto_mapper)
+asset_repository = AssetRepository(db_name="TradingConfig",uri=mongo_server)
 
-data_repository = DataRepository(db_name="TradingData",uri=mongo_server,dto_mapper=dto_mapper)
+data_repository = CandleRepository(db_name="TradingData", uri=mongo_server)
 
-relation_repository = RelationRepository(db_name="TradingConfig",uri=mongo_server,dto_mapper=dto_mapper)
+relation_repository = RelationRepository(db_name="TradingConfig",uri=mongo_server)
 
-news_repository = NewsRepository(db_name="News",uri=mongo_server,dto_mapper=dto_mapper)
+news_repository = NewsRepository(db_name="News",uri=mongo_server)
 
-backtest_repository = BacktestRepository(db_name="Backtest",uri=mongo_server,dto_mapper=dto_mapper)
+backtest_repository = BacktestRepository(db_name="Backtest",uri=mongo_server)
+
+strategy_repository = StrategyRepository(db_name="TradingConfig",uri=mongo_server)
 
 # Registry 
 
-strategy_registry = StrategyRegistry(logger=logger)
 broker_facade = BrokerRegistry()
 
 broker_facade.register_handler(bybit_handler)
 
-risk_manager = RiskManager()
 
 # Manager
+risk_manager = RiskManager(logger=logger,max_risk_percentage=1,max_drawdown=4)
+
+strategy_manager = StrategyManager(logger=logger,strategy_repository=strategy_repository)
 
 asset_manager = AssetManager(asset_respository=asset_repository,trading_data_repository=data_repository,logger=logger)
 
-relation_manager = RelationManager(relation_repository=relation_repository,asset_manager=asset_manager,asset_repository=asset_repository,strategy_registry=strategy_registry,logger=logger,strategy_factory=strategy_factory)
+smt_manager = SMTManager(logger=logger,relation_repository=relation_repository,asset_repository=asset_repository,asset_manager=asset_manager)
 
-trade_manager = TradeManager(trade_repository=trade_repository,broker_facade=broker_facade,risk_manager=risk_manager,relation_manager=relation_manager, logger=logger,broker_mapper=broker_mapper,class_mapper=class_mapper)
+relation_manager = RelationManager(relation_repository=relation_repository, asset_manager=asset_manager, strategy_registry=strategy_manager, logger=logger,
+                                   strategy_builder=strategy_factory,strategy_repository=strategy_repository)
 
-config_manager = RestartManager(trade_manager=trade_manager, asset_manager=asset_manager, relation_manager=relation_manager,
-                                strategy_registry=strategy_registry, logger=logger, strategy_factory=strategy_factory, data_repository=data_repository)
+trade_manager = BrokerService(trade_repository=trade_repository, broker_facade=broker_facade, risk_manager=risk_manager, relation_manager=relation_manager, logger=logger, broker_mapper=broker_mapper, class_mapper=class_mapper)
+
 
 # services
 
@@ -142,19 +151,43 @@ news_service = NewsService(news_repository=news_repository,logger=logger,economi
 
 telegram_service = TelegramService(token=os.getenv("TELEGRAMBOTTOKEN"), chat_id=os.getenv("TELEGRAMGROUPCHAT"),logger=logger)
 
-trading_service = TradingService(asset_manager=asset_manager, trade_manager=trade_manager, strategy_registry=strategy_registry, news_service=news_service, telegram_service=telegram_service, logger=logger,asset_mapper=asset_mapper)
+trading_service = TradingService(asset_manager=asset_manager, trade_manager=trade_manager, strategy_registry=strategy_manager, news_service=news_service, telegram_service=telegram_service, logger=logger, asset_mapper=asset_mapper)
 
 # Handler
 
-new_file_handler = FileHandler(asset_manager=asset_manager, strategy_registry=strategy_registry, backtest_service=backtest_service, logger=logger)
+new_file_handler = FileHandler(asset_manager=asset_manager, strategy_registry=strategy_manager, backtest_service=backtest_service, logger=logger)
 
 # controller
 
-signal_controller = SignalController(trading_service=trading_service, news_service=news_service,asset_manager=asset_manager, trade_manager=trade_manager,relation_manager=relation_manager,backtest_service=backtest_service,logger=logger,strategy_registry=strategy_registry)
+signal_controller = SignalController(trading_service=trading_service, broker_service=trade_manager, relation_manager=relation_manager, smt_manager=smt_manager,logger=logger)
+
+asset_controller = AssetController(asset_manager=asset_manager,logger=logger)
+
+strategy_controller = StrategyController(strategy_manager=strategy_manager,logger=logger)
+
+tools_controller = ToolsController(logger=logger,news_service=news_service,backtest_service=backtest_service)
 
 # Logic
 
-config_manager.initialize_managers()
+assets = asset_manager.return_assets()
+
+for asset in assets:
+    asset_manager.add_asset(asset)
+
+relations = relation_manager.return_relations()
+
+smt_pairs = smt_manager.return_smt_pairs()
+
+for relation in relations:
+    relation_manager.add_relation(relation=relation)
+
+for smt_pair in smt_pairs:
+    smt_manager.add_smt(smt_pair)
+
+trades = trade_manager.get_trades()
+
+for trade in trades:
+    trade_manager.register_trade(trade=trade)
 
 schedule_manager = ScheduleService(logger=logger)
 

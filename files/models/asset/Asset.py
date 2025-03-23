@@ -1,85 +1,65 @@
+import uuid
 from collections import deque
 from typing import Optional
 
-from pydantic import BaseModel
+from bson import ObjectId
+from pydantic import BaseModel,Field
 
 from files.models.asset.Candle import Candle
-from files.models.asset.Relation import Relation
 from files.models.asset.CandleSeries import CandleSeries
-from files.models.asset.SMTPair import SMTPair
+from files.models.asset.Relation import Relation
+from files.models.PyObjectId import PyObjectId
 
 
 class Asset(BaseModel):
-    asset_id: int
+    id: Optional[PyObjectId] = Field(alias="_id")
+
+    asset_id: int = Field(alias="assetId",default_factory=lambda: uuid.uuid4().__str__())
     name: str
-    asset_class: str
-    smt_pairs: Optional[list['SMTPair']] = None  # Can be None
-    relations: Optional[list['Relation']] = None  # Can be None
-    candles_series: Optional[list['CandleSeries']] = None  # Can be None
+    asset_class_id: int = Field(alias="assetClassId")
+    candles_series: Optional[list['CandleSeries']] = Field(exclude=True,default=None)
 
-    def update_asset(self,asset:'Asset'):
-        if asset.smt_pairs is not None:
-            self.smt_pairs = asset.smt_pairs
-        if asset.relations is not None:
-            self.relations = asset.relations
-
-    def remove_relation(self, relation:Relation):
-        if self.relations is None:
-            return
-        self.relations.remove(relation)
-
-        candles_series = self.candles_series.copy()
-
-        for candleSeries in candles_series:
-            if candleSeries.broker == relation.broker:
-                self.candles_series.remove(candleSeries)
-        smt_pairs = self.smt_pairs
-        for smt_pair in smt_pairs:
-            if smt_pair.broker == relation.broker and (smt_pair.asset_1 == relation.asset_1 or smt_pair.asset_2 == relation.asset_1):
-                self.smt_pairs.remove(smt_pair)
-
-    def update_relation(self,relation:Relation):
-        relations = self.relations.copy()
-        for relation_ in relations:
-            if relation_.id == relation.id:
-                self.relations.remove(relation_)
-                self.relations.append(relation)
-                return
-
-    def add_relation(self, relation:Relation):
-        if self.relations is None:
-            self.relations = []
-        if relation in self.relations:
-            return
-        self.relations.append(relation)
+    class Config:
+        json_encoders = {ObjectId: str}  # Convert ObjectId to str in JSON
+        populate_by_name = True  # Allow alias `_id` to be populated
 
     def add_candle(self,candle:Candle):
         for candleSeries in self.candles_series:
-            if candleSeries.broker == candle.broker and candleSeries.timeFrame == candle.timeframe:
+            if candleSeries.broker_id == candle.broker and candleSeries.time_frame == candle.timeframe:
                 candleSeries.add_candle(candle)
-
-    def add_smt_pair(self,smt_pair:SMTPair):
-        if self.smt_pairs is None:
-            self.smt_pairs = []
-        if smt_pair in self.smt_pairs:
-            return
-        self.smt_pairs.append(smt_pair)
-
-    def add_candles_series(self,_maxlen:int,_timeframe:int,_broker:str):
-        for candleSeries_ in self.candles_series:
-            if candleSeries_.broker == _broker and candleSeries_.timeFrame == _timeframe:
                 return
-        self.candles_series.append(CandleSeries(candleSeries=deque(maxlen=_maxlen)
-                                                ,timeFrame=_timeframe,broker=_broker))
+        self.add_candles_series(candle.timeFrame, candle.broker)
+        self.add_candle(candle)
 
-    def return_relations(self,broker:str)->list[Relation]:
-        relations = []
-        for relation in self.relations:
-            if relation.broker == broker:
-                relations.append(relation)
-        return relations
+    def add_candles_series(self,timeframe:int, _broker:str):
+        if timeframe > 5:
+            self.candles_series.append(CandleSeries(candle_series=deque(maxlen=240)
+                                                    , time_frame=timeframe, broker=_broker))
+        if timeframe == 5:
+            self.candles_series.append(CandleSeries(candle_series=deque(maxlen=150)
+                                                    , time_frame=timeframe, broker=_broker))
+        if 15 < timeframe < 240:
+            self.candles_series.append(CandleSeries(candle_series=deque(maxlen=336)
+                                                    , time_frame=timeframe, broker=_broker))
+        if timeframe == 240:
+            self.candles_series.append(CandleSeries(candle_series=deque(maxlen=168)
+                                                    , time_frame=timeframe, broker=_broker))
+        if timeframe == 1440:
+            self.candles_series.append(CandleSeries(candle_series=deque(maxlen=120)
+                                                    , time_frame=timeframe, broker=_broker))
 
-    def return_candles(self,timeFrame:int, broker:str)->list[Candle]:
-        for candleSeries in self.candles_series:
-            if candleSeries.broker == broker and candleSeries.timeFrame == timeFrame:
-                return candleSeries.to_list()
+    def return_candles(self, time_frame:int, broker:str)->list[Candle]:
+        for candle_series in self.candles_series:
+            candle_series:CandleSeries
+            if candle_series.broker == broker and candle_series.time_frame == time_frame:
+                return list(candle_series)
+
+    def update_asset(self,asset: 'Asset'):
+        self.asset_class_id = asset.asset_class_id
+
+    def remove_relation(self, relation:Relation):
+        candles_series = self.candles_series.copy()
+
+        for candleSeries in candles_series:
+            if candleSeries.broker_id == relation.broker:
+                self.candles_series.remove(candleSeries)

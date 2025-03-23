@@ -1,10 +1,10 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from files.models.trade.Trade import Trade
 
 
 class StrategyResult(BaseModel):
-    trade: Optional[Trade]=None
-    status: Optional[str]= None
+    trade: Optional[Trade]=Field(default=None)
+    status: Optional[str]= Field(default=None)

@@ -1,23 +1,20 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
-from files.api.POSTParams import POSTParams
-
+from pydantic import BaseModel, Field
 
 # post /v5/order/cancel
 # You can only cancel unfilled or partially filled orders.
-@dataclass
-class CancelOrder(POSTParams):
+class CancelOrder(BaseModel):
     # Required parameter
     category: str
     symbol: str
 
     # Either one Required
-    orderId: Optional[str] = field(default=None)
-    orderLinkId: Optional[str] = field(default=None)
+    orderId: Optional[str] = Field(default=None)
+    orderLinkId: Optional[str] = Field(default=None)
 
     # Optional parameters
-    orderFilter: Optional[str] = field(default=None)
+    orderFilter: Optional[str] = Field(default=None)
 
     def validate(self):
         """Validate required parameters."""

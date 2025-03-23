@@ -3,9 +3,9 @@ from enum import Enum
 from random import randint
 from typing import Optional
 
-from files.api.brokers.models.BrokerOrder import BrokerOrder
-from files.api.brokers.models.BrokerPosition import BrokerPosition
-from files.api.brokers.models.RequestParameters import RequestParameters
+from files.models.broker.BrokerOrder import BrokerOrder
+from files.models.broker.BrokerPosition import BrokerPosition
+from files.models.broker.RequestParameters import RequestParameters
 from files.models.asset.Candle import Candle
 
 

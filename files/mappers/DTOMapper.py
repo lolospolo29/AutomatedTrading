@@ -1,7 +1,3 @@
-from files.db.mongodb.dtos.AssetDTO import AssetDTO
-from files.db.mongodb.dtos.CandleFrameWorkDTO import CandleFrameWorkDTO
-from files.db.mongodb.dtos.FrameWorkDTO import FrameWorkDTO
-from files.db.mongodb.dtos.TradeDTO import TradeDTO
 from files.models.asset.Asset import Asset
 from files.models.asset.Candle import Candle
 from files.models.frameworks.FrameWork import FrameWork
@@ -12,21 +8,21 @@ from files.models.trade.Trade import Trade
 class DTOMapper:
 
     @staticmethod
-    def map_trade_to_dto(trade:Trade)->TradeDTO:
+    def map_trade_to_dto(trade:Trade)->Trade:
 
-        trade_dto = TradeDTO()
-        trade_dto.tradeId = trade.tradeId
-        trade_dto.tradeMode = trade.tradeMode
+        trade_dto = Trade()
+        trade_dto.trade_id = trade.trade_id
+        trade_dto.trade_mode = trade.trade_mode
         trade_dto.relationId = trade.relation.id
         trade_dto.category = trade.category
         trade_dto.side = trade.side
-        trade_dto.tpslMode = trade.tpslMode
-        trade_dto.unrealisedPnl = trade.unrealisedPnl
+        trade_dto.tpsl_mode = trade.tpsl_mode
+        trade_dto.unrealised_pnl = trade.unrealised_pnl
         trade_dto.leverage = trade.leverage
         trade_dto.size = trade.size
-        trade_dto.tradeMode = trade.tradeMode
-        trade_dto.updatedTime = trade.updatedTime
-        trade_dto.createdTime = trade.createdTime
+        trade_dto.trade_mode = trade.trade_mode
+        trade_dto.updated_time = trade.updated_time
+        trade_dto.created_time = trade.created_time
 
         return trade_dto
 
@@ -39,7 +35,7 @@ class DTOMapper:
         framework_dto.name = framework.name
         framework_dto.timeframe = framework.timeframe
         framework_dto.direction = framework.direction
-        framework_dto.orderLinkId = framework.orderLinkId
+        framework_dto.order_link_id = framework.orderLinkId
 
 
         if framework.__class__.__name__ == "PDArray":
@@ -55,16 +51,16 @@ class DTOMapper:
         return framework_dto
 
     @staticmethod
-    def map_candle_to_dto(candle:Candle, framework:FrameWork)->CandleFrameWorkDTO:
-        candle_dto = CandleFrameWorkDTO(asset=candle.asset,broker=candle.broker,open=candle.open
-                                        ,high=candle.high,low=candle.low,close=candle.close,iso_time=candle.iso_time
-                                        ,timeframe=candle.timeframe,candleId=candle.id)
+    def map_candle_to_dto(candle:Candle, framework:FrameWork)->CandleDTO:
+        candle_dto = CandleDTO(asset=candle.asset, broker=candle.broker, open=candle.open
+                               , high=candle.high, low=candle.low, close=candle.close, iso_time=candle.iso_time
+                               , timeframe=candle.timeframe, candleId=candle.id)
         candle_dto.frameWorkId = framework.id
 
         return candle_dto
 
     @staticmethod
-    def map_asset_to_dto(asset:Asset,asset_class_id:id,asset_id:int)->AssetDTO:
-        dto = AssetDTO(name=asset.name,assetClass=asset_class_id,assetId=asset_id)
+    def map_asset_to_dto(asset:Asset, asset_class_id:id, asset_id:int)->Asset:
+        dto = Asset(name=asset.name, assetClass=asset_class_id, assetId=asset_id)
 
         return dto

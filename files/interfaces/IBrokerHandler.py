@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
-from files.api.brokers.models.RequestParameters import RequestParameters
-from files.api.brokers.models.BrokerOrder import BrokerOrder
-from files.api.brokers.models.BrokerPosition import BrokerPosition
+from files.models.broker.RequestParameters import RequestParameters
+from files.models.broker.BrokerOrder import BrokerOrder
+from files.models.broker.BrokerPosition import BrokerPosition
 
 
 class IBrokerHandler(ABC):
 
-    @abstractmethod
-    def return_name(self)->str:
+    @property
+    def name(self)->str:
         pass
 
     @abstractmethod

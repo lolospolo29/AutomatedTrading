@@ -27,17 +27,21 @@ class OrderBlockMediator:
 
             self._remove_duplicate_orderblocks(timeframe)
 
+    def get_orderblocks(self, timeframe: int) -> list[PDArray]:
+        """Returns the orderblocks for a given timeframe."""
+        return self._orderblocks[timeframe]
+
+    def get_probulsion_block(self, orderblock_id: str) -> list[PDArray]:
+        """Returns the propulsion blocks based on their ID."""
+        return self._probulsion_blocks[orderblock_id]
+
+    def remove_orderblock_by_ids(self,_ids:list,timeframe: int):
+        self._remove_orderblocks_by_ids(_ids=_ids,timeframe=timeframe)
+        self._remove_probulsion_blocks_by_ids(_ids=_ids,timeframe=timeframe)
+
     def clear(self):
         self._orderblocks.clear()
         self._probulsion_blocks.clear()
-
-    def get_orderblocks(self, timeframe: int) -> list[PDArray]:
-        """Returns the orderblocks for a given timeframe."""
-        return self._orderblocks.get(timeframe, [])
-
-    def get_probulsion_blocks(self, timeframe: str) -> list[PDArray]:
-        """Returns the propulsion blocks based on their ID."""
-        return self._probulsion_blocks.get(timeframe, [])
 
     def _detect_orderblock(self, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects Orderblock patterns."""
@@ -70,7 +74,7 @@ class OrderBlockMediator:
         """Detects probulsion patterns."""
         if timeframe in self._orderblocks:
             for orderblock in self._orderblocks[timeframe]:
-                if orderblock.__name == "OB" or orderblock.__name == "SCOB":
+                if orderblock._name == "OB" or orderblock._name == "SCOB":
                     pb = PB.detect_probulsion_block(last_candle=third_candle, orderblock=orderblock)
                     if pb:
                         pb.reference = orderblock.id
@@ -81,7 +85,7 @@ class OrderBlockMediator:
     def _detect_breaker(self, third_candle: Candle, timeframe: int):
         if timeframe in self._orderblocks:
             for orderblock in self._orderblocks[timeframe]:
-                if orderblock.__name == "OB" or orderblock.__name == "SCOB":
+                if orderblock._name == "OB" or orderblock._name == "SCOB":
                     breaker = Breaker.detect_breaker(last_candle=third_candle, orderblock=orderblock)
                     if breaker:
                         orderblock.status = OrderBlockStatusEnum.Breaker.value
@@ -102,7 +106,7 @@ class OrderBlockMediator:
         non_obs = []  # Store non-BPR imbalances
 
         for ob in self._orderblocks[timeframe]:
-            if ob.__name == "SCOB" or ob.__name == "OB":
+            if ob._name == "SCOB" or ob._name == "OB":
                 candle_ids = frozenset(candle.id for candle in ob.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
@@ -113,10 +117,6 @@ class OrderBlockMediator:
 
         # Combine filtered BPR imbalances with non-BPR imbalances
         self._orderblocks[timeframe] = unique_ob + non_obs
-
-    def remove_orderblock_by_ids(self,_ids:list,timeframe: int):
-        self._remove_orderblocks_by_ids(_ids=_ids,timeframe=timeframe)
-        self._remove_probulsion_blocks_by_ids(_ids=_ids,timeframe=timeframe)
 
     def _remove_orderblocks_by_ids(self, _ids, timeframe):
         self._orderblocks[timeframe] = [orderblocks for orderblocks in self._orderblocks[timeframe]

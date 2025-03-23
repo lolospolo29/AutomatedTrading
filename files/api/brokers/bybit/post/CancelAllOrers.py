@@ -1,21 +1,19 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
-from files.api.POSTParams import POSTParams
+from pydantic import BaseModel, Field
 
 
 # post /v5/order/cancel-all
-@dataclass
-class CancelAllOrders(POSTParams):
+class CancelAllOrders(BaseModel):
     # Required parameter
     category: str
 
     # Optional parameters
-    symbol: Optional[str] = field(default=None)
-    baseCoin: Optional[str] = field(default=None)
-    settleCoin: Optional[str] = field(default=None)
-    orderFilter: Optional[str] = field(default=None)
-    stopOrderType: Optional[str] = field(default=None)
+    symbol: Optional[str] = Field(default=None)
+    baseCoin: Optional[str] = Field(default=None)
+    settleCoin: Optional[str] = Field(default=None)
+    orderFilter: Optional[str] = Field(default=None)
+    stopOrderType: Optional[str] = Field(default=None)
 
     def validate(self):
         """Validate required parameters."""

@@ -3,8 +3,8 @@ import uuid
 from datetime import datetime
 from logging import Logger
 
-from files.db.mongodb.BacktestRepository import BacktestRepository
-from files.helper.factories.StrategyFactory import StrategyFactory
+from files.db.repositories.BacktestRepository import BacktestRepository
+from files.helper.builder.StrategyBuilder import StrategyBuilder
 from files.models.asset.Candle import Candle
 from files.models.backtest.BacktestInput import BacktestInput
 from files.models.backtest.Result import Result
@@ -23,7 +23,7 @@ class BacktestService:
                     cls._instance = super(BacktestService, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, backtest_repository: BacktestRepository,strategy_factory: StrategyFactory
+    def __init__(self, backtest_repository: BacktestRepository,strategy_factory: StrategyBuilder
                  ,logger:Logger):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self.__factory = strategy_factory
@@ -58,7 +58,7 @@ class BacktestService:
             if strategy is None:
                 continue
 
-            self.logger.info(f"Starting Backtest: {strategy.name} with Asset {asset}")
+            self.logger.info(f"Starting Backtest: {strategy._name} with Asset {asset}")
 
             module = TestModule(asset_class=asset_classes[asset], strategy=strategy, asset=asset
                                 , candles=test_data[asset], timeframes=strategy.timeframes, trade_limit=backtest_input.trade_limit,logger=self.logger)
@@ -94,7 +94,7 @@ class BacktestService:
             self._backtest_repository.add_candle(candle)
 
     @staticmethod
-    def generate_custom_id(strategy_name, asset):
+    def _generate_custom_id(strategy_name, asset):
         now = datetime.utcnow()
         timestamp = now.strftime("%H%M%S%d%m%Y")  # Format: HHMMSSDDMMYYYY
         short_uuid = str(uuid.uuid4().hex)[:4]  # Take first 4 chars from UUID
@@ -121,7 +121,7 @@ class BacktestService:
         total_activated = 0
         max_drawdown = float('inf')
 
-        result = Result(result_id=str(self.generate_custom_id(strategy_name=module.strategy.name,asset=module.asset)),strategy=module.strategy.name,asset=module.asset)
+        result = Result(result_id=str(self._generate_custom_id(strategy_name=module.strategy.name, asset=module.asset)), strategy=module.strategy.name, asset=module.asset)
 
         # Alle TradeResults aus dem TestModule iterieren
         for trade in module.trade_results.values():
@@ -189,14 +189,14 @@ class BacktestService:
             if not alive:  # If no threads are alive, exit the loop
                 break
 
-    def fetch_test_assets(self):
+    def _fetch_test_assets(self):
         self.logger.info("Fetching Test Assets...")
         self._asset_selection = self._backtest_repository.find_assets_in_testdata()
 
     def _get_asset_classes(self, test_assets: list[str]) -> dict[str, str]:
         asset_classes: dict[str, str] = {}
         for asset in test_assets:
-            asset_classes[asset] = self._backtest_repository.find_asset_class_name_by_asset(asset)
+            asset_classes[asset] = self._backtest_repository.find_asset_class_by_id(asset)
         return asset_classes
 
     def _prepare_test_data(self, test_assets: list[str]) -> dict[str, list[Candle]]:

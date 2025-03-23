@@ -12,3 +12,4 @@ class EndPointEnum(Enum):
     SETLEVERAGE = "/v5/position/set-leverage"
     INSTRUMENT = "/v5/market/instruments-info"
     HISTORY = "/v5/order/history"
+    FUNDING = "/v5/market/funding/history"

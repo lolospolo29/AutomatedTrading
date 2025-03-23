@@ -1,7 +1,6 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
-from files.api.GETParams import GETParams
+from pydantic import BaseModel, Field
 
 
 # get /v5/position/list
@@ -9,17 +8,16 @@ from files.api.GETParams import GETParams
 # such as position size, cumulative realizedPNL.
 # symbol parameter is supported to be passed with multiple symbols
 # up to 10, e.g., "symbol=BTCUSD,ETHUSD"
-@dataclass
-class PositionInfo(GETParams):
+class PositionInfo(BaseModel):
     # Required parameter
     category: str
 
     # Optional parameters
-    symbol: Optional[str] = field(default=None)
-    baseCoin: Optional[str] = field(default=None) # not in order
-    settleCoin: Optional[str] = field(default=None) # not in order
-    limit: Optional[int] = field(default=None) # not in order max 200
-    cursor: Optional[str] = field(default=None)
+    symbol: Optional[str] = Field(default=None)
+    baseCoin: Optional[str] = Field(default=None) # not in order
+    settleCoin: Optional[str] = Field(default=None) # not in order
+    limit: Optional[int] = Field(default=None) # not in order max 200
+    cursor: Optional[str] = Field(default=None)
 
     def validate(self) -> bool:
         """Validate required parameters."""

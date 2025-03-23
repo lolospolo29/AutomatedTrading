@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
 
 class ProfitStopEntry(BaseModel):
-    profit: float=None
-    stop: float=None
-    entry: float=None
-    percentage: float = 0.0  # Default value for percentage
+    profit: float = Field(default=0.0)
+    stop: float= Field(default=0.0)
+    entry: float= Field(default=0.0)
+    percentage: float = Field(default=0.0)

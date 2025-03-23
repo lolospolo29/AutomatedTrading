@@ -1,5 +1,7 @@
+from pydantic import Field
+
 from files.models.frameworks.FrameWork import FrameWork
 
 
 class Structure(FrameWork):
-    pass
+    typ: str = Field(default='Structure')

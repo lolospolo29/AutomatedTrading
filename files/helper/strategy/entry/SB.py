@@ -1,14 +1,21 @@
 from files.models.asset.Candle import Candle
 from files.models.asset.Relation import Relation
 from files.models.frameworks.PDArray import PDArray
-from files.models.strategy.Strategy import Strategy
+from files.models.strategy import EntryInput
+from files.models.strategy.EntryStrategy import EntryStrategy
 from files.models.strategy.Result import StrategyResult
-from files.models.trade.Trade import Trade
 
 
 # Unicorn Entry with 4H PD Range Bias
 
-class LondonSB(Strategy):
+class LondonSB(EntryStrategy):
+
+    @property
+    def name(self) -> str:
+        pass
+
+    def get_entry(self, entryInput: EntryInput) -> StrategyResult:
+        pass
 
     def is_in_time(self, time) -> bool:
         pass
@@ -56,7 +63,7 @@ class LondonSB(Strategy):
             if not self.is_in_time(time):
                 return StrategyResult()
 
-            fvgs: list[PDArray] = [brk for brk in pds if brk.__name == "FVG"]
+            fvgs: list[PDArray] = [brk for brk in pds if brk._name == "FVG"]
 
             for fvg in fvgs:
                 fvgLow, fvgHigh = self.strategy_facade.PDMediator.return_candle_range("FVG", fvg)
@@ -67,6 +74,3 @@ class LondonSB(Strategy):
                         return StrategyResult()
         else:
             return StrategyResult()
-
-    def exit(self, candles: list, timeFrame: int, trade:Trade, relation:Relation)->StrategyResult:
-        pass

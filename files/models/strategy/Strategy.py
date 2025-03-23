@@ -1,36 +1,34 @@
-from abc import abstractmethod, ABC
-
 from files.models.strategy import ExitStrategy
 from files.models.strategy.EntryStrategy import EntryStrategy
 
+class Strategy:
 
-class Strategy(ABC):
+    def __init__(self, name):
+        self._name = name
+        self.entry_strategy = None
+        self.exitStrategy = None
+
     @property
-    @abstractmethod
     def name(self) -> str:
         """Jede Strategie muss einen Namen haben"""
-        pass
+        return self._name
 
     @property
-    @abstractmethod
     def entry_strategy(self) -> EntryStrategy:
         """Getter für Entry-Strategie"""
-        pass
+        return self.entry_strategy
 
     @entry_strategy.setter
-    @abstractmethod
     def entry_strategy(self, entry_strategy: EntryStrategy):
         """Setter für Entry-Strategie"""
-        pass
+        self.entry_strategy = entry_strategy
 
     @property
-    @abstractmethod
     def exit_strategy(self) -> ExitStrategy:
         """Getter für Exit-Strategie"""
-        pass
+        return self.exit_strategy
 
     @exit_strategy.setter
-    @abstractmethod
     def exit_strategy(self, exit_strategy: ExitStrategy):
         """Setter für Exit-Strategie"""
-        pass
+        self.exit_strategy = exit_strategy

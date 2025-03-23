@@ -3,8 +3,8 @@ from logging import Logger
 from typing import Any, Dict
 
 from files.helper.manager.AssetManager import AssetManager
-from files.helper.registry.StrategyRegistry import StrategyRegistry
-from files.helper.manager.TradeManager import TradeManager
+from files.helper.manager.StrategyManager import StrategyManager
+from files.services.BrokerService import BrokerService
 from files.mappers.AssetMapper import AssetMapper
 from files.models.asset.Relation import Relation
 from files.models.asset.Candle import Candle
@@ -14,8 +14,8 @@ from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
 from files.models.trade.enums.OrderType import OrderType
 from files.functions.monitoring.log_time import log_time
-from files.services.NewsService import NewsService
-from files.services.TelegramService import TelegramService
+from tools.NewsService import NewsService
+from tools.TelegramService import TelegramService
 
 
 class TradingService:
@@ -47,12 +47,12 @@ class TradingService:
 
     # region Initializing
 
-    def __init__(self, asset_manager:AssetManager, trade_manager:TradeManager
-                 , strategy_registry:StrategyRegistry, news_service:NewsService, telegram_service:TelegramService, logger:Logger, asset_mapper:AssetMapper):
+    def __init__(self, asset_manager:AssetManager, trade_manager:BrokerService
+                 , strategy_registry:StrategyManager, news_service:NewsService, telegram_service:TelegramService, logger:Logger, asset_mapper:AssetMapper):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
             self._asset_manager: AssetManager = asset_manager
-            self._trade_manager: TradeManager = trade_manager
-            self._strategy_registry: StrategyRegistry = strategy_registry
+            self._trade_manager: BrokerService = trade_manager
+            self._strategy_registry: StrategyManager = strategy_registry
             self._asset_mapper = asset_mapper
             self._news_service :NewsService = news_service
             self._telegram_service = telegram_service
@@ -180,13 +180,13 @@ class TradingService:
         else:
             self._trade_manager.archive_trade(trade)
 
-    def _closing_trade(self,trade:Trade)->None:
+    def _closing_trade(self, trade:Trade)->None:
 
         exceptionOrders, trade = self._trade_manager.cancel_trade(trade)
         trade = self._trade_manager.update_trade(trade)
         self._trade_manager.archive_trade(trade)
-        self._logger.info(f"Canceled Trade: TradeId:{trade.tradeId},"
-                             f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealisedPnl}")
+        self._logger.info(f"Canceled Trade: TradeId:{trade.trade_id},"
+                             f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealised_pnl}")
         message = self._format_orders(trade.orders)
         self._telegram_service.send(f"Cancelled Trade: {message}")
 
@@ -197,15 +197,15 @@ class TradingService:
         formatted_orders = []
 
         for order in orders:
-            if order.orderType == OrderType.MARKET.value:
-                formatted_orders.append(f"• Market Order: {order.side} @ {order.qty},Id:{order.orderLinkId}")
-                if order.takeProfit:
-                    formatted_orders.append(f"TakeProfit: {order.takeProfit},Id:{order.orderLinkId}")
-                if order.stopLoss:
-                    formatted_orders.append(f"StopLoss: {order.stopLoss},Id:{order.orderLinkId}")
-                if order.triggerPrice:
-                    formatted_orders.append(f"TriggerPrice: {order.triggerPrice},Id:{order.orderLinkId}")
-            elif order.orderType == OrderType.LIMIT.value:
-                formatted_orders.append(f"• Limit Order: {order.side} @ {order.qty} (Limit: {order.price}),Id:{order.orderLinkId}")
+            if order.order_type == OrderType.MARKET.value:
+                formatted_orders.append(f"• Market Order: {order.side} @ {order.qty},Id:{order.order_link_id}")
+                if order.take_profit:
+                    formatted_orders.append(f"TakeProfit: {order.take_profit},Id:{order.order_link_id}")
+                if order.stop_loss:
+                    formatted_orders.append(f"StopLoss: {order.stop_loss},Id:{order.order_link_id}")
+                if order.trigger_price:
+                    formatted_orders.append(f"TriggerPrice: {order.trigger_price},Id:{order.order_link_id}")
+            elif order.order_type == OrderType.LIMIT.value:
+                formatted_orders.append(f"• Limit Order: {order.side} @ {order.qty} (Limit: {order.price}),Id:{order.order_link_id}")
 
         return "\n".join(formatted_orders)

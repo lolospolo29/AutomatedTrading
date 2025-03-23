@@ -1,26 +1,24 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
-from files.api.GETParams import GETParams
+from pydantic import BaseModel, Field
 
 
-@dataclass
-class OrderHistory(GETParams):
+class OrderHistory(BaseModel):
     # Required parameter
     category: str
 
     # Optional parameters
-    symbol: Optional[str] = field(default=None)
-    baseCoin: Optional[str] = field(default=None) # not in order
-    orderId: Optional[str] = field(default=None) # not in order
-    orderLinkId: Optional[str] = field(default=None) # not in order
-    orderFilter: Optional[str] = field(default=None) # not in order
-    orderStatus: Optional[str] = field(default=None) # not in order
-    startTime: Optional[int] = field(default=None) # not in order
-    endTime: Optional[int] = field(default=None) # not in order
-    settleCoin: Optional[str] = field(default=None) # not in order
-    limit: Optional[int] = field(default=None) # not in order max 200
-    cursor: Optional[str] = field(default=None)
+    symbol: Optional[str] = Field(default=None)
+    baseCoin: Optional[str] = Field(default=None) # not in order
+    orderId: Optional[str] = Field(default=None) # not in order
+    orderLinkId: Optional[str] = Field(default=None) # not in order
+    orderFilter: Optional[str] = Field(default=None) # not in order
+    orderStatus: Optional[str] = Field(default=None) # not in order
+    startTime: Optional[int] = Field(default=None) # not in order
+    endTime: Optional[int] = Field(default=None) # not in order
+    settleCoin: Optional[str] = Field(default=None) # not in order
+    limit: Optional[int] = Field(default=None) # not in order max 200
+    cursor: Optional[str] = Field(default=None)
 
     def validate(self) -> bool:
         """Validate required parameters."""

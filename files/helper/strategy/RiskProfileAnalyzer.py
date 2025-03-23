@@ -10,8 +10,13 @@ class RiskProfileAnalyzer:
             risk_profile = self._update_fundamentals(risk_profile, risk_input.fundamentals)
 
         if risk_input.news:
-            if len(risk_profile.news) > 3:
-                risk_profile.news = risk_input.news
+            risk_profile.news = risk_input.news
+
+        if risk_input.smt:
+            risk_profile.smt_detected[risk_input.smt.timeframe] = risk_input.smt
+
+        if risk_input.quarter:
+            risk_profile.quarter = risk_input.quarter
 
         return risk_profile
 

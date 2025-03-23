@@ -33,7 +33,7 @@ class ImbalanceMediator:
 
     def get_imbalances(self, timeframe: int) -> list[PDArray]:
         """Returns the imbalances for a given timeframe."""
-        return self._imbalances.get(timeframe, [])
+        return self._imbalances[timeframe]
 
     def _detect_fvg(self, first_candle: Candle, second_candle: Candle, third_candle: Candle, timeframe: int):
         """Detects FVG patterns."""
@@ -76,7 +76,7 @@ class ImbalanceMediator:
             for imbalance in self._imbalances[timeframe]:
                 buy_fvg = None
                 sell_fvg = None
-                if imbalance.__name == "FVG":
+                if imbalance._name == "FVG":
                     if imbalance.direction == "Bullish":
                         buy_fvg = imbalance
                     if imbalance.direction == "Bearish":
@@ -84,7 +84,7 @@ class ImbalanceMediator:
                 else:
                     continue
                 for imbalance2 in self._imbalances[timeframe]:
-                    if imbalance2.__name == imbalance.__name and imbalance2.direction != imbalance.direction:
+                    if imbalance2._name == imbalance._name and imbalance2.direction != imbalance.direction:
                         if imbalance2.direction == "Bullish":
                             buy_fvg = imbalance2
                         if imbalance2.direction == "Bearish":
@@ -98,7 +98,7 @@ class ImbalanceMediator:
     def _detect_inversion_fvg(self, third_candle: Candle, timeframe: int):
         if timeframe in self._imbalances:
             for imbalance in self._imbalances[timeframe]:
-                if imbalance.__name == "FVG" or imbalance.__name == "IFVG":
+                if imbalance._name == "FVG" or imbalance._name == "IFVG":
                     if InversionFVG.detect_inversion(last_candle=third_candle, fvg=imbalance):
                         if imbalance.status == ImbalanceStatusEnum.Normal.value or imbalance.status == ImbalanceStatusEnum.Reclaimed.value:
                             imbalance.status = ImbalanceStatusEnum.Inversed.value
@@ -122,7 +122,7 @@ class ImbalanceMediator:
         non_bpr_imbalances = []  # Store non-BPR imbalances
 
         for imbalance in self._imbalances[timeframe]:
-            if imbalance.__name == "BPR" or imbalance.__name == "IFVG" or imbalance.__name == "FVG":
+            if imbalance._name == "BPR" or imbalance._name == "IFVG" or imbalance._name == "FVG":
                 candle_ids = frozenset(candle.id for candle in imbalance.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:

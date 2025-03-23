@@ -64,9 +64,9 @@ class DoubleFib15(Strategy):
             if not bos or not imbalances:
                 return StrategyResult()
 
-            levels = self._price_mediator.calculate_fibonnaci(bos.candles, ote=True)
+            levels = self._price_mediator.get_fibonnaci(bos.candles, ote=True)
 
-            levels.extend(self._price_mediator.calculate_fibonnaci(bos.candles, pd=True))
+            levels.extend(self._price_mediator.get_fibonnaci(bos.candles, pd=True))
 
             fib_levels,profit_stop_entry = self._get_fibonacci_levels(levels)
 
@@ -119,22 +119,22 @@ class DoubleFib15(Strategy):
 
         return StrategyResult(trade=trade,status=StrategyResultStatusEnum.NOCHANGE.value)
 
-    def _create_trade(self,relation:Relation,order_dir:str,exit_dir:str,stop_dir:str
-                      ,profit_dir:str,take_profit:float,stop:float,last_candle:Candle,asset_class:str,levels:list[FrameWork]):
-        trade = Trade(relation=relation, category=Category.LINEAR.value, orders=[], tradeId=str(uuid.uuid4()))
+    def _create_trade(self, relation:Relation, order_dir:str, exit_dir:str, stop_dir:str
+                      , profit_dir:str, take_profit:float, stop:float, last_candle:Candle, asset_class:str, levels:list[FrameWork]):
+        trade = Trade(relation=relation, category=Category.LINEAR.value, orders=[], trade_id=str(uuid.uuid4()))
         trade.side = order_dir
 
         entry_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
                                                   , category=Category.LINEAR.value, side=order_dir
                                                   , risk_percentage=1
                                                   , order_number=1,
-                                                  tradeId=trade.tradeId).build()
+                                                  tradeId=trade.trade_id).build()
 
         stop_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels
                                                  , category=Category.LINEAR.value, side=exit_dir
                                                  , risk_percentage=1
                                                  , order_number=2
-                                                 , tradeId=trade.tradeId).set_conditional(
+                                                 , tradeId=trade.trade_id).set_conditional(
             trigger_direction=stop_dir
             , trigger_price=stop, trigger_by=
             TriggerBy.MARKPRICE.value).set_defaults(price=stop).build()
@@ -143,7 +143,7 @@ class DoubleFib15(Strategy):
                                                         , category=Category.LINEAR.value, side=exit_dir
                                                         , risk_percentage=1
                                                         , order_number=3
-                                                        , tradeId=trade.tradeId).set_conditional(
+                                                        , tradeId=trade.trade_id).set_conditional(
             trigger_direction=profit_dir
             , trigger_price=take_profit, trigger_by=
             TriggerBy.MARKPRICE.value).set_defaults(price=take_profit).build()

@@ -10,7 +10,7 @@ class TradeBuilder:
     def __init__(self):
         self.trade = None
 
-    def create_trade(self,relation:Relation,category:str,side:str,orders:list[Order]=None):
+    def create_trade(self, relation:Relation, category:str, side:str, orders:list[Order]=None):
         self.trade = Trade()
         self.trade.relation = relation
         self.trade.category = category
@@ -21,7 +21,7 @@ class TradeBuilder:
             self.trade.orders = orders#
 
         self.trade.side = side
-        self.trade.tradeId = self._generate_order_link_id(relation.asset,relation.broker,relation.strategy)
+        self.trade.trade_id = self._generate_order_link_id(relation.asset, relation.broker, relation.strategy)
         return self
 
     def build(self):

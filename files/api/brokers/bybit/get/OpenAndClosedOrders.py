@@ -1,28 +1,26 @@
-from dataclasses import dataclass, field
 from typing import Optional
 
-from files.api.GETParams import GETParams
+from pydantic import BaseModel, Field
 
 
 # get /v5/order/realtime
 # Primarily query unfilled or partially filled orders in real-time,
 # but also supports querying recent 500 closed status (Cancelled, Filled)
 # orders.
-@dataclass
-class OpenAndClosedOrders(GETParams):
+class OpenAndClosedOrders(BaseModel):
     # Required parameter
     category: str
 
     # Optional parameters
-    symbol: Optional[str] = field(default=None)
-    baseCoin: Optional[str] = field(default=None) # not in order
-    settleCoin: Optional[str] = field(default=None) # not in order
-    orderId: Optional[str] = field(default=None)
-    orderLinkId: Optional[str] = field(default=None)
-    openOnly: Optional[int] = field(default=None) # open Only
-    orderFilter: Optional[str] = field(default=None) # exits but different enums
-    limit: Optional[int] = field(default=None) # page size receiving
-    cursor: Optional[str] = field(default=None) # safe for next page
+    symbol: Optional[str] = Field(default=None)
+    baseCoin: Optional[str] = Field(default=None) # not in order
+    settleCoin: Optional[str] = Field(default=None) # not in order
+    orderId: Optional[str] = Field(default=None)
+    orderLinkId: Optional[str] = Field(default=None)
+    openOnly: Optional[int] = Field(default=None) # open Only
+    orderFilter: Optional[str] = Field(default=None) # exits but different enums
+    limit: Optional[int] = Field(default=None) # page size receiving
+    cursor: Optional[str] = Field(default=None) # safe for next page
 
     def validate(self) -> bool:
         """Validate required parameters based on category and other conditions."""
@@ -63,5 +61,3 @@ class OpenAndClosedOrders(GETParams):
 
         # If all checks pass
         return True
-
-

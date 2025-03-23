@@ -11,8 +11,10 @@ pytz~=2024.2
 schedule~=1.2.2
 watchdog~=6.0.0
 selenium~=4.27.1
-flask
+flask~=3.0.3
 dotenv~=0.9.9
 python-dotenv~=1.0.1
 
 pandas~=2.2.3
+ratelimit~=2.2.1
+python-dateutil~=2.9.0.post0

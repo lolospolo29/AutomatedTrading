@@ -6,6 +6,7 @@ from files.models.asset.Relation import Relation
 from files.models.risk.RiskProfile import RiskProfile
 
 from files.models.risk.RiskProfileInput import RiskProfileInput
+#todo class instance
 
 # todo Hybrid-Ansatz mit Lazy Loading
 #

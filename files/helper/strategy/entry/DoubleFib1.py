@@ -60,9 +60,9 @@ class DoubleFib1(Strategy):
             if not bos or not imbalances:
                 return StrategyResult()
 
-            levels = self._price_mediator.calculate_fibonnaci(bos.candles, ote=True)
+            levels = self._price_mediator.get_fibonnaci(bos.candles, ote=True)
 
-            levels.extend(self._price_mediator.calculate_fibonnaci(bos.candles, pd=True))
+            levels.extend(self._price_mediator.get_fibonnaci(bos.candles, pd=True))
 
             fib_levels,profit_stop_entry = self._get_fibonacci_levels(levels)
 
@@ -119,6 +119,7 @@ class DoubleFib1(Strategy):
 
     def exit(self, candles: list, timeFrame: int, trade: Trade, relation: Relation) -> StrategyResult:
         # todo seperate entry exit / price mediator decoupling / create trade decoupling / risk management from outer
+        # todo daily updater for risk profile and mediator
         # todo smt
         # todo faker exit test
         # todo test price mediator
@@ -138,13 +139,13 @@ class DoubleFib1(Strategy):
                                                        , category=relation.category, side=order_dir
                                                        , risk_percentage=1
                                                        , order_number=1,
-                                                       tradeId=trade.tradeId).build()
+                                                       tradeId=trade.trade_id).build()
 
         stop_order = self._order_builder.create_order(relation=relation, symbol=relation.asset, confirmations=levels
                                                       , category=relation.category, side=exit_dir
                                                       , risk_percentage=1
                                                       , order_number=2
-                                                      , tradeId=trade.tradeId).set_conditional(
+                                                      , tradeId=trade.trade_id).set_conditional(
             trigger_direction=stop_dir
             , trigger_price=stop, trigger_by=
             TriggerBy.MARKPRICE.value).set_defaults(price=stop).build()
@@ -153,7 +154,7 @@ class DoubleFib1(Strategy):
                                                         , category=relation.category, side=exit_dir
                                                         , risk_percentage=1
                                                         , order_number=3
-                                                        , tradeId=trade.tradeId).set_conditional(
+                                                        , tradeId=trade.trade_id).set_conditional(
             trigger_direction=profit_dir
             , trigger_price=take_profit
             , trigger_by=TriggerBy.MARKPRICE.value).set_defaults(price=take_profit).build()

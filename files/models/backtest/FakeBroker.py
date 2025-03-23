@@ -35,13 +35,13 @@ class FakeBroker:
     @staticmethod
     def create_limit_exit_order(order:Order, is_stop:bool)->Order:
         o = Order()
-        o.orderType = OrderType.LIMIT.value
-        o.orderId = order.orderId + str(random.randint(1, 10000))
+        o.order_type = OrderType.LIMIT.value
+        o.order_id = order.order_id + str(random.randint(1, 10000))
         o.qty = order.qty
         if not is_stop:
-            o.price = order.tpLimitPrice
+            o.price = order.tp_limit_price
         if is_stop:
-            o.price = order.slLimitPrice
+            o.price = order.sl_limit_price
 
         if order.side == Side.BUY.value:
             o.side = Side.SELL.value
@@ -52,13 +52,13 @@ class FakeBroker:
     @staticmethod
     def create_market_exit_order(order:Order, is_stop:bool)->Order:
         o = Order()
-        o.orderType = OrderType.MARKET.value
-        o.orderId = order.orderId + str(random.randint(1, 10000))
+        o.order_type = OrderType.MARKET.value
+        o.order_id = order.order_id + str(random.randint(1, 10000))
         o.qty = order.qty
         if not is_stop:
-            o.triggerPrice = order.takeProfit
+            o.trigger_price = order.take_profit
         if is_stop:
-            o.triggerPrice = order.stopLoss
+            o.trigger_price = order.stop_loss
 
         if order.side == Side.BUY.value:
             o.side = Side.SELL.value
@@ -68,15 +68,15 @@ class FakeBroker:
 
     def create_tp_sl_order(self, order:Order)->list[Order]:
         new_orders = []
-        if order.takeProfit:
-            if order.tpLimitPrice:
+        if order.take_profit:
+            if order.tp_limit_price:
                 limit_order:Order = self.create_limit_exit_order(order=order, is_stop=False)
                 new_orders.append(limit_order)
             else:
                 market_order:Order = self.create_market_exit_order(order=order, is_stop=False)
                 new_orders.append(market_order)
-        if order.stopLoss:
-            if order.slLimitPrice:
+        if order.stop_loss:
+            if order.sl_limit_price:
                 limit_order:Order = self.create_limit_exit_order(order=order, is_stop=True)
                 new_orders.append(limit_order)
             else:
