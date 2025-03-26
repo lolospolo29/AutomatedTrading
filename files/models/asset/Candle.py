@@ -1,10 +1,9 @@
-import json
 import uuid
 from datetime import datetime
 from typing import Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 from files.models.PyObjectId import PyObjectId
 

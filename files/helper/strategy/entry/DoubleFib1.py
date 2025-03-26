@@ -118,14 +118,15 @@ class DoubleFib1(Strategy):
             return StrategyResult()
 
     def exit(self, candles: list, timeFrame: int, trade: Trade, relation: Relation) -> StrategyResult:
-        # todo seperate entry exit / price mediator decoupling / create trade decoupling / risk management from outer
+        # todo seperate entry exit / price mediator decoupling / create trade decoupling/director / risk management from outer
+        # todo entry exit swap +  ui strategy builder for backtest
         # todo daily updater for risk profile and mediator
         # todo smt
         # todo faker exit test
         # todo test price mediator
         # todo implement strategies + test
+        # todo test backtest
         # todo trail stop
-        # todo entry exit swap +  ui strategy builder for backtest
         return StrategyResult(trade=trade, status=StrategyResultStatusEnum.NOCHANGE.value)
 
     def _create_trade(self, relation: Relation, order_dir: str, exit_dir: str, stop_dir: str

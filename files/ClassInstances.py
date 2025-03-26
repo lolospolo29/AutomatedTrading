@@ -9,14 +9,16 @@ import os
 from files.api.brokers.bybit.Bybit import Bybit
 from files.api.brokers.bybit.BybitHandler import BybitHandler
 from files.controller.AssetController import AssetController
-from files.controller.SignalController import SignalController
+from files.controller.RelationController import RelationController
+from files.controller.SMTController import SMTController
+from files.controller.ServiceController import ServiceController
 from files.controller.StrategyController import StrategyController
-from files.controller.ToolsController import ToolsController
 from files.db.repositories.AssetRepository import AssetRepository
 from files.db.repositories.BacktestRepository import BacktestRepository
 from files.db.repositories.CandleRepository import CandleRepository
 from files.db.repositories.NewsRepository import NewsRepository
 from files.db.repositories.RelationRepository import RelationRepository
+from files.db.repositories.SMTPairRepository import SMTPairRepository
 from files.db.repositories.StrategyRepository import StrategyRepository
 from files.db.repositories.TradeRepository import TradeRepository
 from files.helper.builder.StrategyBuilder import StrategyBuilder
@@ -24,17 +26,13 @@ from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.RelationManager import RelationManager
 from files.helper.manager.RiskManager import RiskManager
 from files.helper.manager.SMTManager import SMTManager
-from files.helper.observer.MongoDBSyncObserver import MongoDBSyncObserver
 from files.services.BrokerService import BrokerService
 from files.helper.registry.BrokerRegistry import BrokerRegistry
 from files.helper.manager.StrategyManager import StrategyManager
-from files.mappers.AssetMapper import AssetMapper
-from files.mappers.BrokerMapper import BrokerMapper
-from files.mappers.ClassMapper import ClassMapper
-from files.mappers.DTOMapper import DTOMapper
-from files.functions.monitoring.logging.QueueHandler import QueueHandler
-from files.functions.monitoring.logging.TelegramLogHandler import TelegramLogHandler
-from files.functions.monitoring.monitorFolder import MonitorFolder
+from files.helper.mappers.ClassMapper import ClassMapper
+from files.helper.functions.monitoring.logging.QueueHandler import QueueHandler
+from files.helper.functions.monitoring.logging.TelegramLogHandler import TelegramLogHandler
+from files.helper.functions.monitoring.monitorFolder import MonitorFolder
 from files.services.BacktestService import BacktestService
 from tools.NewsService import NewsService
 from tools.ScheduleService import ScheduleService
@@ -79,30 +77,21 @@ logger.addHandler(telegram_handler)
 
 # factory
 
-strategy_factory = StrategyBuilder()
+strategy_builder = StrategyBuilder()
 
-if os.getenv("ENV") == "TST":
-    watch_asset = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Asset")
-    watch_relation = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Relation")
-    watch_smt_pairs = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="SMTPairs")
-    watch_strategy = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="Strategy")
-    watch_exit_entry = MongoDBSyncObserver(client1_uri=os.getenv("MONGODBDEV"),client2_uri=os.getenv("MONGODB"),db_name="TradingConfig",collection_name="EntryExitStrategy")
 # scrapper
 
 economic_scrapper = EconomicScrapper(logger=logger)
 
 # mapper
 
-dto_mapper = DTOMapper()
-asset_mapper = AssetMapper()
 class_mapper = ClassMapper()
-broker_mapper = BrokerMapper()
 
 # broker
 
 bybit = Bybit(api_key=os.getenv("BYBITKEY"),api_secret=os.getenv("BYBITSECRET"),uri=os.getenv("BYBITURL"))
 
-bybit_handler = BybitHandler(logger=logger, class_mapper=class_mapper,bybit=bybit)
+bybit_handler = BybitHandler(logger=logger,bybit=bybit)
 
 # DB
 mongo_server = os.getenv("MONGODB")
@@ -121,31 +110,31 @@ backtest_repository = BacktestRepository(db_name="Backtest",uri=mongo_server)
 
 strategy_repository = StrategyRepository(db_name="TradingConfig",uri=mongo_server)
 
+smt_repository = SMTPairRepository(db_name="TradingConfig",uri=mongo_server)
+
 # Registry 
 
 broker_facade = BrokerRegistry()
 
 broker_facade.register_handler(bybit_handler)
 
-
 # Manager
 risk_manager = RiskManager(logger=logger,max_risk_percentage=1,max_drawdown=4)
 
-strategy_manager = StrategyManager(logger=logger,strategy_repository=strategy_repository)
+strategy_manager = StrategyManager(logger=logger,strategy_repository=strategy_repository,strategy_builder=strategy_builder)
 
 asset_manager = AssetManager(asset_respository=asset_repository,trading_data_repository=data_repository,logger=logger)
 
-smt_manager = SMTManager(logger=logger,relation_repository=relation_repository,asset_repository=asset_repository,asset_manager=asset_manager)
+smt_manager = SMTManager(smt_repository=smt_repository,logger=logger)
 
-relation_manager = RelationManager(relation_repository=relation_repository, asset_manager=asset_manager, strategy_registry=strategy_manager, logger=logger,
-                                   strategy_builder=strategy_factory,strategy_repository=strategy_repository)
+relation_manager = RelationManager(relation_repository=relation_repository, asset_manager=asset_manager,logger=logger)
 
-trade_manager = BrokerService(trade_repository=trade_repository, broker_facade=broker_facade, risk_manager=risk_manager, relation_manager=relation_manager, logger=logger, broker_mapper=broker_mapper, class_mapper=class_mapper)
+trade_manager = BrokerService( broker_registry=broker_facade, logger=logger,)
 
 
 # services
 
-backtest_service = BacktestService(backtest_repository=backtest_repository,logger=logger,strategy_factory=strategy_factory)
+backtest_service = BacktestService(backtest_repository=backtest_repository, logger=logger, strategy_factory=strategy_builder)
 
 news_service = NewsService(news_repository=news_repository,logger=logger,economic_scrapper=economic_scrapper)
 
@@ -159,22 +148,23 @@ new_file_handler = FileHandler(asset_manager=asset_manager, strategy_registry=st
 
 # controller
 
-signal_controller = SignalController(trading_service=trading_service, broker_service=trade_manager, relation_manager=relation_manager, smt_manager=smt_manager,logger=logger)
-
 asset_controller = AssetController(asset_manager=asset_manager,logger=logger)
+
+relation_controller = RelationController(relation_manager=relation_manager,logger=logger)
+
+service_controller = ServiceController(trading_service=trading_service, broker_service=trade_manager,  backtest_service=backtest_service,news_service=news_service,logger=logger)
 
 strategy_controller = StrategyController(strategy_manager=strategy_manager,logger=logger)
 
-tools_controller = ToolsController(logger=logger,news_service=news_service,backtest_service=backtest_service)
-
+smt_controller = SMTController(smt_manager=smt_manager,logger=logger)
 # Logic
 
-assets = asset_manager.return_assets()
+assets = asset_manager.get_assets()
 
 for asset in assets:
     asset_manager.add_asset(asset)
 
-relations = relation_manager.return_relations()
+relations = relation_manager.get_relations()
 
 smt_pairs = smt_manager.return_smt_pairs()
 

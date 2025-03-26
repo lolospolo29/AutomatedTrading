@@ -178,7 +178,7 @@ class StructureMediator:
     def _remove_swings_by_ids(self, _ids, timeframe):
         self._swings[timeframe] = [
             swing for swing in self._swings[timeframe]
-            if all(candle.id in _ids for candle in swing.candles)
+            if all(candle.strategy_id in _ids for candle in swing.candles)
         ]
 
     def _remove_duplicate_swings(self, timeframe: int):
@@ -190,7 +190,7 @@ class StructureMediator:
 
         for hl in self._swings[timeframe]:
             if hl._name == "High" or hl._name == "Low":
-                candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
+                candle_ids = frozenset(candle.strategy_id for candle in hl.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
                     unique_eqhl.append(hl)
@@ -201,7 +201,7 @@ class StructureMediator:
 
     def _remove_consecutive_candles_by_ids(self, _ids, timeframe):
         self._consecutive_candles[timeframe] = [consecutive for consecutive in self._consecutive_candles[timeframe]
-                                 if all(candle.id in _ids for candle in consecutive.candles)]
+                                                if all(candle.strategy_id in _ids for candle in consecutive.candles)]
 
     def _remove_duplicate_consecutive_candles(self, timeframe: int):
         if timeframe not in self._consecutive_candles:
@@ -214,7 +214,7 @@ class StructureMediator:
         sorted_candle_groups = sorted(self._consecutive_candles[timeframe], key=lambda x: len(x.candles), reverse=True)
 
         for consecutive_candles in sorted_candle_groups:
-            candle_ids = frozenset(candle.id for candle in consecutive_candles.candles)  # Extract candle IDs
+            candle_ids = frozenset(candle.strategy_id for candle in consecutive_candles.candles)  # Extract candle IDs
 
             # If no subset of these candles is already stored, keep it
             if not any(existing_ids.issubset(candle_ids) for existing_ids in seen_candle_sets):
@@ -226,7 +226,7 @@ class StructureMediator:
 
     def _remove_eqhls_by_ids(self, _ids, timeframe):
         self._eqhl[timeframe] = [eqhl for eqhl in self._eqhl[timeframe]
-                                 if all(candle.id in _ids for candle in eqhl.candles)]
+                                 if all(candle.strategy_id in _ids for candle in eqhl.candles)]
 
 
     def _remove_duplicate_eqhl(self, timeframe: int):
@@ -238,7 +238,7 @@ class StructureMediator:
 
         for hl in self._eqhl[timeframe]:
             if hl._name == "EQH" or hl._name == "EQL":
-                candle_ids = frozenset(candle.id for candle in hl.candles)  # Get unique candle IDs
+                candle_ids = frozenset(candle.strategy_id for candle in hl.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
                     unique_eqhl.append(hl)

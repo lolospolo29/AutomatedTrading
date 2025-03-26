@@ -52,7 +52,7 @@ class TimeMediator:
     def remove_old_sessions(self,_ids):
         with self._lock:
             self._current_session = [imbalances for imbalances in self._current_session
-                                           if all(candle.id in _ids for candle in imbalances.candles)]
+                                     if all(candle.strategy_id in _ids for candle in imbalances.candles)]
 
     def clear(self):
         with self._lock:

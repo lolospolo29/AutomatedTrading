@@ -13,12 +13,31 @@ class StrategyController:
         self._logger = logger
     # endregion
 
-    def find_entry_exit_strategies(self):
-        strategies = self._StrategyManager.find_entry_exit_strategies()
+    def create_strategy(self, json_data:Dict[str,Any] = None):
+        try:
+            self._StrategyManager.create_strategy(StrategyDTO.model_validate(json_data))
+        except Exception as e:
+            self._logger.warning("Add Asset failed,Error: {e}".format(e=e))
+
+    def get_strategies(self):
+        strategies = self._StrategyManager.get_strategies()
         dict_strategy = []
         for strategy in strategies:
             try:
-                asset_dict: dict = strategy.dict(exclude={'id'})
+                asset_dict: dict = strategy.dict(exclude={'_id'})
+                dict_strategy.append(asset_dict)
+            except Exception as e:
+                self._logger.error(
+                    "Error appending asset to list Name: {name},Error:{e}".format(name=strategy.name, e=e))
+                continue
+        return dict_strategy
+
+    def get_entry_exit_strategies(self):
+        strategies = self._StrategyManager.get_entry_exit_strategies()
+        dict_strategy = []
+        for strategy in strategies:
+            try:
+                asset_dict: dict = strategy.dict(exclude={'_id'})
                 dict_strategy.append(asset_dict)
             except Exception as e:
                 self._logger.error(
@@ -35,24 +54,5 @@ class StrategyController:
     def delete_strategy(self,json_data:Dict[str,Any] = None):
         try:
             self._StrategyManager.delete_strategy(StrategyDTO.model_validate(json_data))
-        except Exception as e:
-            self._logger.warning("Add Asset failed,Error: {e}".format(e=e))
-
-    def get_strategies(self):
-        strategies = self._StrategyManager.find_strategies()
-        dict_strategy = []
-        for strategy in strategies:
-            try:
-                asset_dict: dict = strategy.dict(exclude={'id'})
-                dict_strategy.append(asset_dict)
-            except Exception as e:
-                self._logger.error(
-                    "Error appending asset to list Name: {name},Error:{e}".format(name=strategy.name, e=e))
-                continue
-        return dict_strategy
-
-    def add_strategy(self,json_data:Dict[str,Any] = None):
-        try:
-            self._StrategyManager.create_strategy(StrategyDTO.model_validate(json_data))
         except Exception as e:
             self._logger.warning("Add Asset failed,Error: {e}".format(e=e))

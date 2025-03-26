@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class RequestParameters(BaseModel):
-    broker:str
+    brokerId:str
     positionIdx: Optional[int] = Field(default=None)
     baseCoin: Optional[str] = Field(default=None)
     settleCoin: Optional[str] = Field(default=None)
@@ -43,7 +43,6 @@ class RequestParameters(BaseModel):
     mmp: Optional[bool] = Field(default=None)
     tpOrderType: Optional[str] = Field(default=None)
     slOrderType: Optional[str] = Field(default=None)
-    broker: Optional[str] = Field(default=None)
     orderType: Optional[str] = Field(default=None)
     side: Optional[str] = Field(default=None)
     qty: Optional[str] = Field(default=None)

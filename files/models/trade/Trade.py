@@ -4,16 +4,13 @@ from typing import Optional
 from bson import ObjectId
 from pydantic import BaseModel, Field
 
-from files.models.asset.Relation import Relation
 from files.models.PyObjectId import PyObjectId
-from files.models.trade.Order import Order
 
 class Trade(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)  # MongoDB _id
 
-    orders: Optional[list[Order]] = Field(default=None,exclude=True)  #
-    relation: Optional[Relation] = Field(default=None,exclude=True)
-    trade_id: Optional[str] = Field(default=None, alias="tradeId", default_factory=lambda: uuid.uuid4().__str__())
+    relation_id: Optional[str] = Field(default=None, exclude=True)
+    trade_id: Optional[str] = Field(alias="tradeId", default_factory=lambda: str(uuid.uuid4()))
     category: Optional[str] = Field(default=None)
     side: Optional[str] = None
     tpsl_mode: Optional[str] = Field(default=None, alias="tpslMode")

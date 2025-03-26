@@ -110,7 +110,7 @@ class ImbalanceMediator:
 
     def remove_imbalances_by_ids(self, _ids, timeframe):
         self._imbalances[timeframe] = [imbalances for imbalances in self._imbalances[timeframe]
-                                 if all(candle.id in _ids for candle in imbalances.candles)]
+                                       if all(candle.strategy_id in _ids for candle in imbalances.candles)]
 
 
     def _remove_duplicate_bpr(self, timeframe: int):
@@ -123,7 +123,7 @@ class ImbalanceMediator:
 
         for imbalance in self._imbalances[timeframe]:
             if imbalance._name == "BPR" or imbalance._name == "IFVG" or imbalance._name == "FVG":
-                candle_ids = frozenset(candle.id for candle in imbalance.candles)  # Get unique candle IDs
+                candle_ids = frozenset(candle.strategy_id for candle in imbalance.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
                     unique_bpr_candles.append(imbalance)

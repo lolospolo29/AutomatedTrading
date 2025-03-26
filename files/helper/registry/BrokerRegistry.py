@@ -6,6 +6,7 @@ class BrokerRegistry:
     def __init__(self):
         self._registry:dict[str,IBrokerHandler]= {}
 
+# todo change to id
     def register_handler(self,handler:IBrokerHandler):
         self._registry[handler.name.upper()] = handler
 
@@ -31,11 +32,11 @@ class BrokerRegistry:
 
     def return_position_info(self, request_params:RequestParameters):
         if request_params.broker.upper() in self._registry:
-            return self._registry[request_params.broker].return_position_info(request_params)
+            return self._registry[request_params.broker].get_position_info(request_params)
 
     def return_order_history(self, request_params:RequestParameters):
         if request_params.broker.upper() in self._registry:
-            return self._registry[request_params.broker].return_order_history(request_params)
+            return self._registry[request_params.broker].get_order_history(request_params)
 
     def set_leverage(self, request_params:RequestParameters):
         if request_params.broker.upper() in self._registry:

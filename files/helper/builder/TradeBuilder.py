@@ -12,7 +12,7 @@ class TradeBuilder:
 
     def create_trade(self, relation:Relation, category:str, side:str, orders:list[Order]=None):
         self.trade = Trade()
-        self.trade.relation = relation
+        self.trade.relation_id = str(relation.relation_id)
         self.trade.category = category
 
         if orders is None:

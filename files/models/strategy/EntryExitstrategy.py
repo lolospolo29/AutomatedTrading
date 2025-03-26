@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from files.models.PyObjectId import PyObjectId
 
 
-class EntryExitStrategyDTO(BaseModel):
+class EntryExitStrategy(BaseModel):
     id: Optional[PyObjectId] = Field(alias="_id", default=None)  # MongoDB _id
     name: str
     typ: str

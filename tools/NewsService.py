@@ -5,7 +5,7 @@ from logging import Logger
 import pytz
 
 from files.db.repositories.NewsRepository import NewsRepository
-from files.functions.to_utc import to_utc
+from files.helper.functions.to_utc import to_utc
 from tools.EconomicScrapper.EconomicScrapper import EconomicScrapper
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent

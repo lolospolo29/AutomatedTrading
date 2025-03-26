@@ -1,5 +1,5 @@
 from files.db.MongoDB import MongoDB
-from files.models.strategy.EntryExitstrategyDTO import EntryExitStrategyDTO
+from files.models.strategy.EntryExitstrategy import EntryExitStrategy
 from files.models.strategy.StrategyDTO import StrategyDTO
 
 
@@ -11,7 +11,7 @@ class StrategyRepository:
     # region Strategy
 
     def add_strategy(self, strategy: StrategyDTO):
-        self._db.add("Strategy", strategy.model_dump(exclude={"id"}))
+        self._db.add("Strategy", strategy.model_dump(exclude={"_id"}))
 
     def find_strategies(self)->list[StrategyDTO]:
         strategies_db: list = self._db.find("Strategy", None)
@@ -28,19 +28,30 @@ class StrategyRepository:
         query = self._db.build_query("name", name)
         return StrategyDTO(**self._db.find("Strategy", query)[0])
 
+    def update_strategy(self, strategy: StrategyDTO):
+        dto: StrategyDTO = self.find_strategy_by_id(strategy.strategy_id)
+
+        self._db.update("Asset", str(dto.id), strategy.model_dump(exclude={"_id"}))
+
+    def delete_strategy(self, strategy: StrategyDTO):
+        dto: StrategyDTO = self.find_strategy_by_id(strategy.strategy_id)
+
+        self._db.delete("Asset", str(dto.id))
+
     # endregion
 
     # region Entry Exit Strategy
 
-    def find_entry_exit_strategy_by_id(self, _id: int) -> EntryExitStrategyDTO:
+    def find_entry_exit_strategy_by_id(self, _id: int) -> EntryExitStrategy:
         query = self._db.build_query("strategyId", _id)
-        return EntryExitStrategyDTO(**self._db.find("EntryExitStrategy", query)[0])
+        return EntryExitStrategy(**self._db.find("EntryExitStrategy", query)[0])
 
-    def find_entry_exit_strategies(self) -> list[EntryExitStrategyDTO]:
+    def find_entry_exit_strategies(self) -> list[EntryExitStrategy]:
         strategies_db: list = self._db.find("EntryExitStrategy", None)
-        strategies: list[EntryExitStrategyDTO] = []
+        strategies: list[EntryExitStrategy] = []
         for strategy in strategies_db:
-            strategies.append(EntryExitStrategyDTO(**strategy))
+            strategies.append(EntryExitStrategy(**strategy))
         return strategies
 
     # endregion
+

@@ -13,10 +13,10 @@ class NewsRepository:
     # region News
 
     def add_news_event(self, news_event: NewsEvent):
-        self._db.add("NewsEvent", news_event.model_dump(exclude={"id"}))
+        self._db.add("NewsEvent", news_event.model_dump(exclude={"_id"}))
 
     def add_news_day(self, news_day: NewsDay):
-        self._db.add("NewsDay", news_day.model_dump(exclude={"id"}))
+        self._db.add("NewsDay", news_day.model_dump(exclude={"_id"}))
 
     def get_news_events(self, from_date: datetime, to_date: datetime)->list[NewsEvent]:
         news_events = []

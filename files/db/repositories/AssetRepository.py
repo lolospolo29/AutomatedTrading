@@ -35,7 +35,7 @@ class AssetRepository:
     # region Asset
 
     def add_asset(self, asset:Asset):
-        self._db.add("Asset",asset.model_dump(exclude={"id"}))
+        self._db.add("Asset",asset.model_dump(exclude={"_id"}))
 
     def find_asset_by_id(self,asset_id:int)->Asset:
         query = self._db.build_query("assetId", asset_id)
@@ -56,7 +56,7 @@ class AssetRepository:
     def update_asset(self, asset:Asset):
         dto:Asset = self.find_asset_by_id(asset.asset_id)
 
-        self._db.update("Asset",str(dto.id),asset.model_dump(exclude={"id"}))
+        self._db.update("Asset",str(dto.id),asset.model_dump(exclude={"_id"}))
 
     def delete_asset(self, asset:Asset):
         dto:Asset = self.find_asset_by_id(asset.asset_id)

@@ -2,37 +2,39 @@ from logging import Logger
 
 from collections import deque
 
+from files.helper.mediator.PriceMediator import PriceMediator
 from files.models.asset.Candle import Candle
 from files.models.asset.CandleSeries import CandleSeries
-from files.models.asset.Relation import Relation
 from files.models.backtest.FakeBroker import FakeBroker
 from files.models.backtest.TradeResult import TradeResult
-from files.models.strategy.ExpectedTimeFrame import ExpectedTimeFrame
+from files.models.strategy.EntryInput import EntryInput
+from files.models.strategy.ExitInput import ExitInput
 from files.models.strategy.Strategy import Strategy
 from files.models.strategy.Result import StrategyResult
 from files.models.trade.Order import Order
+from files.models.trade.enums.OrderResultStatusEnum import OrderResultStatusEnum
 from files.models.trade.enums.Side import Side
 from files.models.trade.enums.OrderType import OrderType
+from files.models.trade.enums.StrategyResultStatusEnum import StrategyResultStatusEnum
+
 
 class TestModule:
     def __init__(self,asset_class:str,strategy:Strategy, asset:str,candles:list[Candle]
-                 , timeframes:list[ExpectedTimeFrame],logger:Logger,trade_limit:int=2,):
+                 ,logger:Logger,trade_limit:int=2,):
         self.asset = asset
         self.asset_class = asset_class
         self.strategy = strategy
         self.candles = candles
-        self.timeframes = timeframes
         self.trade_que = deque(maxlen=trade_limit) # list of tradeIds
         self.fake_broker = FakeBroker()
+        self.mediator = PriceMediator()
         self.logger = logger
         self.results:dict[str,StrategyResult] = {}
         self.trade_results:dict[str,TradeResult] = {}
 
     def start_module(self):
 
-        candles_series:list[CandleSeries] = self._prepare_candle_series(self.timeframes)
-
-        fake_relation = Relation(asset="", broker="", strategy=self.strategy.name, max_trades=99, id=0, category="")
+        candles_series:list[CandleSeries] = self._prepare_candle_series()
 
         for candle in self.candles:
             for serie in candles_series:
@@ -43,10 +45,14 @@ class TestModule:
 
                     series = serie.to_list()
 
+                    if len(series) >= 2:
+                        continue
+
+                    self.mediator.analyze(first_candle=candle[-1],second_candle=candle[-2],third_candle=candle[-3],timeframe=candle.timeframe)
+
                     try:
-                        result = self.strategy.entry_strategy.get_entry(.entry(candles=series
-                                                     , timeFrame=candle.timeframe
-                                                     , relation=fake_relation, asset_class=self.asset_class)
+                        entry_input = EntryInput(candles=series,price_mediator=self.mediator)
+                        result = self.strategy.entry_strategy.get_entry(entry_input)
 
                         if result.status == StrategyResultStatusEnum.NEWTRADE.value and len(self.trade_que) < self.trade_que.maxlen:
                             self.handle_new_trade(result, series[-1])
@@ -57,6 +63,18 @@ class TestModule:
 
         self.calculate_trade_results()
 
+    def _prepare_candle_series(self)->list[CandleSeries]:
+        timeframes = []
+        candle_series:list[CandleSeries] = []
+        for candle in self.candles:
+            if candle.time_frame in timeframes:
+                continue
+            else:
+                timeframes.append(candle.time_frame)
+        for timeframe in timeframes:
+            candle_series.append(CandleSeries(candle_series=deque(maxlen=200),time_frame=timeframe,broker=""))
+
+        return candle_series
 
     def handle_new_trade(self,result:StrategyResult,last_candle:Candle):
         trade_result = TradeResult(trade_id=result.trade.trade_id
@@ -73,11 +91,11 @@ class TestModule:
 
         for id in self.trade_que:
             try:
-                result = self.results[id]
-                strategy_result = self.strategy.exit(candles=series,
-                                                     timeFrame=last_candle.timeframe,
-                                                     relation=result.trade.relation,
-                                                     trade=result.trade)
+                result:StrategyResult = self.results[id]
+
+                exit_input = ExitInput(trade=result.trade,candles=series,mediator=self.mediator)
+
+                strategy_result = self.strategy.exit_strategy.get_exit(exit_input)
 
                 updated_result = self._update_trade_results(strategy_result, last_candle)
 
@@ -169,25 +187,6 @@ class TestModule:
                 trade_result.take_profit = lowest_price
 
             trade_result.max_drawdown = max_drawdown
-
-    @staticmethod
-    def _prepare_candle_series(timeframes: list[ExpectedTimeFrame]) -> list[CandleSeries]:
-        candle_series: list[CandleSeries] = []
-
-        for timeframe in timeframes:
-            is_found = False
-
-            for serie in candle_series:
-                if serie.time_frame == timeframe.timeframe:
-                    is_found = True
-                    break
-
-            if is_found:
-                continue
-
-            candle_series.append(CandleSeries(candle_series=deque(maxlen=timeframe.max_len)
-                                              , time_frame=timeframe.timeframe, broker=""))
-        return candle_series
 
     def _set_entry_(self, order: Order, trade_result: TradeResult, last_candle: Candle):
         if trade_result.entry_price == 0.0:

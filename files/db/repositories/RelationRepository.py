@@ -14,7 +14,7 @@ class RelationRepository:
     # region Relation
 
     def add_relation(self, relation: Relation):
-        self._db.add("Relation", relation.model_dump(exclude={"id"}))
+        self._db.add("Relation", relation.model_dump(exclude={"_id"}))
 
     def find_relations(self):
         relations_db: list = self._db.find("Relation", None)
@@ -41,7 +41,7 @@ class RelationRepository:
     def update_relation(self, relation: Relation):
         dto: Relation = self.find_relation_by_id(relation.relation_id)
 
-        self._db.update("Relation", dto.id, relation.model_dump(exclude={"id"}))
+        self._db.update("Relation", dto.id, relation.model_dump(exclude={"_id"}))
 
     def delete_relation(self, relation: Relation):
         dto: Relation = self.find_relation_by_id(relation.relation_id)

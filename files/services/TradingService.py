@@ -5,33 +5,18 @@ from typing import Any, Dict
 from files.helper.manager.AssetManager import AssetManager
 from files.helper.manager.StrategyManager import StrategyManager
 from files.services.BrokerService import BrokerService
-from files.mappers.AssetMapper import AssetMapper
 from files.models.asset.Relation import Relation
 from files.models.asset.Candle import Candle
 from files.models.strategy.Result import StrategyResult
-from files.models.strategy.ResultStatus import StrategyResultStatusEnum
 from files.models.trade.Order import Order
 from files.models.trade.Trade import Trade
 from files.models.trade.enums.OrderType import OrderType
-from files.functions.monitoring.log_time import log_time
+from files.helper.functions.monitoring.log_time import log_time
 from tools.NewsService import NewsService
 from tools.TelegramService import TelegramService
 
 
 class TradingService:
-    """
-    Manages the core trading operations, including price action signal handling, strategy evaluation,
-    and trade management. This service acts as an intermediary between asset management, strategy
-    execution, and trade execution layers in a trading platform.
-
-    Provides functionality for:
-    - Receiving price action signals and processing them through strategies.
-    - Managing trades based on strategy outputs.
-    - Handling entry and exit conditions for trades.
-
-    Thread-safe Singleton instance ensures centralized service usage within the application.
-    """
-    # region Singleton
 
     _instance = None
     _lock = threading.Lock()
@@ -43,24 +28,18 @@ class TradingService:
                     cls._instance = super(TradingService, cls).__new__(cls)
         return cls._instance
 
-    # endregion
-
-    # region Initializing
-
+# todo map out data flow to remove possible inheritances
     def __init__(self, asset_manager:AssetManager, trade_manager:BrokerService
-                 , strategy_registry:StrategyManager, news_service:NewsService, telegram_service:TelegramService, logger:Logger, asset_mapper:AssetMapper):
-        if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
+                 , strategy_registry:StrategyManager, news_service:NewsService, telegram_service:TelegramService, logger:Logger):
+        if not hasattr(self, "_initialized"):
             self._asset_manager: AssetManager = asset_manager
             self._trade_manager: BrokerService = trade_manager
             self._strategy_registry: StrategyManager = strategy_registry
-            self._asset_mapper = asset_mapper
-            self._news_service :NewsService = news_service
+            self._news_service :NewsService = news_service #todo -> move to risk service
             self._telegram_service = telegram_service
             self._logger = logger
-            self._logger.info("TradingService initialized")
-            self._initialized = True  # Markiere als initialisiert
+            self._initialized = True
 
-    # endregion
     @log_time
     def handle_price_action_signal(self, jsonData: Dict[str, Any]) -> None:
         """
@@ -126,14 +105,14 @@ class TradingService:
         If there is a Signal for Entry,the Strategy generates a Trade Object.
         That Object is used to Execute Orders in the Trade Manager.
         """
-        asset_class = self._asset_manager.return_asset_class(relation.asset)
+        asset_class = self._asset_manager.get_asset_class(relation.asset)
 
 
         result: StrategyResult = self._strategy_registry.get_entry(candles, relation, timeframe, asset_class)
         if result.status is None:
             return
         if result.status == StrategyResultStatusEnum.NEWTRADE.value:
-            self._logger.info(f"New Trade found:{result.trade.relation}")
+            self._logger.info(f"New Trade found:{result.trade.relation_id}")
 
             self._trade_manager.register_trade(result.trade)
             exceptionOrders,trade = self._trade_manager.place_trade(result.trade)
@@ -186,7 +165,7 @@ class TradingService:
         trade = self._trade_manager.update_trade(trade)
         self._trade_manager.archive_trade(trade)
         self._logger.info(f"Canceled Trade: TradeId:{trade.trade_id},"
-                             f"Symbol:{trade.relation.asset},Broker:{trade.relation.broker},Pnl:{trade.unrealised_pnl}")
+                             f"Symbol:{trade.relation_id.asset},Broker:{trade.relation_id.broker},Pnl:{trade.unrealised_pnl}")
         message = self._format_orders(trade.orders)
         self._telegram_service.send(f"Cancelled Trade: {message}")
 

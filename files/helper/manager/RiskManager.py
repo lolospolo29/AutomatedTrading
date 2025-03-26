@@ -1,9 +1,10 @@
 import threading
 from logging import Logger
 
+from files.models.broker.BrokerRisk import BrokerRisk
+
 # todo risk manager risk profile crud
 # todo risk manager update drawdown after trade / get balance from broker / split up by asset_class
-
 class RiskManager:
 
     _instance = None
@@ -17,25 +18,17 @@ class RiskManager:
         return cls._instance
 
     def __init__(self, max_drawdown:float, max_risk_percentage: float,logger:Logger):
-        if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.__max_drawdown: float = max_drawdown  # Maximaler Verlust in %
-            self.__current_pnl: float = 0.0  # Aktueller Drawdown
+        if not hasattr(self, "_initialized"):
+            self.__max_drawdown: float = max_drawdown
+            self.__current_pnl: float = 0.0
             self.__max_risk_percentage: float = max_risk_percentage
             self.__account_balance = 1000
+            self._brokers_profile:list[BrokerRisk] = []
             self._logger = logger
-            self._initialized = True  # Markiere als initialisiert
+            self._initialized = True
 
     @staticmethod
     def breakeven_exchange_rate(current_exchange_rate: float, lower_yield: float, higher_yield: float) -> float:
-        """
-        Calculates the breakeven exchange rate where the yield advantage of the higher-yielding currency
-        is fully offset by exchange rate movement.
-
-        :param current_exchange_rate: Current exchange rate (e.g., EUR/USD = 1.1000)
-        :param lower_yield: Yield (interest rate) of the lower-yielding currency (as a decimal, e.g., 0.02 for 2%)
-        :param higher_yield: Yield (interest rate) of the higher-yielding currency (as a decimal, e.g., 0.04 for 4%)
-        :return: Breakeven exchange rate
-        """
         return current_exchange_rate * ((1 + lower_yield) / (1 + higher_yield))
 
     # # Example usage:

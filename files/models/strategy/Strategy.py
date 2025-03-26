@@ -1,12 +1,21 @@
-from files.models.strategy import ExitStrategy
+import uuid
+
+from files.models.strategy.ExitStrategy import ExitStrategy
 from files.models.strategy.EntryStrategy import EntryStrategy
 
 class Strategy:
 
-    def __init__(self, name):
+    def __init__(self, name,id:str=None):
         self._name = name
+        if id is None:
+           id =  str(uuid.uuid4())
+        self._strategy_id = id
         self.entry_strategy = None
         self.exitStrategy = None
+
+    @property
+    def strategy_id(self):
+        return self._strategy_id
 
     @property
     def name(self) -> str:

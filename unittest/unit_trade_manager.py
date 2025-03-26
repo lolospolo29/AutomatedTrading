@@ -1,7 +1,7 @@
 # trade_manager = TradeManager()
 #
-# relation = Relation(asset="XRPUSDT", broker="BYBIT", strategy="AC", max_trades=1, id=1)
-# relation2 = Relation(asset="XRPUSDT", broker="BYBIT", strategy="ABC", max_trades=1, id=2)
+# relation = Relation(asset="XRPUSDT", broker="BYBIT", strategy="AC", max_trades=1, strategy_id=1)
+# relation2 = Relation(asset="XRPUSDT", broker="BYBIT", strategy="ABC", max_trades=1, strategy_id=2)
 #
 # pd = PDArray(candles=[])
 #
@@ -32,20 +32,20 @@
 #
 # trade1 = Trade(relation=relation, orders=[order1, order2], tradeId="131", category="linear")
 #
-# trade_manager.register_trade(trade1)
+# trade_manager.add_trade(trade1)
 #
-# print(trade_manager.return_trades_for_relation(relation))
+# print(trade_manager.get_trades_for_relation(relation))
 #
-# trades = trade_manager.return_trades_for_relation(relation2)
+# trades = trade_manager.get_trades_for_relation(relation2)
 #
 # trade_manager.place_trade(trade1)
 #
-# trades2 = trade_manager.return_trades_for_relation(relation)
+# trades2 = trade_manager.get_trades_for_relation(relation)
 #
 # for res1 in trades2:
 #     trade_manager.update_trade(res1)
 #
-# trades3 = trade_manager.return_trades_for_relation(relation)
+# trades3 = trade_manager.get_trades_for_relation(relation)
 #
 # for res2 in trades3:
 #     trade_manager.cancel_trade(res2)

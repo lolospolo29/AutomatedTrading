@@ -12,7 +12,7 @@ class CandleRepository:
     # region Candle
 
     def add_candle(self, asset: str, candle: Candle):
-        self._db.add(asset, candle.model_dump(exclude={"id"}))
+        self._db.add(asset, candle.model_dump(exclude={"_id"}))
 
     def find_candles_by_asset(self, asset:str)->list[Candle]:
         query = self._db.build_query("asset", asset)

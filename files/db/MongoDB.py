@@ -7,8 +7,7 @@ from files.db.Database import Database
 
 class MongoDB(Database):
 
-    def count(self, collection: str, query: dict) -> int:
-        return self.db[collection].count_documents(query)
+
 
     # region Initializing
     def __init__(self, db_name: str, uri: str):
@@ -133,6 +132,9 @@ class MongoDB(Database):
         # end_date
         collection = self.db[collection_name]
         return list(collection.find(query))
+
+    def count(self, collection: str, query: dict) -> int:
+        return self.db[collection].count_documents(query)
 
     def distinct(self, collection_name: str, field_name: str) -> list[Any]:
         """

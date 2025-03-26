@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABC
 
-from files.models.strategy.ExitInput import ExitInput
+from files.models.strategy import ExitInput
 from files.models.strategy.Result import StrategyResult
 
 class ExitStrategy(ABC):

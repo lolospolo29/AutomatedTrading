@@ -9,7 +9,7 @@ S = TypeVar("S", bound=BaseModel)  # Source model type
 
 class ClassMapper:
     @staticmethod
-    def map_request_to_model(source: S, target_class: Type[typing.T]) -> typing.T:
+    def map_source_to_target_model(source: S, target_class: Type[typing.T]) -> typing.T:
         """Generic function to map one Pydantic model to another"""
         source_dict = source.model_dump(by_alias=True, exclude_unset=True)
         filtered_data = {key: source_dict[key] for key in target_class.model_fields if key in source_dict}

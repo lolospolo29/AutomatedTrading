@@ -1,7 +1,7 @@
 import threading
 from logging import Logger
 
-from files.helper.strategy.RiskProfileAnalyzer import RiskProfileAnalyzer
+from files.helper.calculator.RiskProfileAnalyzer import RiskProfileAnalyzer
 from files.models.asset.Relation import Relation
 from files.models.risk.RiskProfile import RiskProfile
 

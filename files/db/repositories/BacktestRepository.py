@@ -12,7 +12,7 @@ class BacktestRepository:
     # region Candle
 
     def add_candle(self, candle: Candle):
-        self._db.add("Testdata", candle.model_dump(exclude={"id"}))
+        self._db.add("Testdata", candle.model_dump(exclude={"_id"}))
 
     def find_candles_by_asset(self, asset:str)->list[Candle]:
         query = self._db.build_query("asset", asset)
@@ -28,7 +28,7 @@ class BacktestRepository:
     # region Result
 
     def add_result(self, result:Result):
-        self._db.add("Results",result.model_dump(exclude={"id"}))
+        self._db.add("Results",result.model_dump(exclude={"_id"}))
 
     def find_results(self)->list[Result]:
         results_db:list = self._db.find("Results",None)
@@ -72,7 +72,7 @@ class BacktestRepository:
     # region Trade
 
     def add_trade_to_db(self, trade: Trade):
-        self._db.add("Trades",trade.model_dump(exclude={"id"}))
+        self._db.add("Trades",trade.model_dump(exclude={"_id"}))
 
     def find_trades(self)->list[Trade]:
         trades_db:list =  self._db.find("OpenTrades", None)
@@ -93,6 +93,14 @@ class BacktestRepository:
 
         trade.id = dto.trade_id
 
-        self._db.update("OpenTrades", trade.id, trade.model_dump(exclude={"id"}))
+        self._db.update("OpenTrades", trade.id, trade.model_dump(exclude={"strategy_id"}))
 
     # endregion
+
+    def get_asset_selection(self):
+        pipeline = [
+            {"$group": {"_id": "$asset"}},  # Group by asset name
+            {"$project": {"_id": 0, "asset": "$_id"}}  # Rename _id to asset
+        ]
+
+        return self._db.aggregate("Testdata", pipeline)

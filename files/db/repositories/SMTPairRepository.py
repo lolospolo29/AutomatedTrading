@@ -9,7 +9,7 @@ class SMTPairRepository:
     # region SMT
 
     def add_smt_pair(self, smt_pair: SMTPair):
-        self._db.add("SMTPairs", smt_pair.model_dump(exclude={"id"}))
+        self._db.add("SMTPairs", smt_pair.model_dump(exclude={"_id"}))
 
     def find_smt_pairs(self) -> list[SMTPair]:
         smt_pairs_db: list = self._db.find("SMTPairs", None)
@@ -22,10 +22,10 @@ class SMTPairRepository:
         query = self._db.build_query("smtPairId", smt_pair_id)
         return SMTPair(**self._db.find("Relation", query)[0])
 
-    def update_relation(self, smt_pair: SMTPair):
+    def update_smt_pair(self, smt_pair: SMTPair):
         dto: SMTPair = self.find_smt_pair_by_id(smt_pair.smt_pair_id)
 
-        self._db.update("Relation", dto.id, dto.model_dump(exclude={"id"}))
+        self._db.update("Relation", dto.id, dto.model_dump(exclude={"_id"}))
 
     def delete_smt_pair(self, smt_pair: SMTPair):
         dto: SMTPair = self.find_smt_pair_by_id(smt_pair.smt_pair_id)

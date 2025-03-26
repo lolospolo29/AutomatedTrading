@@ -4,4 +4,4 @@ from files.models.frameworks.FrameWork import FrameWork
 
 
 class Structure(FrameWork):
-    typ: str = Field(default='Structure')
+    typ: str = Field(default='Structure',exclude=True)

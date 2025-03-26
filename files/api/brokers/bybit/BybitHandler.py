@@ -20,7 +20,7 @@ from files.models.broker.BrokerFunding import BrokerFunding
 from files.models.broker.BrokerOrder import BrokerOrder
 from files.models.broker.BrokerPosition import BrokerPosition
 from files.interfaces.IBrokerHandler import IBrokerHandler
-from files.mappers.ClassMapper import ClassMapper
+from files.helper.mappers.ClassMapper import ClassMapper
 from files.models.broker.RequestParameters import RequestParameters
 from ratelimit import limits
 # endregion
@@ -43,7 +43,7 @@ class BybitHandler(IBrokerHandler):
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def return_open_and_closed_order(self, request_params: RequestParameters) -> list[BrokerOrder]:
 
-        openAndClosedOrders: OpenAndClosedOrders = ClassMapper.map_request_to_model(request_params, OpenAndClosedOrders)
+        openAndClosedOrders: OpenAndClosedOrders = ClassMapper.map_source_to_target_model(request_params, OpenAndClosedOrders)
 
         self._logger.info(f"Open And Closed Orders Bybit,Symbol:{openAndClosedOrders.symbol}")
 
@@ -86,7 +86,7 @@ class BybitHandler(IBrokerHandler):
 
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def return_position_info(self, request_params: RequestParameters) -> list[BrokerPosition]:
-        positionInfo: PositionInfo = ClassMapper.map_request_to_model(request_params, PositionInfo)
+        positionInfo: PositionInfo = ClassMapper.map_source_to_target_model(request_params, PositionInfo)
 
         self._logger.info(f"Position Info Bybit,Symbol:{request_params.symbol}")
 
@@ -129,7 +129,7 @@ class BybitHandler(IBrokerHandler):
 
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def return_order_history(self, request_params: RequestParameters) -> list[BrokerOrder]:
-        orderHistory: OrderHistory = ClassMapper.map_request_to_model(request_params,OrderHistory)
+        orderHistory: OrderHistory = ClassMapper.map_source_to_target_model(request_params, OrderHistory)
 
         self._logger.info(f"Order History Bybit,Symbol:{orderHistory.symbol}")
 
@@ -172,7 +172,7 @@ class BybitHandler(IBrokerHandler):
 
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def return_funding_history(self, request_params: RequestParameters) -> list[BrokerFunding]:
-        fundingHistory: FundingHistory = ClassMapper.map_request_to_model(request_params,FundingHistory)
+        fundingHistory: FundingHistory = ClassMapper.map_source_to_target_model(request_params, FundingHistory)
 
         self._logger.info(f"Sending API-Call to Return Funding History  Bybit,Symbol:{request_params.symbol}")
 
@@ -207,7 +207,7 @@ class BybitHandler(IBrokerHandler):
     # region post Methods
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def amend_order(self, request_params: RequestParameters) -> Optional[BrokerOrder]:
-        amendOrder: AmendOrder = ClassMapper.map_request_to_model(request_params, AmendOrder)
+        amendOrder: AmendOrder = ClassMapper.map_source_to_target_model(request_params, AmendOrder)
 
         self._logger.info(f"Amend Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
 
@@ -229,7 +229,7 @@ class BybitHandler(IBrokerHandler):
 
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def cancel_all_orders(self, request_params: RequestParameters) -> list[BrokerOrder]:
-        cancelOrders: CancelAllOrders = ClassMapper.map_request_to_model(request_params, CancelAllOrders)
+        cancelOrders: CancelAllOrders = ClassMapper.map_source_to_target_model(request_params, CancelAllOrders)
         self._logger.info(f"Sending API-Call to Cancel All Orders Bybit,Symbol:{request_params.symbol}")
 
         if not cancelOrders.validate():
@@ -254,7 +254,7 @@ class BybitHandler(IBrokerHandler):
 
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def cancel_order(self, request_params: RequestParameters) -> Optional[BrokerOrder]:
-        cancelOrder: CancelOrder = ClassMapper.map_request_to_model(request_params, CancelOrder)
+        cancelOrder: CancelOrder = ClassMapper.map_source_to_target_model(request_params, CancelOrder)
 
         self._logger.info(f"Cancel Order To Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
 
@@ -276,7 +276,7 @@ class BybitHandler(IBrokerHandler):
 
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def place_order(self, request_params: RequestParameters) -> Optional[BrokerOrder]:
-        placeOrder: PlaceOrder = ClassMapper.map_request_to_model(request_params, PlaceOrder)
+        placeOrder: PlaceOrder = ClassMapper.map_source_to_target_model(request_params, PlaceOrder)
 
         self._logger.info(f"Place Order Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
 
@@ -298,7 +298,7 @@ class BybitHandler(IBrokerHandler):
 
     @limits(calls=10, period=FIFTEEN_MINUTES)
     def set_leverage(self, request_params: RequestParameters) -> Optional[bool]:
-        setLeverage: SetLeverage = ClassMapper.map_request_to_model(request_params, SetLeverage)
+        setLeverage: SetLeverage = ClassMapper.map_source_to_target_model(request_params, SetLeverage)
 
         self._logger.info(f"Set Leverage Bybit,OrderLinkId:{request_params.orderLinkId},{request_params.symbol}")
 

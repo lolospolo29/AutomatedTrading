@@ -77,7 +77,7 @@ class OrderBlockMediator:
                 if orderblock._name == "OB" or orderblock._name == "SCOB":
                     pb = PB.detect_probulsion_block(last_candle=third_candle, orderblock=orderblock)
                     if pb:
-                        pb.reference = orderblock.id
+                        pb.reference = orderblock.strategy_id
                         if timeframe not in self._probulsion_blocks:
                             self._probulsion_blocks[pb.reference] = []
                         self._probulsion_blocks[pb.reference].append(pb)
@@ -107,7 +107,7 @@ class OrderBlockMediator:
 
         for ob in self._orderblocks[timeframe]:
             if ob._name == "SCOB" or ob._name == "OB":
-                candle_ids = frozenset(candle.id for candle in ob.candles)  # Get unique candle IDs
+                candle_ids = frozenset(candle.strategy_id for candle in ob.candles)  # Get unique candle IDs
 
                 if candle_ids not in seen_candle_sets:
                     unique_ob.append(ob)
@@ -120,8 +120,8 @@ class OrderBlockMediator:
 
     def _remove_orderblocks_by_ids(self, _ids, timeframe):
         self._orderblocks[timeframe] = [orderblocks for orderblocks in self._orderblocks[timeframe]
-                                 if all(candle.id in _ids for candle in orderblocks.candles)]
+                                        if all(candle.strategy_id in _ids for candle in orderblocks.candles)]
 
     def _remove_probulsion_blocks_by_ids(self, _ids, timeframe):
         self._probulsion_blocks[timeframe] = [pb for pb in self._probulsion_blocks[timeframe]
-                                 if all(candle.id in _ids for candle in pb.candles)]
+                                              if all(candle.strategy_id in _ids for candle in pb.candles)]

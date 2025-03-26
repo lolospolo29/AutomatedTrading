@@ -121,7 +121,7 @@ class DoubleFib15(Strategy):
 
     def _create_trade(self, relation:Relation, order_dir:str, exit_dir:str, stop_dir:str
                       , profit_dir:str, take_profit:float, stop:float, last_candle:Candle, asset_class:str, levels:list[FrameWork]):
-        trade = Trade(relation=relation, category=Category.LINEAR.value, orders=[], trade_id=str(uuid.uuid4()))
+        trade = Trade(relation_id=relation, category=Category.LINEAR.value, orders=[], trade_id=str(uuid.uuid4()))
         trade.side = order_dir
 
         entry_order = OrderBuilder().create_order(relation=relation, symbol=relation.asset, confirmations=levels

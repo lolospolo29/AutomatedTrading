@@ -7,7 +7,6 @@ from pydantic import BaseModel,Field
 
 from files.models.asset.Candle import Candle
 from files.models.asset.CandleSeries import CandleSeries
-from files.models.asset.Relation import Relation
 from files.models.PyObjectId import PyObjectId
 
 
@@ -52,14 +51,7 @@ class Asset(BaseModel):
         for candle_series in self.candles_series:
             candle_series:CandleSeries
             if candle_series.broker == broker and candle_series.time_frame == time_frame:
-                return list(candle_series)
+                return list(candle_series.candle_series)
 
     def update_asset(self,asset: 'Asset'):
         self.asset_class_id = asset.asset_class_id
-
-    def remove_relation(self, relation:Relation):
-        candles_series = self.candles_series.copy()
-
-        for candleSeries in candles_series:
-            if candleSeries.broker_id == relation.broker:
-                self.candles_series.remove(candleSeries)

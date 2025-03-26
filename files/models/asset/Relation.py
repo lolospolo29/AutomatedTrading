@@ -12,7 +12,6 @@ class Relation(BaseModel):
     asset_id: int = Field(alias="assetId")
     broker_id: int = Field(alias="brokerId")
     strategy_id: int = Field(alias="strategyId")
-    max_trades: Optional[int] = Field(alias="maxTrades",default=1)
     relation_id: int = Field(alias="relationId", default_factory=lambda: uuid.uuid4().__str__())
     category_id: Optional[int] = Field(alias="categoryId",default=None)
 

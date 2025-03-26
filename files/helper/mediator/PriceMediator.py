@@ -145,7 +145,7 @@ class PriceMediator:
             return self._ote.return_levels(highest_candle, lowest_candle)
 
     def remove_old_frameworks(self, candles: list[Candle], timeframe):
-        _ids = [candle.id for candle in candles]
+        _ids = [candle.strategy_id for candle in candles]
 
         self._time_mediator.remove_old_sessions(_ids)
         self._imbalance_mediator.remove_imbalances_by_ids(_ids, timeframe)

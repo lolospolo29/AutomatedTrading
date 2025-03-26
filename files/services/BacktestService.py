@@ -5,6 +5,7 @@ from logging import Logger
 
 from files.db.repositories.BacktestRepository import BacktestRepository
 from files.helper.builder.StrategyBuilder import StrategyBuilder
+from files.models.asset.AssetClass import AssetClass
 from files.models.asset.Candle import Candle
 from files.models.backtest.BacktestInput import BacktestInput
 from files.models.backtest.Result import Result
@@ -26,42 +27,38 @@ class BacktestService:
     def __init__(self, backtest_repository: BacktestRepository,strategy_factory: StrategyBuilder
                  ,logger:Logger):
         if not hasattr(self, "_initialized"):  # Prüfe, ob bereits initialisiert
-            self.__factory = strategy_factory
+            self._builder = strategy_factory
             self._backtest_repository = backtest_repository
-            self._asset_selection: list[str] = [
-                                                "AUDUSD",
-                                                "BTCUSD",
-                                                "EURJPY",
-                                                "DOGEUSDT",
-                                                "AAPLUSUSD",
-                                                "EURUSD",
-                                                "XAUUSD",
-                                                "NZDJPY"
-                                            ]
             self.logger = logger
 
             self._initialized = True  # Markiere als initialisiert
+
+    def add_test_data(self, candles: list[Candle]):
+        for candle in candles:
+            self._backtest_repository.add_candle(candle)
 
     def start_backtesting_strategy(self, backtest_input: BacktestInput):
 
         test_data: dict[str, list[Candle]] = self._prepare_test_data(backtest_input.test_assets)
 
-        asset_classes: dict[str, str] = self._get_asset_classes(backtest_input.test_assets)
+        asset_classes: dict[str, AssetClass] = self._get_asset_classes(backtest_input.test_assets)
 
         modules: list[TestModule] = []
 
         threads = []
 
         for asset in backtest_input.test_assets:
-            strategy = self.__factory.return_strategy(backtest_input.strategy)
+            strategy = (self._builder.create_strategy(backtest_input.strategy.name)
+                        .add_entry(backtest_input.strategy.entry_strategy_id)
+                        .add_exit(backtest_input.strategy.exit_strategy_id).build())
 
             if strategy is None:
                 continue
 
-            self.logger.info(f"Starting Backtest: {strategy._name} with Asset {asset}")
+            self.logger.info(f"Starting Backtest: {strategy.name} with Asset {asset}")
 
             module = TestModule(asset_class=asset_classes[asset], strategy=strategy, asset=asset
-                                , candles=test_data[asset], timeframes=strategy.timeframes, trade_limit=backtest_input.trade_limit,logger=self.logger)
+                                , candles=test_data[asset], trade_limit=backtest_input.trade_limit,logger=self.logger)
             modules.append(module)
             thread = threading.Thread(target=module.start_module)
             threads.append(thread)
@@ -81,32 +78,14 @@ class BacktestService:
                 self._backtest_repository.add_result(result)
 
     def get_asset_selection(self) -> list[str]:
-        return self._asset_selection
+        assets_dict =  self._backtest_repository.get_asset_selection()
+        return [doc['asset'] for doc in assets_dict]
 
     def get_test_results(self, strategy: str = None) -> list[Result]:
         if strategy:
             return self._backtest_repository.find_result_by_strategy(strategy)
         else:
             return self._backtest_repository.find_results()
-
-    def add_test_data(self, candles: list[Candle]):
-        for candle in candles:
-            self._backtest_repository.add_candle(candle)
-
-    @staticmethod
-    def _generate_custom_id(strategy_name, asset):
-        now = datetime.utcnow()
-        timestamp = now.strftime("%H%M%S%d%m%Y")  # Format: HHMMSSDDMMYYYY
-        short_uuid = str(uuid.uuid4().hex)[:4]  # Take first 4 chars from UUID
-
-        # Shorten strategy and asset names (max 3 chars each to fit in 16)
-        strategy_part = strategy_name[:3].upper()
-        asset_part = asset[:3].upper()
-
-        # Construct the 16-character ID
-        custom_id = f"{timestamp[:8]}{short_uuid}{strategy_part}{asset_part}"
-
-        return custom_id[:16]  # Ensure it remains 16 chars
 
     def _create_result(self,module: TestModule) -> Result:
         """Fügt die Statistiken eines TestModules zum übergeordneten Result hinzu."""
@@ -179,6 +158,21 @@ class BacktestService:
         return result
 
     @staticmethod
+    def _generate_custom_id(strategy_name, asset):
+        now = datetime.utcnow()
+        timestamp = now.strftime("%H%M%S%d%m%Y")  # Format: HHMMSSDDMMYYYY
+        short_uuid = str(uuid.uuid4().hex)[:4]  # Take first 4 chars from UUID
+
+        # Shorten strategy and asset names (max 3 chars each to fit in 16)
+        strategy_part = strategy_name[:3].upper()
+        asset_part = asset[:3].upper()
+
+        # Construct the 16-character ID
+        custom_id = f"{timestamp[:8]}{short_uuid}{strategy_part}{asset_part}"
+
+        return custom_id[:16]  # Ensure it remains 16 chars
+
+    @staticmethod
     def _wait_for_threads(threads: list[threading.Thread]):
         while True:
             alive = False  # Assume all threads are dead
@@ -189,13 +183,10 @@ class BacktestService:
             if not alive:  # If no threads are alive, exit the loop
                 break
 
-    def _fetch_test_assets(self):
-        self.logger.info("Fetching Test Assets...")
-        self._asset_selection = self._backtest_repository.find_assets_in_testdata()
-
-    def _get_asset_classes(self, test_assets: list[str]) -> dict[str, str]:
-        asset_classes: dict[str, str] = {}
+    def _get_asset_classes(self, test_assets: list[str]) -> dict[str, AssetClass]:
+        asset_classes: dict[str, AssetClass] = {}
         for asset in test_assets:
+            asset:str
             asset_classes[asset] = self._backtest_repository.find_asset_class_by_id(asset)
         return asset_classes
 

@@ -1,17 +1,13 @@
 import re
 from datetime import datetime,timezone
 
-from zoneinfo import ZoneInfo
-import pytz
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from logging import Logger
 
 
-from files.functions.to_utc import to_utc
+from files.helper.functions.to_utc import to_utc
 from tools.EconomicScrapper.Models.NewsDay import NewsDay
 from tools.EconomicScrapper.Models.NewsEvent import NewsEvent
 
@@ -104,7 +100,7 @@ class EconomicScrapper:
 
             # Find the button with the specific ID and click it
             button = self.__driver.find_element(By.ID,
-                                                "ctl00_ContentPlaceHolder1_ctl02_Button1")  # Replace 'your-button-id' with the actual button ID
+                                                "ctl00_ContentPlaceHolder1_ctl02_Button1")  # Replace 'your-button-strategy_id' with the actual button ID
             button.click()
 
             WebDriverWait(self.__driver, 10)
@@ -115,7 +111,7 @@ class EconomicScrapper:
                 checkbox_input.click()
 
             button = self.__driver.find_element(By.ID,
-                                                "DropDownListTimezone")  # Replace 'your-button-id' with the actual button ID
+                                                "DropDownListTimezone")  # Replace 'your-button-strategy_id' with the actual button ID
             button.click()
             WebDriverWait(self.__driver, 3)
 
